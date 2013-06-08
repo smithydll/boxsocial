@@ -71,7 +71,6 @@ namespace BoxSocial.Applications.Blog
             SetTemplate("account_blog_manage");
 
             Blog myBlog;
-            int p = core.Functions.RequestInt("p", 1);
 
             try
             {
@@ -88,7 +87,7 @@ namespace BoxSocial.Applications.Blog
             }
             template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", myBlog.Id, ItemType.GetTypeId(typeof(Blog))), true));
 
-            List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, p, 25);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, core.TopLevelPageNumber, 25);
 
             foreach (BlogEntry be in blogEntries)
             {
@@ -107,7 +106,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Entries / 25.0)), PaginationOptions.Blog);
+            core.Display.ParsePagination(template, BuildUri(), 25, myBlog.Entries);
         }
     }
 }

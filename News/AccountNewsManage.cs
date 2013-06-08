@@ -68,9 +68,8 @@ namespace BoxSocial.Applications.News
         {
             SetTemplate("account_news_manage");
 
-            int p = core.Functions.RequestInt("p", 1);
             News news = new News(core, Owner);
-            List<Article> articles = news.GetArticles(p, 25);
+            List<Article> articles = news.GetArticles(core.TopLevelPageNumber, 25);
 
             foreach (Article article in articles)
             {
@@ -91,7 +90,7 @@ namespace BoxSocial.Applications.News
 
             if (Owner is UserGroup)
             {
-                core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(((UserGroup)Owner).Info.NewsArticles / 25.0));
+                core.Display.ParsePagination(template, BuildUri(), 25, ((UserGroup)Owner).GroupInfo.NewsArticles);
             }
         }
 	}

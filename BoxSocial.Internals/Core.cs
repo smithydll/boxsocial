@@ -39,7 +39,6 @@ namespace BoxSocial.Internals
         private Mysql db;
         private Template template;
         private SessionState session;
-        private int pageNo;
         private AppDomain coreDomain;
         private string pagePath;
         private GroupCollection pagePathParts;
@@ -140,17 +139,48 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// Current page number for paginated pages
+        /// Current page numbers for paginated pages
         /// </summary>
-        public int PageNo
+        public int[] PageNumber
         {
             get
             {
-                return pageNo;
+                return page.PageNumber;
             }
-            internal set
+        }
+
+        /// <summary>
+        /// Current top level page number for paginated pages
+        /// </summary>
+        public int TopLevelPageNumber
+        {
+            get
             {
-                pageNo = value;
+                return page.TopLevelPageNumber;
+            }
+        }
+
+        public int CommentPageNumber
+        {
+            get
+            {
+                return page.CommentPageNumber;
+            }
+        }
+
+        public long[] PageOffset
+        {
+            get
+            {
+                return page.PageOffset;
+            }
+        }
+
+        public long TopLevelPageOffset
+        {
+            get
+            {
+                return page.TopLevelPageOffset;
             }
         }
 

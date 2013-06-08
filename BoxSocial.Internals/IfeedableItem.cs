@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public interface IShareableItem
+    public interface IFeedableItem
     {
         long Id
         {
@@ -56,17 +56,17 @@ namespace BoxSocial.Internals
             get;
         }
 
-        string ShareString
+        string FeedAction
+        {
+            get;
+        }
+
+        string FeedString
         {
             get;
         }
 
         string Uri
-        {
-            get;
-        }
-
-        string ShareUri
         {
             get;
         }

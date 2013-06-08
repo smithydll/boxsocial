@@ -53,7 +53,7 @@ namespace BoxSocial.FrontEnd
             Response.Clear();
 
             // don't allow to load up external stylesheets
-            Response.Write(Regex.Replace(profileOwner.Info.Style, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
+            Response.Write(Regex.Replace(profileOwner.GroupInfo.Style, "\\@import(.+?)\\;", "", RegexOptions.IgnoreCase));
 
             if (db != null)
             {

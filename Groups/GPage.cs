@@ -76,7 +76,7 @@ namespace BoxSocial.Groups
             }
             if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {
-                core.PagePath = Group.Info.GroupHomepage;
+                core.PagePath = Group.GroupInfo.GroupHomepage;
             }
             if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {

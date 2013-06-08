@@ -79,8 +79,6 @@ namespace BoxSocial.Applications.Blog
         private long views;
         [DataField("post_trackbacks")]
         private long trackbacks;
-        [DataField("post_comments")]
-        private long comments;
         [DataField("post_status")]
         private byte status;
         [DataField("post_license")]
@@ -361,6 +359,17 @@ namespace BoxSocial.Applications.Blog
             {
                 throw new InvalidBlogEntryException();
             }
+        }
+
+        public BlogEntry(Core core, Blog blog, Primitive owner, DataRow postEntryRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(BlogEntry_ItemLoad);
+
+            this.blog = blog;
+            this.owner = owner;
+
+            loadItemInfo(postEntryRow);
         }
 
         /// <summary>

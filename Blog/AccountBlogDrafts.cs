@@ -79,7 +79,6 @@ namespace BoxSocial.Applications.Blog
             SetTemplate("account_blog_manage");
 
             Blog myBlog;
-            int p = core.Functions.RequestInt("p", 1);
 
             try
             {
@@ -90,7 +89,7 @@ namespace BoxSocial.Applications.Blog
                 myBlog = Blog.Create(core);
             }
 
-            List<BlogEntry> blogEntries = myBlog.GetDrafts(null, null, -1, -1, -1, 1, 25);
+            List<BlogEntry> blogEntries = myBlog.GetDrafts(null, null, -1, -1, -1, core.TopLevelPageNumber, 25);
 
             foreach (BlogEntry be in blogEntries)
             {
@@ -108,7 +107,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)(Math.Ceiling(myBlog.Drafts / 25.0)), PaginationOptions.Blog);
+            core.Display.ParsePagination(template, BuildUri(), 25, myBlog.Drafts);
         }
     }
 }

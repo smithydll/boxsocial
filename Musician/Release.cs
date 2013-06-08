@@ -56,8 +56,6 @@ namespace BoxSocial.Musician
         private long releaseDateRaw;
         [DataField("release_cover_art")]
         private long releaseCoverArt;
-        [DataField("release_comments")]
-        private long releaseComments;
         [DataField("release_rating")]
         private float releaseRating;
         [DataField("release_ratings")]
@@ -343,7 +341,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return releaseComments;
+                return Info.Comments;
             }
         }
 

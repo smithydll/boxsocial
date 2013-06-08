@@ -137,7 +137,7 @@ namespace BoxSocial.Groups
                 }
             }
 
-            pagesSelectBox.SelectedKey = thisGroup.Info.GroupHomepage.ToString();
+            pagesSelectBox.SelectedKey = thisGroup.GroupInfo.GroupHomepage.ToString();
             template.Parse("S_HOMEPAGE", pagesSelectBox);
 
             Save(new EventHandler(AccountGroupsEdit_Save));

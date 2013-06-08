@@ -79,6 +79,10 @@ namespace BoxSocial.Internals
                     Thread.CurrentThread.CurrentUICulture = culture;
                 }
             }
+            get
+            {
+                return language;
+            }
         }
 
         internal void Initialise(Core core, string language)

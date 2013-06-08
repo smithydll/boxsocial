@@ -964,7 +964,26 @@ namespace BoxSocial.Internals
 
         public bool IsFriend(ItemKey member)
         {
-            if ((GetRelations(member) & Relation.Friend) == Relation.Friend)
+            Relation viewerRelation;
+            if (!sessionRelationsSet)
+            {
+                if (member == null)
+                {
+                    viewerRelation = Relation.None;
+                }
+                else
+                {
+                    viewerRelation = GetRelations(member);
+                }
+                sessionRelations = viewerRelation;
+                sessionRelationsSet = true;
+            }
+            else
+            {
+                viewerRelation = sessionRelations;
+            }
+
+            if ((viewerRelation & Relation.Friend) == Relation.Friend)
             {
                 return true;
             }
@@ -976,7 +995,26 @@ namespace BoxSocial.Internals
 
         public bool IsFamily(ItemKey member)
         {
-            if ((GetRelations(member) & Relation.Family) == Relation.Family)
+            Relation viewerRelation;
+            if (!sessionRelationsSet)
+            {
+                if (member == null)
+                {
+                    viewerRelation = Relation.None;
+                }
+                else
+                {
+                    viewerRelation = GetRelations(member);
+                }
+                sessionRelations = viewerRelation;
+                sessionRelationsSet = true;
+            }
+            else
+            {
+                viewerRelation = sessionRelations;
+            }
+
+            if ((viewerRelation & Relation.Family) == Relation.Family)
             {
                 return true;
             }
@@ -988,7 +1026,26 @@ namespace BoxSocial.Internals
 
         public bool IsBlocked(ItemKey member)
         {
-            if ((GetRelations(member) & Relation.Blocked) == Relation.Blocked)
+            Relation viewerRelation;
+            if (!sessionRelationsSet)
+            {
+                if (member == null)
+                {
+                    viewerRelation = Relation.None;
+                }
+                else
+                {
+                    viewerRelation = GetRelations(member);
+                }
+                sessionRelations = viewerRelation;
+                sessionRelationsSet = true;
+            }
+            else
+            {
+                viewerRelation = sessionRelations;
+            }
+
+            if ((viewerRelation & Relation.Blocked) == Relation.Blocked)
             {
                 return true;
             }

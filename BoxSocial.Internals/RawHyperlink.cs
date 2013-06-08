@@ -21,54 +21,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Text;
-using System.Web;
-using BoxSocial.Internals;
-using BoxSocial.IO;
 
-namespace BoxSocial.Internals
+namespace BoxSocial.Forms
 {
-    public interface IShareableItem
+    public class RawHyperlink //: FormField
     {
-        long Id
-        {
-            get;
-        }
-
-        ItemKey ItemKey
-        {
-            get;
-        }
-
-        ItemKey OwnerKey
-        {
-            get;
-        }
-
-        Primitive Owner
-        {
-            get;
-        }
-
-        string Namespace
-        {
-            get;
-        }
-
-        string ShareString
-        {
-            get;
-        }
-
-        string Uri
-        {
-            get;
-        }
-
-        string ShareUri
-        {
-            get;
-        }
     }
 }

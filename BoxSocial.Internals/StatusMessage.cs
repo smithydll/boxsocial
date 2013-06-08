@@ -40,8 +40,6 @@ namespace BoxSocial.Internals
         private long ownerId;
         [DataField("status_message", 1023)]
         private string statusMessage;
-        [DataField("comments")]
-        private long comments;
         [DataField("status_likes")]
         private byte likes;
         [DataField("status_dislikes")]
@@ -318,7 +316,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return comments;
+                return Info.Comments;
             }
         }
 

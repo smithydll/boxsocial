@@ -71,7 +71,6 @@ namespace BoxSocial.Applications.Forum
         void McpMain_Show(object sender, EventArgs e)
         {
             //AuthoriseRequestSid();
-            int p = core.Functions.RequestInt("p", 1);
             SetTemplate("mcp_main");
 
             /* */
@@ -120,7 +119,7 @@ namespace BoxSocial.Applications.Forum
             }
 
             List<ForumTopic> announcements = thisForum.GetAnnouncements();
-            List<ForumTopic> topics = thisForum.GetTopics(p, settings.TopicsPerPage);
+            List<ForumTopic> topics = thisForum.GetTopics(core.TopLevelPageNumber, settings.TopicsPerPage);
             List<ForumTopic> allTopics = new List<ForumTopic>();
             allTopics.AddRange(announcements);
             allTopics.AddRange(topics);

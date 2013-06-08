@@ -78,7 +78,7 @@ namespace BoxSocial.Networks
             }
         }
 
-        public NetworkInfo Info
+        public NetworkInfo NetworkInfo
         {
             get
             {
@@ -182,7 +182,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return networkInfo.Comments;
+                return Info.Comments;
             }
         }
 

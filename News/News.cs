@@ -219,7 +219,7 @@ namespace BoxSocial.Applications.News
                 e.Template.Parse("L_POST_NEWS_ARTICLE", "New Article");
             }
 
-            e.Core.Display.ParsePagination(e.Template, "PAGINATION", news.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)e.Page.Group.Info.NewsArticles / 10), PaginationOptions.Normal);
+            e.Core.Display.ParsePagination(e.Template, news.Uri, 10, e.Page.Group.GroupInfo.NewsArticles);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });

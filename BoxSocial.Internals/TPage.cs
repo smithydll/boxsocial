@@ -72,7 +72,6 @@ namespace BoxSocial.Internals
         public SessionState session;
         protected Random rand;
         Stopwatch timer;
-        protected int[] page;
         public UnixTime tz;
         protected Core core;
         public PageSignature Signature;
@@ -80,11 +79,25 @@ namespace BoxSocial.Internals
         private bool isMobile;
         private bool pageEnded;
 
+        //
+        // Pagination
+        //
+        protected int[] page;
+        protected long[] offset;
+
         public int[] PageNumber
         {
             get
             {
                 return page;
+            }
+        }
+
+        public long[] PageOffset
+        {
+            get
+            {
+                return offset;
             }
         }
 
@@ -95,6 +108,36 @@ namespace BoxSocial.Internals
                 if (page.Length >= 1)
                 {
                     return page[0];
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+        }
+
+        public long TopLevelPageOffset
+        {
+            get
+            {
+                if (offset.Length >= 1)
+                {
+                    return offset[0];
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        }
+
+        public int CommentPageNumber
+        {
+            get
+            {
+                if (page.Length >= 1)
+                {
+                    return page[page.Length - 1];
                 }
                 else
                 {
@@ -291,9 +334,10 @@ namespace BoxSocial.Internals
 
             template.SetProse(core.Prose);
 
-            if (!string.IsNullOrEmpty(core.Http.Query["p"]))
+            string pageString = core.Http.Query["p"];
+            if (!string.IsNullOrEmpty(pageString))
             {
-                string[] pages = core.Http.Query["p"].Split(new char[] { ',' });
+                string[] pages = pageString.Split(new char[] { ',' });
                 page = new int[pages.Length];
 
                 for (int i = 0; i < pages.Length; i++)
@@ -306,8 +350,26 @@ namespace BoxSocial.Internals
             }
             else
             {
-                page = new int[1];
-                page[0] = 1;
+                page = new int[] { 1 };
+            }
+
+            string offsetString = core.Http.Query["o"];
+            if (!string.IsNullOrEmpty(offsetString))
+            {
+                string[] offsets = offsetString.Split(new char[] { ',' });
+                offset = new long[offsets.Length];
+
+                for (int i = 0; i < offsets.Length; i++)
+                {
+                    if (!long.TryParse(offsets[i], out offset[i]))
+                    {
+                        offset[i] = 0;
+                    }
+                }
+            }
+            else
+            {
+                offset = new long[] { 0 };
             }
         }
 

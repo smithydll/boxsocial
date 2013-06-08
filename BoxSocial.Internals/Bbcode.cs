@@ -2007,15 +2007,32 @@ namespace BoxSocial.Internals
 
                     if (TagAllowed(e.Tag.Tag, e.Options))
                     {
-                        string apiUri = "https://api.twitter.com/1/statuses/oembed.json?id=" + tweetId + "&align=center";
-                        WebClient wc = new WebClient();
-                        string response = wc.DownloadString(apiUri);
+                        ContentPreviewCache preview = ContentPreviewCache.GetPreview(e.Core, "twitter.com", tweetId, e.Core.Prose.Language);
+                        string tweet = string.Empty;
 
-                        Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
-
-                        if (strings.ContainsKey("html"))
+                        if (preview != null)
                         {
-                            e.PrefixText = "</p>" + strings["html"] + "<p>";
+                            tweet = preview.Body;
+                        }
+                        else
+                        {
+                            string apiUri = "https://api.twitter.com/1/statuses/oembed.json?id=" + tweetId + "&maxwidth=550";
+                            WebClient wc = new WebClient();
+                            string response = wc.DownloadString(apiUri);
+
+                            Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
+
+                            if (strings.ContainsKey("html"))
+                            {
+                                tweet = strings["html"];
+                            }
+                            ContentPreviewCache.Create(e.Core, "twitter.com", tweetId, string.Empty, tweet, e.Core.Prose.Language);
+                        }
+
+
+                        if (!string.IsNullOrEmpty(tweet))
+                        {
+                            e.PrefixText = "</p>" + tweet + "<p>";
                             e.SuffixText = string.Empty;
                         }
                         else

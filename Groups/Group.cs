@@ -88,7 +88,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public UserGroupInfo Info
+        public UserGroupInfo GroupInfo
         {
             get
             {
@@ -236,7 +236,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return groupInfo.Comments;
+                return Info.Comments;
             }
         }
 
@@ -807,7 +807,6 @@ namespace BoxSocial.Groups
             iQuery.AddField("group_officers", 0);
             iQuery.AddField("group_members", 1);
             iQuery.AddField("group_category", groupCategory);
-            iQuery.AddField("group_comments", 0);
             iQuery.AddField("group_gallery_items", 0);
             iQuery.AddField("group_home_page", "/profile");
             iQuery.AddField("group_style", string.Empty);

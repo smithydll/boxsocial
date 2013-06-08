@@ -47,8 +47,6 @@ namespace BoxSocial.Applications.News
         private string articleSubject;
 		[DataField("article_body", MYSQL_TEXT)]
         private string articleBody;
-		[DataField("article_comments")]
-        private long articleComments;
         [DataField("article_icon_item_id", typeof(NewsIcon))]
         private long newsIconId;
 		
@@ -197,7 +195,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return articleComments;
+                return Info.Comments;
             }
         }
 
@@ -235,7 +233,6 @@ namespace BoxSocial.Applications.News
                 new FieldValuePair("article_time_ut", UnixTime.UnixTimeStamp()),
                 new FieldValuePair("article_subject", subject),
                 new FieldValuePair("article_body", body),
-                new FieldValuePair("article_comments", 0),
                 new FieldValuePair("user_id", core.LoggedInMemberId));
 
             return (Article)item;
@@ -264,7 +261,8 @@ namespace BoxSocial.Applications.News
             e.Template.Parse("ARTICLE_COMMENTS", article.Comments.ToString());
             e.Template.Parse("ARTICLE_DATE", e.Core.Tz.DateTimeToString(article.GetCreatedDate(e.Core.Tz)));
 
-            e.Core.Display.ParsePagination(e.Template, "PAGINATION", article.Uri, e.Page.TopLevelPageNumber, (int)Math.Ceiling((double)article.Comments / 10), PaginationOptions.Blog);
+            // PaginationOptions.Blog
+            e.Core.Display.ParsePagination(e.Template, article.Uri, 10, article.Comments);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "news", "News" });

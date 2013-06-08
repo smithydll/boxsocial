@@ -46,8 +46,6 @@ namespace BoxSocial.Applications.Calendar
         protected long views;
         [DataField("event_attendees")]
         protected long attendees;
-        [DataField("event_comments")]
-        protected long comments;
         [DataField("event_item", DataFieldKeys.Index)]
         protected ItemKey ownerKey;
         [DataField("user_id")]
@@ -123,7 +121,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return comments;
+                return Info.Comments;
             }
         }
 

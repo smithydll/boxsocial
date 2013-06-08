@@ -33,21 +33,23 @@ namespace BoxSocial.Internals
     {
         public static List<StatusMessage> GetItems(Core core, User owner)
         {
-            return GetItems(core, owner, 1);
+            bool moreContent;
+            return GetItems(core, owner, 1, 20, 0, out moreContent);
         }
 
-        public static List<StatusMessage> GetItems(Core core, User owner, int page)
+        public static List<StatusMessage> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
+            double pessimism = 1.5;
+
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
             List<StatusMessage> feedItems = new List<StatusMessage>();
-            bool moreContent = false;
+            moreContent = false;
 
-            int bpage = page;
-            int perPage = 20;
+            int bpage = currentPage;
             int limitStart = (bpage - 1) * perPage;
 
             SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
@@ -56,56 +58,115 @@ namespace BoxSocial.Internals
             /*query.LimitCount = 50;
             query.LimitStart = (page - 1) * 50;*/
 
-            DataTable feedTable = core.Db.Query(query);
-
-            /*foreach (DataRow dr in feedTable.Rows)
+            //if ((currentOffset > 0 && currentPage > 1) || currentOffset == 0)
             {
-                feedItems.Add(new StatusMessage(core, owner, dr));
-            }
-
-            return feedItems;*/
-
-            int offset = 0;
-            int i = 0;
-
-            while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
-            {
-                List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
-                int j = 0;
-                for (j = offset; j < Math.Min(offset + perPage * 2, feedTable.Rows.Count); j++)
+                long lastId = 0;
+                QueryCondition qc1 = null;
+                if (currentOffset > 0)
                 {
-                    StatusMessage message = new StatusMessage(core, owner, feedTable.Rows[j]);
-                    tempMessages.Add(message);
+                    qc1 = query.AddCondition("status_id", ConditionEquality.LessThan, currentOffset);
                 }
+                query.LimitCount = (int)(perPage * pessimism);
 
-                if (tempMessages.Count > 0)
+                while (feedItems.Count <= perPage)
                 {
+                    DataTable feedTable = core.Db.Query(query);
+
+                    List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
+
+                    if (feedTable.Rows.Count == 0)
+                    {
+                        break;
+                    }
+
+                    foreach (DataRow row in feedTable.Rows)
+                    {
+                        StatusMessage entry = new StatusMessage(core, owner, row);
+                        tempMessages.Add(entry);
+                    }
+
                     core.AcessControlCache.CacheGrants(tempMessages);
 
                     foreach (IPermissibleItem message in tempMessages)
                     {
                         if (message.Access.Can("VIEW"))
                         {
-                            if (i >= limitStart + perPage)
+                            if (feedItems.Count == perPage)
                             {
                                 moreContent = true;
                                 break;
                             }
-                            if (i >= limitStart)
+                            else
                             {
                                 feedItems.Add((StatusMessage)message);
                             }
-                            i++;
                         }
+                        lastId = message.Id;
+                    }
+
+                    //query.LimitStart += query.LimitCount;
+                    if (qc1 == null)
+                    {
+                        qc1 = query.AddCondition("status_id", ConditionEquality.LessThan, lastId);
+                    }
+                    else
+                    {
+                        qc1.Value = lastId;
+                    }
+                    query.LimitCount = (int)(query.LimitCount * pessimism);
+
+                    if (moreContent)
+                    {
+                        break;
                     }
                 }
-                else
-                {
-                    break;
-                }
-
-                offset = j;
             }
+            /*else
+            {
+                DataTable feedTable = core.Db.Query(query);
+
+                int offset = 0;
+                int i = 0;
+
+                while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
+                {
+                    List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
+                    int j = 0;
+                    for (j = offset; j < Math.Min(offset + perPage * 2, feedTable.Rows.Count); j++)
+                    {
+                        StatusMessage message = new StatusMessage(core, owner, feedTable.Rows[j]);
+                        tempMessages.Add(message);
+                    }
+
+                    if (tempMessages.Count > 0)
+                    {
+                        core.AcessControlCache.CacheGrants(tempMessages);
+
+                        foreach (IPermissibleItem message in tempMessages)
+                        {
+                            if (message.Access.Can("VIEW"))
+                            {
+                                if (i >= limitStart + perPage)
+                                {
+                                    moreContent = true;
+                                    break;
+                                }
+                                if (i >= limitStart)
+                                {
+                                    feedItems.Add((StatusMessage)message);
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    offset = j;
+                }
+            }*/
 
             return feedItems;
         }
@@ -230,7 +291,9 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
 
-            List<StatusMessage> items = StatusFeed.GetItems(core, (User)e.Page.Owner, e.Page.TopLevelPageNumber);
+            bool moreContent = false;
+            long lastId = 0;
+            List<StatusMessage> items = StatusFeed.GetItems(core, (User)e.Page.Owner, e.Page.TopLevelPageNumber, 20, e.Page.TopLevelPageOffset, out moreContent);
 
             foreach (StatusMessage item in items)
             {
@@ -282,9 +345,11 @@ namespace BoxSocial.Internals
                         statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
                     }
                 }
+
+                lastId = item.Id;
             }
 
-            core.Display.ParsePagination(core.Hyperlink.BuildStatusUri((User)e.Page.Owner), e.Page.TopLevelPageNumber, (int)Math.Ceiling(((User)e.Page.Owner).UserInfo.StatusMessages / 10.0));
+            core.Display.ParseBlogPagination(core.Template, "PAGINATION", core.Hyperlink.BuildStatusUri((User)e.Page.Owner), 0, moreContent ? lastId : 0);
 
             /* pages */
             core.Display.ParsePageList(e.Page.Owner, true);

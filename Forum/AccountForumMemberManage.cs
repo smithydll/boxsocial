@@ -70,9 +70,7 @@ namespace BoxSocial.Applications.Forum
         {
             SetTemplate("account_forum_member_manage");
 
-            int page = core.Functions.RequestInt("p", 0);
-
-            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, Owner, core.Functions.GetFilter(), page, 20);
+            Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, Owner, core.Functions.GetFilter(), core.TopLevelPageNumber, 20);
 
             foreach (ForumMember member in members.Values)
             {

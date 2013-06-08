@@ -80,8 +80,6 @@ namespace BoxSocial.Applications.Mail
 
             List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
 
-            int p = core.Functions.RequestInt("p", 1);
-
             foreach (MailFolder f in folders)
             {
                 if (f.FolderType == FolderTypes.Inbox) continue;
@@ -125,7 +123,7 @@ namespace BoxSocial.Applications.Mail
                 }
             }
 
-            List<Message> messages = mailFolder.GetMessages(p, 20);
+            List<Message> messages = mailFolder.GetMessages(core.TopLevelPageNumber, 20);
 
             List<long> messageIds = new List<long>();
             Dictionary<long, MessageRecipient> readStatus = new Dictionary<long, MessageRecipient>();
@@ -186,7 +184,7 @@ namespace BoxSocial.Applications.Mail
             Dictionary<string, string> a = new Dictionary<string,string>();
             a.Add("folder", mailFolder.FolderName);
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(a), p, (int)(Math.Ceiling(mailFolder.MessageCount / 20.0)));
+            core.Display.ParsePagination(template, BuildUri(a), 20, mailFolder.MessageCount);
         }
     }
 }

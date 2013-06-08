@@ -48,8 +48,6 @@ namespace BoxSocial.Musician
         private string gigVenue;
         [DataField("gig_all_ages")]
         private bool gigAllAges;
-        [DataField("gig_comments")]
-        private long gigComments;
         [DataField("gig_rating")]
         private float gigRating;
         [DataField("gig_ratings")]
@@ -468,7 +466,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return gigComments;
+                return Info.Comments;
             }
         }
 

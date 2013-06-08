@@ -29,10 +29,38 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("content_preview_caches")]
-    public class ContentPreviewCache : NumberedItem
+    public sealed class ContentPreviewCache : NumberedItem
     {
         [DataField("cache_id", DataFieldKeys.Primary)]
-        protected long cacheId;
+        private long cacheId;
+        [DataField("content_domain", 127)]
+        private string domain;
+        [DataField("content_unique", 127)]
+        private string unique;
+        [DataField("content_language", 8)]
+        private string language;
+        [DataField("content_title", 127)]
+        private string title;
+        [DataField("content_body", MYSQL_TEXT)]
+        private string body;
+        [DataField("content_cached_time")]
+        private long cachedTimeRaw;
+
+        public string Title
+        {
+            get
+            {
+                return title;
+            }
+        }
+
+        public string Body
+        {
+            get
+            {
+                return body;
+            }
+        }
 
         public ContentPreviewCache(Core core, DataRow cacheRow)
             : base(core)
@@ -46,6 +74,40 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidContentPreviewCacheException();
             }
+        }
+
+        public static void Create(Core core, string domain, string unique, string title, string body, string language)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item.Create(core, typeof(ContentPreviewCache), true, new FieldValuePair("content_domain", domain),
+                new FieldValuePair("content_unique", unique),
+                new FieldValuePair("content_title", title),
+                new FieldValuePair("content_body", body),
+                new FieldValuePair("content_language", language),
+                new FieldValuePair("content_cached_time", UnixTime.UnixTimeStamp()));
+        }
+
+        public static ContentPreviewCache GetPreview(Core core, string domain, string unique, string language)
+        {
+            ContentPreviewCache preview = null;
+
+            SelectQuery query = ContentPreviewCache.GetSelectQueryStub(typeof(ContentPreviewCache));
+            query.AddCondition("content_domain", domain);
+            query.AddCondition("content_unique", unique);
+            query.AddCondition("content_language", language);
+
+            DataTable previewDataTable = core.Db.Query(query);
+
+            if (previewDataTable.Rows.Count == 1)
+            {
+                preview = new ContentPreviewCache(core, previewDataTable.Rows[0]);
+            }
+
+            return preview;
         }
 
         public override long Id

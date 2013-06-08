@@ -64,7 +64,6 @@ namespace BoxSocial.Applications.Blog
             SetTemplate("account_blog_trackback");
 
             Blog myBlog;
-            int p = core.Functions.RequestInt("p", 1);
 
             try
             {
@@ -75,7 +74,7 @@ namespace BoxSocial.Applications.Blog
                 myBlog = Blog.Create(core);
             }
 
-            List<TrackBack> trackBacksUnapproved = myBlog.GetTrackBacksUnapproved(p, 10);
+            List<TrackBack> trackBacksUnapproved = myBlog.GetTrackBacksUnapproved(core.TopLevelPageNumber, 10);
         }
     }
 }

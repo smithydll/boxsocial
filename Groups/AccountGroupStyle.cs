@@ -76,7 +76,7 @@ namespace BoxSocial.Groups
             UserGroup thisGroup = (UserGroup)Owner;
 
             CascadingStyleSheet css = new CascadingStyleSheet();
-            css.Parse(thisGroup.Info.Style);
+            css.Parse(thisGroup.GroupInfo.Style);
 
             template.Parse("STYLE", css.ToString());
 

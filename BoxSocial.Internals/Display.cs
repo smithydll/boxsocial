@@ -72,7 +72,73 @@ namespace BoxSocial.Internals
 
         public delegate void DisplayCommentHookHandler(DisplayCommentHookEventArgs e);
 
-        public void ParsePagination(string baseUri, int currentPage, int maxPages)
+        //
+        // New style
+        //
+
+        // Normal
+        public void ParsePagination(Template template, string baseUri, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(template, "PAGINATION", baseUri, 0, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(Template template, string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(template, "PAGINATION", baseUri, pageLevel, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(string baseUri, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(core.Template, "PAGINATION", baseUri, 0, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(core.Template, "PAGINATION", baseUri, pageLevel, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(string templateVar, string baseUri, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(core.Template, templateVar, baseUri, 0, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(string templateVar, string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(core.Template, templateVar, baseUri, pageLevel, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(Template template, string templateVar, string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            ParsePagination(template, templateVar, baseUri, pageLevel, itemsPerPage, totalItems, false);
+        }
+
+        public void ParsePagination(Template template, string templateVar, string baseUri, int pageLevel, int itemsPerPage, long totalItems, bool minimal)
+        {
+            int maxPages = (int)Math.Ceiling(totalItems / (double)itemsPerPage);
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, maxPages, (minimal ? PaginationOptions.Minimal : PaginationOptions.Normal)));
+        }
+
+        // Minimal
+        public void ParseMinimalPagination(VariableCollection template, string templateVar, string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            int maxPages = (int)Math.Ceiling(totalItems / (double)itemsPerPage);
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, maxPages, PaginationOptions.Minimal));
+        }
+
+        public void ParseMinimalPagination(Template template, string templateVar, string baseUri, int pageLevel, int itemsPerPage, long totalItems)
+        {
+            int maxPages = (int)Math.Ceiling(totalItems / (double)itemsPerPage);
+            template.ParseRaw(templateVar, GeneratePagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, maxPages, PaginationOptions.Minimal));
+        }
+
+        // Blog
+        public void ParseBlogPagination(Template template, string templateVar, string baseUri, int pageLevel, long offsetItemId)
+        {
+            template.ParseRaw(templateVar, GenerateBlogPagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, offsetItemId));
+        }
+
+        // Old style
+        /*public void ParsePagination(string baseUri, int currentPage, int maxPages)
         {
             ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages);
         }
@@ -115,6 +181,102 @@ namespace BoxSocial.Internals
         public string GeneratePagination(string baseUri, int currentPage, int maxPages)
         {
             return GeneratePagination(baseUri, currentPage, maxPages, PaginationOptions.Normal);
+        }*/
+
+        private string BuildPageAndOffset(int pageLevel, int[] currentPage, long[] currentOffset, int newPage, long newOffset)
+        {
+            string page = string.Empty;
+            string offset = string.Empty;
+
+            for (int i = 0; i < currentPage.Length; i++)
+            {
+                if (i > 0)
+                {
+                    page += ",";
+                }
+                if (i == pageLevel)
+                {
+                    page += newPage.ToString();
+                }
+                else
+                {
+                    page += currentPage[i];
+                }
+            }
+
+            for (int i = 0; i < currentOffset.Length; i++)
+            {
+                if (i > 0)
+                {
+                    offset += ",";
+                }
+                if (i == pageLevel)
+                {
+                    if (newOffset > 0)
+                    {
+                        offset += newOffset.ToString();
+                    }
+                }
+                else
+                {
+                    offset += currentOffset[i];
+                }
+            }
+
+            return string.Format("p={0}&amp;o={1}", page, offset);
+        }
+
+        private string GenerateBlogPagination(string baseUri, int pageLevel, int[] currentPage, long[] currentOffset, long offsetItemId)
+        {
+            StringBuilder pagination = new StringBuilder();
+            bool baseAmp = baseUri.Contains("?");
+            string ampSymbol = "?";
+
+            if (baseAmp)
+            {
+                ampSymbol = "&";
+            }
+
+            if (core.IsMobile)
+            {
+                if (offsetItemId > 0)
+                {
+                    pagination.Append(string.Format("<a href=\"{0}{1}\" data-role=\"button\" data-inline=\"true\">&laquo; Older Entries</a>",
+                        HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, currentPage[pageLevel] + 1, offsetItemId)));
+                }
+                pagination.Append("&nbsp;");
+                if (currentPage[pageLevel] > 2)
+                {
+                    pagination.Append(string.Format("<a href=\"{0}{1}\" data-role=\"button\" data-inline=\"true\">Newer Entries &raquo;</a>",
+                        HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, currentPage[pageLevel] - 1, 0)));
+                }
+                else if (currentPage[pageLevel] > 1)
+                {
+                    pagination.Append(string.Format("<a href=\"{0}\" data-role=\"button\" data-inline=\"true\">Newer Entries &raquo;</a>",
+                        HttpUtility.HtmlEncode(baseUri)));
+                }
+            }
+            else
+            {
+                if (currentPage[pageLevel] > 2)
+                {
+                    pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}{1}\">Newer Entries &raquo;</a>",
+                        HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, currentPage[pageLevel] - 1, 0)));
+                }
+                else if (currentPage[pageLevel] > 1)
+                {
+                    pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}\">Newer Entries &raquo;</a>",
+                        HttpUtility.HtmlEncode(baseUri)));
+                }
+                pagination.Append("&nbsp;");
+                if (offsetItemId > 0)
+                {
+                    pagination.Append(string.Format("<a href=\"{0}{1}\">&laquo; Older Entries</a>",
+                        HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, currentPage[pageLevel] + 1, offsetItemId)));
+                }
+            }
+
+            return pagination.ToString();
         }
 
         /// <summary>
@@ -124,7 +286,7 @@ namespace BoxSocial.Internals
         /// <param name="currentPage"></param>
         /// <param name="maxPages"></param>
         /// <returns></returns>
-        public string GeneratePagination(string baseUri, int currentPage, int maxPages, PaginationOptions options)
+        private string GeneratePagination(string baseUri, int pageLevel, int[] currentPage, long[] currentOffset, int maxPages, PaginationOptions options)
         {
             StringBuilder pagination = new StringBuilder();
             bool comma = false;
@@ -148,10 +310,10 @@ namespace BoxSocial.Internals
                     if (maxPages > 1)
                     {
                         // Previous
-                        if (currentPage > 1)
+                        if (currentPage[pageLevel] > 1)
                         {
                             pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&laquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage - 1));
+                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage[pageLevel] - 1));
                         }
                         else
                         {
@@ -172,10 +334,10 @@ namespace BoxSocial.Internals
                         }
 
                         // Next
-                        if (currentPage < maxPages)
+                        if (currentPage[pageLevel] < maxPages)
                         {
                             pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage + 1));
+                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage[pageLevel] + 1));
                         }
                         else
                         {
@@ -188,36 +350,36 @@ namespace BoxSocial.Internals
             {
                 if ((options & PaginationOptions.Blog) == PaginationOptions.Blog)
                 {
-                    if (currentPage > 2)
+                    if (currentPage[pageLevel] > 2)
                     {
                         if (baseAmp)
                         {
                             pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}p={1}\">Newer Entries &raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage - 1));
+                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] - 1));
                         }
                         else
                         {
                             pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}?p={1}\">Newer Entries &raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri), currentPage - 1));
+                                HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] - 1));
                         }
                     }
-                    else if (currentPage > 1)
+                    else if (currentPage[pageLevel] > 1)
                     {
                         pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}\">Newer Entries &raquo;</a>",
                             HttpUtility.HtmlEncode(baseUri)));
                     }
                     pagination.Append("&nbsp;");
-                    if (currentPage < maxPages)
+                    if (currentPage[pageLevel] < maxPages)
                     {
                         if (baseAmp)
                         {
                             pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Older Entries</a>",
-                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage + 1));
+                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] + 1));
                         }
                         else
                         {
                             pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Older Entries</a>",
-                                HttpUtility.HtmlEncode(baseUri), currentPage + 1));
+                                HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] + 1));
                         }
                     }
                 }
@@ -226,21 +388,21 @@ namespace BoxSocial.Internals
 
                     if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
                     {
-                        if (currentPage > 2)
+                        if (currentPage[pageLevel] > 2)
                         {
                             if (baseAmp)
                             {
                                 pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Prev</a>",
-                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage - 1));
+                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] - 1));
                             }
                             else
                             {
                                 pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Prev</a>",
-                                    HttpUtility.HtmlEncode(baseUri), currentPage - 1));
+                                    HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] - 1));
                             }
                             comma = true;
                         }
-                        else if (currentPage > 1)
+                        else if (currentPage[pageLevel] > 1)
                         {
                             pagination.Append(string.Format("<a href=\"{0}\">&laquo; Prev</a>",
                                 HttpUtility.HtmlEncode(baseUri)));
@@ -256,7 +418,7 @@ namespace BoxSocial.Internals
 
                     for (int i = 1; i <= maxPages; i++)
                     {
-                        if (i != currentPage)
+                        if (i != currentPage[pageLevel])
                         {
                             if (i == 1)
                             {
@@ -274,7 +436,7 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                if ((i > firstCount && i < currentPage - (firstCount - 1)) || (i < maxPages - 2 && i > currentPage + 2))
+                                if ((i > firstCount && i < currentPage[pageLevel] - (firstCount - 1)) || (i < maxPages - 2 && i > currentPage[pageLevel] + 2))
                                 {
                                     skipped = true;
                                     continue;
@@ -325,18 +487,18 @@ namespace BoxSocial.Internals
 
                     if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
                     {
-                        if (currentPage < maxPages)
+                        if (currentPage[pageLevel] < maxPages)
                         {
                             pagination.Append(", ");
                             if (baseAmp)
                             {
                                 pagination.Append(string.Format("<a href=\"{0}p={1}\">Next &raquo;</a>",
-                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage + 1));
+                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] + 1));
                             }
                             else
                             {
                                 pagination.Append(string.Format("<a href=\"{0}?p={1}\">Next &raquo;</a>",
-                                    HttpUtility.HtmlEncode(baseUri), currentPage + 1));
+                                    HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] + 1));
                             }
                         }
                     }
@@ -471,7 +633,7 @@ namespace BoxSocial.Internals
 
         public void DisplayComments(Template template, Primitive owner, ICommentableItem item)
         {
-            int page = core.page.TopLevelPageNumber;
+            int page = core.CommentPageNumber;
 
             DisplayComments(template, owner, page, item);
         }
@@ -483,7 +645,7 @@ namespace BoxSocial.Internals
 
         public void DisplayComments(Template template, Primitive owner, ICommentableItem item, List<User> commenters, long commentCount, DisplayCommentHookHandler hook)
         {
-            int page = core.page.TopLevelPageNumber;
+            int page = core.CommentPageNumber;
 
             DisplayComments(template, owner, item, commenters, page, commentCount, hook);
         }

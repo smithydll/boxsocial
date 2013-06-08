@@ -60,8 +60,6 @@ namespace BoxSocial.Applications.Calendar
         private string description;
         [DataField("task_views")]
         private long views;
-        [DataField("task_comments")]
-        private long comments;
         [DataField("task_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("user_id")]
@@ -121,7 +119,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return comments;
+                return Info.Comments;
             }
         }
 

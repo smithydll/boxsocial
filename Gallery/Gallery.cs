@@ -98,12 +98,6 @@ namespace BoxSocial.Applications.Gallery
         private string path;
 
         /// <summary>
-        /// Number of gallery comments
-        /// </summary>
-        [DataField("gallery_comments")]
-        private long galleryComments;
-
-        /// <summary>
         /// Number of gallery items comments
         /// </summary>
         [DataField("gallery_item_comments")]
@@ -944,11 +938,11 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Photos per page</param>
         /// <returns>A list of photos</returns>
-        public List<GalleryItem> GetItems(Core core, int currentPage, int perPage)
+        public List<GalleryItem> GetItems(Core core, int currentPage, int perPage, long currentOffset)
 		{
 			List<GalleryItem> items = new List<GalleryItem>();
 
-            DataRowCollection drc = GetItemDataRows(core, currentPage, perPage);
+            DataRowCollection drc = GetItemDataRows(core, currentPage, perPage, currentOffset);
             foreach (DataRow dr in drc)
             {
                 items.Add(new GalleryItem(core, owner, dr));
@@ -964,7 +958,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>Raw data for a list of gallery photos</returns>
         protected DataRowCollection GetItemDataRows(Core core)
         {
-            return GetItemDataRows(core, 1, 12);
+            return GetItemDataRows(core, 1, 12, 0);
         }
 
         /// <summary>
@@ -974,7 +968,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
         /// <returns>Raw data for a list of gallery photos</returns>
-        protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage)
+        protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage, long currentOffset)
         {
             db = core.Db;
 
@@ -985,7 +979,15 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_id", galleryId);
             query.AddCondition("gallery_item_item_id", owner.Id);
             QueryCondition qc1 = query.AddCondition("gallery_item_item_type_id", owner.TypeId);
-            query.LimitStart = (currentPage - 1) * perPage;
+            if (currentOffset > 0)
+            {
+                // Ascending order
+                query.AddCondition("gallery_item_id", ConditionEquality.GreaterThan, currentOffset);
+            }
+            else if (currentPage > 1)
+            {
+                query.LimitStart = (currentPage - 1) * perPage;
+            }
             query.LimitCount = perPage;
 
             DataTable photoTable = db.Query(query);
@@ -1189,7 +1191,6 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
             iQuery.AddField("gallery_bytes", 0);
             iQuery.AddField("gallery_items", 0);
-            iQuery.AddField("gallery_comments", 0);
             iQuery.AddField("gallery_item_comments", 0);
             iQuery.AddField("gallery_visits", 0);
             iQuery.AddField("gallery_hierarchy", parents);
@@ -1685,8 +1686,6 @@ namespace BoxSocial.Applications.Gallery
                     catch (InvalidAccessControlPermissionException)
                     {
                     }
-
-                    e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), e.Page.TopLevelPageNumber, (int)Math.Ceiling(gallery.Items / 12.0), PaginationOptions.Normal);
                 }
                 catch (InvalidGalleryException)
                 {
@@ -1794,7 +1793,7 @@ namespace BoxSocial.Applications.Gallery
             long galleryComments = 0;
             if (gallery.Items > 0)
             {
-                List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12);
+                List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12, e.Page.TopLevelPageOffset);
 
                 e.Template.Parse("PHOTOS", galleryItems.Count.ToString());
 
@@ -1805,7 +1804,7 @@ namespace BoxSocial.Applications.Gallery
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
                     galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(e.Core, e.Page.Owner, galleryItem.ParentPath, galleryItem.Path));
-                    galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                    galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.Comments));
                     galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
                     galleryVariableCollection.Parse("INDEX", i.ToString());
                     galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
@@ -1855,7 +1854,7 @@ namespace BoxSocial.Applications.Gallery
                             break;
                     }
 
-                    galleryComments += galleryItem.ItemComments;
+                    galleryComments += galleryItem.Comments;
                     i++;
                 }
 
@@ -1863,6 +1862,8 @@ namespace BoxSocial.Applications.Gallery
                 {
                     e.Template.Parse("S_RATEBAR", "TRUE");
                 }
+
+                e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), 0, 12, gallery.Items);
             }
 
             if (gallery.Id > 0)
@@ -1873,14 +1874,9 @@ namespace BoxSocial.Applications.Gallery
                     e.Template.Parse("CAN_COMMENT", "TRUE");
                 }
 
-                int commentPage = 1;
-                if (e.Page.PageNumber.Length >= 2)
-                {
-                    commentPage = e.Page.PageNumber[1];
-                }
-                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, commentPage, gallery);
+                e.Core.Display.DisplayComments(e.Template, e.Page.Owner, e.Page.CommentPageNumber, gallery);
 
-                e.Core.Display.ParsePagination("COMMENT_PAGINATION", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), commentPage, (int)Math.Ceiling(gallery.Comments / 10.0), PaginationOptions.Normal);
+                e.Core.Display.ParsePagination("COMMENT_PAGINATION", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), 1, 10, gallery.Info.Comments);
             }
 
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());
@@ -2034,7 +2030,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (Items > 0)
                         {
-                            List<GalleryItem> items = GetItems(core, 1, 1);
+                            List<GalleryItem> items = GetItems(core, 1, 1, 0);
                             if (items.Count > 0)
                             {
                                 highlightItem = items[0];
@@ -2185,7 +2181,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return galleryComments;
+                return Info.Comments;
             }
         }
 

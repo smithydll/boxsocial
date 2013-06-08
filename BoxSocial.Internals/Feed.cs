@@ -38,6 +38,10 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            int perPage = 20;
+            int limitStart = 0;
+            bool moreContent = false;
+
             List<Action> feedItems = new List<Action>();
 
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
@@ -59,9 +63,52 @@ namespace BoxSocial.Internals
 
                 DataTable feedTable = core.Db.Query(query);
 
-                foreach (DataRow dr in feedTable.Rows)
+                /*foreach (DataRow dr in feedTable.Rows)
                 {
                     feedItems.Add(new Action(core, owner, dr));
+                }*/
+
+                int offset = 0;
+                int i = 0;
+
+                //while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
+                {
+                    List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
+                    List<Action> tempActions = new List<Action>();
+                    int j = 0;
+                    for (j = offset; j < Math.Min(offset + perPage * 2, feedTable.Rows.Count); j++)
+                    {
+                        Action action = new Action(core, owner, feedTable.Rows[j]);
+                        tempActions.Add(action);
+                    }
+
+                    if (tempMessages.Count > 0)
+                    {
+                        core.AcessControlCache.CacheGrants(tempMessages);
+
+                        foreach (IPermissibleItem message in tempMessages)
+                        {
+                            if (message.Access.Can("VIEW"))
+                            {
+                                if (i >= limitStart + perPage)
+                                {
+                                    moreContent = true;
+                                    break;
+                                }
+                                if (i >= limitStart)
+                                {
+                                    feedItems.Add((Action)message);
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //break;
+                    }
+
+                    offset = j;
                 }
             }
 
@@ -79,7 +126,13 @@ namespace BoxSocial.Internals
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", owner.ItemKey);
+
+            template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
+
             List<Action> feedActions = Feed.GetItems(core, owner);
+
+            
 
             if (feedActions.Count > 0)
             {
@@ -127,6 +180,19 @@ namespace BoxSocial.Internals
                         if (feedAction.Info.Comments > 0)
                         {
                             feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", feedAction.Info.Comments));
+                        }
+                    }
+
+                    //Access access = new Access(core, feedAction.ActionItemKey, true);
+                    //if (access.IsPublic())
+                    {
+                        feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                        feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                        //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                        if (feedAction.Info.SharedTimes > 0)
+                        {
+                            feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
                         }
                     }
 

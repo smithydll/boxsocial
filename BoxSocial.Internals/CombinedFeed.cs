@@ -227,7 +227,8 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
 
-            List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber);
+            bool moreContent;
+            List<StatusMessage> items = StatusFeed.GetItems(core, owner, page.TopLevelPageNumber, 20, page.TopLevelPageOffset, out moreContent);
 
             foreach (StatusMessage item in items)
             {
@@ -268,7 +269,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            core.Display.ParsePagination(core.Hyperlink.BuildStatusUri(owner), page.TopLevelPageNumber, (int)Math.Ceiling(owner.UserInfo.StatusMessages / 10.0));
+            core.Display.ParsePagination(core.Hyperlink.BuildStatusUri(owner), 10, owner.UserInfo.StatusMessages);
 
             /* pages */
             core.Display.ParsePageList(owner, true);

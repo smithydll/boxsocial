@@ -71,9 +71,7 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_friends_manage");
 
-            int p = core.Functions.RequestInt("p", 1);
-
-            List<Friend> friends = LoggedInMember.GetFriends(p, 50, null);
+            List<Friend> friends = LoggedInMember.GetFriends(core.TopLevelPageNumber, 50, null);
 
             foreach (UserRelation friend in friends)
             {
@@ -95,7 +93,7 @@ namespace BoxSocial.Applications.Profile
                 friendsVariableCollection.Parse("U_DEMOTE", core.Hyperlink.BuildDemoteFriendUri(friend.Id));
             }
 
-            core.Display.ParsePagination(template, "PAGINATION", BuildUri(), p, (int)Math.Ceiling(LoggedInMember.UserInfo.Friends / 50.0));
+            core.Display.ParsePagination(template, BuildUri(), 50, LoggedInMember.UserInfo.Friends);
         }
 
         void AccountFriendManage_Add(object sender, EventArgs e)

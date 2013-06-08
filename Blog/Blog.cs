@@ -351,7 +351,7 @@ namespace BoxSocial.Applications.Blog
         internal List<BlogEntry> GetDrafts(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
             bool moreContent = false;
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, true, out moreContent);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, true, out moreContent);
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace BoxSocial.Applications.Blog
         internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
             bool moreContent = false;
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, false, out moreContent);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, false, out moreContent);
         }
 
         /// <summary>
@@ -383,8 +383,10 @@ namespace BoxSocial.Applications.Blog
         /// <param name="drafts">Flag to select draft posts or published posts (true for drafts)</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, bool drafts, out bool moreContent)
+        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, long currentOffset, bool drafts, out bool moreContent)
         {
+            double pessimism = 1.2;
+
             List<BlogEntry> entries = new List<BlogEntry>();
             moreContent = false;
 
@@ -443,53 +445,117 @@ namespace BoxSocial.Applications.Blog
             query.AddCondition("post_status", (byte)status);
             query.AddCondition("user_id", UserId);
             query.AddSort(SortOrder.Descending, "post_time_ut");
-            /*query.LimitStart = (bpage - 1) * perPage;
-            query.LimitCount = perPage;*/
-
-            DataTable blogEntriesTable = db.Query(query);
-
-            /* Check ACLs, not the most efficient, but will only check mostly newer content which should be viewed first. */
-
-            int offset = 0;
-            int i = 0;
-
-            while (i < limitStart + perPage + 1 && offset < blogEntriesTable.Rows.Count)
+            /*query.LimitStart = (bpage - 1) * perPage;*/
+            if ((currentOffset > 0 && currentPage > 1) || currentOffset == 0)
             {
-                List<IPermissibleItem> tempBlogEntries = new List<IPermissibleItem>();
-                int j = 0;
-                for (j = offset; j < Math.Min(offset + perPage * 2, blogEntriesTable.Rows.Count); j++)
+                long lastId = 0;
+                QueryCondition qc1 = null;
+                if (currentOffset > 0)
                 {
-                    BlogEntry entry = new BlogEntry(core, owner, blogEntriesTable.Rows[j]);
-                    tempBlogEntries.Add(entry);
+                    qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, currentOffset);
                 }
+                query.LimitCount = (int)(perPage * pessimism);
 
-                if (tempBlogEntries.Count > 0)
+                while (entries.Count <= perPage)
                 {
+                    DataTable blogEntriesTable = db.Query(query);
+
+                    List<IPermissibleItem> tempBlogEntries = new List<IPermissibleItem>();
+
+                    if (blogEntriesTable.Rows.Count == 0)
+                    {
+                        break;
+                    }
+
+                    foreach (DataRow row in blogEntriesTable.Rows)
+                    {
+                        BlogEntry entry = new BlogEntry(core, this, owner, row);
+                        tempBlogEntries.Add(entry);
+                    }
+
                     core.AcessControlCache.CacheGrants(tempBlogEntries);
 
                     foreach (IPermissibleItem entry in tempBlogEntries)
                     {
                         if (entry.Access.Can("VIEW"))
                         {
-                            if (i >= limitStart + perPage)
+                            if (entries.Count == perPage)
                             {
                                 moreContent = true;
                                 break;
                             }
-                            if (i >= limitStart)
+                            else
                             {
                                 entries.Add((BlogEntry)entry);
                             }
-                            i++;
                         }
+                        lastId = entry.Id;
+                    }
+
+                    //query.LimitStart += query.LimitCount;
+                    if (qc1 == null)
+                    {
+                        qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, lastId);
+                    }
+                    else
+                    {
+                        qc1.Value = lastId;
+                    }
+                    query.LimitCount = (int)(query.LimitCount * pessimism);
+
+                    if (moreContent)
+                    {
+                        break;
                     }
                 }
-                else
-                {
-                    break;
-                }
+            }
+            else
+            {
+                DataTable blogEntriesTable = db.Query(query);
 
-                offset = j;
+                /* Check ACLs, not the most efficient, but will only check mostly newer content which should be viewed first. */
+
+                int offset = 0;
+                int i = 0;
+
+                while (i < limitStart + perPage + 1 && offset < blogEntriesTable.Rows.Count)
+                {
+                    List<IPermissibleItem> tempBlogEntries = new List<IPermissibleItem>();
+                    int j = 0;
+                    for (j = offset; j < Math.Min(offset + perPage * 2, blogEntriesTable.Rows.Count); j++)
+                    {
+                        BlogEntry entry = new BlogEntry(core, this, owner, blogEntriesTable.Rows[j]);
+                        tempBlogEntries.Add(entry);
+                    }
+
+                    if (tempBlogEntries.Count > 0)
+                    {
+                        core.AcessControlCache.CacheGrants(tempBlogEntries);
+
+                        foreach (IPermissibleItem entry in tempBlogEntries)
+                        {
+                            if (entry.Access.Can("VIEW"))
+                            {
+                                if (i >= limitStart + perPage)
+                                {
+                                    moreContent = true;
+                                    break;
+                                }
+                                if (i >= limitStart)
+                                {
+                                    entries.Add((BlogEntry)entry);
+                                }
+                                i++;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    offset = j;
+                }
             }
 
             return entries;
@@ -714,7 +780,8 @@ namespace BoxSocial.Applications.Blog
             page.User.LoadProfileInfo();
 
             bool moreContent = false;
-            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, false, out moreContent);
+            long lastPostId = 0;
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, page.TopLevelPageOffset, false, out moreContent);
 
             if (!rss)
             {
@@ -924,6 +991,7 @@ namespace BoxSocial.Applications.Blog
                         postTitle = blogEntries[i].Title;
                     }
 
+                    lastPostId = blogEntries[i].Id;
                 }
 
                 if (post > 0)
@@ -1003,7 +1071,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post <= 0)
                 {
-                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, page.TopLevelPageNumber + (moreContent ? 1 : 0), PaginationOptions.Blog);
+                    core.Display.ParseBlogPagination(page.template, "PAGINATION", pageUri, 0, moreContent ? lastPostId : 0);
                 }
                 else
                 {

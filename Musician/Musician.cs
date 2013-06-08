@@ -77,8 +77,6 @@ namespace BoxSocial.Musician
         protected string nameFirstCharacter;
         [DataField("musician_bio", MYSQL_TEXT)]
         private string biography;
-        [DataField("musician_comments")]
-        private long comments;
         [DataField("musician_views")]
         private long views;
         [DataField("musician_ratings")]
@@ -150,11 +148,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return comments;
-            }
-            set
-            {
-                SetProperty("comments", value);
+                return Info.Comments;
             }
         }
 

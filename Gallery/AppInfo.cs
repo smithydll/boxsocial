@@ -318,7 +318,7 @@ namespace BoxSocial.Applications.Gallery
                 // show recent photographs in the gallery
                 Gallery gallery = new Gallery(e.core, thisGroup);
 
-                List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
+                List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6, 0);
 
                 template.Parse("PHOTOS", thisGroup.GalleryItems.ToString());
 
@@ -352,7 +352,7 @@ namespace BoxSocial.Applications.Gallery
 
             Gallery gallery = new Gallery(e.core, theNetwork);
 
-            List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6);
+            List<GalleryItem> galleryItems = gallery.GetItems(e.core, 1, 6, 0);
 
             template.Parse("PHOTOS", theNetwork.GalleryItems.ToString());
 

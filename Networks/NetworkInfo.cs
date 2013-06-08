@@ -44,8 +44,6 @@ namespace BoxSocial.Networks
         private string description;
         [DataField("network_members")]
         private long members;
-        [DataField("network_comments")]
-        private long comments;
         [DataField("network_require_confirmation")]
         private bool requireConfirmation;
         [DataField("network_type", 15)]
@@ -107,14 +105,6 @@ namespace BoxSocial.Networks
             get
             {
                 return members;
-            }
-        }
-
-        public long Comments
-        {
-            get
-            {
-                return comments;
             }
         }
 

@@ -57,8 +57,6 @@ namespace BoxSocial.Groups
         private long groupMembers;
         [DataField("group_category")]
         private short rawCategory;
-        [DataField("group_comments")]
-        private long comments;
         [DataField("group_gallery_items")]
         private long galleryItems;
         [DataField("group_home_page", MYSQL_TEXT)]
@@ -175,14 +173,6 @@ namespace BoxSocial.Groups
             set
             {
                 SetProperty("rawCategory", value);
-            }
-        }
-
-        public long Comments
-        {
-            get
-            {
-                return comments;
             }
         }
 

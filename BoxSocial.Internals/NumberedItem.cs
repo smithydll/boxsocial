@@ -48,8 +48,8 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveId)) return -1;
-            PrimitiveId pk = (PrimitiveId)obj;
+            if (obj.GetType() != typeof(NumberedItemId)) return -1;
+            NumberedItemId pk = (NumberedItemId)obj;
 
             if (TypeId != pk.TypeId)
                 return TypeId.CompareTo(pk.TypeId);
@@ -58,8 +58,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveId)) return false;
-            PrimitiveId pk = (PrimitiveId)obj;
+            if (obj.GetType() != typeof(NumberedItemId)) return false;
+            NumberedItemId pk = (NumberedItemId)obj;
 
             if (TypeId != pk.TypeId)
                 return false;
@@ -291,6 +291,20 @@ namespace BoxSocial.Internals
 
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
+            //HttpContext.Current.Response.Write(string.Format("Reflection {0} {1} {2} {3}<br />", ik.Id, ik.TypeId, ik.ApplicationId, ik.Type.ToString()));
+            if (ik.Type.IsSubclassOf(typeof(Primitive)))
+            {
+                //HttpContext.Current.Response.Write("Found Primitive being reflected, redirect to primitive cache<br />");
+                core.PrimitiveCache.LoadPrimitiveProfile(ik);
+                return core.PrimitiveCache[ik];
+            }
+
+            if (core.ItemCache.ContainsItem(ik))
+            {
+                //HttpContext.Current.Response.Write("Found Primitive being reflected, redirect to primitive cache<br />");
+                return core.ItemCache[ik];
+            }
+
             if (core == null)
             {
                 throw new NullCoreException();

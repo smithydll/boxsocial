@@ -84,6 +84,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool ContainsItem(ItemKey key)
+        {
+            return itemsCached.ContainsKey(new NumberedItemId(key.Id, key.TypeId));
+        }
+
         private void loadItems(long typeId, List<NumberedItemId> itemIds)
         {
             List<long> itemId = new List<long>();

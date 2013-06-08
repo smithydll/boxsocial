@@ -1697,10 +1697,9 @@ namespace BoxSocial.Applications.Forum
                 {
                     VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
 
-                    int pages = (int)Math.Ceiling((topic.Posts) / (double)settings.PostsPerPage);
-                    if (pages > 1)
+                    if (topic.Posts > settings.PostsPerPage)
                     {
-                        core.Display.ParsePagination(topicVariableCollection, "PAGINATION", topic.Uri, 0, pages, PaginationOptions.Minimal);
+                        core.Display.ParseMinimalPagination(topicVariableCollection, "PAGINATION", topic.Uri, 0, settings.PostsPerPage, topic.Posts);
                     }
                     else
                     {

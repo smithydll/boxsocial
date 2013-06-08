@@ -1266,10 +1266,17 @@ ul#group-members li.member div.frame ul.actions li {
 	width: auto;
 }
 
+#today-feed {
+    margin-right: 260px;
+    border: solid 1px #EEEEEE;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+}
+
 ul#today-feeds {
 	list-style: none;
 	padding: 0px;
-	margin: 0 5px;
+	margin: 0px;
 }
 
 ul#today-feeds li.today-feed {

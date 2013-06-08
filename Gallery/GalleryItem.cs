@@ -119,12 +119,6 @@ namespace BoxSocial.Applications.Gallery
         protected long parentId;
 
         /// <summary>
-        /// Gallery photo comments
-        /// </summary>
-        [DataField("gallery_item_comments")]
-        protected long itemComments;
-
-        /// <summary>
         /// Gallery photo views
         /// </summary>
         [DataField("gallery_item_views")]
@@ -345,17 +339,6 @@ namespace BoxSocial.Applications.Gallery
                 {
                     return parentPath + "/" + path;
                 }
-            }
-        }
-
-        /// <summary>
-        /// Gets the number of comments
-        /// </summary>
-        public long ItemComments
-        {
-            get
-            {
-                return itemComments;
             }
         }
 
@@ -1368,7 +1351,7 @@ namespace BoxSocial.Applications.Gallery
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
                 e.Template.Parse("HD_WIDTH", hdSize.Width);
                 e.Template.Parse("HD_HEIGHT", hdSize.Height);
-                e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemComments));
+                e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.Comments));
                 e.Template.Parse("U_EDIT", galleryItem.EditUri);
                 e.Template.Parse("U_MARK_DISPLAY_PIC", galleryItem.MakeDisplayPicUri);
                 e.Template.Parse("U_MARK_GALLERY_COVER", galleryItem.SetGalleryCoverUri);
@@ -1439,7 +1422,7 @@ namespace BoxSocial.Applications.Gallery
 
                 string pageUri = string.Format("{0}gallery/{1}",
                     HttpUtility.HtmlEncode(e.Page.Owner.UriStub), e.Slug);
-                e.Core.Display.ParsePagination("COMMENT_PAGINATION", pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(galleryItem.ItemComments / 10.0));
+                e.Core.Display.ParsePagination("COMMENT_PAGINATION", pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(galleryItem.Comments / 10.0));
 
                 List<string[]> breadCrumbParts = new List<string[]>();
 
@@ -2755,7 +2738,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return itemComments;
+                return Info.Comments;
             }
         }
 

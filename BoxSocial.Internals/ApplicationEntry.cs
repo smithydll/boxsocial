@@ -69,8 +69,6 @@ namespace BoxSocial.Internals
         private byte primitives;
         [DataField("application_date_ut")]
         private long dateRaw;
-        [DataField("application_comments")]
-        private long comments;
         [DataField("application_comment")]
         private bool usesComments;
         [DataField("application_rating")]
@@ -270,7 +268,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return comments;
+                return Info.Comments;
             }
         }
 
@@ -1027,7 +1025,7 @@ namespace BoxSocial.Internals
                 message = message.Substring(0, 511);
             }
 
-            SelectQuery query = new SelectQuery("actions");
+            SelectQuery query = new SelectQuery(typeof(Action));
             query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
             query.AddCondition("action_primitive_id", owner.ItemKey.Id);
             query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
@@ -1037,7 +1035,7 @@ namespace BoxSocial.Internals
             // maximum five per application per day
             if ((long)db.Query(query).Rows[0]["twentyfour"] < 5)
             {
-                InsertQuery iquery = new InsertQuery("actions");
+                InsertQuery iquery = new InsertQuery(typeof(Action));
                 iquery.AddField("action_primitive_id", owner.ItemKey.Id);
                 iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
                 iquery.AddField("action_item_id", item.Id);

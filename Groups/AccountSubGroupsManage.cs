@@ -130,7 +130,7 @@ namespace BoxSocial.Groups
             {
                 List<SubGroupMember> leaders = subUserGroup.GetLeaders();
                 List<SubGroupMember> awaiting = subUserGroup.GetMembersWaitingApproval();
-                List<SubGroupMember> members = subUserGroup.GetMembers(core.PageNo, 25);
+                List<SubGroupMember> members = subUserGroup.GetMembers(core.TopLevelPageNumber, 25);
 
                 UserSelectBox newUserSelectBox = new UserSelectBox(core, "usernames");
                 newUserSelectBox.SelectMultiple = false;

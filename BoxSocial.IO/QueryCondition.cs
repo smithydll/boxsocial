@@ -32,6 +32,26 @@ namespace BoxSocial.IO
         private string field;
         private object value;
 
+        public Object Field
+        {
+            get
+            {
+                return field;
+            }
+        }
+
+        public Object Value
+        {
+            get
+            {
+                return value;
+            }
+            set
+            {
+                this.value = value;
+            }
+        }
+
         public QueryCondition()
         {
             conditions = new List<KeyValuePair<QueryCondition, ConditionRelations>>();

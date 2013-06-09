@@ -315,6 +315,10 @@ namespace BoxSocial.Internals
             core.Tz = tz;
 
             isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
+            if (!isAjax)
+            {
+                isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
+            }
 
             // As a security measure we use the http object to prevent
             // applications hijacking the response output

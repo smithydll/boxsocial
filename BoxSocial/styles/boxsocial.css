@@ -585,23 +585,37 @@ ul.comment-list li {
 	border-top: none;
 }
 
+ul.comment-list li > h4 
+{
+    font-size: 120% !important;
+    font-weight: normal;
+    margin: 2px 0 2px 0;
+}
+
 ul.comment-list li:hover {
     background-color: #eeeeee;
     border: 1px solid #dddddd;
     border-top: none;
 }
 
-ul.comment-list li h4 {
-	font-size: 115%;
-	padding: 2px;
-	margin: 0px;
-	font-weight: normal;
-	font-size: 120% !important;
-	border-top: 2px solid #dddddd;
+ul.comment-list li div.normal {
+	border-top: 1px solid #dddddd;
+	padding-top: 1px;
 }
 
-ul.comment-list li h4.owner {
-	border-top: 2px solid #BBDDEE;
+ul.comment-list li div.owner {
+	border-top: 1px solid #bbccff;
+	padding-top: 1px;
+}
+
+ul.comment-list li div.owner:hover {
+    padding-top: 0;
+    border-top: 2px solid #2244aa;
+}
+
+ul.comment-list li div.normal:hover {
+    padding-top: 0;
+    border-top-width: 2px;
 }
 
 ul.comment-list li p.time {
@@ -851,7 +865,7 @@ tr:hover td {
 
 #new-stuff, #x-stuff, .r-stuff
 {
-	padding: 5px 2px;
+	padding: 1px 2px 5px 2px;
 }
 
 #x-stuff {
@@ -1768,4 +1782,13 @@ blockquote {
     display: none;
     width: 640px;
     text-align: left;
+}
+
+.infinite-more {
+    display: none;
+}
+
+p.posted-by 
+{
+    padding: 1px 0 4px 0;
 }

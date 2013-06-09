@@ -91,7 +91,7 @@ namespace BoxSocial.FrontEnd
                 applicationVariableCollection.Parse("I_TILE", ae.Tile);
             }
 
-            core.Display.ParsePagination("/applications/", TopLevelPageNumber, (int)Math.Ceiling((double)applicationsTable.Rows.Count / 10));
+            core.Display.ParsePagination("/applications/", 10, applicationsTable.Rows.Count);
 
             EndResponse();
         }

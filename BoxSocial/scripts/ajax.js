@@ -199,7 +199,11 @@ function PostToAccount(onPost, module, sub, id, params, a) {
 }
 
 function PostToPage(onPost, page, nodes, params, a) {
-    $.post(AppendSid(host + page), params, function (data) {
+    var u = page;
+    if (page.indexOf(host) != 0) {
+        u = host + page;
+    }
+    $.post(AppendSid(u), params, function (data) {
         if (onPost != null) {
             var r = ProcessAjaxResult(data);
             if (r != null) onPost(r, nodes, a);
@@ -601,3 +605,65 @@ $(document).ready(function () {
         }
     });
 });
+
+var lastScrollPosn = 0;
+var infiniteLoading = false;
+var loadCount = 0;
+
+$(document).ready(function () {
+    $(".infinite-more").siblings().hide();
+    $(".infinite-more").show();
+    $(window).scroll(function () {
+        var trigger = 100;
+
+        if (infiniteLoading == false && loadCount < 2) {
+            if ($(window).scrollTop() != lastScrollPosn) {
+                console.log($(window).scrollTop());
+                $(".infinite").each(function () {
+                    if ($(window).scrollTop() + $(window).height() > ($(this).offset().top + $(this).height() - trigger)) {
+                        infiniteLoading = true;
+                        $(this).children("p").children(".infinite-more").trigger('click');
+                    }
+                });
+                lastScrollPosn = $(window).scrollTop();
+            }
+        }
+    });
+});
+
+function loadInfiniteContent(u, n) {
+
+    PostToPage(LoadedInfinite, u, n, { ajax: 'true' }, '');
+    return false;
+}
+
+function LoadedInfinite(r, e, a) {
+    e.append(r['message']);
+
+    var c = r['code'];
+    var more = e.siblings('p').children('.infinite-more');
+    if (c == 'noMoreContent') {
+        more.remove();
+    }
+    else {
+        more.attr('onclick', "return false;");
+        more.unbind('click');
+        more.bind('click', function () {
+            return loadInfiniteContent(c, e);
+        });
+    }
+
+    loadCount++;
+    infiniteLoading = false;
+}
+
+function toggleStatusComments(parent, id, type, el) {
+    if (parent.hasClass('active')) {
+        parent.removeClass('active');
+        el.html('');
+    } else {
+        LoadComments(id, type, el);
+        parent.addClass('active');
+    }
+    return false;
+}

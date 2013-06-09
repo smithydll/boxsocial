@@ -19,7 +19,7 @@
     min-height: 62px;
 }
 
-.status-post:hover, #compose-status:hover {
+.status-post:hover, #compose-status:hover, .status-post.active {
     background-color: #eeeeee;
     border: 1px solid #dddddd;
     border-top: none;

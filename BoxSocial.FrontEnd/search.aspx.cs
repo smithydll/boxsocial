@@ -111,7 +111,7 @@ namespace BoxSocial.FrontEnd
 
             template.Parse("RESULTS", (results.Results - resultsRemoved).ToString());
 
-            core.Display.ParsePagination(core.Hyperlink.BuildSearchUri(query), TopLevelPageNumber, (int)Math.Ceiling((results.Results - resultsRemoved) / 10.0));
+            core.Display.ParsePagination(core.Hyperlink.BuildSearchUri(query), 10, results.Results - resultsRemoved);
         }
 
         private void showFriends()

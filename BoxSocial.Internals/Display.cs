@@ -183,6 +183,11 @@ namespace BoxSocial.Internals
             return GeneratePagination(baseUri, currentPage, maxPages, PaginationOptions.Normal);
         }*/
 
+        private string BuildPageAndOffset(int pageLevel, int[] currentPage, long[] currentOffset, int newPage)
+        {
+            return BuildPageAndOffset(pageLevel, currentPage, currentOffset, newPage, -1);
+        }
+
         private string BuildPageAndOffset(int pageLevel, int[] currentPage, long[] currentOffset, int newPage, long newOffset)
         {
             string page = string.Empty;
@@ -219,11 +224,32 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    offset += currentOffset[i];
+                    if (currentOffset[i] > 0)
+                    {
+                        offset += currentOffset[i];
+                    }
                 }
             }
 
-            return string.Format("p={0}&amp;o={1}", page, offset);
+            if (offset.Replace(",", "") != string.Empty)
+            {
+                return string.Format("p={0}&amp;o={1}", page, offset);
+            }
+            else
+            {
+                return string.Format("p={0}", page);
+            }
+        }
+
+        private bool AllFirstPage(int pageLevel, int[] currentPage)
+        {
+            for (int i = 0; i < currentPage.Length; i++)
+            {
+                if (i == pageLevel) continue;
+                if (currentPage[i] != 1) return false;
+            }
+
+            return true;
         }
 
         private string GenerateBlogPagination(string baseUri, int pageLevel, int[] currentPage, long[] currentOffset, long offsetItemId)
@@ -299,177 +325,88 @@ namespace BoxSocial.Internals
                 ampSymbol = "&";
             }
 
+            int page = 1;
+            if (pageLevel < currentPage.Length)
+            {
+                page = currentPage[pageLevel];
+            }
+            else
+            {
+                int[] oldPage = currentPage;
+                currentPage = new int[pageLevel + 1];
+                oldPage.CopyTo(currentPage, 0);
+                currentPage[pageLevel] = page;
+            }
+
             if (core.IsMobile)
             {
-                // Some mobile pages will use infinite scrolling, most likely pages that use the Blog style pagination
-                if ((options & PaginationOptions.Blog) == PaginationOptions.Blog)
+                if (maxPages > 1)
                 {
-                }
-                else
-                {
+                    // Previous
+                    if (page > 1)
+                    {
+                        pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&laquo;</a>",
+                            HttpUtility.HtmlEncode(baseUri + ampSymbol), page - 1));
+                    }
+                    else
+                    {
+                        pagination.Append("<a href=\"#\" class=\"ui-disabled\" data-role=\"button\" data-inline=\"true\">&laquo;</a>");
+                    }
+
+                    // First
+                    pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">{1}</a>",
+                        HttpUtility.HtmlEncode(baseUri + ampSymbol), 1));
+
                     if (maxPages > 1)
                     {
-                        // Previous
-                        if (currentPage[pageLevel] > 1)
-                        {
-                            pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&laquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage[pageLevel] - 1));
-                        }
-                        else
-                        {
-                            pagination.Append("<a href=\"#\" class=\"ui-disabled\" data-role=\"button\" data-inline=\"true\">&laquo;</a>");
-                        }
+                        // Select box
 
-                        // First
+                        // Last
                         pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">{1}</a>",
-                            HttpUtility.HtmlEncode(baseUri + ampSymbol), 1));
+                            HttpUtility.HtmlEncode(baseUri + ampSymbol), maxPages));
+                    }
 
-                        if (maxPages > 1)
-                        {
-                            // Select box
-
-                            // Last
-                            pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">{1}</a>",
-                                HttpUtility.HtmlEncode(baseUri + ampSymbol), maxPages));
-                        }
-
-                        // Next
-                        if (currentPage[pageLevel] < maxPages)
-                        {
-                            pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + ampSymbol), currentPage[pageLevel] + 1));
-                        }
-                        else
-                        {
-                            pagination.Append("<a href=\"#\" class=\"ui-disabled\" data-role=\"button\" data-inline=\"true\">&raquo;</a>");
-                        }
+                    // Next
+                    if (page < maxPages)
+                    {
+                        pagination.Append(string.Format("<a href=\"{0}p={1}\" data-role=\"button\" data-inline=\"true\">&raquo;</a>",
+                            HttpUtility.HtmlEncode(baseUri + ampSymbol), page + 1));
+                    }
+                    else
+                    {
+                        pagination.Append("<a href=\"#\" class=\"ui-disabled\" data-role=\"button\" data-inline=\"true\">&raquo;</a>");
                     }
                 }
             }
             else
             {
-                if ((options & PaginationOptions.Blog) == PaginationOptions.Blog)
+                if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
                 {
-                    if (currentPage[pageLevel] > 2)
+                    if (page > 2 || ((!AllFirstPage(pageLevel, currentPage)) && page > 1 && currentPage.Length > 1))
                     {
-                        if (baseAmp)
-                        {
-                            pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}p={1}\">Newer Entries &raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] - 1));
-                        }
-                        else
-                        {
-                            pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}?p={1}\">Newer Entries &raquo;</a>",
-                                HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] - 1));
-                        }
+                        pagination.Append(string.Format("<a href=\"{0}{1}\">&laquo; Prev</a>",
+                            HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, page - 1)));
+                        comma = true;
                     }
-                    else if (currentPage[pageLevel] > 1)
+                    else if (page > 1)
                     {
-                        pagination.Append(string.Format("<a style=\"float: right; display: block;\" href=\"{0}\">Newer Entries &raquo;</a>",
+                        pagination.Append(string.Format("<a href=\"{0}\">&laquo; Prev</a>",
                             HttpUtility.HtmlEncode(baseUri)));
-                    }
-                    pagination.Append("&nbsp;");
-                    if (currentPage[pageLevel] < maxPages)
-                    {
-                        if (baseAmp)
-                        {
-                            pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Older Entries</a>",
-                                HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] + 1));
-                        }
-                        else
-                        {
-                            pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Older Entries</a>",
-                                HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] + 1));
-                        }
+                        comma = true;
                     }
                 }
-                else
+
+                int firstCount = 3;
+                if ((options & PaginationOptions.Minimal) == PaginationOptions.Minimal)
                 {
+                    firstCount = 1;
+                }
 
-                    if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
+                for (int i = 1; i <= maxPages; i++)
+                {
+                    if (i != page)
                     {
-                        if (currentPage[pageLevel] > 2)
-                        {
-                            if (baseAmp)
-                            {
-                                pagination.Append(string.Format("<a href=\"{0}p={1}\">&laquo; Prev</a>",
-                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] - 1));
-                            }
-                            else
-                            {
-                                pagination.Append(string.Format("<a href=\"{0}?p={1}\">&laquo; Prev</a>",
-                                    HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] - 1));
-                            }
-                            comma = true;
-                        }
-                        else if (currentPage[pageLevel] > 1)
-                        {
-                            pagination.Append(string.Format("<a href=\"{0}\">&laquo; Prev</a>",
-                                HttpUtility.HtmlEncode(baseUri)));
-                            comma = true;
-                        }
-                    }
-
-                    int firstCount = 3;
-                    if ((options & PaginationOptions.Minimal) == PaginationOptions.Minimal)
-                    {
-                        firstCount = 1;
-                    }
-
-                    for (int i = 1; i <= maxPages; i++)
-                    {
-                        if (i != currentPage[pageLevel])
-                        {
-                            if (i == 1)
-                            {
-                                if (comma)
-                                {
-                                    pagination.Append(", ");
-                                }
-                                else
-                                {
-                                    comma = true;
-                                }
-
-                                pagination.Append(string.Format("<a href=\"{0}\">{1}</a>",
-                                    HttpUtility.HtmlEncode(baseUri), i));
-                            }
-                            else
-                            {
-                                if ((i > firstCount && i < currentPage[pageLevel] - (firstCount - 1)) || (i < maxPages - 2 && i > currentPage[pageLevel] + 2))
-                                {
-                                    skipped = true;
-                                    continue;
-                                }
-
-                                if (comma)
-                                {
-                                    pagination.Append(", ");
-                                }
-                                else
-                                {
-                                    comma = true;
-                                }
-
-                                if (skipped)
-                                {
-                                    pagination.Append("... ");
-                                    skipped = false;
-                                }
-
-                                if (baseAmp)
-                                {
-                                    pagination.Append(string.Format("<a href=\"{0}p={1}\">{1}</a>",
-                                        HttpUtility.HtmlEncode(baseUri + "&"), i));
-                                }
-                                else
-                                {
-                                    pagination.Append(string.Format("<a href=\"{0}?p={1}\">{1}</a>",
-                                        HttpUtility.HtmlEncode(baseUri), i));
-                                }
-                            }
-                        }
-                        else // current page
+                        if (i == 1)
                         {
                             if (comma)
                             {
@@ -480,27 +417,59 @@ namespace BoxSocial.Internals
                                 comma = true;
                             }
 
-                            pagination.Append(string.Format("<strong>{0}</strong>",
-                                i));
+                            pagination.Append(string.Format("<a href=\"{0}\">{1}</a>",
+                                HttpUtility.HtmlEncode(baseUri), i));
                         }
-                    }
-
-                    if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
-                    {
-                        if (currentPage[pageLevel] < maxPages)
+                        else
                         {
-                            pagination.Append(", ");
-                            if (baseAmp)
+                            if ((i > firstCount && i < page - (firstCount - 1)) || (i < maxPages - 2 && i > page + 2))
                             {
-                                pagination.Append(string.Format("<a href=\"{0}p={1}\">Next &raquo;</a>",
-                                    HttpUtility.HtmlEncode(baseUri + "&"), currentPage[pageLevel] + 1));
+                                skipped = true;
+                                continue;
+                            }
+
+                            if (comma)
+                            {
+                                pagination.Append(", ");
                             }
                             else
                             {
-                                pagination.Append(string.Format("<a href=\"{0}?p={1}\">Next &raquo;</a>",
-                                    HttpUtility.HtmlEncode(baseUri), currentPage[pageLevel] + 1));
+                                comma = true;
                             }
+
+                            if (skipped)
+                            {
+                                pagination.Append("... ");
+                                skipped = false;
+                            }
+
+                            pagination.Append(string.Format("<a href=\"{0}{1}\">{2}</a>",
+                                HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, i), i));
                         }
+                    }
+                    else // current page
+                    {
+                        if (comma)
+                        {
+                            pagination.Append(", ");
+                        }
+                        else
+                        {
+                            comma = true;
+                        }
+
+                        pagination.Append(string.Format("<strong>{0}</strong>",
+                            i));
+                    }
+                }
+
+                if ((options & PaginationOptions.Normal) == PaginationOptions.Normal)
+                {
+                    if (page < maxPages)
+                    {
+                        pagination.Append(", ");
+                        pagination.Append(string.Format("<a href=\"{0}{1}\">Next &raquo;</a>",
+                            HttpUtility.HtmlEncode(baseUri + ampSymbol), BuildPageAndOffset(pageLevel, currentPage, currentOffset, page + 1)));
                     }
                 }
             }

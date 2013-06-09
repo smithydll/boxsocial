@@ -1019,7 +1019,7 @@ namespace BoxSocial.Applications.Forum
                     page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 
-                core.Display.ParsePagination(thisTopic.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((thisTopic.Posts + 1) / (double)settings.PostsPerPage));
+                core.Display.ParsePagination(thisTopic.Uri, settings.PostsPerPage, thisTopic.Posts + 1);
 
                 List<string[]> breadCrumbParts = new List<string[]>();
                 breadCrumbParts.Add(new string[] { "forum", "Forum" });

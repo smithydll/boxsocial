@@ -276,6 +276,12 @@ namespace BoxSocial.Internals
                 return;
             }
 
+            if (core.IsAjax)
+            {
+                ShowMore(core, e);
+                return;
+            }
+
             core.Template.SetTemplate("Profile", "viewstatusfeed");
 
             if (core.Session.IsLoggedIn && e.Page.Owner == core.Session.LoggedInMember)
@@ -350,6 +356,7 @@ namespace BoxSocial.Internals
             }
 
             core.Display.ParseBlogPagination(core.Template, "PAGINATION", core.Hyperlink.BuildStatusUri((User)e.Page.Owner), 0, moreContent ? lastId : 0);
+            core.Template.Parse("U_NEXT_PAGE", core.Hyperlink.BuildStatusUri((User)e.Page.Owner) + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId);
 
             /* pages */
             core.Display.ParsePageList(e.Page.Owner, true);
@@ -364,6 +371,79 @@ namespace BoxSocial.Internals
 
         public static void ShowMore(Core core, ShowUPageEventArgs e)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (!e.Page.Owner.Access.Can("VIEW"))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
+            Template template = new Template("pane.statusmessage.html");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            bool moreContent = false;
+            long lastId = 0;
+            List<StatusMessage> items = StatusFeed.GetItems(core, (User)e.Page.Owner, e.Page.TopLevelPageNumber, 20, e.Page.TopLevelPageOffset, out moreContent);
+
+            foreach (StatusMessage item in items)
+            {
+                VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
+
+                core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(item.Message), e.Page.Owner, true, string.Empty, string.Empty);
+                statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(item.GetTime(core.Tz)));
+
+                statusMessageVariableCollection.Parse("ID", item.Id.ToString());
+                statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
+                statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
+                statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
+                statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(item.Id));
+                statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_PERMISSIONS", item.Access.AclUri);
+                statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
+                statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
+                statusMessageVariableCollection.Parse("URI", item.Uri);
+
+                if (core.Session.IsLoggedIn)
+                {
+                    if (item.Owner.Id == core.Session.LoggedInMember.Id)
+                    {
+                        statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+                    }
+                }
+
+                if (item.Info.Likes > 0)
+                {
+                    statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", item.Info.Likes));
+                    statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", item.Info.Dislikes));
+                }
+
+                if (item.Info.Comments > 0)
+                {
+                    statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", item.Info.Comments));
+                }
+
+                if (item.Access.IsPublic())
+                {
+                    statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                    statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                    statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
+
+                    if (item.Info.SharedTimes > 0)
+                    {
+                        statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
+                    }
+                }
+                lastId = item.Id;
+            }
+
+            string loadMoreUri = core.Hyperlink.BuildStatusUri((User)e.Page.Owner) + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId;
+            core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
     }
 }

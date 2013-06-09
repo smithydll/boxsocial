@@ -955,7 +955,7 @@ namespace BoxSocial.Networks
             }
 
             string pageUri = page.Network.MemberlistUri;
-            core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(page.Network.Members / 18.0));
+            core.Display.ParsePagination(pageUri, 18, page.Network.Members);
 
             List<string[]> breadCrumbParts = new List<string[]>();
 

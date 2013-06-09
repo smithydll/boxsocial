@@ -48,17 +48,15 @@
 	</div>
     <!-- ENDIF -->
 
-	<!-- IF PAGINATION -->
-	<p>{PAGINATION}</p>
-	<!-- ENDIF -->
-
-<ul class="status-feed">
+    <div class="infinite">
+        <ul class="status-feed">
 <!-- INCLUDE pane.statusmessage.html -->
-</ul>
+        </ul>
 
 	<!-- IF PAGINATION -->
-	<p>{PAGINATION}</p>
+	<p>{PAGINATION}<a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $(this).parent().siblings('.status-feed'));">{L_LOAD_MORE}</a></p>
 	<!-- ENDIF -->
+    </div>
 
     </div>
     </div>

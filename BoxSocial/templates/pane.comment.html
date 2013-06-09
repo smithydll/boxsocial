@@ -1,21 +1,15 @@
 	<!-- BEGIN comment-list -->
 	<li id="c{comment-list.ID}">
-		<!-- IF comment-list.OWNER -->
-		<h4 class="owner">Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
-		<!-- ENDIF -->
 		<!-- IF comment-list.IS_SPAM -->
 		<h4>This Comment has been marked as spam (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">show comment</a>)</h4>
 		<!-- ENDIF -->
-		<!-- IF comment-list.NORMAL -->
-		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
-		<!-- ENDIF -->
 		<!-- IF comment-list.IS_SPAM -->
 		<div id ="comment-{comment-list.ID}" style="display: none;">
-		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
-		<p class="time">Posted: {comment-list.TIME}</p>
 		<!-- ELSE -->
-		<p class="time">Posted: {comment-list.TIME}</p>
-		<div>
+        <!-- IF comment-list.OWNER -->
+		<div class="owner">
+        <!-- ELSE -->
+        <div class="normal">
 		<!-- ENDIF -->
 		<!-- IF comment-list.USER_ICON -->
 		<div class="comment-disp-pic">
@@ -23,6 +17,7 @@
 		</div>
 		<!-- ENDIF -->
 		<div class="comment-text">
+            <p class="posted-by"><a href="{status_messages.U_PROFILE}">{comment-list.USER_DISPLAY_NAME}</a> <em>{comment-list.TIME}</em></p>
 			{comment-list.COMMENT}
 		</div>
         <div class="r-stuff light">

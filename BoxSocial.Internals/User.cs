@@ -2126,7 +2126,7 @@ namespace BoxSocial.Internals
             }
 
             string pageUri = e.Core.Hyperlink.BuildFriendsUri(e.Page.User);
-            e.Core.Display.ParsePagination(pageUri, e.Page.TopLevelPageNumber, (int)Math.Ceiling(e.Page.User.UserInfo.Friends / 18.0));
+            e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.UserInfo.Friends);
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);

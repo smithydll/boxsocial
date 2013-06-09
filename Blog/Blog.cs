@@ -1075,7 +1075,7 @@ namespace BoxSocial.Applications.Blog
                 }
                 else
                 {
-                    core.Display.ParsePagination(pageUri, page.TopLevelPageNumber, (int)Math.Ceiling(comments / 10.0));
+                    core.Display.ParsePagination(pageUri, 10, comments);
                 }
 
                 page.CanonicalUri = pageUri;

@@ -459,6 +459,9 @@
   <data name="LIMITED" xml:space="preserve">
     <value>Limited</value>
   </data>
+  <data name="LOAD_MORE" xml:space="preserve">
+    <value>Load More</value>
+  </data>
   <data name="LOCATION" xml:space="preserve">
     <value>Location</value>
   </data>

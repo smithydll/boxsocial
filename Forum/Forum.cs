@@ -1815,7 +1815,7 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            core.Display.ParsePagination(thisForum.Uri, page.TopLevelPageNumber, (int)Math.Ceiling((topicsCount) / (double)settings.TopicsPerPage));
+            core.Display.ParsePagination(thisForum.Uri, settings.TopicsPerPage, topicsCount);
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });

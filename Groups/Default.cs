@@ -88,7 +88,7 @@ namespace BoxSocial.Groups
                 groupsVariableCollection.Parse("U_GROUP", group.Uri);
             }
 
-            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), e.Page.TopLevelPageNumber, (int)Math.Ceiling(category.Groups / ((double)UserGroup.GROUPS_PER_PAGE)));
+            e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), UserGroup.GROUPS_PER_PAGE, category.Groups);
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "groups", "Groups" });

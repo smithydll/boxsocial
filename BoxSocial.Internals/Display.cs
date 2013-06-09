@@ -72,10 +72,6 @@ namespace BoxSocial.Internals
 
         public delegate void DisplayCommentHookHandler(DisplayCommentHookEventArgs e);
 
-        //
-        // New style
-        //
-
         // Normal
         public void ParsePagination(Template template, string baseUri, int itemsPerPage, long totalItems)
         {
@@ -136,52 +132,6 @@ namespace BoxSocial.Internals
         {
             template.ParseRaw(templateVar, GenerateBlogPagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, offsetItemId));
         }
-
-        // Old style
-        /*public void ParsePagination(string baseUri, int currentPage, int maxPages)
-        {
-            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages);
-        }
-
-        public void ParsePagination(string baseUri, int currentPage, int maxPages, PaginationOptions options)
-        {
-            ParsePagination(core.Template, "PAGINATION", baseUri, currentPage, maxPages, options);
-        }
-
-        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages)
-        {
-            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages);
-        }
-
-        public void ParsePagination(string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
-        {
-            ParsePagination(core.Template, templateVar, baseUri, currentPage, maxPages, options);
-        }
-
-        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages)
-        {
-            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
-        }
-
-        public void ParsePagination(Template template, string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
-        {
-            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, options));
-        }
-
-        public void ParsePagination(VariableCollection template, string templateVar, string baseUri, int currentPage, int maxPages)
-        {
-            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages));
-        }
-
-        public void ParsePagination(VariableCollection template, string templateVar, string baseUri, int currentPage, int maxPages, PaginationOptions options)
-        {
-            template.ParseRaw(templateVar, GeneratePagination(baseUri, currentPage, maxPages, options));
-        }
-
-        public string GeneratePagination(string baseUri, int currentPage, int maxPages)
-        {
-            return GeneratePagination(baseUri, currentPage, maxPages, PaginationOptions.Normal);
-        }*/
 
         private string BuildPageAndOffset(int pageLevel, int[] currentPage, long[] currentOffset, int newPage)
         {

@@ -222,7 +222,7 @@ namespace BoxSocial.Applications.Gallery
                 catch (GalleryItemTooLargeException)
                 {
                     db.RollBackTransaction();
-                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to 5 MiB in size.");
+                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
                     return;
                 }
                 catch (GalleryQuotaExceededException)

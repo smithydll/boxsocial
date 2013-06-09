@@ -75,6 +75,54 @@ namespace BoxSocial.Internals
             this.core = core;
         }
 
+        public long MaxStorage
+        {
+            get
+            {
+                long bytes = 1024L * 1024L * 1024L * 1024L;
+                if (long.TryParse(WebConfigurationManager.AppSettings["storage-max"], out bytes))
+                {
+                    return bytes;
+                }
+                else
+                {
+                    return 1024L * 1024L * 1024L * 1024L;
+                }
+            }
+        }
+
+        public long MaxUserStorage
+        {
+            get
+            {
+                long bytes = 1024L * 1024L * 1024L;
+                if (long.TryParse(WebConfigurationManager.AppSettings["storage-user-max"], out bytes))
+                {
+                    return bytes;
+                }
+                else
+                {
+                    return 1024L * 1024L * 1024L;
+                }
+            }
+        }
+
+        public long MaxFileSize
+        {
+            get
+            {
+                long bytes = 10L * 1024L * 1024L;
+                if (long.TryParse(WebConfigurationManager.AppSettings["storage-file-max"], out bytes))
+                {
+                    return bytes;
+                }
+                else
+                {
+                    return 10L * 1024L * 1024L;
+                }
+            }
+        }
+
         public string SignupMode
         {
             get

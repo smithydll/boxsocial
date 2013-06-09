@@ -848,6 +848,40 @@ namespace BoxSocial.Internals
             return core.Tz.Now.ToString("dd/MM/yyyy HH:mm:ss");
         }
 
+        public static string BytesToString(int bytes)
+        {
+            return BytesToString((ulong)bytes);
+        }
+
+        public static string BytesToString(long bytes)
+        {
+            return BytesToString((ulong)bytes);
+        }
+
+        public static string BytesToString(ulong bytes)
+        {
+            if (bytes > 0.95 * Math.Pow(1024, 4))
+            {
+                return Math.Round((double)bytes / Math.Pow(1024, 4), 2).ToString() + " TiB";
+            }
+            else if (bytes > 0.95 * Math.Pow(1024, 3))
+            {
+                return Math.Round((double)bytes / Math.Pow(1024, 3), 2).ToString() + " GiB";
+            }
+            else if (bytes > 0.95 * Math.Pow(1024, 2))
+            {
+                return Math.Round((double)bytes / Math.Pow(1024, 2), 2).ToString() + " MiB";
+            }
+            else if (bytes > 0.95 * Math.Pow(1024, 1))
+            {
+                return Math.Round((double)bytes / Math.Pow(1024, 1), 2).ToString() + " KiB";
+            }
+            else
+            {
+                return bytes.ToString() + " B";
+            }
+        }
+
         public static int ParseNumber(string numeral)
         {
             string[] parts = numeral.ToLower().Split(new char[] { ' ', ',' });

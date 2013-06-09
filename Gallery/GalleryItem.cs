@@ -1041,14 +1041,12 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
-            // 10 MiB
-            if (bytes > (ulong)10 * 1024 * 1024)
+            if (bytes > (ulong)core.Settings.MaxFileSize)
             {
                 throw new GalleryItemTooLargeException();
             }
 
-            // 5 giB
-            if (core.Session.LoggedInMember.UserInfo.BytesUsed + bytes > (ulong)5 * 1024 * 1024 * 1024)
+            if (core.Session.LoggedInMember.UserInfo.BytesUsed + bytes > (ulong)core.Settings.MaxUserStorage)
             {
                 throw new GalleryQuotaExceededException();
             }
@@ -1058,7 +1056,7 @@ namespace BoxSocial.Applications.Gallery
                 case "image/png":
                 case "image/jpeg":
                 case "image/pjpeg":
-                case "image/gif": // not accepting gif at the moment
+                case "image/gif":
                     break;
                 default:
                     throw new InvalidGalleryItemTypeException();

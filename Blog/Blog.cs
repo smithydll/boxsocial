@@ -416,7 +416,7 @@ namespace BoxSocial.Applications.Blog
             }
             else if (string.IsNullOrEmpty(tag))
             {
-                Item.GetSelectQueryStub(typeof(BlogEntry));
+                query = Item.GetSelectQueryStub(typeof(BlogEntry));
                 query.AddField(new DataField(typeof(BlogEntry), "post_id"));
 
                 query.AddCondition("category_path", category);

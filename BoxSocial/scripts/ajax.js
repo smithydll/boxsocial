@@ -614,7 +614,7 @@ $(document).ready(function () {
     $(".infinite-more").siblings().hide();
     $(".infinite-more").show();
     $(window).scroll(function () {
-        var trigger = 150;
+        var trigger = 200;
 
         if (infiniteLoading == false && loadCount < 2) {
             if ($(window).scrollTop() != lastScrollPosn) {

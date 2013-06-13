@@ -61,6 +61,10 @@ namespace BoxSocial.Internals
 
         public void RequestItem(ItemKey itemKey)
         {
+            if (itemKey.TypeId == 0)
+            {
+                return;
+            }
             if (!typesAccessed.ContainsKey(itemKey.TypeId))
             {
                 // We need to make sure that the application is loaded
@@ -102,7 +106,15 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.TypeString));
+                    try
+                    {
+                        typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.TypeString));
+                    }
+                    catch
+                    {
+                        HttpContext.Current.Response.Write(itemKey.ToString());
+                        HttpContext.Current.Response.End();
+                    }
                 }
             }
             NumberedItemId loadedId = new NumberedItemId(itemKey.Id, itemKey.TypeId);
@@ -131,6 +143,10 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (key.TypeId == 0)
+                {
+                    return null;
+                }
                 loadBatchedIds(key.TypeId, key.Id);
                 NumberedItem item = itemsCached[new NumberedItemId(key.Id, key.TypeId)];
                 return item;

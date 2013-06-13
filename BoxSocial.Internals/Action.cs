@@ -89,8 +89,15 @@ namespace BoxSocial.Internals
                     }
                     catch
                     {
-                        item = NumberedItem.Reflect(core, itemKey);
-                        HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
+                        try
+                        {
+                            item = NumberedItem.Reflect(core, itemKey);
+                            HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
+                        }
+                        catch
+                        {
+                            item = null;
+                        }
                     }
                 }
                 return item;

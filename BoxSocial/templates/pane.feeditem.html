@@ -1,0 +1,34 @@
+<!-- BEGIN feed_days_list.feed_item -->
+<ul class="feed-list">
+    <li class="feed-item" id="feed-item-{feed_days_list.feed_item.ID}">
+	<h5>{feed_days_list.feed_item.TITLE}</h5>
+    <!-- IF feed_days_list.feed_item.USER_ICON -->
+	<div class="feed-disp-pic">
+		<img src="{feed_days_list.feed_item.USER_ICON}" alt="{feed_days_list.feed_item.USER_DISPLAY_NAME}" />
+	</div>
+	<!-- ENDIF -->
+    <div class="feed-text">
+		{feed_days_list.feed_item.TEXT}
+    </div>
+    <div class="r-stuff light">
+        <!--
+        <!-- IF feed_days_list.feed_item.LIKEABLE -->
+        --><span class="img-button like-item"><a href="#" onclick="return LikeItem({feed_days_list.feed_item.ID},{feed_days_list.feed_item.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{feed_days_list.feed_item.LIKES}</span></a></span><!--
+        <!-- ENDIF -->
+        <!-- IF feed_days_list.feed_item.SHAREABLE -->
+        --><span class="img-button share-item"><a href="{U_SHARE}" onclick="return ShareItem({feed_days_list.feed_item.ID},{feed_days_list.feed_item.TYPE_ID});" title="Share"><span class="sprite share-sprite"></span><span class="shares">{feed_days_list.feed_item.SHARES}</span></a></span><!--
+        <!-- ENDIF -->
+        <!-- IF feed_days_list.feed_item.COMMENTABLE -->
+        --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({feed_days_list.feed_item.ID}, {feed_days_list.feed_item.TYPE_ID}, $('#feed-comments-{feed_days_list.feed_item.ID}'));" title="Expand comments">Comments<span class="likes">{feed_days_list.feed_item.COMMENTS}</span></a></span><!--
+        <!-- ENDIF -->
+        <!-- IF feed_days_list.feed_item.IS_PUBLIC -->
+        --><span class="img-button permissions-item" title="{L_PUBLIC}"><span class="perms">{L_PUBLIC}</span></span><!--
+        <!-- ELSE -->
+        --><span class="img-button permissions-item" title="{L_LIMITED}"><span class="perms">{L_LIMITED}</span></span><!--
+        <!-- ENDIF -->
+        -->
+    </div>
+    <div class="feed-text comment-pane" id="feed-comments-{feed_days_list.feed_item.ID}" style="display: none;"></div>
+    </li>
+</ul>
+<!-- END feed_days_list.feed_item -->

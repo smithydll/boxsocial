@@ -176,7 +176,10 @@ namespace BoxSocial.Internals
             foreach (IPermissibleItem item in items)
             {
                 typeId = item.ItemKey.TypeId;
-                keys.Add(item.Id, new AccessControlGrantKey(typeId, item.Id));
+                if (!keys.ContainsKey(item.Id))
+                {
+                    keys.Add(item.Id, new AccessControlGrantKey(typeId, item.Id));
+                }
             }
 
             List<AccessControlGrant> grants = AccessControlGrant.GetGrants(core, items);

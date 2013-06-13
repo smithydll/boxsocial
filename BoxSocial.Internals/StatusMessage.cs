@@ -139,6 +139,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public StatusMessage(Core core, DataRow statusRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
+
+            loadItemInfo(statusRow);
+        }
+
         public StatusMessage(Core core, User owner, DataRow statusRow)
             : base(core)
         {

@@ -291,17 +291,17 @@ namespace BoxSocial.Internals
 
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
-            //HttpContext.Current.Response.Write(string.Format("Reflection {0} {1} {2} {3}<br />", ik.Id, ik.TypeId, ik.ApplicationId, ik.Type.ToString()));
-            if (ik.Type.IsSubclassOf(typeof(Primitive)))
+            if (ik.Type != null)
             {
-                //HttpContext.Current.Response.Write("Found Primitive being reflected, redirect to primitive cache<br />");
-                core.PrimitiveCache.LoadPrimitiveProfile(ik);
-                return core.PrimitiveCache[ik];
+                if (ik.Type.IsSubclassOf(typeof(Primitive)))
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ik);
+                    return core.PrimitiveCache[ik];
+                }
             }
 
             if (core.ItemCache.ContainsItem(ik))
             {
-                //HttpContext.Current.Response.Write("Found Primitive being reflected, redirect to primitive cache<br />");
                 return core.ItemCache[ik];
             }
 
@@ -314,7 +314,11 @@ namespace BoxSocial.Internals
             
             if (ik.ApplicationId > 0)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
+                core.ItemCache.RegisterType(typeof(ApplicationEntry));
+                ItemKey applicationKey = new ItemKey(ik.ApplicationId, typeof(ApplicationEntry));
+                core.ItemCache.RequestItem(applicationKey);
+                //ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
+                ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
     
                 //Application a = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
                 string assemblyPath;

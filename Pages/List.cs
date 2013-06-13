@@ -216,6 +216,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public List(Core core, DataRow listRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(List_ItemLoad);
+
+            loadItemInfo(listRow);
+        }
+
         internal List(Core core, User owner, DataRow listRow)
             : base(core)
         {

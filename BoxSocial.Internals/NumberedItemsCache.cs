@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web;
@@ -42,7 +43,10 @@ namespace BoxSocial.Internals
         public void RegisterType(Type type)
         {
             long typeId = ItemType.GetTypeId(type);
-            typesAccessed.Add(typeId, type);
+            if (!typesAccessed.ContainsKey(typeId))
+            {
+                typesAccessed.Add(typeId, type);
+            }
         }
 
         public void RegisterItem(NumberedItem item)
@@ -57,7 +61,55 @@ namespace BoxSocial.Internals
 
         public void RequestItem(ItemKey itemKey)
         {
-            batchedItemIds.Add(new NumberedItemId(itemKey.Id, itemKey.TypeId));
+            if (!typesAccessed.ContainsKey(itemKey.TypeId))
+            {
+                // We need to make sure that the application is loaded
+                if (itemKey.ApplicationId > 0)
+                {
+                    core.ItemCache.RegisterType(typeof(ApplicationEntry));
+
+                    ItemKey applicationKey = new ItemKey(itemKey.ApplicationId, typeof(ApplicationEntry));
+                    core.ItemCache.RequestItem(applicationKey);
+
+                    ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
+
+                    string assemblyPath;
+                    if (ae.IsPrimitive)
+                    {
+                        if (core.Http != null)
+                        {
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
+                        }
+                        else
+                        {
+                            assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+                        }
+                    }
+                    else
+                    {
+                        if (core.Http != null)
+                        {
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
+                        }
+                        else
+                        {
+                            assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+                        }
+                    }
+                    Assembly assembly = Assembly.LoadFrom(assemblyPath);
+
+                    typesAccessed.Add(itemKey.TypeId, assembly.GetType(itemKey.TypeString));
+                }
+                else
+                {
+                    typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.TypeString));
+                }
+            }
+            NumberedItemId loadedId = new NumberedItemId(itemKey.Id, itemKey.TypeId);
+            if (!(batchedItemIds.Contains(loadedId) || itemsCached.ContainsKey(loadedId)))
+            {
+                batchedItemIds.Add(loadedId);
+            }
         }
 
         /// <summary>
@@ -80,7 +132,8 @@ namespace BoxSocial.Internals
             get
             {
                 loadBatchedIds(key.TypeId, key.Id);
-                return itemsCached[new NumberedItemId(key.Id, key.TypeId)];
+                NumberedItem item = itemsCached[new NumberedItemId(key.Id, key.TypeId)];
+                return item;
             }
         }
 
@@ -130,7 +183,9 @@ namespace BoxSocial.Internals
                 {
                     NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, dr }) as NumberedItem;
 
-                    itemsCached.Add(new NumberedItemId(item.Id, typeToGet), item);
+                    NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
+                    itemsCached.Add(loadedId, item);
+                    batchedItemIds.Remove(loadedId);
                 }
             }
         }

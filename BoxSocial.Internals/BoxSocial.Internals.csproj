@@ -134,7 +134,6 @@
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />
     <Compile Include="Identicon.cs" />
-    <Compile Include="IfeedableItem.cs" />
     <Compile Include="IHashtagableItem.cs" />
     <Compile Include="ILikeableItem.cs" />
     <Compile Include="InviteKey.cs" />

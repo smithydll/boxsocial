@@ -31,28 +31,29 @@ namespace BoxSocial.Internals
     public class Feed
     {
 
-        public static List<Action> GetItems(Core core, User owner)
+        public static List<Action> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
+            double pessimism = 1.5;
+
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-            int perPage = 20;
-            int limitStart = 0;
-            bool moreContent = false;
-
             List<Action> feedItems = new List<Action>();
+            moreContent = false;
 
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 64;
 
-            List<long> friendIds = owner.GetFriendIds(16);
+            List<long> friendIds = owner.GetFriendIds(100);
             if (core.Session.IsLoggedIn)
             {
                 friendIds.Add(core.LoggedInMemberId);
             }
+
+            // TODO: Add subscriptions to feed
 
             if (friendIds.Count > 0)
             {
@@ -61,18 +62,88 @@ namespace BoxSocial.Internals
                 query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
                 query.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
 
-                DataTable feedTable = core.Db.Query(query);
+                {
+                    long lastId = 0;
+                    QueryCondition qc1 = null;
+                    if (currentOffset > 0)
+                    {
+                        qc1 = query.AddCondition("action_id", ConditionEquality.LessThan, currentOffset);
+                    }
+                    query.LimitCount = (int)(perPage * pessimism);
+
+                    while (feedItems.Count <= perPage)
+                    {
+                        DataTable feedTable = core.Db.Query(query);
+
+                        List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
+                        List<Action> tempActions = new List<Action>();
+
+                        if (feedTable.Rows.Count == 0)
+                        {
+                            break;
+                        }
+
+                        foreach (DataRow row in feedTable.Rows)
+                        {
+                            Action action = new Action(core, owner, row);
+                            tempActions.Add(action);
+                            core.ItemCache.RequestItem(action.ActionItemKey);
+                        }
+
+                        foreach (Action action in tempActions)
+                        {
+                            tempMessages.Add(action.PermissiveParent);
+                        }
+
+                        core.AcessControlCache.CacheGrants(tempMessages);
+
+                        foreach (Action action in tempActions)
+                        {
+                            if (action.PermissiveParent.Access.Can("VIEW"))
+                            {
+                                if (feedItems.Count == perPage)
+                                {
+                                    moreContent = true;
+                                    break;
+                                }
+                                else
+                                {
+                                    feedItems.Add(action);
+                                }
+                            }
+                            lastId = action.Id;
+                        }
+
+                        //query.LimitStart += query.LimitCount;
+                        if (qc1 == null)
+                        {
+                            qc1 = query.AddCondition("action_id", ConditionEquality.LessThan, lastId);
+                        }
+                        else
+                        {
+                            qc1.Value = lastId;
+                        }
+                        query.LimitCount = (int)(query.LimitCount * pessimism);
+
+                        if (moreContent)
+                        {
+                            break;
+                        }
+                    }
+                }
+
+                //DataTable feedTable = core.Db.Query(query);
 
                 /*foreach (DataRow dr in feedTable.Rows)
                 {
                     feedItems.Add(new Action(core, owner, dr));
                 }*/
 
-                int offset = 0;
-                int i = 0;
+                //int offset = 0;
+                //int i = 0;
 
                 //while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
-                {
+                /*{
                     List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
                     List<Action> tempActions = new List<Action>();
                     int j = 0;
@@ -109,7 +180,7 @@ namespace BoxSocial.Internals
                     }
 
                     offset = j;
-                }
+                }*/
             }
 
             return feedItems;
@@ -122,6 +193,12 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            if (core.IsAjax)
+            {
+                ShowMore(core, page, owner);
+                return;
+            }
+
             Template template = new Template(core.Http.TemplatePath, "viewfeed.html");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
@@ -130,9 +207,9 @@ namespace BoxSocial.Internals
 
             template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
 
-            List<Action> feedActions = Feed.GetItems(core, owner);
-
-            
+            bool moreContent = false;
+            long lastId = 0;
+            List<Action> feedActions = Feed.GetItems(core, owner, page.TopLevelPageNumber, 20, page.TopLevelPageOffset, out moreContent);
 
             if (feedActions.Count > 0)
             {
@@ -184,7 +261,7 @@ namespace BoxSocial.Internals
                     }
 
                     //Access access = new Access(core, feedAction.ActionItemKey, true);
-                    //if (access.IsPublic())
+                    if (feedAction.PermissiveParent.Access.IsPublic())
                     {
                         feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
                         feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
@@ -201,10 +278,89 @@ namespace BoxSocial.Internals
                         feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).UserTile);
                         feedItemVariableCollection.Parse("USER_ICON", ((User)feedAction.Owner).UserIcon);
                     }
+
+                    lastId = feedAction.Id;
                 }
             }
 
+            core.Display.ParseBlogPagination(template, "PAGINATION", core.Hyperlink.BuildHomeUri(), 0, moreContent ? lastId : 0);
+            template.Parse("U_NEXT_PAGE", core.Hyperlink.BuildHomeUri() + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId);
+
             core.AddMainPanel(template);
+        }
+
+        public static void ShowMore(Core core, TPage page, User owner)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Template template = new Template("pane.feeditem.html");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            bool moreContent = false;
+            long lastId = 0;
+            List<Action> feedActions = Feed.GetItems(core, owner, page.TopLevelPageNumber, 20, page.TopLevelPageOffset, out moreContent);
+
+            foreach (Action feedAction in feedActions)
+            {
+                VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
+
+                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
+
+                feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
+
+                feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+
+                if (feedAction.ActionItemKey.ImplementsLikeable)
+                {
+                    feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
+
+                    if (feedAction.Info.Likes > 0)
+                    {
+                        feedItemVariableCollection.Parse("LIKES", string.Format(" {0:d}", feedAction.Info.Likes));
+                        feedItemVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", feedAction.Info.Dislikes));
+                    }
+                }
+
+                if (feedAction.ActionItemKey.ImplementsCommentable)
+                {
+                    feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
+
+                    if (feedAction.Info.Comments > 0)
+                    {
+                        feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", feedAction.Info.Comments));
+                    }
+                }
+
+                //Access access = new Access(core, feedAction.ActionItemKey, true);
+                if (feedAction.PermissiveParent.Access.IsPublic())
+                {
+                    feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                    feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                    //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                    if (feedAction.Info.SharedTimes > 0)
+                    {
+                        feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                    }
+                }
+
+                if (feedAction.Owner is User)
+                {
+                    feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).UserTile);
+                    feedItemVariableCollection.Parse("USER_ICON", ((User)feedAction.Owner).UserIcon);
+                }
+
+                lastId = feedAction.Id;
+            }
+
+            string loadMoreUri = core.Hyperlink.BuildHomeUri() + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId;
+            core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
     }
 }

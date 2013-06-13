@@ -29,7 +29,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Internals
 {
     [DataTable("actions")]
-    public class Action : NumberedItem
+    public class Action : NumberedItem, IPermissibleSubItem
     {
         [DataField("action_id", DataFieldKeys.Primary)]
         private long actionId;
@@ -47,6 +47,7 @@ namespace BoxSocial.Internals
         private long timeRaw;
 
         private Primitive owner;
+        private NumberedItem item;
 
         public new ItemInfo Info
         {
@@ -64,6 +65,35 @@ namespace BoxSocial.Internals
                     }
                 }
                 return info;
+            }
+        }
+
+        public ItemKey ActionItemKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
+        public NumberedItem ActionedItem
+        {
+            get
+            {
+                if (item == null)
+                {
+                    core.ItemCache.RequestItem(itemKey);
+                    try
+                    {
+                        item = core.ItemCache[itemKey];
+                    }
+                    catch
+                    {
+                        item = NumberedItem.Reflect(core, itemKey);
+                        HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
+                    }
+                }
+                return item;
             }
         }
 
@@ -104,14 +134,6 @@ namespace BoxSocial.Internals
             get
             {
                 return ownerKey.Id;
-            }
-        }
-
-        public ItemKey ActionItemKey
-        {
-            get
-            {
-                return itemKey;
             }
         }
 
@@ -236,6 +258,26 @@ namespace BoxSocial.Internals
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                if (ActionedItem is IPermissibleItem)
+                {
+                    return (IPermissibleItem)ActionedItem;
+                }
+                else if (ActionedItem is IPermissibleSubItem)
+                {
+                    return ((IPermissibleSubItem)ActionedItem).PermissiveParent;
+                }
+                else
+                {
+                    return Owner;
+                }
             }
         }
     }

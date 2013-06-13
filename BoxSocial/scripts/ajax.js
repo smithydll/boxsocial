@@ -614,7 +614,7 @@ $(document).ready(function () {
     $(".infinite-more").siblings().hide();
     $(".infinite-more").show();
     $(window).scroll(function () {
-        var trigger = 100;
+        var trigger = 150;
 
         if (infiniteLoading == false && loadCount < 2) {
             if ($(window).scrollTop() != lastScrollPosn) {
@@ -641,7 +641,7 @@ function LoadedInfinite(r, e, a) {
     e.append(r['message']);
 
     var c = r['code'];
-    var more = e.siblings('p').children('.infinite-more');
+    var more = $('.infinite-more');
     if (c == 'noMoreContent') {
         more.remove();
     }

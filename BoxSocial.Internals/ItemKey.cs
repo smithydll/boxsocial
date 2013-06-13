@@ -384,7 +384,7 @@ namespace BoxSocial.Internals
         
         public override string ToString ()
         {
-            return string.Format("{0},{1}", TypeId, Id);
+            return string.Format("Type: {0}:{1}, Id: {2}", TypeId, TypeString, Id);
         }
 
         public override bool Equals(object obj)

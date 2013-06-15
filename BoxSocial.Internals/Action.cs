@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
     {
         [DataField("action_id", DataFieldKeys.Primary)]
         private long actionId;
-        [DataField("action_title", 63)]
+        [DataField("action_title", 127)]
         private string title;
         [DataField("action_body", 511)]
         private string body;
@@ -47,7 +47,7 @@ namespace BoxSocial.Internals
         private long timeRaw;
 
         private Primitive owner;
-        private NumberedItem item;
+        private IActionableItem item;
 
         public new ItemInfo Info
         {
@@ -76,7 +76,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public NumberedItem ActionedItem
+        public IActionableItem ActionedItem
         {
             get
             {
@@ -85,13 +85,13 @@ namespace BoxSocial.Internals
                     core.ItemCache.RequestItem(itemKey);
                     try
                     {
-                        item = core.ItemCache[itemKey];
+                        item = (IActionableItem)core.ItemCache[itemKey];
                     }
                     catch
                     {
                         try
                         {
-                            item = NumberedItem.Reflect(core, itemKey);
+                            item = (IActionableItem)NumberedItem.Reflect(core, itemKey);
                             HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
                         }
                         catch
@@ -116,14 +116,28 @@ namespace BoxSocial.Internals
         {
             get
             {
+                string url = string.Empty;
+                if (ActionedItem != null)
+                {
+                    title = ActionedItem.Action;
+                    url = ActionedItem.Uri;
+                }
                 if (title.Contains("[/user]"))
                 {
                     return title;
                 }
                 else
                 {
-                    return string.Format("[user]{0}[/user] {1}",
+                    if (url != string.Empty)
+                    {
+                        return string.Format("[user]{0}[/user] [iurl=\"{2}\"]{1}[/iurl]",
+                            ownerKey.Id, title, url);
+                    }
+                    else
+                    {
+                        return string.Format("[user]{0}[/user] {1}",
                         ownerKey.Id, title);
+                    }
                 }
             }
         }

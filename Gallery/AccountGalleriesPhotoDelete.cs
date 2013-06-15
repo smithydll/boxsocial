@@ -123,7 +123,7 @@ namespace BoxSocial.Applications.Gallery
 
                     try
                     {
-                        photo.Delete(core);
+                        photo.Delete();
 
                         SetRedirectUri(BuildUri("galleries", "galleries"));
                         core.Display.ShowMessage("Photo Deleted", "You have successfully deleted the photo from the gallery.");

@@ -31,8 +31,24 @@ namespace BoxSocial.Internals
 {
     public interface IActionableItem
     {
-        string GetActionBody();
+        ItemKey ItemKey
+        {
+            get;
+        }
 
-        string RebuildAction(Action action);
+        string Action
+        {
+            get;
+        }
+
+        string GetActionBody(List<ItemKey> subItems);
+
+        /// <summary>
+        /// Gets the URI for the commentable item.
+        /// </summary>
+        string Uri
+        {
+            get;
+        }
     }
 }

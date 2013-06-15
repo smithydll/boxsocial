@@ -1008,13 +1008,134 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public void PublishToFeed(User owner, ItemKey item, string title)
+        public void PublishToFeed(User owner, IActionableItem item)
         {
-            PublishToFeed(owner, item, title, string.Empty);
+            PublishToFeed(owner, item, new List<ItemKey>());
         }
 
-        public void PublishToFeed(User owner, ItemKey item, string title, string message)
+        private void PublishToFeed(User owner, ItemKey item, string title, string message)
         {
+            PublishToFeed(owner, item, title, message, new List<ItemKey>());
+        }
+
+        public void PublishToFeed(User owner, IActionableItem item, ItemKey subItem)
+        {
+            if (subItem != null)
+            {
+                PublishToFeed(owner, item, new List<ItemKey> { subItem });
+            }
+            else
+            {
+                PublishToFeed(owner, item, new List<ItemKey>());
+            }
+        }
+
+        public void PublishToFeed(User owner, IActionableItem item, List<ItemKey> subItems)
+        {
+            ItemKey itemKey = item.ItemKey;
+
+            SelectQuery query = new SelectQuery(typeof(Action));
+            query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
+            query.AddCondition("action_primitive_id", owner.ItemKey.Id);
+            query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
+            query.AddCondition("action_application", applicationId);
+            query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+
+            // maximum 10 per application per day
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
+            {
+
+                query = new SelectQuery(typeof(Action));
+                query.AddCondition("action_primitive_id", owner.ItemKey.Id);
+                query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
+                query.AddCondition("action_item_id", itemKey.Id);
+                query.AddCondition("action_item_type_id", itemKey.TypeId);
+                query.AddCondition("action_application", applicationId);
+                query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+                query.AddSort(SortOrder.Descending, "action_time_ut");
+
+                DataTable actionDataTable = db.Query(query);
+
+                if (actionDataTable.Rows.Count > 0)
+                {
+                    List<ItemKey> subItemsShortList = new List<ItemKey>();
+                    
+                    Action action = new Action(core, owner, actionDataTable.Rows[0]);
+
+                    query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+                    query.AddCondition("action_id", action.Id);
+                    query.LimitCount = 3;
+
+                    DataTable actionItemDataTable = db.Query(query);
+
+                    if (actionItemDataTable.Rows.Count < 3)
+                    {
+                        for (int i = 0; i < actionItemDataTable.Rows.Count; i++)
+                        {
+                            subItemsShortList.Add(new ItemKey((long)actionItemDataTable.Rows[i]["item_id"], (long)actionItemDataTable.Rows[i]["item_type_id"]));
+                        }
+
+                        for (int i = 0; i < subItems.Count; i++)
+                        {
+                            if (subItemsShortList.Count == 3) break;
+                            subItemsShortList.Add(subItems[i]);
+                        }
+
+                        UpdateQuery uquery = new UpdateQuery(typeof(Action));
+                        uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+                        uquery.AddField("action_title", item.Action);
+                        uquery.AddField("action_body", item.GetActionBody(subItemsShortList));
+                        uquery.AddCondition("action_id", action.Id);
+
+                        db.Query(uquery);
+
+                        if (subItems != null)
+                        {
+                            foreach (ItemKey subItem in subItems)
+                            {
+                                InsertQuery iquery = new InsertQuery(typeof(ActionItem));
+                                iquery.AddField("action_id", action.Id);
+                                iquery.AddField("item_id", subItem.Id);
+                                iquery.AddField("item_type_id", subItem.TypeId);
+
+                                db.Query(iquery);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    InsertQuery iquery = new InsertQuery(typeof(Action));
+                    iquery.AddField("action_primitive_id", owner.ItemKey.Id);
+                    iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
+                    iquery.AddField("action_item_id", itemKey.Id);
+                    iquery.AddField("action_item_type_id", itemKey.TypeId);
+                    iquery.AddField("action_title", item.Action);
+                    iquery.AddField("action_body", item.GetActionBody(subItems));
+                    iquery.AddField("action_application", applicationId);
+                    iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+
+                    long actionId = db.Query(iquery);
+
+                    if (subItems != null)
+                    {
+                        foreach (ItemKey subItem in subItems)
+                        {
+                            iquery = new InsertQuery(typeof(ActionItem));
+                            iquery.AddField("action_id", actionId);
+                            iquery.AddField("item_id", subItem.Id);
+                            iquery.AddField("item_type_id", subItem.TypeId);
+
+                            db.Query(iquery);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void PublishToFeed(User owner, ItemKey item, string title, string message, List<ItemKey> subItems)
+        {
+            ItemKey itemKey = item;
             if (title.Length > 63)
             {
                 title = title.Substring(0, 63);
@@ -1031,21 +1152,72 @@ namespace BoxSocial.Internals
             query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
             query.AddCondition("action_application", applicationId);
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
-
-            // maximum five per application per day
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 5)
+            
+            // maximum 10 per application per day
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
             {
-                InsertQuery iquery = new InsertQuery(typeof(Action));
-                iquery.AddField("action_primitive_id", owner.ItemKey.Id);
-                iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
-                iquery.AddField("action_item_id", item.Id);
-                iquery.AddField("action_item_type_id", item.TypeId);
-                iquery.AddField("action_title", title);
-                iquery.AddField("action_body", message);
-                iquery.AddField("action_application", applicationId);
-                iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
 
-                db.Query(iquery);
+                query = new SelectQuery(typeof(Action));
+                query.AddCondition("action_primitive_id", owner.ItemKey.Id);
+                query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
+                query.AddCondition("action_item_id", itemKey.Id);
+                query.AddCondition("action_item_type_id", itemKey.TypeId);
+                query.AddCondition("action_application", applicationId);
+                query.AddCondition("action_time_ut", ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+
+                DataTable actionDataTable = db.Query(query);
+
+                if (actionDataTable.Rows.Count == 1)
+                {
+                    Action action = new Action(core, owner, actionDataTable.Rows[0]);
+                    UpdateQuery uquery = new UpdateQuery(typeof(Action));
+                    uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+                    uquery.AddField("action_title", title);
+                    uquery.AddField("action_body", message);
+                    uquery.AddCondition("action_id", action.Id);
+
+                    db.Query(uquery);
+
+                    if (subItems != null)
+                    {
+                        foreach (ItemKey subItem in subItems)
+                        {
+                            InsertQuery iquery = new InsertQuery(typeof(ActionItem));
+                            iquery.AddField("action_id", action.Id);
+                            iquery.AddField("item_id", subItem.Id);
+                            iquery.AddField("item_type_id", subItem.TypeId);
+
+                            db.Query(iquery);
+                        }
+                    }
+                }
+                else
+                {
+                    InsertQuery iquery = new InsertQuery(typeof(Action));
+                    iquery.AddField("action_primitive_id", owner.ItemKey.Id);
+                    iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
+                    iquery.AddField("action_item_id", itemKey.Id);
+                    iquery.AddField("action_item_type_id", itemKey.TypeId);
+                    iquery.AddField("action_title", title);
+                    iquery.AddField("action_body", message);
+                    iquery.AddField("action_application", applicationId);
+                    iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+
+                    long actionId = db.Query(iquery);
+
+                    if (subItems != null)
+                    {
+                        foreach (ItemKey subItem in subItems)
+                        {
+                            iquery = new InsertQuery(typeof(ActionItem));
+                            iquery.AddField("action_id", actionId);
+                            iquery.AddField("item_id", subItem.Id);
+                            iquery.AddField("item_type_id", subItem.TypeId);
+
+                            db.Query(iquery);
+                        }
+                    }
+                }
             }
         }
 

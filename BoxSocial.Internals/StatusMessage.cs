@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     [Permission("VIEW", "Can view this status message", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
-    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem
+    public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem, IActionableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
         private long statusId;
@@ -509,6 +509,20 @@ namespace BoxSocial.Internals
             }
 
             return template;
+        }
+
+
+        public string Action
+        {
+            get
+            {
+                return "posted";
+            }
+        }
+
+        public string GetActionBody(List<ItemKey> subItems)
+        {
+            return ShareString;
         }
     }
 

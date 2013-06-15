@@ -255,7 +255,7 @@ namespace BoxSocial.Internals
             acl.SaveNewItemPermissions();
 
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
-            ae.PublishToFeed(core.Session.LoggedInMember, statusMessage.ItemKey, "shared", core.Bbcode.FromStatusCode(message));
+            ae.PublishToFeed(core.Session.LoggedInMember, statusMessage);
 
             return statusMessage;
         }

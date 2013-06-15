@@ -1792,3 +1792,7 @@ p.posted-by
 {
     padding: 1px 0 4px 0;
 }
+
+.bbcode-thumb {
+    margin-right: 1px;
+}

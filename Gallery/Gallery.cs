@@ -53,7 +53,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("EDIT_ITEMS", "Can edit photos", PermissionTypes.CreateAndEdit)]
     [Permission("DELETE_ITEMS", "Can delete photos", PermissionTypes.Delete)]
     [Permission("DOWNLOAD_ORIGINAL", "Can download the original photo. This will include EXIF data which may include personally identifiable information.", PermissionTypes.View)]
-    public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem, ILikeableItem
+    public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem, ILikeableItem, IActionableItem
     {
 
         /// <summary>
@@ -795,6 +795,19 @@ namespace BoxSocial.Applications.Gallery
                 loadItemInfo(typeof(Gallery), galleryTable.Rows[0]);
             }
             else
+            {
+                throw new InvalidGalleryException();
+            }
+        }
+
+        public Gallery(Core core, DataRow galleryRow)
+            : base(core)
+        {
+            try
+            {
+                loadItemInfo(typeof(Gallery), galleryRow);
+            }
+            catch (InvalidItemException)
             {
                 throw new InvalidGalleryException();
             }
@@ -2221,6 +2234,57 @@ namespace BoxSocial.Applications.Gallery
             {
                 return Info.Dislikes;
             }
+        }
+
+
+        public string Action
+        {
+            get
+            {
+                return "uploaded a photo to " + GalleryTitle;
+            }
+        }
+
+        public string GetActionBody(List<ItemKey> subItems)
+        {
+            string returnValue = string.Empty;
+
+            long galleryItemTypeId = ItemType.GetTypeId(typeof(GalleryItem));
+            List<long> itemIds = new List<long>();
+
+            foreach (ItemKey il in subItems)
+            {
+                if (il.TypeId == galleryItemTypeId)
+                {
+                    itemIds.Add(il.Id);
+                }
+            }
+
+            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            query.AddCondition("gallery_item_id", ConditionEquality.In, itemIds);
+            query.AddCondition("gallery_id", Id);
+
+            DataTable itemDataTable = db.Query(query);
+
+            if (itemDataTable.Rows.Count == 1)
+            {
+                GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
+
+                returnValue += string.Format("[iurl={0}][inline]{1}[/inline][/iurl]",
+                        item.Uri, item.FullPath);
+            }
+            else
+            {
+                foreach (DataRow row in itemDataTable.Rows)
+                {
+                    GalleryItem item = new GalleryItem(core, Owner, row);
+
+                    returnValue += string.Format("[iurl={0}][thumb]{1}[/thumb][/iurl]",
+                            item.Uri, item.FullPath);
+                }
+            }
+
+            return returnValue;
         }
     }
 

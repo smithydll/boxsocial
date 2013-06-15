@@ -231,9 +231,12 @@ namespace BoxSocial.Internals
             {
                 if (itemTypeId == item.ItemKey.TypeId || itemTypeId == 0)
                 {
-                    itemIds.Add(item.ItemKey.Id);
-                    itemTypeId = item.ItemKey.TypeId;
-                    itemDictionary.Add(item.ItemKey.Id, item);
+                    if (!itemDictionary.ContainsKey(item.ItemKey.Id))
+                    {
+                        itemIds.Add(item.ItemKey.Id);
+                        itemTypeId = item.ItemKey.TypeId;
+                        itemDictionary.Add(item.ItemKey.Id, item);
+                    }
                 }
             }
 

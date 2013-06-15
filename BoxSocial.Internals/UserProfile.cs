@@ -624,7 +624,7 @@ namespace BoxSocial.Internals
             {
                 if (!string.IsNullOrEmpty(Sexuality) && Sexuality != "FALSE")
                 {
-                    ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "changed " + core.Session.LoggedInMember.Preposition + " sexuality to " + Sexuality);
+                    //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "changed " + core.Session.LoggedInMember.Preposition + " sexuality to " + Sexuality);
                 }
             }
 
@@ -654,7 +654,7 @@ namespace BoxSocial.Internals
                             // Ignore if empty or null
                             break;
                         default:
-                            ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "changed " + core.Session.LoggedInMember.Preposition + " relationship status to " + MaritialStatus.ToLower());
+                            //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "changed " + core.Session.LoggedInMember.Preposition + " relationship status to " + MaritialStatus.ToLower());
                             break;
                     }
                 }
@@ -678,12 +678,12 @@ namespace BoxSocial.Internals
                             switch (maritialStatus)
                             {
                                 case "RELATIONSHIP":
-                                    ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.Session.LoggedInMember.Id + "[/user]");
+                                    //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    //aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;
                                 case "MARRIED":
-                                    ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
-                                    aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.Session.LoggedInMember.Id + "[/user]");
+                                    //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
+                                    //aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;
                             }
                             break;

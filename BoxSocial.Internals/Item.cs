@@ -1308,6 +1308,17 @@ namespace BoxSocial.Internals
                 db.Query(idQuery);
 
                 /* Delete any Action rows */
+                SelectQuery sQuery = new SelectQuery(typeof(ActionItem));
+                sQuery.AddField(new DataField(typeof(Action), "action_id"));
+                sQuery.AddField(new DataField(typeof(Action), "action_item_id"));
+                sQuery.AddField(new DataField(typeof(Action), "action_item_type_id"));
+                sQuery.AddJoin(JoinTypes.Inner, new DataField(typeof(ActionItem), "action_id"), new DataField(typeof(Action), "action_id"));
+                sQuery.AddCondition(new DataField(typeof(ActionItem), "item_id"), ((NumberedItem)this).ItemKey.Id);
+                sQuery.AddCondition(new DataField(typeof(ActionItem),"item_type_id"), ((NumberedItem)this).ItemKey.TypeId);
+                sQuery.AddCondition(new DataField(typeof(ActionItem), "item_id"), ConditionEquality.NotEqual, new DataField(typeof(Action), "action_item_id"));
+
+                DataTable table = db.Query(sQuery);
+
                 idQuery = new DeleteQuery(Item.GetTable(typeof(Action)));
                 idQuery.AddCondition("action_item_id", ((NumberedItem)this).ItemKey.Id);
                 idQuery.AddCondition("action_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
@@ -1322,7 +1333,49 @@ namespace BoxSocial.Internals
                 db.Query(idQuery);
 
                 /* Select action sub items so we can inform the action to re-calculate it's view */
+                foreach (DataRow row in table.Rows)
+                {
+                    long actionId = (long)row["action_id"];
+                    long itemId = (long)row["action_item_id"];
+                    long itemTypeId = (long)row["action_item_type_id"];
+                    ItemKey ik = new ItemKey(itemId, itemTypeId);
 
+                    NumberedItem item = NumberedItem.Reflect(core, ik);
+
+                    if (item != null)
+                    {
+                        SelectQuery query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+                        query.AddCondition("action_id", actionId);
+                        query.LimitCount = 3;
+
+                        DataTable actionItemDataTable = db.Query(query);
+
+                        List<ItemKey> subItemsShortList = new List<ItemKey>();
+
+                        for (int i = 0; i < actionItemDataTable.Rows.Count; i++)
+                        {
+                            subItemsShortList.Add(new ItemKey((long)actionItemDataTable.Rows[i]["item_id"], (long)actionItemDataTable.Rows[i]["item_type_id"]));
+                        }
+
+                        string newBody = ((IActionableItem)item).GetActionBody(subItemsShortList);
+
+                        if (string.IsNullOrEmpty(newBody))
+                        {
+                            idQuery = new DeleteQuery(Item.GetTable(typeof(Action)));
+                            idQuery.AddCondition("action_id", actionId);
+
+                            db.Query(idQuery);
+                        }
+                        else
+                        {
+                            UpdateQuery uQuery = new UpdateQuery(typeof(Action));
+                            uQuery.AddField("action_body", newBody);
+                            uQuery.AddCondition("action_id", actionId);
+
+                            db.Query(uQuery);
+                        }
+                    }
+                }
             }
 
             long result = db.Query(dQuery);

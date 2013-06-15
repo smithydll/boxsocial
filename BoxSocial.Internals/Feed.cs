@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
 
         public static List<Action> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
-            double pessimism = 1.5;
+            double pessimism = 2.0;
 
             if (core == null)
             {

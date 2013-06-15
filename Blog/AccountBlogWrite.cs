@@ -411,14 +411,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (publishStatus == PublishStatuses.Publish)
                 {
-                    // TODO Permissions
-                    //if (Access.FriendsCanRead(myBlogEntry.Permissions))
-                    {
-                        DateTime postDateTime = myBlogEntry.GetCreatedDate(core.Tz);
-
-                        core.CallingApplication.PublishToFeed(LoggedInMember, myBlogEntry.ItemKey, "posted a new Blog Entry", string.Format("[iurl={0}]{1}[/iurl]",
-                            myBlogEntry.Uri, myBlogEntry.Title));
-                    }
+                    core.CallingApplication.PublishToFeed(LoggedInMember, myBlogEntry);
                 }
 
             }

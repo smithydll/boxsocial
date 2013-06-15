@@ -58,7 +58,7 @@ namespace BoxSocial.Applications.Blog
     [Permission("VIEW", "Can view this blog entry", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this blog entry", PermissionTypes.Interact)]
     [Permission("RATE", "Can rate this blog entry", PermissionTypes.Interact)]
-    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem
+    public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem, IActionableItem
     {
         /// <summary>
         /// A list of database fields associated with a blog entry.
@@ -816,6 +816,20 @@ namespace BoxSocial.Applications.Blog
             {
                 return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
             }
+        }
+
+
+        public string Action
+        {
+            get
+            {
+                return "posted a new blog";
+            }
+        }
+
+        public string GetActionBody(List<ItemKey> subItems)
+        {
+            return ShareString;
         }
     }
 

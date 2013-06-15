@@ -370,7 +370,7 @@ namespace BoxSocial.Applications.Pages
                     ApplicationEntry ae = new ApplicationEntry(core);
 
                     // TODO: different list types
-                    core.CallingApplication.PublishToFeed(LoggedInMember, list.ItemKey, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
+                    //core.CallingApplication.PublishToFeed(LoggedInMember, list.ItemKey, string.Format("added {0} to list [iurl={2}]{1}[/iurl]", item.Text, list.Title, list.Uri));
 
                     if (ajax)
                     {

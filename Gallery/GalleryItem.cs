@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, IActionableItem, ILikeableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem
     {
         // Square
         static string IconPrefix = "_icon"; // 50
@@ -279,6 +279,27 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         protected ContentLicense licenseInfo;
 
+        protected Gallery gallery;
+
+        public Gallery Parent
+        {
+            get
+            {
+                if (gallery == null || gallery.Id != parentId)
+                {
+                    if (parentId > 0)
+                    {
+                        gallery = new Gallery(core, parentId);
+                    }
+                    else
+                    {
+                        gallery = new Gallery(core, Owner);
+                    }
+                }
+                return gallery;
+            }
+        }
+
         /// <summary>
         /// Gets the gallery photo Id
         /// </summary>
@@ -338,6 +359,21 @@ namespace BoxSocial.Applications.Gallery
                 else
                 {
                     return parentPath + "/" + path;
+                }
+            }
+        }
+
+        public string PostPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(parentPath))
+                {
+                    return path;
+                }
+                else
+                {
+                    return Owner.UriStub + "/gallery/" + parentPath + "/" + path;
                 }
             }
         }
@@ -955,7 +991,7 @@ namespace BoxSocial.Applications.Gallery
         /// Delete the gallery item
         /// </summary>
         /// <param name="core"></param>
-        public void Delete(Core core)
+        public void Delete()
         {
             SelectQuery squery = new SelectQuery("gallery_items gi");
             squery.AddFields("COUNT(*) AS number");
@@ -963,12 +999,11 @@ namespace BoxSocial.Applications.Gallery
 
             DataTable results = db.Query(squery);
 
-            DeleteQuery dquery = new DeleteQuery("gallery_items");
+            /*DeleteQuery dquery = new DeleteQuery("gallery_items");
             dquery.AddCondition("gallery_item_id", itemId);
-            dquery.AddCondition("user_id", core.LoggedInMemberId);
+            dquery.AddCondition("user_id", core.LoggedInMemberId);*/
 
-            db.BeginTransaction();
-            if (db.Query(dquery) > 0)
+            if (base.Delete() > 0)
             {
                 // TODO, determine if the gallery icon and act appropriately
                 /*if (parentId > 0)
@@ -2766,25 +2801,6 @@ namespace BoxSocial.Applications.Gallery
 
         #endregion
 
-        #region IActionableItem Members
-
-        /// <summary>
-        /// Returns Feed Action body
-        /// </summary>
-        /// <returns></returns>
-        public string GetActionBody()
-        {
-            return string.Format("[iurl={0}][thumb]{1}/{2}[/thumb][/iurl]",
-                BuildUri(), ParentPath, Path);
-        }
-
-        public string RebuildAction(BoxSocial.Internals.Action action)
-        {
-            throw new NotImplementedException();
-        }
-
-        #endregion
-
         public long Likes
         {
             get
@@ -2798,6 +2814,15 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return Info.Dislikes;
+            }
+        }
+
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Parent;
             }
         }
     }

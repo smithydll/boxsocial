@@ -467,11 +467,11 @@ namespace BoxSocial.Internals
                     string imageUri = null;
                     if (forceThumbnail)
                     {
-                        imageUri = owner.UriStubAbsolute + "/images/_icon/" + match.Groups[1].Value;
+                        imageUri = owner.UriStubAbsolute + "images/_tile/" + match.Groups[1].Value;
                     }
                     else
                     {
-                        imageUri = owner.UriStubAbsolute + "/images/_display/" + match.Groups[1].Value;
+                        imageUri = owner.UriStubAbsolute + "images/_display/" + match.Groups[1].Value;
                     }
                     imageUris.Add(imageUri);
 
@@ -485,7 +485,7 @@ namespace BoxSocial.Internals
 
                 foreach (Match match in matches)
                 {
-                    string imageUri = owner.UriStubAbsolute + "/images/_icon/" + match.Groups[1].Value;
+                    string imageUri = owner.UriStubAbsolute + "images/_tile/" + match.Groups[1].Value;
                     imageUris.Add(imageUri);
 
                     if (firstOnly)
@@ -1844,7 +1844,7 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase))
                     {
-                        e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100px; max-height: 100px;\" src=\"";
+                        e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" style=\"max-width: 100px; max-height: 100px;\" src=\"";
                         e.SuffixText = "\" />";
                     }
                     else
@@ -1855,7 +1855,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            e.PrefixText = "<img alt=\"Bbcode image\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_icon/";
+                            e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "images/_tile/";
                             e.SuffixText = "\" />";
                         }
                     }

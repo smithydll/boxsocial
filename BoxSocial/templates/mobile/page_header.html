@@ -6,7 +6,6 @@
 	<link rel="icon" href="/favicon.ico" />
 	<link href="/styles/boxsocial.mobile.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
     <link href="/styles/boxsocial.min.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
-    <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.0/jquery.mobile.structure-1.3.0.min.css" />
 	<!-- BEGIN style_sheet_list -->
 	<link href="{style_sheet_list.URI}" rel="Stylesheet" media="screen, projection" type="text/css"/>
 	<!-- END style_sheet_list -->
@@ -23,57 +22,50 @@
 	-->
 	</script>
 	<script type="text/javascript" src="/scripts/jquery-1.8.2.min.js"></script>
+    <!--<script type="text/javascript" src="/scripts/jgestures.min.js"></script>-->
 	<!-- BEGIN javascript_list -->
 	<script type="text/javascript" src="{javascript_list.URI}"></script>
 	<!-- END javascript_list -->
     <script type="text/javascript" src="/scripts/ajax.js"></script>
-    <script type="text/javascript">
-        $(document).on("mobileinit", function () {
-            $.mobile.defaultTransition = 'none';
-            //$.mobile.ignoreContentEnabled = true;
-        });
-    </script>
-    <script type="text/javascript" src="/scripts/jquery.mobile-1.3.0.min.js"></script>
+    <script type="text/javascript" src="/scripts/ajax.mobile.js"></script>
 </head>
 <body>
-<div data-role="page" id="main-page" data-theme="a">
-	<div data-theme="a" data-role="header" data-position="fixed">
-			<h1 id="page-title"><a data-rel="panel" data-inline="true" href="#boxsocial-menu"><span>{HEADING}</span></a></h1>
-            <!-- IF SITE_SLOGAN -->
-			<h2 id="sub-title">{SITE_SLOGAN}</h2>
-            <!-- ENDIF -->
-		<div id="mobile-nav" data-role="navbar" data-iconpos="top">
-			<ul>
-				<li>
-					<a href="{U_HOME}" data-theme="" data-icon="home">Home</a>
-				</li>
-                <!-- IF PAGE_LIST -->
-				<li>
-					<a href="#pages-menu" data-rel="panel" data-role="button" data-inline="true" data-theme="" data-icon="">Pages</a>
-				</li>
-                <!-- ENDIF -->
-                <!-- IF TAB_LIST -->
-				<li>
-					<a href="#pages-menu" data-rel="panel" data-role="button" data-inline="true" data-theme="" data-icon="">Pages</a>
-				</li>
-                <!-- ENDIF -->
-                <!-- IF LOGGED_IN -->
-				<li>
-					<a href="{U_USER_PROFILE}" data-theme="" data-icon="">Me</a>
-				</li>
-				<li>
-					<a href="#post-menu" data-rel="popup" data-role="button" data-inline="true" data-theme="" data-icon="">Post</a>
-				</li>
-                <!-- ENDIF -->
-				<li>
-					<a href="#search-menu" data-rel="popup" data-role="button" data-inline="true" data-theme="" data-icon="search">Search</a>
-				</li>
-			</ul>
-		</div>
-	</div>
-    <div data-role="panel" id="boxsocial-menu" data-display="push" data-theme="b" style="position:fixed">
-        <ul data-role="listview" data-inset="true" data-theme="b">
+    <!-- IF PAGE_LIST -->
+    <div id="pages-menu" class="side-menu">
+        <ul  class="mobile-list">
+            <li class="list-divider">Pages</li>
+            {PAGE_LIST}
+        </ul>
+    </div>
+    <!-- ENDIF -->
+    <div id="search-menu" class="side-menu">
+        <div style="padding:10px 20px;">
+            <h2>Search</h2>
+			<form action="{S_SEARCH}" method="get">
+				<fieldset>
+					<input type="text" id="search-text" name="q" value="" maxlength="127" />
+					<input type="submit" value="Search" />
+				</fieldset>
+			</form>
+        </div>
+    </div>
+        <!-- IF LOGGED_IN -->
+    <div id="post-menu" class="side-menu">
+        <div style="padding:10px 20px;">
+            <h2>Post status</h2>
+			    <form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
+			        <p><input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+			        <input type="hidden" name="module" value="profile" />
+			        <input type="hidden" name="sub" value="status" /></p>
+			    </form>
+        </div>
+    </div>
+        <!-- ENDIF -->
+    <div id="boxsocial-menu" class="side-menu">
+        <ul class="mobile-list">
+            <li><a href="{U_HOME}" data-theme="" data-icon="home">Home</a></li>
 <!-- IF LOGGED_IN -->
+    		<li><a href="{U_USER_PROFILE}">Me</a></li>
             <li><a href="{U_ACCOUNT}">My Account</a>
             <!-- IF module_list -->
                 <ul>
@@ -91,7 +83,7 @@
             <li><a href="{U_HELP}">Help</a></li>
         </ul>
 
-        <ul data-role="listview" data-inset="true" data-theme="b">
+        <ul class="mobile-list">
             <li>{SITE_TITLE}
                 <ul>
                         <li><a href="{U_ABOUT}">About</a></li>
@@ -116,40 +108,33 @@
         </ul>
         <p><a href="{U_COPYRIGHT}">Copyright</a> &copy; {YEAR} {SITE_TITLE}, Powered By <a href="http://boxsocial.net/">Box Social</a></p>
     </div>
-    <!-- IF PAGE_LIST -->
-    <div data-role="panel" id="pages-menu" data-display="overlay" data-position="right" data-theme="b">
-        <ul data-role="listview" data-inset="true" data-theme="b">
-            <li data-role="divider" data-theme="">Pages</li>
-            {PAGE_LIST}
-        </ul>
-    </div>
-    <!-- ENDIF -->
-    <div data-role="popup" data-position-to="window" id="search-menu" data-theme="a">
-        <div style="padding:10px 20px;">
-            <h2>Search</h2>
-			<form action="{S_SEARCH}" method="get">
-				<fieldset>
-					<input type="text" id="search-text" name="q" value="" maxlength="127" />
-					<input type="submit" value="Search" />
-				</fieldset>
-			</form>
-        </div>
-    </div>
-        <!-- IF LOGGED_IN -->
-    <div data-role="popup" data-position-to="window" id="post-menu" data-theme="a" style="position:fixed">
-        <div style="padding:10px 20px;">
-            <h2>Post status</h2>
-			    <form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
-			        <p><input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
-			        <input type="hidden" name="module" value="profile" />
-			        <input type="hidden" name="sub" value="status" /></p>
-			    </form>
-        </div>
-    </div>
-        <!-- ENDIF -->
+<div id="main-page" onclick="hideSideBar();">
+	<div>
+            <a href="#" id="search-button" onclick="return showSearchBar();"><span>Search</span></a>
+            <!-- IF LOGGED_IN -->
+            <a href="#" id="post-button" onclick="return showPostBar();"><span>Post</span></a>
+            <!-- ENDIF -->
+			<h1 id="page-title"><a href="#" onclick="return showSideBar();"><span>{HEADING}</span></a></h1>
+            <!-- IF SITE_SLOGAN -->
+			<h2 id="sub-title">{SITE_SLOGAN}</h2>
+            <!-- ENDIF -->
+		<div id="mobile-nav">
+			<ul>
+                <!-- IF PAGE_LIST -->
+				<li>
+					<a href="#" onclick="return showPagesBar();">Pages</a>
+				</li>
+                <!-- ENDIF -->
+                <!-- IF TAB_LIST -->
+				<li>
+					<a href="#pages-menu">Pages</a>
+				</li>
+                <!-- ENDIF -->
+			</ul>
+		</div>
+	</div>
 	    <!-- BEGIN head_hook -->
 {head_hook.BODY}
 		<!-- END head_hook -->
-	<div data-role="content" data-theme="a">
-		<div id="body" data-enhance="false">
+		<div id="body">
 

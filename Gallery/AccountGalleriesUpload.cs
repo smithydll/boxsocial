@@ -209,8 +209,10 @@ namespace BoxSocial.Applications.Gallery
 
                     string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
 
-                    GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
+                    GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
                     stream.Close();
+
+                    core.CallingApplication.PublishToFeed(LoggedInMember, parent, newGalleryItem.ItemKey);
 
                     db.CommitTransaction();
 

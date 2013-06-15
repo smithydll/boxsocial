@@ -114,7 +114,7 @@ namespace BoxSocial.FrontEnd
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_active = 1 WHERE user_id = {0} AND user_activate_code = '{1}';",
                         userId, Mysql.Escape(activateKey)));
 
-                    core.Display.ShowMessage("Success", "You have successfully activated your account. You may now [url=\"/sign-in/\"]sign in[/url].");
+                    core.Display.ShowMessage("Success", "You have successfully activated your account. You may now [iurl=\"/sign-in/\"]sign in[/iurl].", ShowMessageOptions.Bbcode);
                     return;
                 }
                 else
@@ -155,13 +155,45 @@ namespace BoxSocial.FrontEnd
                     return;
                 }
             }
-            else if (Request.Form["submit"] == null)
+            else if (core.Http.Form["submit"] == null)
             {
-                prepareNewCaptcha();
+                string emailKey = core.Http.Query["key"];
+                bool continueSignup = false;
+
+                Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
+
+                if (core.Settings.SignupMode == "invite")
+                {
+                    if (keys.Count == 0)
+                    {
+                        continueSignup = false;
+                    }
+                    else
+                    {
+                        continueSignup = true;
+                    }
+                }
+                else
+                {
+                    continueSignup = true;
+                }
+
+                if (continueSignup)
+                {
+                    prepareNewCaptcha();
+                    if (!string.IsNullOrEmpty(emailKey))
+                    {
+                        template.Parse("EMAIL_KEY", emailKey);
+                    }
+                }
+                else
+                {
+                    core.Display.ShowMessage("Invite Only", "Sorry, registration is current on an invite-only basis at the moment. Check back later.");
+                }
             }
             else
             {
-                string emailKey = Request.QueryString["key"];
+                string emailKey = core.Http.Form["key"];
                 bool continueSignup = false;
 
                 Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
@@ -185,9 +217,14 @@ namespace BoxSocial.FrontEnd
                 if (continueSignup)
                 {
                     // submit the form
-                    template.Parse("USERNAME", (string)Request.Form["username"]);
-                    template.Parse("EMAIL", (string)Request.Form["email"]);
-                    template.Parse("CONFIRM_EMAIL", (string)Request.Form["confirm-email"]);
+                    template.Parse("USERNAME", (string)core.Http.Form["username"]);
+                    template.Parse("EMAIL", (string)core.Http.Form["email"]);
+                    template.Parse("CONFIRM_EMAIL", (string)core.Http.Form["confirm-email"]);
+
+                    if (!string.IsNullOrEmpty(emailKey))
+                    {
+                        template.Parse("EMAIL_KEY", emailKey);
+                    }
 
                     DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",
                         Mysql.Escape(session.SessionId)));
@@ -197,54 +234,54 @@ namespace BoxSocial.FrontEnd
                         template.Parse("ERROR", "Captcha is invalid, please try again.");
                         prepareNewCaptcha();
                     }
-                    else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)Request.Form["captcha"]).ToLower())
+                    else if (((string)confirmTable.Rows[0]["confirm_code"]).ToLower() != ((string)core.Http.Form["captcha"]).ToLower())
                     {
                         template.Parse("ERROR", "Captcha is invalid, please try again.");
                         prepareNewCaptcha();
                     }
-                    else if (!BoxSocial.Internals.User.CheckUserNameValid(Request.Form["username"]))
+                    else if (!BoxSocial.Internals.User.CheckUserNameValid(core.Http.Form["username"]))
                     {
                         template.Parse("ERROR", "Username is invalid, you may only use letters, numbers, period, underscores or a dash (a-z, 0-9, '_', '-', '.').");
                         prepareNewCaptcha();
                     }
-                    else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, Request.Form["username"]))
+                    else if (!BoxSocial.Internals.User.CheckUserNameUnique(db, core.Http.Form["username"]))
                     {
                         template.Parse("ERROR", "Username is already taken, please choose another one.");
                         prepareNewCaptcha();
                     }
-                    else if (!BoxSocial.Internals.User.CheckEmailValid(Request.Form["email"]))
+                    else if (!BoxSocial.Internals.User.CheckEmailValid(core.Http.Form["email"]))
                     {
                         template.Parse("ERROR", "You have entered an invalid e-mail address, you must use a valid e-mail address to complete registration.");
                         prepareNewCaptcha();
                     }
-                    else if (!BoxSocial.Internals.User.CheckEmailUnique(core, Request.Form["email"]))
+                    else if (!BoxSocial.Internals.User.CheckEmailUnique(core, core.Http.Form["email"]))
                     {
                         template.Parse("ERROR", "The e-mail address you have entered has already been registered.");
                         prepareNewCaptcha();
                     }
-                    else if (Request.Form["email"] != Request.Form["confirm-email"])
+                    else if (core.Http.Form["email"] != core.Http.Form["confirm-email"])
                     {
                         template.Parse("ERROR", "The e-mail addresses you entered do not match, may sure you have entered your e-mail address correctly.");
                         prepareNewCaptcha();
                     }
-                    else if (Request.Form["password"] != Request.Form["confirm-password"])
+                    else if (core.Http.Form["password"] != core.Http.Form["confirm-password"])
                     {
                         template.Parse("ERROR", "The passwords you entered do not match, make sure you have entered your desired password correctly.");
                         prepareNewCaptcha();
                     }
-                    else if (((string)Request.Form["password"]).Length < 6)
+                    else if (((string)core.Http.Form["password"]).Length < 6)
                     {
                         template.Parse("ERROR", "The password you entered is too short. Please choose a strong password of 6 characters or more.");
                         prepareNewCaptcha();
                     }
-                    else if ((string)Request.Form["agree"] != "true")
+                    else if ((string)core.Http.Form["agree"] != "true")
                     {
                         template.Parse("ERROR", "You must accept the " + core.Settings.SiteTitle + " Terms of Service to register an account.");
                         prepareNewCaptcha();
                     }
                     else
                     {
-                        if (BoxSocial.Internals.User.Register(Core, Request.Form["username"], Request.Form["email"], Request.Form["password"], Request.Form["confirm-password"]) == null)
+                        if (BoxSocial.Internals.User.Register(Core, core.Http.Form["username"], core.Http.Form["email"], core.Http.Form["password"], core.Http.Form["confirm-password"]) == null)
                         {
                             template.Parse("ERROR", "Bad registration details");
                             prepareNewCaptcha();
@@ -255,14 +292,22 @@ namespace BoxSocial.FrontEnd
                             db.UpdateQuery(string.Format("DELETE FROM confirm WHERE confirm_type = 1 AND session_id = '{0}'",
                                 Mysql.Escape(session.SessionId)));
 
+                            // Invite keys are single use
+                            if (!string.IsNullOrEmpty(emailKey))
+                            {
+                                db.UpdateQuery(string.Format("DELETE FROM invite_keys WHERE email_key = '{0}'",
+                                    Mysql.Escape(emailKey)));
+                            }
+
                             //Response.Redirect("/", true);
-                            core.Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a link sent to it.");
+                            core.Display.ShowMessage("Registered", "You have registered. Before you can use your account you must verify your e-mail address by clicking a verification link sent to it.");
                             return; /* stop processing the display of this page */
                         }
                     }
                 }
                 else
                 {
+                    core.Display.ShowMessage("Invite Only", "Sorry, registration is current on an invite-only basis at the moment. Check back later.");
                 }
             }
 

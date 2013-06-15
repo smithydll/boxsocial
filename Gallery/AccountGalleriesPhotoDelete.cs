@@ -134,10 +134,10 @@ namespace BoxSocial.Applications.Gallery
                         Display.ShowMessage("Unauthorised", "You are unauthorised to delete this photo.");
                         return;
                     }*/
-                    catch
+                    catch (Exception ex)
                     {
                         SetRedirectUri(photo.Uri);
-                        core.Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it.");
+                        core.Display.ShowMessage("Cannot Delete Photo", "An Error occured while trying to delete the photo, you may not be authorised to delete it." + ex.ToString());
                         return;
                     }
                 }

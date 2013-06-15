@@ -107,6 +107,9 @@
     <Compile Include="help.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="identicon.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="login.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

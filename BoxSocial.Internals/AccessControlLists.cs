@@ -232,15 +232,15 @@ namespace BoxSocial.Internals
 
                                     VariableCollection grantVariableCollection = permissionVariableCollection.CreateChild("grant");
 
-                                    if (groupsSelectBox.ContainsKey(itemGrant.PrimitiveKey.ToString()))
+                                    if (groupsSelectBox.ContainsKey(gsbk))
                                     {
-                                        string text = groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Text;
+                                        string text = groupsSelectBox[gsbk].Text;
                                         if (text.StartsWith(" -- "))
                                         {
                                             text = text.Substring(4);
                                         }
                                         grantVariableCollection.Parse("DISPLAY_NAME", text);
-                                        groupsSelectBox[itemGrant.PrimitiveKey.ToString()].Selectable = false;
+                                        groupsSelectBox[gsbk].Selectable = false;
                                     }
                                     else
                                     {

@@ -1701,7 +1701,7 @@ ul.feed-list li.feed-item {
     overflow: auto;
 }
 
-ul.feed-list li.feed-item:hover {
+ul.feed-list li.feed-item:hover, ul.feed-list li.feed-item.active {
     background-color: #eeeeee;
     border: 1px solid #dddddd;
     border-top: none;

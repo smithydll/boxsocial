@@ -35,7 +35,7 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Pages
 {
     [DataTable("list_items")]
-    public class ListItem : NumberedItem
+    public class ListItem : NumberedItem, IPermissibleSubItem
     {
         [DataField("list_item_id", DataFieldKeys.Primary)]
         private long listItemId;
@@ -43,8 +43,12 @@ namespace BoxSocial.Applications.Pages
         private long listId;
         [DataField("list_item_text_id")]
         private long listItemTextId;
+        [DataField("user_id", typeof(User))]
+        private long ownerId;
 
         private ListItemText lit;
+        private Primitive owner;
+        private List parent;
 
         public long ListItemId
         {
@@ -83,6 +87,18 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 return lit;
+            }
+        }
+
+        public List Parent
+        {
+            get
+            {
+                if (parent == null || parent.Id != listId)
+                {
+                    parent = new List(core, listId);
+                }
+                return parent;
             }
         }
 
@@ -209,6 +225,28 @@ namespace BoxSocial.Applications.Pages
             get
             {
                 throw new NotImplementedException();
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || owner.Id != ownerId)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.PrimitiveCache[ownerId];
+                    return owner;
+                }
+                return owner;
+            }
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Parent;
             }
         }
     }

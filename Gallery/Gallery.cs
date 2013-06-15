@@ -2249,38 +2249,42 @@ namespace BoxSocial.Applications.Gallery
         {
             string returnValue = string.Empty;
 
-            long galleryItemTypeId = ItemType.GetTypeId(typeof(GalleryItem));
-            List<long> itemIds = new List<long>();
-
-            foreach (ItemKey il in subItems)
+            if (subItems.Count > 0)
             {
-                if (il.TypeId == galleryItemTypeId)
+
+                long galleryItemTypeId = ItemType.GetTypeId(typeof(GalleryItem));
+                List<long> itemIds = new List<long>();
+
+                foreach (ItemKey il in subItems)
                 {
-                    itemIds.Add(il.Id);
+                    if (il.TypeId == galleryItemTypeId)
+                    {
+                        itemIds.Add(il.Id);
+                    }
                 }
-            }
 
-            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
-            query.AddCondition("gallery_item_id", ConditionEquality.In, itemIds);
-            query.AddCondition("gallery_id", Id);
+                SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+                query.AddCondition("gallery_item_id", ConditionEquality.In, itemIds);
+                query.AddCondition("gallery_id", Id);
 
-            DataTable itemDataTable = db.Query(query);
+                DataTable itemDataTable = db.Query(query);
 
-            if (itemDataTable.Rows.Count == 1)
-            {
-                GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
-
-                returnValue += string.Format("[iurl={0}][inline]{1}[/inline][/iurl]",
-                        item.Uri, item.FullPath);
-            }
-            else
-            {
-                foreach (DataRow row in itemDataTable.Rows)
+                if (itemDataTable.Rows.Count == 1)
                 {
-                    GalleryItem item = new GalleryItem(core, Owner, row);
+                    GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
 
-                    returnValue += string.Format("[iurl={0}][thumb]{1}[/thumb][/iurl]",
+                    returnValue += string.Format("[iurl={0}][inline]{1}[/inline][/iurl]",
                             item.Uri, item.FullPath);
+                }
+                else
+                {
+                    foreach (DataRow row in itemDataTable.Rows)
+                    {
+                        GalleryItem item = new GalleryItem(core, Owner, row);
+
+                        returnValue += string.Format("[iurl={0}][thumb]{1}[/thumb][/iurl]",
+                                item.Uri, item.FullPath);
+                    }
                 }
             }
 

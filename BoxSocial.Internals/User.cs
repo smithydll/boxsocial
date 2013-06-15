@@ -295,7 +295,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return "FALSE";
+                    return string.Format("/images/user/_thumb/{0}.png",
+                        userName);
                 }
             }
         }
@@ -314,7 +315,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return "FALSE";
+                    return string.Format("/images/user/_icon/{0}.png",
+                        userName);
                 }
             }
         }
@@ -333,7 +335,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return "FALSE";
+                    return string.Format("/images/user/_tile/{0}.png",
+                        userName);
                 }
             }
         }
@@ -2021,20 +2024,24 @@ namespace BoxSocial.Internals
                 core.Template.Parse("U_BLOCK_USER", core.Hyperlink.BuildBlockUserUri(page.User.UserId));
             }
 
-            string langFriends = (page.User.UserInfo.Friends != 1) ? "friends" : "friend";
-
-            core.Template.Parse("FRIENDS", page.User.UserInfo.Friends.ToString());
-            core.Template.Parse("L_FRIENDS", langFriends);
-
-            List<Friend> friends = page.User.GetFriends(1, 8, null);
-            foreach (UserRelation friend in friends)
+            if (page.User.Access.Can("VIEW_FRIENDS"))
             {
-                VariableCollection friendVariableCollection = core.Template.CreateChild("friend_list");
+                core.Template.Parse("SHOW_FRIENDS", "TRUE");
+                string langFriends = (page.User.UserInfo.Friends != 1) ? "friends" : "friend";
 
-                friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
-                friendVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendVariableCollection.Parse("ICON", friend.UserIcon);
-                friendVariableCollection.Parse("TILE", friend.UserTile);
+                core.Template.Parse("FRIENDS", page.User.UserInfo.Friends.ToString());
+                core.Template.Parse("L_FRIENDS", langFriends);
+
+                List<Friend> friends = page.User.GetFriends(1, 8, null);
+                foreach (UserRelation friend in friends)
+                {
+                    VariableCollection friendVariableCollection = core.Template.CreateChild("friend_list");
+
+                    friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
+                    friendVariableCollection.Parse("U_PROFILE", friend.Uri);
+                    friendVariableCollection.Parse("ICON", friend.UserIcon);
+                    friendVariableCollection.Parse("TILE", friend.UserTile);
+                }
             }
 
             ushort readAccessLevel = page.User.GetAccessLevel(core.Session.LoggedInMember);

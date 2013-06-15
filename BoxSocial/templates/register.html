@@ -25,7 +25,10 @@
 		<dt class="top"></dt>
 		<dd class="top"><input type="submit" value="Register" name="submit" /></dd>
 	</dl>
-	<input type="hidden" id="verification" value="{SID}" />
+	<input type="hidden" id="verification" name="verification" value="{SID}" />
+    <!-- IF EMAIL_KEY -->
+    <input type="hidden" id="key" name="key" value="{EMAIL_KEY}" />
+    <!-- ENDIF -->
 </fieldset>
 </form>
 <!-- INCLUDE page_footer.html -->

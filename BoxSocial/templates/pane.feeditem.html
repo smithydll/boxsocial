@@ -19,7 +19,7 @@
         --><span class="img-button share-item"><a href="{U_SHARE}" onclick="return ShareItem({feed_days_list.feed_item.ID},{feed_days_list.feed_item.TYPE_ID});" title="Share"><span class="sprite share-sprite"></span><span class="shares">{feed_days_list.feed_item.SHARES}</span></a></span><!--
         <!-- ENDIF -->
         <!-- IF feed_days_list.feed_item.COMMENTABLE -->
-        --><span class="img-button comment-item"><a href="#" onclick="return LoadComments({feed_days_list.feed_item.ID}, {feed_days_list.feed_item.TYPE_ID}, $('#feed-comments-{feed_days_list.feed_item.ID}'));" title="Expand comments">Comments<span class="likes">{feed_days_list.feed_item.COMMENTS}</span></a></span><!--
+        --><span class="img-button comment-item"><a href="#" onclick="return toggleStatusComments($(this).parents('.feed-item'), {feed_days_list.feed_item.ID}, {feed_days_list.feed_item.TYPE_ID}, $('#feed-comments-{feed_days_list.feed_item.ID}'));" title="Expand comments">Comments<span class="likes">{feed_days_list.feed_item.COMMENTS}</span></a></span><!--
         <!-- ENDIF -->
         <!-- IF feed_days_list.feed_item.IS_PUBLIC -->
         --><span class="img-button permissions-item" title="{L_PUBLIC}"><span class="perms">{L_PUBLIC}</span></span><!--

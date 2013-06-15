@@ -96,6 +96,8 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeYouTube);
             BbcodeHooks += new BbcodeHookHandler(BbcodeLaTeX);
             BbcodeHooks += new BbcodeHookHandler(BbcodeTwitter);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeSoundcloud);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeInstagram);
             // TODO: flash
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
@@ -520,6 +522,18 @@ namespace BoxSocial.Internals
                 if (domain.ToLower().EndsWith("twitter.com") && path.ToLower().Contains("/status/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[tweet]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/tweet]");
+                    offset += 16;
+                }
+
+                if (domain.ToLower().EndsWith("soundcloud.com") && path.ToLower().Contains("/"))
+                {
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[soundcloud]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 13, "[/soundcloud]");
+                    offset += 16;
+                }
+
+                if (domain.ToLower().EndsWith("instagram.com") && path.ToLower().Contains("/p/"))
+                {
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[instagram]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 12, "[/instagram]");
                     offset += 16;
                 }
             }
@@ -1964,6 +1978,147 @@ namespace BoxSocial.Internals
                     {
                         youTubeUrl = "http://www.youtube.com/watch?v=" + youTubeUrl;
                         e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
+                        e.SuffixText = "</a>";
+                    }
+                    break;
+            }
+        }
+
+        private static void BbcodeInstagram(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "instagram") return;
+
+            e.SetHandled();
+
+            switch (e.Mode)
+            {
+                case BbcodeParseMode.Tldr:
+                    // Preserve
+                    e.AbortParse();
+                    break;
+                case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Normal:
+                    string instagramUrl = e.Contents;
+                    string instagramId = instagramUrl;
+                    //if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+
+                    e.RemoveContents();
+
+                    if (TagAllowed(e.Tag.Tag, e.Options))
+                    {
+                        ContentPreviewCache preview = ContentPreviewCache.GetPreview(e.Core, "instagram.com", instagramId, e.Core.Prose.Language);
+                        string instagram = string.Empty;
+
+                        if (preview != null)
+                        {
+                            instagram = preview.Body;
+                        }
+                        else
+                        {
+                            string apiUri = "http://api.instagram.com/oembed?url=" + HttpUtility.UrlEncode(instagramId) + "&maxwidth=550";
+                            WebClient wc = new WebClient();
+                            string response = wc.DownloadString(apiUri);
+
+                            Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
+
+                            if (strings.ContainsKey("url") && strings.ContainsKey("type") && strings.ContainsKey("title"))
+                            {
+                                if (strings["type"] == "photo")
+                                {
+                                    instagram = "<a href=\"" + instagramUrl + "\"><img src=\"" + strings["url"] + "\" alt=\"" + HttpUtility.HtmlEncode(strings["title"]) + "\" style=\"max-width: 100%;\" /></a>";
+                                }
+                            }
+                            ContentPreviewCache.Create(e.Core, "instagram.com", instagramId, string.Empty, instagram, e.Core.Prose.Language);
+                        }
+
+
+                        if (!string.IsNullOrEmpty(instagram))
+                        {
+                            e.PrefixText = instagram;
+                            e.SuffixText = string.Empty;
+                        }
+                        else
+                        {
+                            e.PrefixText = "<a href=\"" + instagramUrl + "\"><strong>IMG</strong>: ";
+                            e.SuffixText = "</a>";
+                        }
+                    }
+                    else
+                    {
+                        e.PrefixText = "<a href=\"" + instagramUrl + "\"><strong>IMG</strong>: ";
+                        e.SuffixText = "</a>";
+                    }
+                    break;
+            }
+        }
+
+        private static void BbcodeSoundcloud(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "soundcloud") return;
+
+            e.SetHandled();
+
+            switch (e.Mode)
+            {
+                case BbcodeParseMode.Tldr:
+                    // Preserve
+                    e.AbortParse();
+                    break;
+                case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Normal:
+                    string soundcloudUrl = e.Contents;
+                    string soundcloudId = soundcloudUrl;
+                    //if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+
+                    e.RemoveContents();
+
+                    if (TagAllowed(e.Tag.Tag, e.Options))
+                    {
+                        ContentPreviewCache preview = ContentPreviewCache.GetPreview(e.Core, "soundcloud.com", soundcloudId, e.Core.Prose.Language);
+                        string soundcloud = string.Empty;
+
+                        if (preview != null)
+                        {
+                            soundcloud = preview.Body;
+                        }
+                        else
+                        {
+                            string apiUri = "http://soundcloud.com/oembed?format=json&url=" + HttpUtility.UrlEncode(soundcloudId) + "&maxwidth=550&show_comments=false";
+                            WebClient wc = new WebClient();
+                            string response = wc.DownloadString(apiUri);
+
+                            Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
+
+                            if (strings.ContainsKey("html"))
+                            {
+                                soundcloud = strings["html"];
+                            }
+                            ContentPreviewCache.Create(e.Core, "soundcloud.com", soundcloudId, string.Empty, soundcloud, e.Core.Prose.Language);
+                        }
+
+
+                        if (!string.IsNullOrEmpty(soundcloud))
+                        {
+                            e.PrefixText = "</p>" + soundcloud + "<p>";
+                            e.SuffixText = string.Empty;
+                        }
+                        else
+                        {
+                            e.PrefixText = "<a href=\"" + soundcloudUrl + "\"><strong>IMG</strong>: ";
+                            e.SuffixText = "</a>";
+                        }
+                    }
+                    else
+                    {
+                        e.PrefixText = "<a href=\"" + soundcloudUrl + "\"><strong>IMG</strong>: ";
                         e.SuffixText = "</a>";
                     }
                     break;

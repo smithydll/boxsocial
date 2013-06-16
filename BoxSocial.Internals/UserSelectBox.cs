@@ -203,8 +203,11 @@ namespace BoxSocial.Internals
                     if (limit > 0)
                     {
                         long id = core.PrimitiveCache.LoadUserProfile(username);
-                        userIds.Add(id);
-                        limit--;
+                        if (id > 0)
+                        {
+                            userIds.Add(id);
+                            limit--;
+                        }
                     }
                     else
                     {

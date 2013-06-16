@@ -90,6 +90,9 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
+            Response.Cache.SetCacheability(HttpCacheability.Public);
+            Response.Cache.SetMaxAge(new TimeSpan(180, 0, 0, 0, 0));
+            Response.Cache.SetLastModified(new DateTime(2000, 1, 1));
             Response.ContentType = "image/png";
             Response.Clear();
 

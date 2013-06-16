@@ -164,11 +164,11 @@ namespace BoxSocial.Applications.Profile
 
             if (!isFriend)
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend.", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Hyperlink.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] wants to add you as a friend", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Hyperlink.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
             }
             else
             {
-                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] accepted your friendship.", LoggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(friendProfile, string.Format("[user]{0}[/user] accepted your friendship", LoggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", LoggedInMember.Id), emailTemplate);
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",

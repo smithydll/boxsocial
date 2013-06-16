@@ -346,6 +346,7 @@ namespace BoxSocial.Applications.Calendar
 
                     emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
                     emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+                    emailTemplate.Parse("TO_NAME", invitee.DisplayName);
                     emailTemplate.Parse("FROM_NAME", user.DisplayName);
                     emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
                     emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
@@ -354,7 +355,7 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
                     emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
-                    core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                    core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                 }
@@ -407,7 +408,7 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
                         emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
-                        core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}.",
+                        core.CallingApplication.SendNotification(invitee, string.Format("{0} has invited you to {1}",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                     }

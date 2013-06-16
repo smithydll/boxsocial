@@ -144,7 +144,7 @@ namespace BoxSocial.Applications.Profile
                         emailTemplate.Parse("U_PROFILE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
                         emailTemplate.Parse("U_OPTOUT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildOptOutUri(emailKey))));
 
-                        core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle + ".", LoggedInMember.DisplayName), emailTemplate);
+                        core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle, LoggedInMember.DisplayName), emailTemplate);
 
                         db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_time_ut) VALUES ('{0}', 1, '{1}', {2});",
                             Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail)), Mysql.Escape(UnixTime.UnixTimeStamp().ToString())));
@@ -208,7 +208,7 @@ namespace BoxSocial.Applications.Profile
                             emailTemplate.Parse("U_PROFILE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Session.LoggedInMember.ProfileUri)));
                             emailTemplate.Parse("U_OPTOUT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildOptOutUri(emailKey))));
 
-                            core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle + ".", LoggedInMember.DisplayName), emailTemplate);
+                            core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle, LoggedInMember.DisplayName), emailTemplate);
 
                             db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
                                 Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
@@ -251,7 +251,7 @@ namespace BoxSocial.Applications.Profile
                                     emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                                     emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
-                                    core.Email.SendEmail(friendProfile.UserInfo.PrimaryEmail, string.Format("{0} added you as a friend on " + core.Settings.SiteTitle + ".", LoggedInMember.DisplayName), emailTemplate);
+                                    core.Email.SendEmail(friendProfile.UserInfo.PrimaryEmail, string.Format("{0} added you as a friend on " + core.Settings.SiteTitle, LoggedInMember.DisplayName), emailTemplate);
                                 }
                             }
                         }

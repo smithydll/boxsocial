@@ -275,14 +275,21 @@ namespace BoxSocial.Internals
                 return pid.Id;
             }
 
-            User newUser = new User(core, username, UserLoadOptions.All);
-            PrimitiveId id = new PrimitiveId(newUser.Id, ItemKey.GetTypeId(typeof(User)));
-            if (!primitivesCached.ContainsKey(id))
+            try
             {
-                primitivesCached.Add(id, newUser);
-            }
+                User newUser = new User(core, username, UserLoadOptions.All);
+                PrimitiveId id = new PrimitiveId(newUser.Id, ItemKey.GetTypeId(typeof(User)));
+                if (!primitivesCached.ContainsKey(id))
+                {
+                    primitivesCached.Add(id, newUser);
+                }
 
-            return newUser.Id;
+                return newUser.Id;
+            }
+            catch (InvalidUserException)
+            {
+                return 0;
+            }
         }
 
         private void loadBatchedIds(long typeId, long requestedId)

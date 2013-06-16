@@ -560,13 +560,15 @@ namespace BoxSocial.Networks
 
             if (networkInfo.RequireConfirmation)
             {
-                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
+                Template emailTemplate = new Template(core.Http.TemplateEmailPath, "join_network.html");
 
+                emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("S_EMAIL", member.MemberEmail);
 
-                core.Email.SendEmail(member.MemberEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                core.Email.SendEmail(member.MemberEmail, core.Settings.SiteTitle + " Network Registration Confirmation", emailTemplate);
             }
         }
 
@@ -682,13 +684,15 @@ namespace BoxSocial.Networks
 
                 UserEmail registrationEmail = UserEmail.Create(core, newMember, networkEmail, emailType, true);
 
-                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "join_network.eml");
+                Template emailTemplate = new Template(core.Http.TemplateEmailPath, "join_network.html");
 
+                emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                 emailTemplate.Parse("TO_NAME", member.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("S_EMAIL", networkEmail);
 
-                core.Email.SendEmail(networkEmail, "ZinZam Network Registration Confirmation", emailTemplate.ToString());
+                core.Email.SendEmail(networkEmail, core.Settings.SiteTitle + " Network Registration Confirmation", emailTemplate);
             }
 
             return newMember;

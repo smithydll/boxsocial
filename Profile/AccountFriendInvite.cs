@@ -136,7 +136,7 @@ namespace BoxSocial.Applications.Profile
                         }
 
                         emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                        emailTemplate.Parse("U_SITE", core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri()));
+                        emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                         emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                         emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                         emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
@@ -200,7 +200,7 @@ namespace BoxSocial.Applications.Profile
                             Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_invitation.html");
 
                             emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                            emailTemplate.Parse("U_SITE", core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri()));
+                            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                             emailTemplate.Parse("FROM_EMAIL", LoggedInMember.UserInfo.PrimaryEmail);
                             emailTemplate.Parse("FROM_NAMES", LoggedInMember.DisplayNameOwnership);
@@ -243,15 +243,15 @@ namespace BoxSocial.Applications.Profile
                                 // only send a notification if they have subscribed to them
                                 if (friendProfile.UserInfo.EmailNotifications)
                                 {
-                                    RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_notification.eml");
+                                    Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_notification.html");
 
+                                    emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                                    emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                                     emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
                                     emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
                                     emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
 
-                                    core.Email.SendEmail(friendProfile.UserInfo.PrimaryEmail, string.Format("{0} added you as a friend on " + core.Settings.SiteTitle + ".",
-                                        LoggedInMember.DisplayName),
-                                        emailTemplate.ToString());
+                                    core.Email.SendEmail(friendProfile.UserInfo.PrimaryEmail, string.Format("{0} added you as a friend on " + core.Settings.SiteTitle + ".", LoggedInMember.DisplayName), emailTemplate);
                                 }
                             }
                         }

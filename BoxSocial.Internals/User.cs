@@ -1258,14 +1258,16 @@ namespace BoxSocial.Internals
             string activateUri = string.Format("{0}register/?mode=activate&id={1}&key={2}",
                 Hyperlink.Uri, userId, activateKey);
 
-            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "registration_welcome.eml");
+            Template emailTemplate = new Template(core.Http.TemplateEmailPath, "registration_welcome.html");
 
+            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
             emailTemplate.Parse("TO_NAME", userName);
             emailTemplate.Parse("U_ACTIVATE", activateUri);
             emailTemplate.Parse("USERNAME", userName);
             emailTemplate.Parse("PASSWORD", passwordClearText);
 
-            core.Email.SendEmail(eMail, "Activate your account. Welcome to " + core.Settings.SiteTitle, emailTemplate.ToString());
+            core.Email.SendEmail(eMail, "Activate your account. Welcome to " + core.Settings.SiteTitle, emailTemplate);
 
             Access.CreateAllGrantsForOwner(core, newUser);
             Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");

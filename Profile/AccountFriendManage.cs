@@ -154,8 +154,10 @@ namespace BoxSocial.Applications.Profile
 
             ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
 
-            RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "friend_notification.eml");
+            Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_notification.html");
 
+            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
             emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
             emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
             emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);

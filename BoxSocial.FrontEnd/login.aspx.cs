@@ -142,13 +142,16 @@ namespace BoxSocial.FrontEnd
 
                                 // send the e-mail
 
-                                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "new_password.eml");
+                                Template emailTemplate = new Template(core.Http.TemplateEmailPath, "new_password.html");
+
+                                emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                                emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                                 emailTemplate.Parse("TO_NAME", userEmail.Owner.DisplayName);
                                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                                 emailTemplate.Parse("USERNAME", userEmail.Owner.UserName);
                                 emailTemplate.Parse("PASSWORD", newPassword);
 
-                                core.Email.SendEmail(userEmail.Email, "Password Reset", emailTemplate.ToString());
+                                core.Email.SendEmail(userEmail.Email, core.Settings.SiteTitle + " Password Reset", emailTemplate);
 
                                 core.Display.ShowMessage("Password reset", "You have been sent an e-mail to the address you entered with your new password. You will need to click the confirmation link before you can sign in");
                                 return;

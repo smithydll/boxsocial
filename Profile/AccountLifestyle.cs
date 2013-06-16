@@ -187,7 +187,7 @@ namespace BoxSocial.Applications.Profile
                     {
                         ApplicationEntry ae = new ApplicationEntry(core, LoggedInMember, "Profile");
 
-                        RawTemplate atpl = new RawTemplate(core.Http.TemplateEmailPath, "user_relationship_notification.eml");
+                        RawTemplate atpl = new RawTemplate(core.Http.TemplateEmailPath, "user_relationship_notification.html");
 
                         atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
                         atpl.Parse("U_CONFIRM", core.Hyperlink.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId));

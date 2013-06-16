@@ -89,5 +89,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        string Noun
+        {
+            get;
+        }
     }
 }

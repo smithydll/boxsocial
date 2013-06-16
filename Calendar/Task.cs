@@ -530,6 +530,14 @@ namespace BoxSocial.Applications.Calendar
         {
             return permission;
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "task";
+            }
+        }
     }
 
     public class InvalidTaskException : InvalidItemException

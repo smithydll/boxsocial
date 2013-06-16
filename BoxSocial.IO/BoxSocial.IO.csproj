@@ -59,6 +59,9 @@
     <Reference Include="openstacknet">
       <HintPath>..\packages\openstack.net.1.1.0.2\lib\net40\openstacknet.dll</HintPath>
     </Reference>
+    <Reference Include="RestSharp">
+      <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SimpleRESTServices">
       <HintPath>..\packages\SimpleRESTServices.1.0.6.3\lib\net40\SimpleRESTServices.dll</HintPath>
     </Reference>
@@ -69,6 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AmazonS3.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="Mailgun.cs" />
+    <Compile Include="Smtp.cs" />
     <Compile Include="Rackspace.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />
     <Compile Include="ImageMagick.cs" />

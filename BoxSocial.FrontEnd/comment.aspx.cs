@@ -53,6 +53,7 @@ namespace BoxSocial.FrontEnd
             ICommentableItem thisItem = null;
             long commentId = -1;
             bool isAjax = false;
+            ApplicationEntry ae = null;
 
             if (Request["ajax"] == "true")
             {
@@ -137,7 +138,6 @@ namespace BoxSocial.FrontEnd
                 try
                 {
                     // This isn't the most elegant fix, but it works
-                    ApplicationEntry ae = null;
                     if (core.IsPrimitiveType(itemTypeId))
                     {
                         ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
@@ -271,7 +271,6 @@ namespace BoxSocial.FrontEnd
                     try
                     {
                         // This isn't the most elegant fix, but it works
-                        ApplicationEntry ae = null;
                         if (core.IsPrimitiveType(itemTypeId))
                         {
                             ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
@@ -356,7 +355,6 @@ namespace BoxSocial.FrontEnd
             try
             {
                 // This isn't the most elegant fix, but it works
-                ApplicationEntry ae = null;
                 if (core.IsPrimitiveType(itemTypeId))
                 {
                     ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
@@ -422,6 +420,8 @@ namespace BoxSocial.FrontEnd
             {
                 commentObject = Comment.Create(Core, itemKey, comment);
                 commentId = commentObject.CommentId;
+
+                ae.PublishToFeed(core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId));
 
                 Comment.Commented(core, itemKey);
             }

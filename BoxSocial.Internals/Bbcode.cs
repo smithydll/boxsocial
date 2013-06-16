@@ -2091,7 +2091,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            string apiUri = "http://soundcloud.com/oembed?format=json&url=" + HttpUtility.UrlEncode(soundcloudId) + "&maxwidth=550&show_comments=false";
+                            string apiUri = "http://soundcloud.com/oembed?format=json&url=" + HttpUtility.UrlEncode(soundcloudId) + "&show_comments=false";
                             WebClient wc = new WebClient();
                             string response = wc.DownloadString(apiUri);
 

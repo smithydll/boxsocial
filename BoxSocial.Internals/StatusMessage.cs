@@ -524,6 +524,14 @@ namespace BoxSocial.Internals
         {
             return ShareString;
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "status";
+            }
+        }
     }
 
     public class InvalidStatusMessageException : Exception

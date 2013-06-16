@@ -2290,6 +2290,14 @@ namespace BoxSocial.Applications.Gallery
 
             return returnValue;
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "photo gallery";
+            }
+        }
     }
 
     /// <summary>

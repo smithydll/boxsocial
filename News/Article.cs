@@ -284,6 +284,14 @@ namespace BoxSocial.Applications.News
         {
             throw new NotImplementedException();
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "article";
+            }
+        }
     }
 
     public class InvalidArticleException : Exception

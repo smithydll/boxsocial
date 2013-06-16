@@ -2799,6 +2799,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public string Noun
+        {
+            get
+            {
+                return "photo";
+            }
+        }
+
         #endregion
 
         public long Likes

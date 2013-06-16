@@ -1171,6 +1171,7 @@ namespace BoxSocial.Internals
             query.AddField("user_status_messages", 0);
             query.AddField("user_show_bbcode", 0x07);
             query.AddField("user_show_custom_styles", true);
+            query.AddField("user_email_notifications", true);
             query.AddField("user_new_password", "");
             query.AddField("user_last_visit_ut", -30610224000L);
             query.AddField("user_language", "en");
@@ -2580,6 +2581,14 @@ namespace BoxSocial.Internals
             }
 
             return template;
+        }
+
+        public string Noun
+        {
+            get
+            {
+                return "guest book";
+            }
         }
     }
 

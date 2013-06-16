@@ -1013,11 +1013,6 @@ namespace BoxSocial.Internals
             PublishToFeed(owner, item, new List<ItemKey>());
         }
 
-        private void PublishToFeed(User owner, ItemKey item, string title, string message)
-        {
-            PublishToFeed(owner, item, title, message, new List<ItemKey>());
-        }
-
         public void PublishToFeed(User owner, IActionableItem item, ItemKey subItem)
         {
             if (subItem != null)
@@ -1112,94 +1107,6 @@ namespace BoxSocial.Internals
                     iquery.AddField("action_item_type_id", itemKey.TypeId);
                     iquery.AddField("action_title", item.Action);
                     iquery.AddField("action_body", item.GetActionBody(subItems));
-                    iquery.AddField("action_application", applicationId);
-                    iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
-
-                    long actionId = db.Query(iquery);
-
-                    if (subItems != null)
-                    {
-                        foreach (ItemKey subItem in subItems)
-                        {
-                            iquery = new InsertQuery(typeof(ActionItem));
-                            iquery.AddField("action_id", actionId);
-                            iquery.AddField("item_id", subItem.Id);
-                            iquery.AddField("item_type_id", subItem.TypeId);
-
-                            db.Query(iquery);
-                        }
-                    }
-                }
-            }
-        }
-
-        private void PublishToFeed(User owner, ItemKey item, string title, string message, List<ItemKey> subItems)
-        {
-            ItemKey itemKey = item;
-            if (title.Length > 63)
-            {
-                title = title.Substring(0, 63);
-            }
-
-            if (message.Length > 511)
-            {
-                message = message.Substring(0, 511);
-            }
-
-            SelectQuery query = new SelectQuery(typeof(Action));
-            query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
-            query.AddCondition("action_primitive_id", owner.ItemKey.Id);
-            query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
-            query.AddCondition("action_application", applicationId);
-            query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
-            
-            // maximum 10 per application per day
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
-            {
-
-                query = new SelectQuery(typeof(Action));
-                query.AddCondition("action_primitive_id", owner.ItemKey.Id);
-                query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
-                query.AddCondition("action_item_id", itemKey.Id);
-                query.AddCondition("action_item_type_id", itemKey.TypeId);
-                query.AddCondition("action_application", applicationId);
-                query.AddCondition("action_time_ut", ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
-
-                DataTable actionDataTable = db.Query(query);
-
-                if (actionDataTable.Rows.Count == 1)
-                {
-                    Action action = new Action(core, owner, actionDataTable.Rows[0]);
-                    UpdateQuery uquery = new UpdateQuery(typeof(Action));
-                    uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
-                    uquery.AddField("action_title", title);
-                    uquery.AddField("action_body", message);
-                    uquery.AddCondition("action_id", action.Id);
-
-                    db.Query(uquery);
-
-                    if (subItems != null)
-                    {
-                        foreach (ItemKey subItem in subItems)
-                        {
-                            InsertQuery iquery = new InsertQuery(typeof(ActionItem));
-                            iquery.AddField("action_id", action.Id);
-                            iquery.AddField("item_id", subItem.Id);
-                            iquery.AddField("item_type_id", subItem.TypeId);
-
-                            db.Query(iquery);
-                        }
-                    }
-                }
-                else
-                {
-                    InsertQuery iquery = new InsertQuery(typeof(Action));
-                    iquery.AddField("action_primitive_id", owner.ItemKey.Id);
-                    iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
-                    iquery.AddField("action_item_id", itemKey.Id);
-                    iquery.AddField("action_item_type_id", itemKey.TypeId);
-                    iquery.AddField("action_title", title);
-                    iquery.AddField("action_body", message);
                     iquery.AddField("action_application", applicationId);
                     iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
 
@@ -1538,6 +1445,14 @@ namespace BoxSocial.Internals
         public override string StoreFile(MemoryStream file)
         {
             return core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), file);
+        }
+
+        public string Noun
+        {
+            get
+            {
+                return "guest book";
+            }
         }
     }
 

@@ -368,6 +368,30 @@ namespace BoxSocial.Musician
                 return releaseRatings;
             }
         }
+
+        public string Noun
+        {
+            get
+            {
+                switch (ReleaseType)
+                {
+                    case BoxSocial.Musician.ReleaseType.Album:
+                        return "album";
+                    case BoxSocial.Musician.ReleaseType.Compilation:
+                        return "compilation";
+                    case BoxSocial.Musician.ReleaseType.Demo:
+                        return "demo";
+                    case BoxSocial.Musician.ReleaseType.DVD:
+                        return "DVD";
+                    case BoxSocial.Musician.ReleaseType.EP:
+                        return "EP";
+                    case BoxSocial.Musician.ReleaseType.Single:
+                        return "single";
+                    default:
+                        return "release";
+                }
+            }
+        }
     }
 
     public class InvalidReleaseException : Exception

@@ -1,0 +1,27 @@
+﻿<h3>{L_DELETE_FORUM}</h3>
+
+<!-- IF ERROR -->
+<p class="error">{ERROR}</p>
+<!-- ENDIF -->
+
+<form action="{S_ACCOUNT}" method="post">
+  <fieldset>
+    <legend>{L_DELETE_FORUM}</legend>
+    <dl>
+      <dt>
+        <label for="type">{L_TOPICS_MOVETO_FORUM}</label>
+      </dt>
+      <dd>
+        {S_FORUM_PARENT}
+      </dd>
+      <dt></dt>
+      <dd>
+        <input type="submit" name="save" value="{L_DELETE}" />
+      </dd>
+    </dl>
+    <input type="hidden" name="module" value="forum" />
+    <input type="hidden" name="sub" value="forum" />
+    <input type="hidden" name="mode" value="delete" />
+    <input type="hidden" name="id" value="{S_ID}" />
+  </fieldset>
+</form>

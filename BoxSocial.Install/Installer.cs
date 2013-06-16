@@ -2259,10 +2259,11 @@ namespace BoxSocial.Install
 			iQuery.AddField("user_active", 1);
 			iQuery.AddField("user_alternate_email", email);
 			iQuery.AddField("user_home_page", "/profile");
-			iQuery.AddField("user_show_custom_styles", 1);
-			iQuery.AddField("user_email_notifications", 1);
+			iQuery.AddField("user_show_custom_styles", true);
+			iQuery.AddField("user_email_notifications", true);
 			iQuery.AddField("user_show_bbcode", 0x07);
 			iQuery.AddField("user_bytes", 0);
+            iQuery.AddField("user_language", "en");
 			
 			core.Db.Query(iQuery);
 			

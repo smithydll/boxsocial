@@ -259,7 +259,7 @@ namespace BoxSocial.Internals
             core.Bbcode = new Bbcode(core);
             core.Functions = new Functions(core);
             core.Display = new Display(core);
-            core.Email = new Email(core);
+
             core.Ajax = new Ajax(core);
             core.Hyperlink = new Hyperlink(core);
 
@@ -291,6 +291,15 @@ namespace BoxSocial.Internals
 
             core.Session = session;
             core.CoreDomain = AppDomain.CurrentDomain;
+
+            if (core.Settings.MailProvider == "smtp")
+            {
+                core.Email = new Smtp(WebConfigurationManager.AppSettings["boxsocial-host"], WebConfigurationManager.AppSettings["smtp-server"], core.LoggedInMemberId, (core.Session.IsLoggedIn ? core.Session.LoggedInMember.UserName : string.Empty), core.Session.IPAddress.ToString(), WebConfigurationManager.AppSettings["email"], core.Settings.SiteTitle);
+            }
+            else if (core.Settings.MailProvider == "mailgun")
+            {
+                core.Email = new Mailgun(WebConfigurationManager.AppSettings["mailgun-uri"], WebConfigurationManager.AppSettings["mailgun-apikey"], WebConfigurationManager.AppSettings["mailgun-domain"], WebConfigurationManager.AppSettings["email"], core.Settings.SiteTitle);
+            }
 
             // Ensure that core applications are loaded
             Stopwatch load = new Stopwatch();

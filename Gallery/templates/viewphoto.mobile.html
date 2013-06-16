@@ -108,12 +108,12 @@
       <!-- END user_tags -->
       -->
     </script>
-    <div data-role="popup" id="hd" data-overlay-theme="a" data-theme="b" data-corners="false" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">
+    <div id="mobile-hd">
         <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img class="popphoto" src="{PHOTO_MOBILE}" style="max-height: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" alt="Photo">
     </div>
     <dl>
       <dt style="text-align: center;">
-        <a href="#hd" data-rel="popup" data-position-to="window" data-transition=""><img id="photo-mobile" src="{PHOTO_MOBILE}" alt="Photo" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" /></a>
+        <a href="#" onclick="$('#mobile-hd').dialog(); return false;"><img id="photo-mobile" src="{PHOTO_MOBILE}" alt="Photo" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" /></a>
       </dt>
       <!-- IF HAS_USER_TAGS -->
       <dd>
@@ -134,7 +134,7 @@
       <!-- ENDIF -->
     </dl>
     <!-- IF OWNER -->
-    <div data-role="popup" id="photo-menu">
+    <div id="photo-menu">
         <ul data-role="listview">
             <li><a href="{U_EDIT}">Edit</a></li>
             <li><a href="{U_MARK_DISPLAY_PIC}">Set as My Picture</a></li>
@@ -142,7 +142,7 @@
             <li data-icon="back"><a href="{U_ROTATE_LEFT}" title="Rotate Left">Rotate left</a></li>
             <li data-icon="forward"><a href="{U_ROTATE_RIGHT}" title="Rotate Right">Rotate Right</a></li>
             <li data-icon="delete"><a href="{U_DELETE}" title="Delete Photo">Delete</a></li>
-            <li><a href="{U_TAG}" title="Tag Photo">Tag</a></li>
+            <!--li><a href="{U_TAG}" title="Tag Photo">Tag</a></li-->
         </ul>
     </div>
     <!-- ENDIF -->

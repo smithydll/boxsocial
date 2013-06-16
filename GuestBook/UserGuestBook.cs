@@ -98,5 +98,13 @@ namespace BoxSocial.Applications.GuestBook
         }
 
         #endregion
+
+        public string Noun
+        {
+            get
+            {
+                return "guest book";
+            }
+        }
     }
 }

@@ -243,7 +243,7 @@ namespace BoxSocial.Applications.Calendar
                 {
                     if (!string.IsNullOrEmpty(inviteeUsername))
                     {
-                        if (Email.IsEmailAddress(inviteeUsername))
+                        if (core.Email.IsEmailAddress(inviteeUsername))
                         {
                             inviteesEmailsList.Add(inviteeUsername);
                         }

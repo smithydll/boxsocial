@@ -501,6 +501,14 @@ namespace BoxSocial.Musician
                 return gigRatings;
             }
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "gig";
+            }
+        }
     }
 
     public class InvalidGigException : InvalidItemException

@@ -1235,6 +1235,7 @@ ul#group-members li.member div.frame ul.actions li {
 	background-color: #333333;
 	color: #FFFFFF;
 	padding-left: 180px;
+	min-height: 100px;
 	/*overflow: hidden;*/
 }
 

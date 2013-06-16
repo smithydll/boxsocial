@@ -47,6 +47,18 @@
 	</div>
     <!-- ENDIF -->
 
+    <div class="infinite">
+        <ul id="today-feeds">
+        <li class="today-feed">
+<!-- INCLUDE pane.feeditem.html -->
+        </li>
+        </ul>
+
+	<!-- IF PAGINATION -->
+	<p>{PAGINATION}<a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $(this).parent().siblings('.status-feed'));">{L_LOAD_MORE}</a></p>
+	<!-- ENDIF -->
+    </div>
+
     </div>
 
 <!-- INCLUDE page_footer.html -->

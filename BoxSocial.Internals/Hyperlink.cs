@@ -123,6 +123,12 @@ namespace BoxSocial.Internals
                 member.UriStub));
         }
 
+        public string BuildCombinedFeedUri(User member)
+        {
+            return AppendSid(string.Format("{0}feed",
+                member.UriStub));
+        }
+
         public string BuildListsUri(User member)
         {
             return AppendSid(string.Format("{0}lists",
@@ -484,9 +490,14 @@ namespace BoxSocial.Internals
             return AppendCoreSid("/register");
         }
 
+        public string BuildRegisterUri(string key)
+        {
+            return AppendCoreSid("/register?key=" + key);
+        }
+
         public string BuildOptOutUri(string emailKey)
         {
-            return AppendCoreSid("/register/?mode=optout&key=" + emailKey);
+            return AppendCoreSid("/register?mode=optout&key=" + emailKey);
         }
 
         public string BuildHelpUri()

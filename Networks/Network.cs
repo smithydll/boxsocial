@@ -1149,6 +1149,14 @@ namespace BoxSocial.Networks
         {
             return core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), file);
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "guest book";
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

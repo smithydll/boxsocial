@@ -46,6 +46,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string MailProvider
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["mail-provider"];
+            }
+        }
+
         public string StorageProvider
         {
             get

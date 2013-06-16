@@ -57,6 +57,10 @@ namespace BoxSocial.Internals
             {
                 itemsCached.Add(itemKey, item);
             }
+            if (batchedItemIds.Contains(itemKey))
+            {
+                batchedItemIds.Remove(itemKey);
+            }
         }
 
         public void RequestItem(ItemKey itemKey)

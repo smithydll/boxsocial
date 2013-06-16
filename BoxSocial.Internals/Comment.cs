@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
 {
 
     [DataTable("comments")]
-    public sealed class Comment : NumberedItem, ILikeableItem, IShareableItem, IPermissibleSubItem
+    public sealed class Comment : NumberedItem, ILikeableItem, IShareableItem, IPermissibleSubItem, IActionableItem
     {
         // TODO: 1023 max length
         public const int COMMENT_MAX_LENGTH = 1023;
@@ -444,7 +444,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                throw new NotImplementedException();
+                return CommentedItem.Uri;
             }
         }
 
@@ -469,6 +469,18 @@ namespace BoxSocial.Internals
             get
             {
                 return PermissiveParent.Owner;
+            }
+        }
+
+        public ICommentableItem CommentedItem
+        {
+            get
+            {
+                if (item == null || item.ItemKey.Id != CommentedItemKey.Id || item.ItemKey.TypeId != CommentedItemKey.TypeId)
+                {
+                    item = (ICommentableItem)NumberedItem.Reflect(core, CommentedItemKey);
+                }
+                return item;
             }
         }
 
@@ -551,6 +563,20 @@ namespace BoxSocial.Internals
             {
                 return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", CommentedItemKey.Id, CommentedItemKey.TypeId), true);
             }
+        }
+
+
+        public string Action
+        {
+            get
+            {
+                return "commented on " + CommentedItem.Owner.DisplayNameOwnership + " " + CommentedItem.Noun;
+            }
+        }
+
+        public string GetActionBody(List<ItemKey> subItems)
+        {
+            return ShareString;
         }
     }
 

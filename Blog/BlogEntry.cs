@@ -831,6 +831,14 @@ namespace BoxSocial.Applications.Blog
         {
             return ShareString;
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "blog";
+            }
+        }
     }
 
     /// <summary>

@@ -900,6 +900,14 @@ namespace BoxSocial.Applications.Calendar
 
             return false;
         }
+
+        public string Noun
+        {
+            get
+            {
+                return "event";
+            }
+        }
     }
 
     public class InvalidEventException : InvalidItemException

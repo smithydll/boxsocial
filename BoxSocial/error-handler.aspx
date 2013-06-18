@@ -1,1 +1,1 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.error_handler" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.error_handler" %>

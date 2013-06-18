@@ -24,8 +24,35 @@ using System.Text;
 
 namespace BoxSocial.IO
 {
+    internal sealed class QueryStub
+    {
+        private string stub;
+
+        internal string Stub
+        {
+            get
+            {
+                return stub;
+            }
+        }
+
+        internal QueryStub(string stub)
+        {
+            this.stub = stub;
+        }
+    }
+
     public abstract class Query
     {
+
+        public static Query FromStub(Type type, string stub)
+        {
+            if (stub.StartsWith("SELECT"))
+            {
+                return new SelectQuery(type, new QueryStub(stub));
+            }
+            throw new Exception("Not a valid Query");
+        }
 
         public static string ObjectToSql(object value)
         {

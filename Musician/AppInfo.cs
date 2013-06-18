@@ -36,7 +36,7 @@ namespace BoxSocial.Musician
         public AppInfo(Core core)
             : base(core)
         {
-            core.AddPrimitiveType(typeof(Musician));
+            //core.AddPrimitiveType(typeof(Musician));
         }
 
         public override string Title

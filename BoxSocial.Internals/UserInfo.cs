@@ -60,7 +60,7 @@ namespace BoxSocial.Internals
         private string profileHomepage;
         [DataField("user_blog_subscriptions")]
         private long blogSubscriptions;
-        [DataField("user_icon")]
+        [DataField("user_icon", DataFieldKeys.Index)]
         private long displayPictureId;
         [DataField("user_cover")]
         private long coverPhotoId;

@@ -36,6 +36,12 @@ namespace BoxSocial.FrontEnd
 {
     public partial class captcha : TPage
     {
+        public captcha()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Request.QueryString["sid"] != session.SessionId)

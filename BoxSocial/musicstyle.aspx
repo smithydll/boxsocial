@@ -1,1 +1,1 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.musicstyle" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.musicstyle" %>

@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Gallery
                 GalleryItem ugi = new GalleryItem(core, LoggedInMember, pictureId);
 
                 // check for public view permissions on the image
-                if (true)
+                if (ugi.PermissiveParent.Access.IsPublic())
                 {
 
                     LoggedInMember.UserInfo.DisplayPictureId = pictureId;

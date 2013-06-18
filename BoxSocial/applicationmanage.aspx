@@ -1,1 +1,1 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.applicationmanage" ValidateRequest="false" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.applicationmanage" ValidateRequest="false" %>

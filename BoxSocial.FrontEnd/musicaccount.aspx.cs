@@ -48,6 +48,8 @@ namespace BoxSocial.FrontEnd
         public musicaccount()
             : base("account_master.html")
         {
+            this.Load += new EventHandler(Page_Load);
+
             BeginMusicianPage();
         }
 

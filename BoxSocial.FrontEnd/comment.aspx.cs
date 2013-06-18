@@ -42,6 +42,7 @@ namespace BoxSocial.FrontEnd
         public comment()
             : base("")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -192,6 +193,20 @@ namespace BoxSocial.FrontEnd
                     }
 
                     if (((IPermissibleItem)thisItem).Access.Can("COMMENT"))
+                    {
+                        template.Parse("CAN_COMMENT", "TRUE");
+                    }
+                }
+
+                if (thisItem is IPermissibleSubItem)
+                {
+                    if (!((IPermissibleSubItem)thisItem).PermissiveParent.Access.Can("VIEW"))
+                    {
+                        core.Ajax.ShowMessage(isAjax, "accessDenied", "Access Denied", "The you do not have access to these comments");
+                        return;
+                    }
+
+                    if (((IPermissibleSubItem)thisItem).PermissiveParent.Access.Can("COMMENT"))
                     {
                         template.Parse("CAN_COMMENT", "TRUE");
                     }
@@ -395,6 +410,10 @@ namespace BoxSocial.FrontEnd
                     {
                         pItem = (IPermissibleItem)item;
                     }
+                    else if (item is IPermissibleSubItem)
+                    {
+                        pItem = ((IPermissibleSubItem)item).PermissiveParent;
+                    }
                     else
                     {
                         pItem = thisItem.Owner;
@@ -421,7 +440,17 @@ namespace BoxSocial.FrontEnd
                 commentObject = Comment.Create(Core, itemKey, comment);
                 commentId = commentObject.CommentId;
 
-                ae.PublishToFeed(core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId));
+                if (item != null)
+                {
+                    if (item is IActionableItem)
+                    {
+                        //ae.TouchFeed(core.Session.LoggedInMember, item);
+                    }
+                    else
+                    {
+                        ae.PublishToFeed(core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId));
+                    }
+                }
 
                 Comment.Commented(core, itemKey);
             }

@@ -39,6 +39,7 @@ namespace BoxSocial.FrontEnd
         public _04()
             : base("404.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)

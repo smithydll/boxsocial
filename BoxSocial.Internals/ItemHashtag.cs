@@ -110,7 +110,6 @@ namespace BoxSocial.Internals
         public static SelectQuery ItemHashtag_GetSelectQueryStub()
         {
             SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemHashtag), false);
-
             query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
             query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "hashtag_id", "hashtag_id");
 

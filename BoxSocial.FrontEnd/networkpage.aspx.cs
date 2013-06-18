@@ -36,6 +36,8 @@ namespace BoxSocial.FrontEnd
         public networkpage()
             : base("1201.html")
         {
+            this.Load += new EventHandler(Page_Load);
+
             BeginNetworkPage();
         }
 

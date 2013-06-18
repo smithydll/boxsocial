@@ -43,25 +43,45 @@ namespace BoxSocial.Internals
         private ItemKey ownerKey;
         [DataField("action_item", DataFieldKeys.Index)]
         private ItemKey itemKey;
+        [DataField("interact_item", DataFieldKeys.Index)]
+        private ItemKey interactKey;
         [DataField("action_time_ut")]
         private long timeRaw;
 
         private Primitive owner;
         private IActionableItem item;
+        private NumberedItem interactItem;
 
         public new ItemInfo Info
         {
             get
             {
-                if (info == null)
+                if (InteractItemKey.TypeId > 0)
                 {
-                    try
+                    if (info == null || info.InfoKey != InteractItemKey)
                     {
-                        info = new ItemInfo(core, ActionItemKey);
+                        try
+                        {
+                            info = new ItemInfo(core, InteractItemKey);
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            info = ItemInfo.Create(core, InteractItemKey);
+                        }
                     }
-                    catch (InvalidIteminfoException)
+                }
+                else
+                {
+                    if (info == null)
                     {
-                        info = ItemInfo.Create(core, ActionItemKey);
+                        try
+                        {
+                            info = new ItemInfo(core, ActionItemKey);
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            info = ItemInfo.Create(core, ActionItemKey);
+                        }
                     }
                 }
                 return info;
@@ -73,6 +93,14 @@ namespace BoxSocial.Internals
             get
             {
                 return itemKey;
+            }
+        }
+
+        public ItemKey InteractItemKey
+        {
+            get
+            {
+                return interactKey;
             }
         }
 
@@ -101,6 +129,38 @@ namespace BoxSocial.Internals
                     }
                 }
                 return item;
+            }
+        }
+
+        public NumberedItem InteractItem
+        {
+            get
+            {
+                if (interactKey == itemKey)
+                {
+                    return (NumberedItem)ActionedItem;
+                }
+                if (interactItem == null)
+                {
+                    core.ItemCache.RequestItem(interactKey);
+                    try
+                    {
+                        interactItem = (NumberedItem)core.ItemCache[interactKey];
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            interactItem = NumberedItem.Reflect(core, interactKey);
+                            HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + interactKey.ToString());
+                        }
+                        catch
+                        {
+                            interactItem = null;
+                        }
+                    }
+                }
+                return interactItem;
             }
         }
 

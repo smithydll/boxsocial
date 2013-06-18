@@ -130,7 +130,8 @@ namespace BoxSocial.IO
 
         private DataTable SelectQuery(string sqlquery)
         {
-            MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
+            // Don't want to clear the connection pool for performance reasons
+            //MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
             Stopwatch timer = new Stopwatch();
             timer.Start();
 

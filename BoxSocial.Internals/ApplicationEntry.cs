@@ -1082,6 +1082,18 @@ namespace BoxSocial.Internals
                         uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
                         uquery.AddField("action_title", item.Action);
                         uquery.AddField("action_body", item.GetActionBody(subItemsShortList));
+
+                        if (subItemsShortList != null && subItemsShortList.Count == 1)
+                        {
+                            uquery.AddField("interact_item_id", subItemsShortList[0].Id);
+                            uquery.AddField("interact_item_type_id", subItemsShortList[0].TypeId);
+                        }
+                        else
+                        {
+                            uquery.AddField("interact_item_id", itemKey.Id);
+                            uquery.AddField("interact_item_type_id", itemKey.TypeId);
+                        }
+
                         uquery.AddCondition("action_id", action.Id);
 
                         db.Query(uquery);
@@ -1111,6 +1123,17 @@ namespace BoxSocial.Internals
                     iquery.AddField("action_body", item.GetActionBody(subItems));
                     iquery.AddField("action_application", applicationId);
                     iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
+
+                    if (subItems != null && subItems.Count == 1)
+                    {
+                        iquery.AddField("interact_item_id", subItems[0].Id);
+                        iquery.AddField("interact_item_type_id", subItems[0].TypeId);
+                    }
+                    else
+                    {
+                        iquery.AddField("interact_item_id", itemKey.Id);
+                        iquery.AddField("interact_item_type_id", itemKey.TypeId);
+                    }
 
                     long actionId = db.Query(iquery);
 

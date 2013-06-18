@@ -609,73 +609,86 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public static SelectQuery GetSelectQueryStub(Type type, bool check)
         {
-            SelectQuery query;
-
-            if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
+            long typeId = ItemType.GetTypeId(type);
+            if (QueryCache.HasQuery(typeId))
             {
-                query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
+                return (SelectQuery)QueryCache.GetQuery(type, typeId);
             }
             else
             {
-                query = new SelectQuery(GetTable(type));
-                query.AddFields(GetFieldsPrefixed(type));
-                if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
-                    (typeof(ILikeableItem).IsAssignableFrom(type) || 
-                    typeof(IRateableItem).IsAssignableFrom(type) ||
-                    typeof(ITagableItem).IsAssignableFrom(type) ||
-                    typeof(IViewableItem).IsAssignableFrom(type) || 
-                    typeof(ICommentableItem).IsAssignableFrom(type) || 
-                    typeof(ISubscribeableItem).IsAssignableFrom(type) ||
-                    typeof(IShareableItem).IsAssignableFrom(type) ||
-                    typeof(IViewableItem).IsAssignableFrom(type)))
-                {
-                    List<DataFieldInfo> fields = GetFields(type);
-                    bool foundKey = false;
-                    bool continueJoin = true;
-                    string idField = string.Empty;
+                SelectQuery query;
 
-                    foreach (DataFieldInfo field in fields)
+                if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
+                {
+                    query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
+                }
+                else
+                {
+                    query = new SelectQuery(GetTable(type));
+                    query.AddFields(GetFieldsPrefixed(type));
+                    if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
+                        (typeof(IActionableItem).IsAssignableFrom(type) || 
+                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        typeof(IRateableItem).IsAssignableFrom(type) ||
+                        typeof(ITagableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type) ||
+                        typeof(ICommentableItem).IsAssignableFrom(type) ||
+                        typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                        typeof(IShareableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type)))
                     {
-                        if ((field.Key & (DataFieldKeys.Primary)) != DataFieldKeys.None)
+                        List<DataFieldInfo> fields = GetFields(type);
+                        bool foundKey = false;
+                        bool continueJoin = true;
+                        string idField = string.Empty;
+
+                        foreach (DataFieldInfo field in fields)
                         {
-                            if (foundKey)
+                            if ((field.Key & (DataFieldKeys.Primary)) != DataFieldKeys.None)
                             {
-                                continueJoin = false;
-                                break;
-                                //throw new ComplexKeyException(GetTable(type));
+                                if (foundKey)
+                                {
+                                    continueJoin = false;
+                                    break;
+                                    //throw new ComplexKeyException(GetTable(type));
+                                }
+                                idField = field.Name;
+                                foundKey = true;
                             }
-                            idField = field.Name;
-                            foundKey = true;
+                        }
+
+                        if (!foundKey)
+                        {
+                            // Error
+                            //throw new NoPrimaryKeyException();
+                            continueJoin = false;
+                        }
+
+                        if (continueJoin)
+                        {
+                            query.AddFields(Item.GetFieldsPrefixed(typeof(ItemInfo)));
+                            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(GetTable(type), idField), new DataField(typeof(ItemInfo), "info_item_id"));
+                            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(type));
                         }
                     }
 
-                    if (!foundKey)
+                    /*Type[] interfaces = type.GetInterfaces();
+                    foreach (Type i in interfaces)
                     {
-                        // Error
-                        //throw new NoPrimaryKeyException();
-                        continueJoin = false;
-                    }
-
-                    if (continueJoin)
-                    {
-                        query.AddFields(Item.GetFieldsPrefixed(typeof(ItemInfo)));
-                        TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(GetTable(type), idField), new DataField(typeof(ItemInfo), "info_item_id"));
-                        join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(type));
-                    }
+                        if (i == typeof(IPermissibleItem))
+                        {
+                            //query.AddFields(GetFieldsPrefixed(typeof(AccessControlGrant)));
+                            /*  * /
+                        }
+                    }*/
                 }
 
-				/*Type[] interfaces = type.GetInterfaces();
-				foreach (Type i in interfaces)
-				{
-					if (i == typeof(IPermissibleItem))
-					{
-						//query.AddFields(GetFieldsPrefixed(typeof(AccessControlGrant)));
-						/*  * /
-					}
-				}*/
+                if (check)
+                {
+                    QueryCache.AddQueryToCache(typeId, query);
+                }
+                return query;
             }
-
-            return query;
         }
 
         public SelectQuery getSelectQueryStub()
@@ -1371,6 +1384,17 @@ namespace BoxSocial.Internals
                             UpdateQuery uQuery = new UpdateQuery(typeof(Action));
                             uQuery.AddField("action_body", newBody);
                             uQuery.AddCondition("action_id", actionId);
+
+                            if (subItemsShortList != null && subItemsShortList.Count == 1)
+                            {
+                                uQuery.AddField("interact_item_id", subItemsShortList[0].Id);
+                                uQuery.AddField("interact_item_type_id", subItemsShortList[0].TypeId);
+                            }
+                            else
+                            {
+                                uQuery.AddField("interact_item_id", new DataField(typeof(Action), "action_item_id"));
+                                uQuery.AddField("interact_item_type_id", new DataField(typeof(Action), "action_item_type_id"));
+                            }
 
                             db.Query(uQuery);
                         }

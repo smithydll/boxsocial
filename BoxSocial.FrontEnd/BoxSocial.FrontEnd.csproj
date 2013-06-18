@@ -171,9 +171,6 @@
     <Compile Include="tos.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="updater.aspx.cs">
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="userstyle.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
@@ -188,6 +185,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Blog\Blog.csproj">
+      <Project>{C46AF662-52E1-46D8-B852-10C9C3FB3E2C}</Project>
+      <Name>Blog</Name>
+    </ProjectReference>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
       <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
       <Name>BoxSocial.Forms</Name>
@@ -200,9 +201,25 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Calendar\Calendar.csproj">
+      <Project>{28571091-8A91-49BB-B69E-E33FA70B7ACE}</Project>
+      <Name>Calendar</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gallery\Gallery.csproj">
+      <Project>{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}</Project>
+      <Name>Gallery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\GuestBook\GuestBook.csproj">
+      <Project>{D49ABC55-875C-4AE9-A803-4F7B1FB3A1E0}</Project>
+      <Name>GuestBook</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Mail\Mail.csproj">
+      <Project>{4D5E2ACA-04F1-45FA-A9DA-46C0D55954B4}</Project>
+      <Name>Mail</Name>
     </ProjectReference>
     <ProjectReference Include="..\Musician\Musician.csproj">
       <Project>{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}</Project>
@@ -211,6 +228,10 @@
     <ProjectReference Include="..\Networks\Networks.csproj">
       <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
       <Name>Networks</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Profile\Profile.csproj">
+      <Project>{BC7327B8-F476-409B-BEFD-5E1C1D417A79}</Project>
+      <Name>Profile</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

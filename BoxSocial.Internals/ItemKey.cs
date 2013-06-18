@@ -35,6 +35,7 @@ namespace BoxSocial.Internals
         private static Object itemTypeCacheLock = new object();
 		private static Dictionary<string, ItemType> itemTypeCache = null;
         private static Dictionary<string, long> itemApplicationCache = null;
+        private static Dictionary<long, ItemType> primitiveTypes = null;
 		private long itemId;
 		private long itemTypeId;
         private long applicationId;
@@ -270,6 +271,28 @@ namespace BoxSocial.Internals
                 this.applicationId = itemApplicationCache[this.itemType];
             }
             this.type = null;
+        }
+
+        public static Dictionary<long, ItemType> PrimitiveTypes
+        {
+            get
+            {
+                lock (itemTypeCacheLock)
+                {
+                    if (primitiveTypes == null)
+                    {
+                        primitiveTypes = new Dictionary<long, ItemType>();
+                        foreach (string key in itemTypeCache.Keys)
+                        {
+                            if (itemTypeCache[key].IsPrimitive)
+                            {
+                                primitiveTypes.Add(itemTypeCache[key].TypeId, itemTypeCache[key]);
+                            }
+                        }
+                    }
+                    return primitiveTypes;
+                }
+            }
         }
 		
 		public static void populateItemTypeCache(Core core)

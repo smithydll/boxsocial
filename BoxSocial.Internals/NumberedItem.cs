@@ -330,7 +330,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
                     }
                 }
                 else
@@ -341,7 +341,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
+                        assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), ae.AssemblyName + ".dll");
                     }
                 }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);

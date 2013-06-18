@@ -41,6 +41,7 @@ namespace BoxSocial.FrontEnd
         public viewapplications()
             : base("viewapplications.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)

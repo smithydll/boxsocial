@@ -33,24 +33,17 @@ namespace BoxSocial.FrontEnd
 {
     public partial class grouppage : GPage
     {
-        private PerformanceMeter meter = null;
-
         public grouppage()
             : base("1201.html")
-        {            
-            meter = new PerformanceMeter();
+        {
+            this.Load += new EventHandler(Page_Load);
 
-            meter.Add("Begin Group Page");
             BeginGroupPage();
-            meter.Add("End Begin Group Page");
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            meter.Add("Begin Invoke Applications");
             Core.InvokeApplication(AppPrimitives.Group, this);
-
-            meter.Add("Begin End Response");
 
             EndResponse();
         }

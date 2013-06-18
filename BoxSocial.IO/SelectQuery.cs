@@ -200,7 +200,7 @@ namespace BoxSocial.IO
 
     public sealed class SelectQuery : Query
     {
-
+        private QueryStub stub;
         private List<string> tables;
         private List<string> fields;
         private List<string> groupings;
@@ -241,6 +241,20 @@ namespace BoxSocial.IO
             {
                 isDistinct = value;
             }
+        }
+
+        internal SelectQuery(Type type, QueryStub stub)
+        {
+            this.stub = stub;
+
+            tables = new List<string>();
+            fields = new List<string>();
+            groupings = new List<string>();
+            conditions = new QueryCondition();
+            joins = new List<TableJoin>();
+            sorts = new List<TableSort>();
+
+            tables.Add(DataFieldAttribute.GetTable(type));
         }
 
         public SelectQuery(string baseTableName)
@@ -491,66 +505,87 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            StringBuilder query = new StringBuilder("SELECT");
+            StringBuilder query = new StringBuilder();
 
-            if (isDistinct)
-            {
-                query.Append(" DISTINCT");
-            }
+            string newFields = string.Empty;
 
-            if (limitCount >= 0)
+            if (stub != null)
             {
-                query.Append(" SQL_CALC_FOUND_ROWS");
-            }
+                query.Append(stub.Stub.TrimEnd(new char[] { ';', ' ' }) + " ");
 
-            if (fields.Count > 0)
-            {
-                bool first = true;
-                foreach (string field in fields)
+                if (fields.Count > 0)
                 {
-                    if (first)
+
+                    foreach (string field in fields)
                     {
-                        /*query = string.Format("{0} {1}",
-                            query, field);*/
-                        query.Append(" ");
-                        query.Append(field);
-                        first = false;
-                    }
-                    else
-                    {
-                        /*query = string.Format("{0}, {1}",
-                            query, field);*/
-                        query.Append(", ");
-                        query.Append(field);
+                        newFields += ", ";
+                        newFields += field;
                     }
                 }
             }
             else
             {
-                /*query = string.Format("{0} *",
-                            query);*/
-                query.Append(" *");
-            }
+                query.Append("SELECT");
 
-            if (tables.Count > 0)
-            {
-                bool first = true;
-                foreach (string table in tables)
+                if (isDistinct)
                 {
-                    if (first)
+                    query.Append(" DISTINCT");
+                }
+
+                if (limitCount >= 0)
+                {
+                    query.Append(" SQL_CALC_FOUND_ROWS");
+                }
+
+                if (fields.Count > 0)
+                {
+                    bool first = true;
+                    foreach (string field in fields)
                     {
-                        /*query = string.Format("{0} FROM {1}",
-                            query, table);*/
-                        query.Append(" FROM ");
-                        query.Append(table);
-                        first = false;
+                        if (first)
+                        {
+                            /*query = string.Format("{0} {1}",
+                                query, field);*/
+                            query.Append(" ");
+                            query.Append(field);
+                            first = false;
+                        }
+                        else
+                        {
+                            /*query = string.Format("{0}, {1}",
+                                query, field);*/
+                            query.Append(", ");
+                            query.Append(field);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    /*query = string.Format("{0} *",
+                                query);*/
+                    query.Append(" *");
+                }
+
+                if (tables.Count > 0)
+                {
+                    bool first = true;
+                    foreach (string table in tables)
                     {
-                        /*query = string.Format("{0}, {1}",
-                            query, table);*/
-                        query.Append(", ");
-                        query.Append(table);
+                        if (first)
+                        {
+                            /*query = string.Format("{0} FROM {1}",
+                                query, table);*/
+                            query.Append(" FROM ");
+                            query.Append(table);
+                            first = false;
+                        }
+                        else
+                        {
+                            /*query = string.Format("{0}, {1}",
+                                query, table);*/
+                            query.Append(", ");
+                            query.Append(table);
+                        }
                     }
                 }
             }
@@ -565,6 +600,7 @@ namespace BoxSocial.IO
                     query.Append(join.ToString());
                 }
             }
+
 
             if (conditions.Count > 0)
             {
@@ -636,7 +672,18 @@ namespace BoxSocial.IO
 
             /*return string.Format("{0};", query);*/
             query.Append(";");
-            return query.ToString();
+            string retQuery = query.ToString();
+
+            if (newFields != string.Empty)
+            {
+                int insertPoint = retQuery.IndexOf(" FROM ");
+                if (insertPoint > 0)
+                {
+                    retQuery = retQuery.Insert(insertPoint, newFields);
+                }
+            }
+
+            return retQuery;
         }
     }
 }

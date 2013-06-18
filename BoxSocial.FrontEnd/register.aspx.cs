@@ -35,6 +35,7 @@ namespace BoxSocial.FrontEnd
         public register()
             : base("register.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         private void prepareNewCaptcha()

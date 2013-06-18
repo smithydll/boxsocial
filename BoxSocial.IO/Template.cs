@@ -624,7 +624,8 @@ namespace BoxSocial.IO
                         }
                         else
                         {
-                            //templates.Add(templateName + "." + Medium.ToString(), template);
+                            // COMMENT/UNCOMMENT TO CACHE THE TEMPLATE, better to uncomment when debugging
+                            templates.Add(templateName + "." + Medium.ToString(), template);
                         }
                     }
                     else

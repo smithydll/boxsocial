@@ -34,6 +34,12 @@ namespace BoxSocial.FrontEnd
 {
     public partial class manageapplications : TPage
     {
+        public manageapplications()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
 			Server.ScriptTimeout = 1000;

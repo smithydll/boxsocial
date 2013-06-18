@@ -201,11 +201,16 @@ namespace BoxSocial.Internals
             }
         }
 
+        private long initTime = 0;
+        private long loadTime = 0;
         public TPage()
         {
             timer = new Stopwatch();
             timer.Start();
             rand = new Random();
+
+            Stopwatch initTimer = new Stopwatch();
+            initTimer.Start();
 
             db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
                 WebConfigurationManager.AppSettings["mysql-password"],
@@ -227,41 +232,9 @@ namespace BoxSocial.Internals
                 isMobile = false;
             }
 
-            core = new Core(db, template);
-
-            core.Settings = new Settings(core);
-            core.Search = new Search(core);
+            core = new Core(this, db, template);
 
             pageTitle = core.Settings.SiteTitle + (!string.IsNullOrEmpty(core.Settings.SiteSlogan) ? " • " + core.Settings.SiteSlogan : string.Empty);
-
-            if (core.Settings.StorageProvider == "amazon_s3")
-            {
-                core.Storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
-            }
-            else if (core.Settings.StorageProvider == "rackspace")
-            {
-                core.Storage = new Rackspace(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
-            }
-            else if (core.Settings.StorageProvider == "azure")
-            {
-                // provision: not supported
-            }
-            else if (core.Settings.StorageProvider == "local")
-            {
-                core.Storage = new LocalStorage(core.Settings.StorageRootUserFiles, db);
-            }
-            else
-            {
-                core.Storage = new LocalStorage(Server.MapPath(WebConfigurationManager.AppSettings["storage-path"]), db);
-            }
-
-            core.page = this;
-            core.Bbcode = new Bbcode(core);
-            core.Functions = new Functions(core);
-            core.Display = new Display(core);
-
-            core.Ajax = new Ajax(core);
-            core.Hyperlink = new Hyperlink(core);
 
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
@@ -284,26 +257,18 @@ namespace BoxSocial.Internals
                 }
             }
 
+            long loadStart = initTimer.ElapsedTicks;
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
+            loadTime = (initTimer.ElapsedTicks - loadStart);
+
             tz = new UnixTime(core, UnixTime.UTC_CODE);
             core.Display.page = this;
 
             core.Session = session;
             core.CoreDomain = AppDomain.CurrentDomain;
 
-            if (core.Settings.MailProvider == "smtp")
-            {
-                core.Email = new Smtp(WebConfigurationManager.AppSettings["boxsocial-host"], WebConfigurationManager.AppSettings["smtp-server"], core.LoggedInMemberId, (core.Session.IsLoggedIn ? core.Session.LoggedInMember.UserName : string.Empty), core.Session.IPAddress.ToString(), WebConfigurationManager.AppSettings["email"], core.Settings.SiteTitle);
-            }
-            else if (core.Settings.MailProvider == "mailgun")
-            {
-                core.Email = new Mailgun(WebConfigurationManager.AppSettings["mailgun-uri"], WebConfigurationManager.AppSettings["mailgun-apikey"], WebConfigurationManager.AppSettings["mailgun-domain"], WebConfigurationManager.AppSettings["email"], core.Settings.SiteTitle);
-            }
-
             // Ensure that core applications are loaded
-            Stopwatch load = new Stopwatch();
-            load.Start();
             try
             {
                 System.Reflection.Assembly.Load("Profile");
@@ -313,7 +278,6 @@ namespace BoxSocial.Internals
             catch
             {
             }
-            load.Stop();
 
             if (loggedInMember != null)
             {
@@ -333,6 +297,7 @@ namespace BoxSocial.Internals
             // applications hijacking the response output
             core.Http = new Http();
             Template.Path = core.Http.TemplatePath;
+
             core.Prose = new Prose();
             core.Prose.Initialise(core, "en");
 
@@ -384,6 +349,9 @@ namespace BoxSocial.Internals
             {
                 offset = new long[] { 0 };
             }
+
+            initTimer.Stop();
+            initTime += initTimer.ElapsedTicks;
         }
 
         public TPage(string templateFile)
@@ -404,22 +372,12 @@ namespace BoxSocial.Internals
             if (!pageEnded)
             {
                 pageEnded = true;
+                long pageEnd = timer.ElapsedTicks;
 
                 core.Display.Header(this);
                 long templateStart = timer.ElapsedTicks;
                 core.Http.Write(template);
                 double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
-                timer.Stop();
-                double seconds = (timer.ElapsedTicks) / 10000000.0;
-                if (core != null)
-                {
-                    HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds));
-                    //if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
-                    {
-                        // We will write it out as a comment to preserve html validation
-                        HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
-                    }
-                }
 
                 if (db != null)
                 {
@@ -430,6 +388,19 @@ namespace BoxSocial.Internals
                 core.Search.Dispose();
                 //core.Dispose();
                 //core = null;
+
+                timer.Stop();
+                double seconds = (timer.ElapsedTicks) / 10000000.0;
+                double pageEndSeconds = (timer.ElapsedTicks - pageEnd) / 10000000.0;
+                if (core != null)
+                {
+                    HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
+                    //if (core.LoggedInMemberId <= 3 && core.LoggedInMemberId != 0)
+                    {
+                        // We will write it out as a comment to preserve html validation
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
+                    }
+                }
 
                 core.Http.End();
                 //System.Threading.Thread.CurrentThread.Abort();

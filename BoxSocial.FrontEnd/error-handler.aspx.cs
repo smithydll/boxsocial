@@ -39,6 +39,7 @@ namespace BoxSocial.FrontEnd
         public error_handler()
             : base("error.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)
@@ -49,13 +50,13 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
             }
             catch
             {
                 try
                 {
-                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "EXCEPTION THROWN:\n" + ex.ToString());
+                    //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "EXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
                 {

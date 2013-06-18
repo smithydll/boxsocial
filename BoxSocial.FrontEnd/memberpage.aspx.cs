@@ -36,6 +36,8 @@ namespace BoxSocial.FrontEnd
         public memberpage()
             : base("1201.html")
         {
+            this.Load += new EventHandler(Page_Load);
+
             BeginProfile();
         }
 

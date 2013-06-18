@@ -35,7 +35,7 @@ namespace BoxSocial.Networks
         public AppInfo(Core core)
             : base(core)
         {
-            core.AddPrimitiveType(typeof(Network));
+            //core.AddPrimitiveType(typeof(Network));
         }
 
         public override string Title

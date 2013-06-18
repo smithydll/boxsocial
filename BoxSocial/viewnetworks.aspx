@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.viewnetworks" %>
+<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.viewnetworks" %>

@@ -43,7 +43,7 @@ namespace BoxSocial.Internals
         private long sessionId;
         [DataField("user_id")]
         private long userId;
-        [DataField("session_string", DataFieldKeys.Unique, 32)]
+        [DataField("session_string", DataFieldKeys.Index, 32)]
         private string sessionString;
         [DataField("session_start_ut")]
         private long sessionStartRaw;
@@ -726,7 +726,7 @@ namespace BoxSocial.Internals
                 //
                 SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
                 query.AddFields("session_ip", "session_time_ut");
-                query.AddJoin(JoinTypes.Inner, "user_sessions", "user_id", "user_id");
+                query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_sessions", "user_id"));
                 query.AddCondition("session_string", sessionId);
 
                 DataTable userSessionTable = db.Query(query);

@@ -33,6 +33,12 @@ namespace BoxSocial.FrontEnd
 {
     public partial class groupstyle : TPage
     {
+        public groupstyle()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string groupName = Request.QueryString["gn"];

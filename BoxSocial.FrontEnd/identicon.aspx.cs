@@ -32,11 +32,18 @@ using System.Text.RegularExpressions;
 using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
+using BoxSocial.Applications.Gallery;
 
 namespace BoxSocial.FrontEnd
 {
     public partial class identicon : TPage
     {
+        public identicon()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             string profileUserName = Request.QueryString["un"];
@@ -100,6 +107,16 @@ namespace BoxSocial.FrontEnd
             MD5 md5 = MD5.Create();
             int hash = BitConverter.ToInt32(md5.ComputeHash(userBytes),0);
             Image image = Identicon.CreateIdenticon(hash, width, false);
+
+            string imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "user"), "_" + mode), string.Format("{0}.png",
+                    profileUserName));
+            try
+            {
+                FileStream newFileStream = new FileStream(imagePath, FileMode.Create);
+                image.Save(newFileStream, ImageFormat.Png);
+                newFileStream.Close();
+            }
+            catch { }
 
             MemoryStream newStream = new MemoryStream();
             image.Save(newStream, ImageFormat.Png);

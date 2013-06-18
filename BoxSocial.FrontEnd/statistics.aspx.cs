@@ -34,6 +34,12 @@ namespace BoxSocial.FrontEnd
 {
     public partial class statistics : TPage
     {
+        public statistics()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             DataTable userData = db.Query("SELECT COUNT(user_id) as registrations FROM user_keys");

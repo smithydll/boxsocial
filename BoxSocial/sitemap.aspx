@@ -1,1 +1,1 @@
-<%@ Page Language="C#" AutoEventWireup="true" Inherits="BoxSocial.FrontEnd.sitemap" %>
+<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.sitemap" %>

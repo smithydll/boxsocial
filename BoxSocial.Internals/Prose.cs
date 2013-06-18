@@ -226,7 +226,14 @@ namespace BoxSocial.Internals
                 foreach (string key in languageResources.Keys)
                 {
                     ResourceManager rm = languageResources[key];
-                    rm.ReleaseAllResources();
+                    try
+                    {
+                        rm.ReleaseAllResources();
+                    }
+                    catch
+                    {
+                        // This is causing errors
+                    }
                 }
             }
         }

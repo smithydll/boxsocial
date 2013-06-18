@@ -35,6 +35,8 @@ namespace BoxSocial.FrontEnd
     {
         public _default() : base("default.html")
         {
+            this.Load += new EventHandler(Page_Load);
+
             template.Parse("IS_CONTENT", "FALSE");
 
             if (session.IsLoggedIn)

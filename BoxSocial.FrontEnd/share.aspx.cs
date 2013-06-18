@@ -39,6 +39,7 @@ namespace BoxSocial.FrontEnd
         public share()
             : base("")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)

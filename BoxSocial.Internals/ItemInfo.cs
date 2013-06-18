@@ -56,6 +56,14 @@ namespace BoxSocial.Internals
 
         private NumberedItem item;
 
+        public ItemKey InfoKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
         public ItemInfo(Core core, ItemKey itemKey)
             : this(core, null, itemKey.Id, itemKey.TypeId)
         {

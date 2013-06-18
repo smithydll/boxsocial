@@ -74,6 +74,7 @@
     <Compile Include="AmazonS3.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Mailgun.cs" />
+    <Compile Include="QueryCache.cs" />
     <Compile Include="Smtp.cs" />
     <Compile Include="Rackspace.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />

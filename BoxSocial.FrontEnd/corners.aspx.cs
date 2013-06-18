@@ -32,6 +32,12 @@ namespace BoxSocial.FrontEnd
 {
     public partial class corners : System.Web.UI.Page
     {
+        public corners()
+            : base()
+        {
+            this.Load += new EventHandler(Page_Load);
+        }
+
         protected Color headColour;
         protected void Page_Load(object sender, EventArgs e)
         {

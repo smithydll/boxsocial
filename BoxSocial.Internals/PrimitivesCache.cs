@@ -80,8 +80,15 @@ namespace BoxSocial.Internals
         {
             get
             {
-                loadBatchedIds(key.TypeId, key.Id);
-                return primitivesCached[new PrimitiveId(key.Id, key.TypeId)];
+                try
+                {
+                    loadBatchedIds(key.TypeId, key.Id);
+                    return primitivesCached[new PrimitiveId(key.Id, key.TypeId)];
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    throw new Exception(string.Format("Something went terribly wrong with {0}\n{1}\n\n{2}", key.ToString(), ex.ToString(), core.Db.QueryListToString()));
+                }
             }
         }
 

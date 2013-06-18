@@ -37,6 +37,7 @@ namespace BoxSocial.FrontEnd
         public search()
             : base("search.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)

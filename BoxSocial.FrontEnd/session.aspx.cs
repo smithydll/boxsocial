@@ -35,6 +35,7 @@ namespace BoxSocial.FrontEnd
         public session()
             : base("session.html")
         {
+            this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)

@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Calendar
                 // now select events invited to
                 SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
                 query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
-                query.AddJoin(JoinTypes.Left, "event_invites", "event_id", "event_id");
+                query.AddJoin(JoinTypes.Left, new DataField(typeof(Event), "event_id"), new DataField("event_invites", "event_id"));
                 query.AddCondition("item_id", loggedIdUid);
                 query.AddCondition("item_type_id", ItemKey.GetTypeId(typeof(User)));
                 QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);

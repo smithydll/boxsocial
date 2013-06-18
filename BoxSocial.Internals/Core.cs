@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -73,7 +74,8 @@ namespace BoxSocial.Internals
         public event LoadHandler LoadApplication;
         public event PermissionGroupHandler primitivePermissionGroupHook;
 
-        private Dictionary<long, Type> primitiveTypes = new Dictionary<long, Type>();
+        private Dictionary<long, ItemType> primitiveTypes = new Dictionary<long, ItemType>();
+        private Dictionary<long, Type> primitiveTypeCache = new Dictionary<long, Type>();
         private Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
         private List<PageHandle> pages = new List<PageHandle>();
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
@@ -244,11 +246,30 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (storage == null)
+                {
+                    if (Settings.StorageProvider == "amazon_s3")
+                    {
+                        storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
+                    }
+                    else if (Settings.StorageProvider == "rackspace")
+                    {
+                        storage = new Rackspace(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+                    }
+                    else if (Settings.StorageProvider == "azure")
+                    {
+                        // provision: not supported
+                    }
+                    else if (Settings.StorageProvider == "local")
+                    {
+                        storage = new LocalStorage(Settings.StorageRootUserFiles, db);
+                    }
+                    else
+                    {
+                        storage = new LocalStorage(WebConfigurationManager.AppSettings["storage-path"], db);
+                    }
+                }
                 return storage;
-            }
-            internal set
-            {
-                storage = value;
             }
         }
 
@@ -256,11 +277,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (search == null)
+                {
+                    search = new Search(this);
+                }
                 return search;
-            }
-            internal set
-            {
-                search = value;
             }
         }
 
@@ -301,11 +322,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (bbcode == null)
+                {
+                    bbcode = new Bbcode(this);
+                }
                 return bbcode;
-            }
-            internal set
-            {
-                bbcode = value;
             }
         }
 
@@ -316,11 +337,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (functions == null)
+                {
+                    functions = new Functions(this);
+                }
                 return functions;
-            }
-            internal set
-            {
-                functions = value;
             }
         }
 
@@ -331,11 +352,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (display == null)
+                {
+                    display = new Display(this);
+                }
                 return display;
-            }
-            internal set
-            {
-                display = value;
             }
         }
 
@@ -346,11 +367,18 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (email == null)
+                {
+                    if (Settings.MailProvider == "smtp")
+                    {
+                        email = new Smtp(WebConfigurationManager.AppSettings["boxsocial-host"], WebConfigurationManager.AppSettings["smtp-server"], LoggedInMemberId, (Session.IsLoggedIn ? Session.LoggedInMember.UserName : string.Empty), Session.IPAddress.ToString(), WebConfigurationManager.AppSettings["email"], Settings.SiteTitle);
+                    }
+                    else if (Settings.MailProvider == "mailgun")
+                    {
+                        email = new Mailgun(WebConfigurationManager.AppSettings["mailgun-uri"], WebConfigurationManager.AppSettings["mailgun-apikey"], WebConfigurationManager.AppSettings["mailgun-domain"], WebConfigurationManager.AppSettings["email"], Settings.SiteTitle);
+                    }
+                }
                 return email;
-            }
-            internal set
-            {
-                email = value;
             }
         }
 
@@ -361,11 +389,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (ajax == null)
+                {
+                    ajax = new Ajax(this);
+                }
                 return ajax;
-            }
-            internal set
-            {
-                ajax = value;
             }
         }
 
@@ -376,11 +404,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (hyperlink == null)
+                {
+                    hyperlink = new Hyperlink(this);
+                }
                 return hyperlink;
-            }
-            internal set
-            {
-                hyperlink = value;
             }
         }
 
@@ -388,11 +416,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (applicationSettings == null)
+                {
+                    applicationSettings = new Settings(this);
+                }
                 return applicationSettings;
-            }
-            internal set
-            {
-                applicationSettings = value;
             }
         }
 
@@ -462,8 +490,9 @@ namespace BoxSocial.Internals
 
             ppgs.AddRange(owner.GetPrimitivePermissionGroups());
 
-            foreach (Type type in primitiveTypes.Values)
+            foreach (long typeId in primitiveTypes.Keys)
             {
+                Type type = this.GetPrimitiveType(typeId);
                 if (type.GetMethod(type.Name + "_GetPrimitiveGroups", new Type[] {typeof(Core), typeof(Primitive)}) != null)
                 {
                     ppgs.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetPrimitiveGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { this, owner }));
@@ -540,26 +569,25 @@ namespace BoxSocial.Internals
             applicationEntryCache.Add(assemblyName, new ApplicationEntry(this, session.LoggedInMember, assemblyName));
         }
 
-        public Core(Mysql db, Template template)
+        public Core(TPage page, Mysql db, Template template)
         {
             HeadHooks += new HookHandler(Core_HeadHooks);
             FootHooks +=new HookHandler(Core_FootHooks);
             PageHooks += new HookHandler(Core_Hooks);
             LoadApplication += new LoadHandler(Core_LoadApplication);
 
+            this.page = page;
             this.db = db;
             this.template = template;
 			
 			ItemKey.populateItemTypeCache(this);
+            QueryCache.populateQueryCache();
 
             userProfileCache = new PrimitivesCache(this);
             itemsCache = new NumberedItemsCache(this);
             accessControlCache = new AccessControlCache(this);
 
-            AddPrimitiveType(typeof(User));
-            AddPrimitiveType(typeof(ApplicationEntry));
-            FindAllPrimitivesLoaded();
-
+            primitiveTypes = ItemKey.PrimitiveTypes;
         }
 
         public void DisposeOf()
@@ -768,7 +796,7 @@ namespace BoxSocial.Internals
             template.AddPageAssembly(assembly);
         }
 
-        public void AddPrimitiveType(Type type)
+        /*public void AddPrimitiveType(Type type)
         {
             bool typeAdded = false;
             long primitiveTypeId = ItemKey.GetTypeId(type);
@@ -797,9 +825,10 @@ namespace BoxSocial.Internals
                     }
                 }
             }
-        }
+        }*/
 
-        internal void FindAllPrimitivesLoaded()
+        /* This should be done a better way, have loaded assemblies register their primitives rather than searching every type */
+        /*internal void FindAllPrimitivesLoaded()
         {
             AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
 
@@ -827,13 +856,70 @@ namespace BoxSocial.Internals
                     HttpContext.Current.Response.End();
                 }
             }
-        }
+        }*/
 
         public Type GetPrimitiveType(long typeId)
         {
             if (primitiveTypes.ContainsKey(typeId))
             {
-                return primitiveTypes[typeId];
+                if (primitiveTypeCache.ContainsKey(typeId))
+                {
+                    return primitiveTypeCache[typeId];
+                }
+                else
+                {
+                    Type tType = null;
+
+                    if (primitiveTypes[typeId].ApplicationId > 0)
+                    {
+                        ItemCache.RegisterType(typeof(ApplicationEntry));
+                        ItemKey applicationKey = new ItemKey(primitiveTypes[typeId].ApplicationId, typeof(ApplicationEntry));
+                        ItemCache.RequestItem(applicationKey);
+                        //ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
+                        ApplicationEntry ae = (ApplicationEntry)ItemCache[applicationKey];
+
+                        //Application a = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
+                        string assemblyPath;
+                        if (ae.IsPrimitive)
+                        {
+                            if (Http != null)
+                            {
+                                assemblyPath = Path.Combine(Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
+                            }
+                            else
+                            {
+                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
+                            }
+                        }
+                        else
+                        {
+                            if (Http != null)
+                            {
+                                assemblyPath = Path.Combine(Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
+                            }
+                            else
+                            {
+                                assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), ae.AssemblyName + ".dll");
+                            }
+                        }
+                        Assembly assembly = Assembly.LoadFrom(assemblyPath);
+
+                        tType = assembly.GetType(primitiveTypes[typeId].TypeNamespace);
+                    }
+                    else
+                    {
+                        tType = Type.GetType(primitiveTypes[typeId].TypeNamespace);
+                    }
+                    if (tType != null)
+                    {
+                        primitiveTypeCache.Add(typeId, tType);
+                        return primitiveTypeCache[typeId];
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
             }
             else
             {
@@ -849,6 +935,19 @@ namespace BoxSocial.Internals
             }
             else
             {
+                if (typeId > 0)
+                {
+                    Type type = GetPrimitiveType(typeId);
+                    if (type != null)
+                    {
+                        foreach (object attr in type.GetCustomAttributes(typeof(PrimitiveAttribute), false))
+                        {
+                            primitiveAttributes.Add(typeId, (PrimitiveAttribute)attr);
+                            return primitiveAttributes[typeId];
+                        }
+                    }
+                }
+
                 return null;
             }
         }

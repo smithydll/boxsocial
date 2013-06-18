@@ -48,6 +48,7 @@ namespace BoxSocial.FrontEnd
         public groupaccount()
             : base("account_master.html")
         {
+            this.Load += new EventHandler(Page_Load);
             BeginGroupPage();
         }
 

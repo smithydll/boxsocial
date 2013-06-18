@@ -236,8 +236,8 @@ namespace BoxSocial.Internals
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 
-                    feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
-                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+                    feedItemVariableCollection.Parse("ID", feedAction.InteractItemKey.Id);
+                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.InteractItemKey.TypeId);
 
                     if (feedAction.ActionItemKey.ImplementsLikeable)
                     {

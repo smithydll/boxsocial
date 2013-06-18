@@ -33,24 +33,17 @@ namespace BoxSocial.FrontEnd
 {
     public partial class staticpage : TPage
     {
-        private PerformanceMeter meter = null;
-
         public staticpage()
             : base("1201.html")
         {
-            meter = new PerformanceMeter();
+            this.Load += new EventHandler(Page_Load);
 
-            meter.Add("Begin Static Page");
             BeginStaticPage();
-            meter.Add("End Begin Static Page");
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            meter.Add("Begin Invoke Applications");
             Core.InvokeApplication(AppPrimitives.None, this, true);
-
-            meter.Add("Begin End Response");
 
             EndResponse();
         }

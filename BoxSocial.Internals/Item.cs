@@ -627,8 +627,7 @@ namespace BoxSocial.Internals
                     query = new SelectQuery(GetTable(type));
                     query.AddFields(GetFieldsPrefixed(type));
                     if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
-                        (typeof(IActionableItem).IsAssignableFrom(type) || 
-                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        (typeof(ILikeableItem).IsAssignableFrom(type) ||
                         typeof(IRateableItem).IsAssignableFrom(type) ||
                         typeof(ITagableItem).IsAssignableFrom(type) ||
                         typeof(IViewableItem).IsAssignableFrom(type) ||

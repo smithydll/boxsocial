@@ -1145,6 +1145,16 @@ namespace BoxSocial.Internals
             return output.ToString();
         }
 
+        public void ParseBbcodeCache(string templateVar, string input)
+        {
+            core.Template.ParseRaw(templateVar, input);
+        }
+
+        public void ParseBbcodeCache(VariableCollection template, string templateVar, string input)
+        {
+            template.ParseRaw(templateVar, input);
+        }
+
         public void ParseBbcode(string templateVar, string input)
         {
             ParseBbcode(templateVar, input, null);

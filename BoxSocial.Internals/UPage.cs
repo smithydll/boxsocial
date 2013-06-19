@@ -75,17 +75,24 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (string.IsNullOrEmpty(User.Domain) || Hyperlink.Domain == core.Http.Domain)
+            if (core.PagePath.StartsWith("/memberpage.aspx"))
             {
-                core.PagePath = core.PagePath.Substring(User.UserName.Length + 1 + 5);
+                core.PagePath = core.PagePath.Substring(20 + User.UserName.Length + 1 + 5);
             }
-            if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower()))
+            else
             {
-                core.PagePath = core.PagePath.Substring(User.UserName.Length + 1);
-            }
-            if (core.PagePath.Trim(new char[] { '/' }) == "")
-            {
-                core.PagePath = User.UserInfo.ProfileHomepage;
+                if (string.IsNullOrEmpty(User.Domain) || Hyperlink.Domain == core.Http.Domain)
+                {
+                    core.PagePath = core.PagePath.Substring(User.UserName.Length + 1 + 5);
+                }
+                if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower()))
+                {
+                    core.PagePath = core.PagePath.Substring(User.UserName.Length + 1);
+                }
+                if (core.PagePath.Trim(new char[] { '/' }) == "")
+                {
+                    core.PagePath = User.UserInfo.ProfileHomepage;
+                }
             }
 
             BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Member, core.PagePath, BoxSocial.Internals.Application.GetApplications(Core, User));

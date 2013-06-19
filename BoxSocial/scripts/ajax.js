@@ -101,6 +101,17 @@ function SentStatus(r, e, a) {
     }
 }
 
+function SendAction(u) {
+    return PostToAccount(SentAction, "profile", "status", -1, { message: $('#message').val(), action: 'true', 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
+}
+
+function SentAction(r, e, a) {
+    $('#status-form').hide();
+    if (r['update'] == 'true') {
+        $('.today-feed ul.feed-list').first().before(r['template']);
+    }
+}
+
 function DeleteComment(id, iid) {
     return PostToPage(DeletedComment, "api/comment?mode=delete&item=" + id, "#c" + id, { ajax: "true" });
 }

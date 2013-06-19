@@ -129,6 +129,7 @@
     <Compile Include="Hashtag.cs" />
     <Compile Include="HookEventArgs.cs" />
     <Compile Include="IActionableItem.cs" />
+    <Compile Include="IActionableSubItem.cs" />
     <Compile Include="IAppInfo.cs" />
     <Compile Include="ICategorisableItem.cs" />
     <Compile Include="ICommentableItem.cs" />

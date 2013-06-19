@@ -38,9 +38,11 @@ namespace BoxSocial.FrontEnd
 {
     public partial class identicon : TPage
     {
+        HttpContext httpContext;
         public identicon()
             : base()
         {
+            httpContext = HttpContext.Current;
             this.Load += new EventHandler(Page_Load);
         }
 
@@ -95,6 +97,15 @@ namespace BoxSocial.FrontEnd
             {
                 core.Functions.Generate404();
                 return;
+            }
+
+            if (profileOwner != null)
+            {
+                if (profileOwner.UserInfo.DisplayPictureId > 0)
+                {
+                    httpContext.Response.Redirect(string.Format("/memberpage.aspx?un={0}&path=/images/_{1}/_{0}.png", profileUserName, mode), true);
+                    return;
+                }
             }
 
             Response.Cache.SetCacheability(HttpCacheability.Public);

@@ -51,11 +51,11 @@ namespace BoxSocial.Internals
         Key = 0x01,
         Info = Key | 0x02,
         Profile = Key | Country | Religion | 0x04,
-        Icon = Key | 0x08,
+        /*Icon = Key | 0x08,*/
         Country = Key | 0x0F,
         Religion = Key | 0x10,
-        Common = Key | Info | Icon,
-        All = Key | Info | Profile | Icon | Country | Religion,
+        Common = Key | Info /*| Icon*/,
+        All = Key | Info | Profile /*| Icon*/ | Country | Religion,
     }
 
     public enum SubscriberLevel : byte
@@ -288,10 +288,10 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (userIconUri != null)
+                if (UserInfo.DisplayPictureId > 0)
                 {
-                    return string.Format("{0}images/_thumb{1}",
-                        UriStub, userIconUri);
+                    return string.Format("{0}images/_thumb/_{1}.png",
+                        UriStub, UserName);
                 }
                 else
                 {
@@ -308,10 +308,10 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (userIconUri != null)
+                if (UserInfo.DisplayPictureId > 0)
                 {
-                    return string.Format("{0}images/_icon{1}",
-                        UriStub, userIconUri);
+                    return string.Format("{0}images/_icon/_{1}.png",
+                        UriStub, UserName);
                 }
                 else
                 {
@@ -328,10 +328,10 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (userIconUri != null)
+                if (UserInfo.DisplayPictureId > 0)
                 {
-                    return string.Format("{0}images/_tile{1}",
-                        UriStub, userIconUri);
+                    return string.Format("{0}images/_tile/_{1}.png",
+                        UriStub, UserName);
                 }
                 else
                 {
@@ -406,7 +406,7 @@ namespace BoxSocial.Internals
         }
 
         public User(Core core, long userId)
-            : this(core, userId, UserLoadOptions.Info | UserLoadOptions.Icon)
+            : this(core, userId, UserLoadOptions.Info)
         {
         }
 
@@ -443,14 +443,14 @@ namespace BoxSocial.Internals
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
                     query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
 
-                    if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                    /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
                         containsIconData = true;
 
                         query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
                         query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                         query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-                    }
+                    }*/
                 }
 
                 if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
@@ -500,7 +500,7 @@ namespace BoxSocial.Internals
         }
 
         public User(Core core, string userName)
-            : this (core, userName, UserLoadOptions.Info | UserLoadOptions.Icon)
+            : this (core, userName, UserLoadOptions.Info)
         {
         }
 
@@ -537,14 +537,14 @@ namespace BoxSocial.Internals
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
                     query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
 
-                    if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                    /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
                         containsIconData = true;
 
                         query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
                         query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                         query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-                    }
+                    }*/
                 }
 
                 if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
@@ -610,11 +610,6 @@ namespace BoxSocial.Internals
                 if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
                 {
                     userProfile = new UserProfile(core, this, userRow, loadOptions);
-                }
-
-                if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
-                {
-                    loadUserIcon(userRow);
                 }
             }
             else
@@ -1078,12 +1073,12 @@ namespace BoxSocial.Internals
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
                     query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
 
-                    if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+                    /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
                         query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
                         query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                         query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-                    }
+                    }*/
                 }
 
                 if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)

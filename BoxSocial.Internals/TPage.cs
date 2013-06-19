@@ -257,11 +257,10 @@ namespace BoxSocial.Internals
                 }
             }
 
-            long loadStart = initTimer.ElapsedTicks;
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
-            loadTime = (initTimer.ElapsedTicks - loadStart);
 
+            long loadStart = initTimer.ElapsedTicks;
             tz = new UnixTime(core, UnixTime.UTC_CODE);
             core.Display.page = this;
 
@@ -350,6 +349,7 @@ namespace BoxSocial.Internals
                 offset = new long[] { 0 };
             }
 
+            loadTime = (initTimer.ElapsedTicks - loadStart);
             initTimer.Stop();
             initTime += initTimer.ElapsedTicks;
         }

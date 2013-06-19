@@ -63,7 +63,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem
     {
         // Square
         static string IconPrefix = "_icon"; // 50
@@ -1788,8 +1788,14 @@ namespace BoxSocial.Applications.Gallery
             {
                 GalleryItem galleryItem;
 
-
-                galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
+                if (Gallery.GetNameFromPath(photoName) == "_" + e.Page.Owner.Key + ".png" && e.Page.Owner is User)
+                {
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, ((User)e.Page.Owner).UserInfo.DisplayPictureId);
+                }
+                else
+                {
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);
+                }
                 Gallery gallery = null;
 
                 if (galleryItem.ParentId > 0)

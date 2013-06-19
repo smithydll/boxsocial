@@ -72,6 +72,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("user_id")]
         private long userId;
+
+        [DataField("settings_id")]
+        private long settingsId;
         
         /// <summary>
         /// Id of the parent gallery
@@ -1151,6 +1154,16 @@ namespace BoxSocial.Applications.Gallery
                 throw new NullCoreException();
             }
 
+            GallerySettings settings = null;
+            try
+            {
+                settings = new GallerySettings(core, owner);
+            }
+            catch (InvalidGallerySettingsException)
+            {
+                settings = GallerySettings.Create(core, owner);
+            }
+
             string parents = "";
             // ensure we have generated a valid slug
             slug = Gallery.GetSlugFromTitle(title, slug);
@@ -1194,6 +1207,7 @@ namespace BoxSocial.Applications.Gallery
             }
 
             InsertQuery iQuery = new InsertQuery("user_galleries");
+            iQuery.AddField("gallery_settings", settings.Id);
             iQuery.AddField("gallery_title", title);
             iQuery.AddField("gallery_abstract", description);
             iQuery.AddField("gallery_path", slug);
@@ -1642,7 +1656,7 @@ namespace BoxSocial.Applications.Gallery
         {
             e.Template.SetTemplate("Gallery", "viewgallery");
 
-            GallerySettings settings;
+            /*GallerySettings settings;
             try
             {
                 settings = new GallerySettings(e.Core, e.Page.Owner);
@@ -1651,7 +1665,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 GallerySettings.Create(e.Core, e.Page.Owner);
                 settings = new GallerySettings(e.Core, e.Page.Owner);
-            }
+            }*/
 
             char[] trimStartChars = { '.', '/' };
 
@@ -1712,7 +1726,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    if (settings.AllowItemsAtRoot && gallery.access.Can("CREATE_ITEMS"))
+                    if (gallery.Settings.AllowItemsAtRoot && gallery.access.Can("CREATE_ITEMS"))
                     {
                         e.Template.Parse("U_UPLOAD_PHOTO", gallery.PhotoUploadUri);
                     }
@@ -1764,42 +1778,56 @@ namespace BoxSocial.Applications.Gallery
             e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
             List<Gallery> galleries = gallery.GetGalleries();
+            List<IPermissibleItem> iPermissibleItems = new List<IPermissibleItem>();
 
-            e.Template.Parse("GALLERIES", galleries.Count.ToString());
-
-            foreach (Gallery galleryGallery in galleries)
+            if (galleries.Count > 0)
             {
-                VariableCollection galleryVariableCollection = e.Template.CreateChild("gallery_list");
-
-                galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
-                galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
-                galleryVariableCollection.Parse("ID", galleryGallery.Id.ToString());
-                galleryVariableCollection.Parse("TYPE_ID", galleryGallery.ItemKey.TypeId.ToString());
-
-                galleryVariableCollection.Parse("ICON", galleryGallery.IconUri);
-                galleryVariableCollection.Parse("TILE", galleryGallery.TileUri);
-                galleryVariableCollection.Parse("SQUARE", galleryGallery.SquareUri);
-
-                galleryVariableCollection.Parse("TINY", galleryGallery.TinyUri);
-                galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbnailUri);
-
-                e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
-
-                if (galleryGallery.Info.Likes > 0)
+                foreach (Gallery galleryGallery in galleries)
                 {
-                    galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryGallery.Info.Likes));
-                    galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryGallery.Info.Dislikes));
+                    iPermissibleItems.Add(galleryGallery);
                 }
+                e.Core.AcessControlCache.CacheGrants(iPermissibleItems);
 
-                long items = galleryGallery.Items;
+                e.Template.Parse("GALLERIES", galleries.Count.ToString());
 
-                if (items == 1)
+                foreach (Gallery galleryGallery in galleries)
                 {
-                    galleryVariableCollection.Parse("ITEMS", "1 item.");
-                }
-                else
-                {
-                    galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", e.Core.Functions.LargeIntegerToString(items)));
+                    if (!galleryGallery.Access.Can("VIEW"))
+                    {
+                        continue;
+                    }
+                    VariableCollection galleryVariableCollection = e.Template.CreateChild("gallery_list");
+
+                    galleryVariableCollection.Parse("TITLE", galleryGallery.GalleryTitle);
+                    galleryVariableCollection.Parse("URI", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryGallery.FullPath));
+                    galleryVariableCollection.Parse("ID", galleryGallery.Id.ToString());
+                    galleryVariableCollection.Parse("TYPE_ID", galleryGallery.ItemKey.TypeId.ToString());
+
+                    galleryVariableCollection.Parse("ICON", galleryGallery.IconUri);
+                    galleryVariableCollection.Parse("TILE", galleryGallery.TileUri);
+                    galleryVariableCollection.Parse("SQUARE", galleryGallery.SquareUri);
+
+                    galleryVariableCollection.Parse("TINY", galleryGallery.TinyUri);
+                    galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbnailUri);
+
+                    e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+
+                    if (galleryGallery.Info.Likes > 0)
+                    {
+                        galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryGallery.Info.Likes));
+                        galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryGallery.Info.Dislikes));
+                    }
+
+                    long items = galleryGallery.Items;
+
+                    if (items == 1)
+                    {
+                        galleryVariableCollection.Parse("ITEMS", "1 item.");
+                    }
+                    else
+                    {
+                        galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", e.Core.Functions.LargeIntegerToString(items)));
+                    }
                 }
             }
 
@@ -2004,13 +2032,20 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (settings == null)
                 {
-                    try
+                    if (settingsId > 0)
                     {
-                        settings = new GallerySettings(core, Owner);
+                        settings = (GallerySettings)NumberedItem.Reflect(core, new ItemKey(settingsId, typeof(GallerySettings)));
                     }
-                    catch (InvalidGallerySettingsException)
+                    else
                     {
-                        settings = GallerySettings.Create(core, Owner);
+                        try
+                        {
+                            settings = new GallerySettings(core, Owner);
+                        }
+                        catch (InvalidGallerySettingsException)
+                        {
+                            settings = GallerySettings.Create(core, Owner);
+                        }
                     }
                     return settings;
                 }

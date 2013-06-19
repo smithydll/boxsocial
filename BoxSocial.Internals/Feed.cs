@@ -232,12 +232,27 @@ namespace BoxSocial.Internals
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
                     core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
-                    core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
+                    if (!string.IsNullOrEmpty(feedAction.BodyCache))
+                    {
+                        core.Display.ParseBbcodeCache(feedItemVariableCollection, "TEXT", feedAction.BodyCache);
+                    }
+                    else
+                    {
+                        core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
+                    }
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 
-                    feedItemVariableCollection.Parse("ID", feedAction.InteractItemKey.Id);
-                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.InteractItemKey.TypeId);
+                    if (feedAction.InteractItemKey.Id > 0)
+                    {
+                        feedItemVariableCollection.Parse("ID", feedAction.InteractItemKey.Id);
+                        feedItemVariableCollection.Parse("TYPE_ID", feedAction.InteractItemKey.TypeId);
+                    }
+                    else
+                    {
+                        feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                        feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+                    }
 
                     if (feedAction.ActionItemKey.ImplementsLikeable)
                     {

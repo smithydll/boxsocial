@@ -150,6 +150,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
             query.AddCondition("item_id", item.Id);
             query.AddCondition("item_type_id", item.ItemKey.TypeId);
+            query.AddSort(SortOrder.Ascending, "tag_text_normalised");
 
             DataTable tagsTable = core.Db.Query(query);
 

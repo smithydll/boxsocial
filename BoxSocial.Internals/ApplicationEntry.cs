@@ -1038,8 +1038,8 @@ namespace BoxSocial.Internals
             query.AddCondition("action_application", applicationId);
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
-            // maximum 10 per application per day
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
+            // maximum 48 per application per day
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 48)
             {
 
                 query = new SelectQuery(typeof(Action));
@@ -1078,10 +1078,19 @@ namespace BoxSocial.Internals
                             subItemsShortList.Add(subItems[i]);
                         }
 
+                        string body = item.GetActionBody(subItemsShortList);
+                        string bodyCache = string.Empty;
+
+                        if (!body.Contains("[user") && !body.Contains("sid=true]"))
+                        {
+                            bodyCache = Bbcode.Parse(HttpUtility.HtmlEncode(body), null, owner, true, string.Empty, string.Empty);
+                        }
+
                         UpdateQuery uquery = new UpdateQuery(typeof(Action));
                         uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
                         uquery.AddField("action_title", item.Action);
-                        uquery.AddField("action_body", item.GetActionBody(subItemsShortList));
+                        uquery.AddField("action_body", body);
+                        uquery.AddField("action_body_cache", bodyCache);
 
                         if (subItemsShortList != null && subItemsShortList.Count == 1)
                         {
@@ -1114,13 +1123,22 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
+                    string body = item.GetActionBody(subItems);
+                    string bodyCache = string.Empty;
+
+                    if (!body.Contains("[user") && !body.Contains("sid=true]"))
+                    {
+                        bodyCache = Bbcode.Parse(HttpUtility.HtmlEncode(body), null, owner, true, string.Empty, string.Empty);
+                    }
+
                     InsertQuery iquery = new InsertQuery(typeof(Action));
                     iquery.AddField("action_primitive_id", owner.ItemKey.Id);
                     iquery.AddField("action_primitive_type_id", owner.ItemKey.TypeId);
                     iquery.AddField("action_item_id", itemKey.Id);
                     iquery.AddField("action_item_type_id", itemKey.TypeId);
                     iquery.AddField("action_title", item.Action);
-                    iquery.AddField("action_body", item.GetActionBody(subItems));
+                    iquery.AddField("action_body", body);
+                    iquery.AddField("action_body_cache", bodyCache);
                     iquery.AddField("action_application", applicationId);
                     iquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
 
@@ -1150,33 +1168,6 @@ namespace BoxSocial.Internals
                         }
                     }
                 }
-            }
-        }
-
-        public void UpdateFeedAction(Action action, string title, string message)
-        {
-            if (action != null)
-            {
-                if (title.Length > 63)
-                {
-                    title = title.Substring(0, 63);
-                }
-
-                if (message.Length > 511)
-                {
-                    message = message.Substring(0, 511);
-                }
-
-                UpdateQuery uquery = new UpdateQuery("actions");
-                uquery.AddField("action_title", title);
-                uquery.AddField("action_body", message);
-                uquery.AddField("action_time_ut", UnixTime.UnixTimeStamp());
-                uquery.AddCondition("action_application", applicationId);
-                uquery.AddCondition("action_primitive_id", action.OwnerId);
-                uquery.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
-                uquery.AddCondition("action_id", action.ActionId);
-
-                db.Query(uquery);
             }
         }
 

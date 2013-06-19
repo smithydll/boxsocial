@@ -484,7 +484,7 @@ namespace BoxSocial.Internals
                     sessionData.autoLoginId = "";
                     sessionData.userId = userId;
 
-                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                     query.AddCondition("user_active", true);
                     query.AddCondition("user_keys.user_id", userId);
 
@@ -492,7 +492,7 @@ namespace BoxSocial.Internals
 
                     if (userSessionTable.Rows.Count == 1)
                     {
-                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info | UserLoadOptions.Icon);
+                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                         isLoggedIn = true;
                     }
                     else
@@ -528,14 +528,14 @@ namespace BoxSocial.Internals
                 sessionData.userId = userId = 0;
                 enableAutologin = isLoggedIn = false;
 
-                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                 query.AddCondition("user_keys.user_id", userId);
 
                 DataTable userTable = db.Query(query);
 
                 if (userTable.Rows.Count == 1)
                 {
-                    loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info | UserLoadOptions.Icon);
+                    loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
                 }
             }
 
@@ -724,7 +724,7 @@ namespace BoxSocial.Internals
                 // session_id exists so go ahead and attempt to grab all
                 // data in preparation
                 //
-                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info | UserLoadOptions.Icon);
+                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                 query.AddFields("session_ip", "session_time_ut");
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_sessions", "user_id"));
                 query.AddCondition("session_string", sessionId);
@@ -737,7 +737,7 @@ namespace BoxSocial.Internals
                 if (userSessionTable.Rows.Count == 1)
                 {
                     DataRow userSessionRow = userSessionTable.Rows[0];
-                    loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info | UserLoadOptions.Icon);
+                    loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info);
                     core.Hyperlink.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)

@@ -442,7 +442,7 @@ namespace BoxSocial.FrontEnd
 
                 if (item != null)
                 {
-                    if (item is IActionableItem)
+                    if (item is IActionableItem || item is IActionableSubItem)
                     {
                         //ae.TouchFeed(core.Session.LoggedInMember, item);
                     }

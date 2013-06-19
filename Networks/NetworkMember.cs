@@ -205,12 +205,12 @@ namespace BoxSocial.Networks
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
             }
-            if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
+            /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
             {
                 query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                 query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
-            }
+            }*/
 
             return query;
         }

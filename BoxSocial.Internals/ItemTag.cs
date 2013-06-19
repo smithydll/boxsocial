@@ -107,14 +107,20 @@ namespace BoxSocial.Internals
 
         public static SelectQuery ItemTag_GetSelectQueryStub()
         {
-            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemTag), false);
+            long typeId = ItemType.GetTypeId(typeof(ItemTag));
+            if (QueryCache.HasQuery(typeId))
+            {
+                return (SelectQuery)QueryCache.GetQuery(typeof(ItemTag), typeId);
+            }
+            else
+            {
+                SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemTag), false);
 
-            query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
-            query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "tag_id", "tag_id");
+                query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
+                query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "tag_id", "tag_id");
 
-            query.AddSort(SortOrder.Ascending, "tag_text_normalised");
-
-            return query;
+                return query;
+            }
         }
 
         public static ItemTag Create(Core core, NumberedItem item, Tag tag)

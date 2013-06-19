@@ -37,6 +37,8 @@ namespace BoxSocial.Internals
         private string title;
         [DataField("action_body", 511)]
         private string body;
+        [DataField("action_body_cache", 511)]
+        private string bodyCache;
         [DataField("action_application")]
         private long applicationId;
 		[DataField("action_primitive", DataFieldKeys.Index)]
@@ -58,7 +60,7 @@ namespace BoxSocial.Internals
             {
                 if (InteractItemKey.TypeId > 0)
                 {
-                    if (info == null || info.InfoKey != InteractItemKey)
+                    if (info == null || info.InfoKey.Id != InteractItemKey.Id || info.InfoKey.TypeId != InteractItemKey.TypeId)
                     {
                         try
                         {
@@ -72,7 +74,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (info == null)
+                    if (info == null || info.InfoKey.Id != InteractItemKey.Id || info.InfoKey.TypeId != InteractItemKey.TypeId)
                     {
                         try
                         {
@@ -182,22 +184,27 @@ namespace BoxSocial.Internals
                     title = ActionedItem.Action;
                     url = ActionedItem.Uri;
                 }
-                if (title.Contains("[/user]"))
+                return GetTitle(ownerKey, title, url);
+            }
+        }
+
+        public static string GetTitle(ItemKey ownerKey, string title, string url)
+        {
+            if (title.Contains("[/user]"))
+            {
+                return title;
+            }
+            else
+            {
+                if (url != string.Empty)
                 {
-                    return title;
+                    return string.Format("[user]{0}[/user] [iurl=\"{2}\"]{1}[/iurl]",
+                        ownerKey.Id, title, url);
                 }
                 else
                 {
-                    if (url != string.Empty)
-                    {
-                        return string.Format("[user]{0}[/user] [iurl=\"{2}\"]{1}[/iurl]",
-                            ownerKey.Id, title, url);
-                    }
-                    else
-                    {
-                        return string.Format("[user]{0}[/user] {1}",
-                        ownerKey.Id, title);
-                    }
+                    return string.Format("[user]{0}[/user] {1}",
+                    ownerKey.Id, title);
                 }
             }
         }
@@ -207,6 +214,14 @@ namespace BoxSocial.Internals
             get
             {
                 return body;
+            }
+        }
+
+        public string BodyCache
+        {
+            get
+            {
+                return bodyCache;
             }
         }
 
@@ -267,8 +282,8 @@ namespace BoxSocial.Internals
         {
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action), false);
             query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
-            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(Action), "action_item_id"), new DataField(typeof(ItemInfo), "info_item_id"));
-            join.AddCondition(new DataField(typeof(Action), "action_item_type_id"), new DataField(typeof(ItemInfo), "info_item_type_id"));
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(Action), "interact_item_id"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(Action), "interact_item_type_id"), new DataField(typeof(ItemInfo), "info_item_type_id"));
 
             return query;
         }

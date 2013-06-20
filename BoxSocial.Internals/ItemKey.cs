@@ -30,7 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-	public class ItemKey
+	public class ItemKey : IComparable
 	{
         private static Object itemTypeCacheLock = new object();
 		private static Dictionary<string, ItemType> itemTypeCache = null;
@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
 
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
         /*public static bool operator ==(ItemKey ik1, ItemKey ik2)
@@ -447,5 +447,23 @@ namespace BoxSocial.Internals
 				return true;
 			return (!ik1.Equals(ik2));
         }*/
-	}
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(ItemKey))
+            {
+                return -1;
+            }
+
+            int c = ((ItemKey)obj).TypeId.CompareTo(TypeId);
+            if (c == 0)
+            {
+                return ((ItemKey)obj).Id.CompareTo(Id);
+            }
+            else
+            {
+                return c;
+            }
+        }
+    }
 }

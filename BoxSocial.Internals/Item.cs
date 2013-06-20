@@ -144,7 +144,23 @@ namespace BoxSocial.Internals
                 throw new NoUniqueKeyException();
             }
 
-            loadItemInfo(type, core.Db.ReaderQuery(query));
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                loadItemInfo(type, reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
+            }
 
             if (type.IsSubclassOf(typeof(NumberedItem)))
             {
@@ -214,7 +230,23 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 
-            loadItemInfo(type, core.Db.ReaderQuery(query));
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                loadItemInfo(type, reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
+            }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
             {
@@ -283,7 +315,23 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 			
-			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                loadItemInfo(this.GetType(), reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
+            }
         }
 
         protected void LoadItem(string ownerIdIndex, string ownerTypeIndex, Primitive owner, params FieldValuePair[] keyFields)
@@ -339,7 +387,23 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }*/
 			
-			loadItemInfo(this.GetType(), core.Db.ReaderQuery(query));
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+
+                loadItemInfo(this.GetType(), reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
+            }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
             {
@@ -387,7 +451,8 @@ namespace BoxSocial.Internals
                 try
                 {
                     Type thisType = this.GetType();
-                    FieldInfo[] fis = thisType.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+                    /*FieldInfo[] fis = thisType.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);*/
+                    FieldInfo[] fis = getFieldInfo(thisType);
 
                     foreach (FieldInfo fi in fis)
                     {
@@ -699,7 +764,101 @@ namespace BoxSocial.Internals
 
             return query;
         }
-		
+
+        private static Object itemFieldInfoCacheLock = new Object();
+        private static Dictionary<Type, FieldInfo[]> itemFieldInfoCache = null;
+
+        private static void populateItemFieldInfoCache()
+        {
+            object o = null;
+            System.Web.Caching.Cache cache;
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            try
+            {
+                if (cache != null)
+                {
+                    o = cache.Get("itemFieldInfo");
+                }
+            }
+            catch (NullReferenceException)
+            {
+            }
+
+            lock (itemFieldInfoCacheLock)
+            {
+                if (o != null && o is Dictionary<Type, FieldInfo[]>)
+                {
+                    itemFieldInfoCache = (Dictionary<Type, FieldInfo[]>)o;
+                }
+                else
+                {
+                    itemFieldInfoCache = new Dictionary<Type, FieldInfo[]>();
+                }
+            }
+        }
+
+        public static FieldInfo[] saveToFieldInfoCache(Type type)
+        {
+            FieldInfo[] fields = type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+
+            lock (itemFieldInfoCacheLock)
+            {
+                if (!itemFieldInfoCache.ContainsKey(type))
+                {
+                    itemFieldInfoCache.Add(type, fields);
+                }
+            }
+
+            System.Web.Caching.Cache cache;
+
+            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            {
+                cache = HttpContext.Current.Cache;
+            }
+            else
+            {
+                cache = new Cache();
+            }
+
+            if (cache != null)
+            {
+                try
+                {
+                    cache.Add("itemFieldInfo", itemFieldInfoCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                }
+                catch (NullReferenceException)
+                {
+                }
+            }
+
+            return fields;
+        }
+
+        public static FieldInfo[] getFieldInfo(Type type)
+        {
+            FieldInfo[] fields = null;
+            if (itemFieldInfoCache != null && itemFieldInfoCache.ContainsKey(type))
+            {
+                fields = itemFieldInfoCache[type];
+            }
+            else
+            {
+                populateItemFieldInfoCache();
+                fields = saveToFieldInfoCache(type);
+            }
+
+            return fields;
+        }
+
         private static Object itemFieldsCacheLock = new Object();
 		private static Dictionary<Type, List<DataFieldInfo>> itemFieldsCache = null;
 
@@ -772,7 +931,9 @@ namespace BoxSocial.Internals
 				populateItemFieldsCache();
 			}
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            FieldInfo[] fields = getFieldInfo(type);
+
+            foreach (FieldInfo fi in fields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
@@ -857,7 +1018,9 @@ namespace BoxSocial.Internals
 
         internal static object GetFieldValue(DataFieldInfo dfi, Item item)
         {
-            foreach (FieldInfo fi in item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            FieldInfo[] fields = getFieldInfo(item.GetType());
+
+            foreach (FieldInfo fi in fields /*item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
@@ -985,7 +1148,8 @@ namespace BoxSocial.Internals
             SelectQuery sQuery = new SelectQuery(Item.GetTable(type));
             UpdateQuery uQuery = new UpdateQuery(Item.GetTable(type));
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            FieldInfo[] ffields = getFieldInfo(type);
+            foreach (FieldInfo fi in ffields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
@@ -1426,7 +1590,8 @@ namespace BoxSocial.Internals
             int objectFields = 0;
             Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(StringComparer.Ordinal);
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            FieldInfo[] ffields = getFieldInfo(type);
+            foreach (FieldInfo fi in ffields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
@@ -1453,21 +1618,23 @@ namespace BoxSocial.Internals
             }
 
             /* buffer for item */
-            long ikBufferId = 0;
-            long ikBufferTypeId = 0;
+            Dictionary<string, long> ikBufferId = new Dictionary<string,long>();
+            Dictionary<string, long> ikBufferTypeId = new Dictionary<string, long>();
+            string ikBufferPrefix = string.Empty;
 
             if (reader.HasRows)
             {
                 bool rowRead = false; /* past participle */
-                while (reader.Read())
+                //while (reader.Read())
                 {
                     /* only read one row */
                     if (rowRead)
                     {
                         // Error
-						reader.Close();
-                        reader.Dispose();
-                        throw new InvalidItemException(this.GetType().FullName + " :: Row Count");
+						//reader.Close();
+                        //reader.Dispose();
+                        //throw new InvalidItemException(this.GetType().FullName + " :: Row Count");
+                        return;
                     }
                     else
                     {
@@ -1500,25 +1667,27 @@ namespace BoxSocial.Internals
                             {*/
                             if (fi.FieldType == typeof(ItemKey))
                             {
-                                if (ikBufferId > 0 && column.EndsWith("_type_id"))
+                                if (column.EndsWith("_type_id") && ikBufferId.ContainsKey(column.Substring(0, column.Length - 8)))
                                 {
-                                    fi.SetValue(this, new ItemKey(ikBufferId, (long)value));
+                                    fi.SetValue(this, new ItemKey(ikBufferId[column.Substring(0, column.Length - 8)], (long)value));
                                     fieldsLoaded++;
                                 }
-                                else if (ikBufferTypeId > 0 && column.EndsWith("_id"))
+                                else if (column.EndsWith("_id") && ikBufferTypeId.ContainsKey(column.Substring(0, column.Length - 3)))
                                 {
-                                    fi.SetValue(this, new ItemKey((long)value, ikBufferTypeId));
+                                    fi.SetValue(this, new ItemKey((long)value, ikBufferTypeId[column.Substring(0, column.Length - 3)]));
                                     fieldsLoaded++;
                                 }
                                 else
                                 {
                                     if (column.EndsWith("_id"))
                                     {
-                                        ikBufferId = (long)value;
+                                        ikBufferPrefix = column.Substring(0, column.Length - 3);
+                                        ikBufferId.Add(ikBufferPrefix, (long)value);
                                     }
                                     else if (column.EndsWith("_type_id"))
                                     {
-                                        ikBufferTypeId = (long)value;
+                                        ikBufferPrefix = column.Substring(0, column.Length - 8);
+                                        ikBufferTypeId.Add(ikBufferPrefix, (long)value);
                                     }
                                 }
                             }
@@ -1563,15 +1732,57 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (fieldsLoaded != objectFields)
+            //if (fieldsLoaded < objectFields)
             {
-				reader.Close();
-                reader.Dispose();
-                throw new InvalidItemException(this.GetType().FullName + " :: fieldsLoaded != objectFields");
+				//reader.Close();
+                //reader.Dispose();
+                //throw new InvalidItemException(this.GetType().FullName + " : Not all fields loaded. fieldsLoaded < objectFields");
             }
 
-			reader.Close();
-            reader.Dispose();
+			//reader.Close();
+            //reader.Dispose();
+
+            if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo")
+            {
+                if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                    typeof(ILikeableItem).IsAssignableFrom(type) ||
+                    typeof(IRateableItem).IsAssignableFrom(type) ||
+                    typeof(ITagableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type) ||
+                    typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                    typeof(IShareableItem).IsAssignableFrom(type) ||
+                    typeof(IViewableItem).IsAssignableFrom(type))
+                {
+
+                    bool loadIF = false;
+                    for (int i = 0; i < reader.FieldCount; i++)
+                    {
+                        string column = reader.GetName(i);
+                        if (column == "info_item_time_ut")
+                        {
+                            loadIF = true;
+                        }
+                    }
+                    // the column most likely to be unique
+                    if (loadIF)
+                    {
+                        try
+                        {
+                            ((NumberedItem)this).info = new ItemInfo(core, reader);
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            // not all rows will have one yet, but be ready
+                        }
+                        catch //(Exception ex)
+                        {
+                            //HttpContext.Current.Response.Write(ex.ToString());
+                            //HttpContext.Current.Response.End();
+                            // catch all remaining errors
+                        }
+                    }
+                }
+            }
 
             if (ItemLoad != null)
             {
@@ -1586,16 +1797,17 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, DataRow itemRow)
         {
-            List<string> columns = new List<string>();
+            //List<string> columns = new List<string>();
             List<string> columnsAttributed = new List<string>();
             int columnCount = 0;
 
-            foreach (DataColumn column in itemRow.Table.Columns)
+            /*foreach (DataColumn column in itemRow.Table.Columns)
             {
                 columns.Add(column.ColumnName);
-            }
+            }*/
 
-            foreach (FieldInfo fi in type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
+            FieldInfo[] fields = getFieldInfo(type);
+            foreach (FieldInfo fi in fields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))
                 {
@@ -1634,7 +1846,7 @@ namespace BoxSocial.Internals
 							
 	                        columnsAttributed.Add(columnName);
 
-	                        if (columns.Contains(columnName))
+                            if (itemRow.Table.Columns.Contains(columnName))
 	                        {
 	                            columnCount++;
 	                            if (!(itemRow[columnName] is DBNull))
@@ -1708,7 +1920,7 @@ namespace BoxSocial.Internals
                     typeof(IViewableItem).IsAssignableFrom(type))
                 {
                     // the column most likely to be unique
-                    if (columns.Contains("info_item_time_ut"))
+                    if (itemRow.Table.Columns.Contains("info_item_time_ut"))
                     {
                         try
                         {

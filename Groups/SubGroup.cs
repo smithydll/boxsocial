@@ -875,7 +875,8 @@ namespace BoxSocial.Groups
             }
 
             List<SubGroupMember> members = subgroup.GetMembers(e.Page.TopLevelPageNumber, 20, e.Core.Functions.GetFilter());
-            long memberCount = e.Db.LastQueryRows;
+            // TODO, cache
+            long memberCount = members.Count; // e.Db.LastQueryRows;
 
             foreach (SubGroupMember member in members)
             {

@@ -114,7 +114,23 @@ namespace BoxSocial.Musician
 
             try
             {
-                loadItemInfo(typeof(MusicianMember), core.Db.ReaderQuery(sQuery));
+                System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(sQuery);
+                if (reader.HasRows)
+                {
+                    reader.Read();
+
+                    loadItemInfo(typeof(MusicianMember), reader);
+
+                    reader.Close();
+                    reader.Dispose();
+                }
+                else
+                {
+                    reader.Close();
+                    reader.Dispose();
+
+                    throw new InvalidMusicianMemberException();
+                }
             }
             catch (InvalidItemException)
             {

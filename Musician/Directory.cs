@@ -64,7 +64,9 @@ namespace BoxSocial.Musician
             e.Template.Parse("U_FILTER_BEGINS_Z", GetDirectoryUri(e.Core, "z"));
 
             List<Musician> musicians = Musician.GetMusicians(e.Core, e.Core.Functions.GetFilter(), e.Page.TopLevelPageNumber);
-            long musicianCount = e.Db.LastQueryRows;
+            
+            // TODO: cache
+            long musicianCount = musicians.Count; // e.Db.LastQueryRows;
 
             Dictionary<long, MusicGenre> musicianGenres = MusicGenre.GetGenres(e.Core, musicians);
 
@@ -198,7 +200,8 @@ namespace BoxSocial.Musician
 
             List<Musician> musicians = genreObject.GetMusicians(e.Core.Functions.GetFilter(), e.Page.TopLevelPageNumber);
 
-            long musicianCount = e.Db.LastQueryRows;
+            // TODO: cache
+            long musicianCount = musicians.Count; // e.Db.LastQueryRows;
 
             Dictionary<long, MusicGenre> musicianGenres = MusicGenre.GetGenres(e.Core, musicians);
 

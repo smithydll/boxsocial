@@ -123,6 +123,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemInfo(Core core, System.Data.Common.DbDataReader itemReader)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
+
+            try
+            {
+                loadItemInfo(itemReader);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidIteminfoException();
+            }
+        }
+
         private void ItemInfo_ItemLoad()
         {
         }

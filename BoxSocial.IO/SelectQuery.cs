@@ -532,10 +532,11 @@ namespace BoxSocial.IO
                     query.Append(" DISTINCT");
                 }
 
-                if (limitCount >= 0)
+                // This is BAD
+                /*if (limitCount >= 0)
                 {
                     query.Append(" SQL_CALC_FOUND_ROWS");
-                }
+                }*/
 
                 if (fields.Count > 0)
                 {

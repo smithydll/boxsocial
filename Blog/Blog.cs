@@ -458,9 +458,9 @@ namespace BoxSocial.Applications.Blog
 
                 while (entries.Count <= perPage)
                 {
-                    DataTable blogEntriesTable = db.Query(query);
-
                     List<IPermissibleItem> tempBlogEntries = new List<IPermissibleItem>();
+
+                    /*DataTable blogEntriesTable = db.Query(query);
 
                     if (blogEntriesTable.Rows.Count == 0)
                     {
@@ -471,7 +471,23 @@ namespace BoxSocial.Applications.Blog
                     {
                         BlogEntry entry = new BlogEntry(core, this, owner, row);
                         tempBlogEntries.Add(entry);
+                    }*/
+
+                    System.Data.Common.DbDataReader blogReader = core.Db.ReaderQuery(query);
+
+                    if (!blogReader.HasRows)
+                    {
+                        break;
                     }
+
+                    while (blogReader.Read())
+                    {
+                        BlogEntry entry = new BlogEntry(core, this, owner, blogReader);
+                        tempBlogEntries.Add(entry);
+                    }
+
+                    blogReader.Close();
+                    blogReader.Dispose();
 
                     core.AcessControlCache.CacheGrants(tempBlogEntries);
 

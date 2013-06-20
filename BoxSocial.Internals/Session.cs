@@ -43,6 +43,7 @@ namespace BoxSocial.Internals
         private long sessionId;
         [DataField("user_id")]
         private long userId;
+        [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_string", DataFieldKeys.Index, 32)]
         private string sessionString;
         [DataField("session_start_ut")]
@@ -51,6 +52,7 @@ namespace BoxSocial.Internals
         private long sessionTimeRaw;
         [DataField("session_signed_in")]
         private bool sessionSignedIn;
+        [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_ip", IP)]
         private string sessionIp;
 
@@ -484,29 +486,32 @@ namespace BoxSocial.Internals
                     sessionData.autoLoginId = "";
                     sessionData.userId = userId;
 
-                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
-                    query.AddCondition("user_active", true);
-                    query.AddCondition("user_keys.user_id", userId);
-
-                    DataTable userSessionTable = db.Query(query);
-
-                    if (userSessionTable.Rows.Count == 1)
+                    if (userId > 0)
                     {
-                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
-                        isLoggedIn = true;
-                    }
-                    else
-                    {
-                        // TODO: activation
-                        //core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
-                        Response.Write("You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
-                        //Display.ShowMessage(this, "Error", "Error starting session");
-                        //Response.Write("fail 1");
-                        if (db != null)
+                        SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                        query.AddCondition("user_active", true);
+                        query.AddCondition("user_keys.user_id", userId);
+
+                        DataTable userSessionTable = db.Query(query);
+
+                        if (userSessionTable.Rows.Count == 1)
                         {
-                            db.CloseConnection();
+                            loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
+                            isLoggedIn = true;
                         }
-                        Response.End();
+                        else
+                        {
+                            // TODO: activation
+                            //core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                            Response.Write("You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
+                            //Display.ShowMessage(this, "Error", "Error starting session");
+                            //Response.Write("fail 1");
+                            if (db != null)
+                            {
+                                db.CloseConnection();
+                            }
+                            Response.End();
+                        }
                     }
                 }
             }
@@ -528,14 +533,17 @@ namespace BoxSocial.Internals
                 sessionData.userId = userId = 0;
                 enableAutologin = isLoggedIn = false;
 
-                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
-                query.AddCondition("user_keys.user_id", userId);
-
-                DataTable userTable = db.Query(query);
-
-                if (userTable.Rows.Count == 1)
+                if (userId > 0)
                 {
-                    loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
+                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                    query.AddCondition("user_keys.user_id", userId);
+
+                    DataTable userTable = db.Query(query);
+
+                    if (userTable.Rows.Count == 1)
+                    {
+                        loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
+                    }
                 }
             }
 

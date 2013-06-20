@@ -59,6 +59,24 @@ namespace BoxSocial.Internals
 		private Primitive owner;
         private ItemKey itemKey;
 
+        public AccessControlGrant Clone()
+        {
+            return new AccessControlGrant(core, primitiveKey, itemId, itemTypeId, permissionId, grantAllow, item, owner, itemKey);
+        }
+
+        private AccessControlGrant(Core core, ItemKey primitiveKey, long itemId, long itemTypeId, long permissionId, sbyte grantAllow, IPermissibleItem item, Primitive owner, ItemKey itemKey)
+            : base(core)
+        {
+            this.primitiveKey = primitiveKey;
+            this.itemId = itemId;
+            this.itemTypeId = itemTypeId;
+            this.permissionId = permissionId;
+            this.grantAllow = grantAllow;
+            this.item = item;
+            this.owner = owner;
+            this.itemKey = itemKey;
+        }
+
         public ItemKey ItemKey
         {
             get

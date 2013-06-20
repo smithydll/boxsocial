@@ -43,7 +43,7 @@ namespace BoxSocial.IO
         public Stack<string> QueryList = new Stack<string>();
         public StringBuilder ErrorList = new StringBuilder();
 
-        public long LastQueryRows
+        /*public long LastQueryRows
         {
             get
             {
@@ -58,7 +58,7 @@ namespace BoxSocial.IO
                     return -1;
                 }
             }
-        }
+        }*/
 
         public Mysql(string username, string database, string host)
         {

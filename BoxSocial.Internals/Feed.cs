@@ -73,10 +73,10 @@ namespace BoxSocial.Internals
 
                     while (feedItems.Count <= perPage)
                     {
-                        DataTable feedTable = core.Db.Query(query);
-
                         List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
                         List<Action> tempActions = new List<Action>();
+
+                        /*DataTable feedTable = core.Db.Query(query);
 
                         if (feedTable.Rows.Count == 0)
                         {
@@ -88,6 +88,29 @@ namespace BoxSocial.Internals
                             Action action = new Action(core, owner, row);
                             tempActions.Add(action);
                             core.ItemCache.RequestItem(action.ActionItemKey);
+                        }*/
+
+                        System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+
+                        if (!feedReader.HasRows)
+                        {
+                            break;
+                        }
+
+                        while (feedReader.Read())
+                        {
+                            Action action = new Action(core, owner, feedReader);
+                            tempActions.Add(action);
+                        }
+
+                        feedReader.Close();
+                        feedReader.Dispose();
+
+                        /**/
+
+                        foreach (Action action in tempActions)
+                        {
+                            core.ItemCache.RequestItem(action.ActionItemKey);
                         }
 
                         foreach (Action action in tempActions)
@@ -95,7 +118,10 @@ namespace BoxSocial.Internals
                             tempMessages.Add(action.PermissiveParent);
                         }
 
-                        core.AcessControlCache.CacheGrants(tempMessages);
+                        if (tempMessages.Count > 0)
+                        {
+                            core.AcessControlCache.CacheGrants(tempMessages);
+                        }
 
                         foreach (Action action in tempActions)
                         {

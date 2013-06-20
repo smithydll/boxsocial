@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public struct AccessControlPermissionKey
+    public struct AccessControlPermissionKey : IComparable
     {
         long typeId;
         string permission;
@@ -67,9 +67,29 @@ namespace BoxSocial.Internals
                 return false;
             return true;
         }
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(AccessControlPermissionKey))
+            {
+                return -1;
+            }
+
+            AccessControlPermissionKey key = (AccessControlPermissionKey)obj;
+
+            int c = key.TypeId.CompareTo(TypeId);
+            if (c == 0)
+            {
+                return key.Permission.CompareTo(Permission);
+            }
+            else
+            {
+                return c;
+            }
+        }
     }
 
-    public struct AccessControlGrantKey
+    public struct AccessControlGrantKey : IComparable
     {
         long typeId;
         long itemId;
@@ -106,6 +126,29 @@ namespace BoxSocial.Internals
             if (itemId != acgk.itemId)
                 return false;
             return true;
+        }
+
+        public override int GetHashCode()
+        {
+            return TypeId.GetHashCode() ^ ItemId.GetHashCode();
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj.GetType() != typeof(AccessControlGrantKey))
+            {
+                return -1;
+            }
+
+            int c = ((AccessControlGrantKey)obj).TypeId.CompareTo(TypeId);
+            if (c == 0)
+            {
+                return ((AccessControlGrantKey)obj).ItemId.CompareTo(ItemId);
+            }
+            else
+            {
+                return c;
+            }
         }
     }
 
@@ -145,7 +188,7 @@ namespace BoxSocial.Internals
                     AccessControlPermission acp = null;
                     if (permissionCache.TryGetValue(key, out acp))
                     {
-                        return acp;
+                        return acp.Clone();
                     }
 
                     /*if (permissionCache.ContainsKey(key))
@@ -220,12 +263,18 @@ namespace BoxSocial.Internals
         {
             AccessControlGrantKey key = new AccessControlGrantKey(itemKey.TypeId, itemKey.Id);
 
+            List<AccessControlGrant> acgs2 = new List<AccessControlGrant>();
+            bool success = false;
             lock (grantsCacheLock)
             {
                 List<AccessControlGrant> acgs = null;
                 if (grantsCache.TryGetValue(key, out acgs))
                 {
-                    return acgs;
+                    success = true;
+                    foreach (AccessControlGrant grant in acgs)
+                    {
+                        acgs2.Add(grant.Clone());
+                    }
                 }
 
                 /*if (grantsCache.ContainsKey(key))
@@ -233,13 +282,22 @@ namespace BoxSocial.Internals
                     return grantsCache[key];
                 }*/
             }
+            if (success)
+            {
+                return acgs2;
+            }
 
             List<AccessControlGrant> g = AccessControlGrant.GetGrants(core, itemKey);
+            List<AccessControlGrant> g2 = new List<AccessControlGrant>();
             lock (grantsCacheLock)
             {
                 if (!grantsCache.ContainsKey(key))
                 {
-                    grantsCache.Add(key, g);
+                    foreach (AccessControlGrant grant in g)
+                    {
+                        g2.Add(grant);
+                    }
+                    grantsCache.Add(key, g2);
                 }
             }
 

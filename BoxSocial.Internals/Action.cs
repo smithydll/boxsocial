@@ -31,6 +31,7 @@ namespace BoxSocial.Internals
     [DataTable("actions")]
     public class Action : NumberedItem, IPermissibleSubItem
     {
+        [DataFieldKey(DataFieldKeys.Index, "i_sort")]
         [DataField("action_id", DataFieldKeys.Primary)]
         private long actionId;
         [DataField("action_title", 127)]
@@ -47,6 +48,7 @@ namespace BoxSocial.Internals
         private ItemKey itemKey;
         [DataField("interact_item", DataFieldKeys.Index)]
         private ItemKey interactKey;
+        [DataFieldKey(DataFieldKeys.Index, "i_sort")]
         [DataField("action_time_ut")]
         private long timeRaw;
 
@@ -261,6 +263,30 @@ namespace BoxSocial.Internals
             try
             {
                 this.info = new ItemInfo(core, actionRow);
+            }
+            catch (InvalidIteminfoException)
+            {
+                // not all rows will have one yet, but be ready
+            }
+            catch //(Exception ex)
+            {
+                //HttpContext.Current.Response.Write(ex.ToString());
+                //HttpContext.Current.Response.End();
+                // catch all remaining errors
+            }
+        }
+
+        public Action(Core core, Primitive owner, System.Data.Common.DbDataReader actionReader)
+            : base(core)
+        {
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Action_ItemLoad);
+
+            loadItemInfo(actionReader);
+
+            try
+            {
+                this.info = new ItemInfo(core, actionReader);
             }
             catch (InvalidIteminfoException)
             {

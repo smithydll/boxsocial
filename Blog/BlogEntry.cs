@@ -380,6 +380,17 @@ namespace BoxSocial.Applications.Blog
             loadItemInfo(postEntryRow);
         }
 
+        public BlogEntry(Core core, Blog blog, Primitive owner, System.Data.Common.DbDataReader postEntryReader)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(BlogEntry_ItemLoad);
+
+            this.blog = blog;
+            this.owner = owner;
+
+            loadItemInfo(postEntryReader);
+        }
+
         /// <summary>
         /// Initialses a new instance of the BlogEntry class.
         /// </summary>

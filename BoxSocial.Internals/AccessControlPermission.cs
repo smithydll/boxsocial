@@ -65,6 +65,21 @@ namespace BoxSocial.Internals
         [DataField("permission_type")]
         byte permissionType;
 
+        public AccessControlPermission Clone()
+        {
+            return new AccessControlPermission(core, permissionId, permissionName, itemTypeId, permissionDescription, permissionType);
+        }
+
+        private AccessControlPermission(Core core, long permissionId, string permissionName, long itemTypeId, string permissionDescription, byte permissionType)
+            : base(core)
+        {
+            this.permissionId = permissionId;
+            this.permissionName = permissionName;
+            this.itemTypeId = itemTypeId;
+            this.permissionDescription = permissionDescription;
+            this.permissionType = permissionType;
+        }
+
         private string permissionAssembly;
         private string permissionDescriptionCache;
 		

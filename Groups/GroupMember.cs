@@ -45,8 +45,10 @@ namespace BoxSocial.Groups
     [PermissionGroup]
     public class GroupMember : User
     {
-        [DataField("user_id")]
+        [DataFieldKey(DataFieldKeys.Unique, "u_member")]
+        [DataField("user_id", DataFieldKeys.Index)]
         private new long userId;
+        [DataFieldKey(DataFieldKeys.Unique, "u_member")]
         [DataField("group_id")]
         private long groupId;
         [DataField("group_member_date_ut")]

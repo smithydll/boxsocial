@@ -1207,12 +1207,12 @@ namespace BoxSocial.Applications.Gallery
             }
 
             InsertQuery iQuery = new InsertQuery("user_galleries");
-            iQuery.AddField("gallery_settings", settings.Id);
             iQuery.AddField("gallery_title", title);
             iQuery.AddField("gallery_abstract", description);
             iQuery.AddField("gallery_path", slug);
             iQuery.AddField("gallery_parent_path", parent.FullPath);
             iQuery.AddField("user_id", core.LoggedInMemberId);
+            iQuery.AddField("settings_id", settings.Id);
             iQuery.AddField("gallery_item_id", owner.Id);
             iQuery.AddField("gallery_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_parent_id", parent.GalleryId);
@@ -2308,7 +2308,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
 
-                    returnValue += string.Format("[iurl={0}][inline]{1}[/inline][/iurl]",
+                    returnValue += string.Format("[iurl=\"{0}#hd\"][inline]{1}[/inline][/iurl]",
                             item.Uri, item.FullPath);
                 }
                 else
@@ -2317,7 +2317,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         GalleryItem item = new GalleryItem(core, Owner, row);
 
-                        returnValue += string.Format("[iurl={0}][thumb]{1}[/thumb][/iurl]",
+                        returnValue += string.Format("[iurl=\"{0}#hd\"][thumb]{1}[/thumb][/iurl]",
                                 item.Uri, item.FullPath);
                     }
                 }

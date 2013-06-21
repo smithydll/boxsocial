@@ -63,6 +63,8 @@ namespace BoxSocial.Musician
 
         private Musician musician;
 
+        public event CommentHandler OnCommentPosted;
+
         public long ReleaseId
         {
             get
@@ -193,6 +195,20 @@ namespace BoxSocial.Musician
 
         void Release_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Release_CommentPosted);
+        }
+
+        bool Release_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         public List<Track> GetTracks()

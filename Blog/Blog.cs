@@ -477,6 +477,8 @@ namespace BoxSocial.Applications.Blog
 
                     if (!blogReader.HasRows)
                     {
+                        blogReader.Close();
+                        blogReader.Dispose();
                         break;
                     }
 
@@ -519,7 +521,7 @@ namespace BoxSocial.Applications.Blog
                     }
                     query.LimitCount = (int)(query.LimitCount * pessimism);
 
-                    if (moreContent)
+                    if (moreContent || post > 0)
                     {
                         break;
                     }
@@ -967,7 +969,14 @@ namespace BoxSocial.Applications.Blog
                     blogPostVariableCollection.Parse("ID", blogEntries[i].Id);
                     blogPostVariableCollection.Parse("TYPE_ID", blogEntries[i].ItemKey.TypeId);
 
-                    core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
+                    if (!string.IsNullOrEmpty(blogEntries[i].BodyCache))
+                    {
+                        core.Display.ParseBbcodeCache(blogPostVariableCollection, "POST", blogEntries[i].BodyCache);
+                    }
+                    else
+                    {
+                        core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
+                    }
 
                     if (core.Session.IsLoggedIn)
                     {

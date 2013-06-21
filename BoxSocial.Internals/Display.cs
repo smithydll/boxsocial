@@ -682,7 +682,14 @@ namespace BoxSocial.Internals
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
                 //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
-                core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body, true, null, null);
+                if (!string.IsNullOrEmpty(comment.BodyCache))
+                {
+                    core.Display.ParseBbcodeCache(commentsVariableCollection, "COMMENT", comment.BodyCache);
+                }
+                else
+                {
+                    core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body, true, null, null);
+                }
 
                 try
                 {
@@ -808,7 +815,7 @@ namespace BoxSocial.Internals
             {
                 loopVars = new Dictionary<string, string>();
             }*/
-            Dictionary<string, string> loopVars = new Dictionary<string, string>();
+            Dictionary<string, string> loopVars = new Dictionary<string, string>(StringComparer.Ordinal);
 
             loopVars.Add("STAR_ONE", one);
             loopVars.Add("STAR_TWO", two);
@@ -936,6 +943,14 @@ namespace BoxSocial.Internals
 
                 template.ParseRaw("ADSENSE_CODE_HEADER", WebConfigurationManager.AppSettings["adsense-code-header"]);
                 template.ParseRaw("ADSENSE_CODE_FOOTER", WebConfigurationManager.AppSettings["adsense-code-footer"]);
+            }
+
+            foreach (string name in core.Meta.Keys)
+            {
+                VariableCollection metaVariableCollection = template.CreateChild("meta_list");
+
+                metaVariableCollection.Parse("NAME", name);
+                metaVariableCollection.ParseRaw("CONTENT", core.Meta[name]);
             }
         }
 

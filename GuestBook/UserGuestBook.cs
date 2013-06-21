@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Web;
 using BoxSocial.Internals;
@@ -33,11 +34,38 @@ namespace BoxSocial.Applications.GuestBook
     {
         private User owner;
 
+        public event CommentHandler OnCommentPosted;
+
         public UserGuestBook(Core core, User owner) : base(core)
         {
             this.db = core.Db;
 
             this.owner = owner;
+
+            OnCommentPosted += new CommentHandler(UserGuestBook_CommentPosted);
+        }
+
+        bool UserGuestBook_CommentPosted(CommentPostedEventArgs e)
+        {
+            User userProfile = new User(core, e.ItemId);
+
+            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
+            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(this));
+            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
+            notificationTemplate.Parse("COMMENT", e.Comment.Body);
+
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "GuestBook");
+            ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
+
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         public override long Id

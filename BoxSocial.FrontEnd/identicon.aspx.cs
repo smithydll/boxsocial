@@ -48,8 +48,8 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string profileUserName = Request.QueryString["un"];
-            string mode = Request.QueryString["mode"];
+            string profileUserName = core.Http["un"];
+            string mode = core.Http["mode"];
             User profileOwner;
 
             int width = 100;
@@ -114,7 +114,7 @@ namespace BoxSocial.FrontEnd
             Response.ContentType = "image/png";
             Response.Clear();
 
-            byte[] userBytes = System.Text.Encoding.UTF8.GetBytes (profileUserName);
+            byte[] userBytes = System.Text.Encoding.UTF8.GetBytes(profileUserName);
             MD5 md5 = MD5.Create();
             int hash = BitConverter.ToInt32(md5.ComputeHash(userBytes),0);
             Image image = Identicon.CreateIdenticon(hash, width, false);

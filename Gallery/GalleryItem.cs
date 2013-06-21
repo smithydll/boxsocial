@@ -281,6 +281,8 @@ namespace BoxSocial.Applications.Gallery
 
         protected Gallery gallery;
 
+        public event CommentHandler OnCommentPosted;
+
         public Gallery Parent
         {
             get
@@ -506,6 +508,10 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
+                if (licenseInfo == null && LicenseId > 0)
+                {
+                    licenseInfo = new ContentLicense(core, LicenseId);
+                }
                 return licenseInfo;
             }
         }
@@ -743,13 +749,13 @@ namespace BoxSocial.Applications.Gallery
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
-                try
+                /*try
                 {
                     licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
                 }
                 catch (InvalidLicenseException)
                 {
-                }
+                }*/
             }
             else
             {
@@ -770,13 +776,13 @@ namespace BoxSocial.Applications.Gallery
             this.owner = owner;
 
             loadItemInfo(typeof(GalleryItem), itemRow);
-            try
+            /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
-            }
+            }*/
         }
 
         /// <summary>
@@ -791,13 +797,13 @@ namespace BoxSocial.Applications.Gallery
             this.owner = owner;
 
             loadItemInfo(typeof(GalleryItem), itemRow);
-            try
+            /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
-            }
+            }*/
         }
 
         /// <summary>
@@ -811,13 +817,13 @@ namespace BoxSocial.Applications.Gallery
             // TODO: owner not set, no big worry
 
             loadItemInfo(typeof(GalleryItem), itemRow);
-            try
+            /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
             }
             catch (InvalidLicenseException)
             {
-            }
+            }*/
         }
 
         /// <summary>
@@ -845,13 +851,13 @@ namespace BoxSocial.Applications.Gallery
             if (galleryItemTable.Rows.Count == 1)
             {
                 loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
-                try
+                /*try
                 {
                     licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
                 }
                 catch (InvalidLicenseException)
                 {
-                }
+                }*/
             }
             else
             {
@@ -882,7 +888,7 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
-                licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
+                //licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
             catch (InvalidItemException)
             {
@@ -931,7 +937,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
 
-                licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
+                //licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
             catch (InvalidItemException)
             {
@@ -944,6 +950,26 @@ namespace BoxSocial.Applications.Gallery
 
         void GalleryItem_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(GalleryItem_CommentPosted);
+        }
+
+        bool GalleryItem_CommentPosted(CommentPostedEventArgs e)
+        {
+            if (Owner is User)
+            {
+                core.CallingApplication.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your photo.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+            }
+
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         /// <summary>
@@ -951,14 +977,14 @@ namespace BoxSocial.Applications.Gallery
         /// gallery item data type.
         /// </summary>
         /// <returns>A query stub for the gallery item data type</returns>
-        public static SelectQuery GalleryItem_GetSelectQueryStub()
+        /*public static SelectQuery GalleryItem_GetSelectQueryStub()
         {
             SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
             query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(ContentLicense)));
             query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(ContentLicense)), "gallery_item_license", "license_id");
 
             return query;
-        }
+        }*/
 
         /// <summary>
         /// Increment the number of views
@@ -1378,6 +1404,19 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 Size hdSize = galleryItem.GetSize(new Size(1920, 1080));
+
+                e.Core.Meta.Add("twitter:card", "photo");
+                e.Core.Meta.Add("twitter:image", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendAbsoluteSid(galleryItem.MobileUri)));
+                if (!string.IsNullOrEmpty(galleryItem.ItemTitle))
+                {
+                    e.Core.Meta.Add("twitter:title", galleryItem.ItemTitle);
+                    e.Core.Meta.Add("og:title", galleryItem.ItemTitle);
+                }
+                e.Core.Meta.Add("og:type", "photo");
+                e.Core.Meta.Add("og:url", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendAbsoluteSid(galleryItem.Uri)));
+                e.Core.Meta.Add("og:image", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendAbsoluteSid(galleryItem.DisplayUri)));
+
+                e.Page.CanonicalUri = galleryItem.Uri;
 
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());

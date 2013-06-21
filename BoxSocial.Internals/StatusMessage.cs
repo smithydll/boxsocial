@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         private User owner;
         private Access access;
 
+        public event CommentHandler OnCommentPosted;
+
         public long StatusId
         {
             get
@@ -169,6 +171,26 @@ namespace BoxSocial.Internals
         {
             ItemUpdated += new EventHandler(StatusMessage_ItemUpdated);
             ItemDeleted += new ItemDeletedEventHandler(StatusMessage_ItemDeleted);
+            OnCommentPosted += new CommentHandler(StatusMessage_CommentPosted);
+        }
+
+        bool StatusMessage_CommentPosted(CommentPostedEventArgs e)
+        {
+            if (Owner is User)
+            {
+                core.CallingApplication.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your status.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+            }
+
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         void StatusMessage_ItemUpdated(object sender, EventArgs e)

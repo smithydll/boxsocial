@@ -22,6 +22,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
+using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -33,6 +36,8 @@ namespace BoxSocial.Internals
     {
         [DataField("info_item", DataFieldKeys.Unique)]
         private ItemKey itemKey;
+        [DataField("info_shortkey", DataFieldKeys.Unique, 11)]
+        private string shortUrlKey;
         [DataField("info_comments")]
         private long comments;
         [DataField("info_likes")]
@@ -164,9 +169,33 @@ namespace BoxSocial.Internals
                 new FieldValuePair("info_item_type_id", itemKey.TypeId),
                 new FieldValuePair("info_item_time_ut", UnixTime.UnixTimeStamp()));*/
 
+            byte[] encryptBytes = { 0x44, 0x33, 0x22, 0x11, 0x00, 0x99, 0x88, 0x77 };
+            string encryptKey = "boxsocia";
+
+            byte[] bytes = new byte[] { 
+                (byte)itemKey.TypeId, 
+                (byte)((itemKey.TypeId >> 8) + (itemKey.Id >> 40)), 
+                (byte)(itemKey.Id >> 32), 
+                (byte)(itemKey.Id >> 24), 
+                (byte)(itemKey.Id >> 16), 
+                (byte)(itemKey.Id >> 8), 
+                (byte)itemKey.Id };
+
+            byte[] keyBytes = Encoding.UTF8.GetBytes(encryptKey);
+            DESCryptoServiceProvider des = new DESCryptoServiceProvider();
+            MemoryStream ms = new MemoryStream();
+            CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(keyBytes, encryptBytes), CryptoStreamMode.Write);
+            cs.Write(bytes, 0, bytes.Length);
+            cs.FlushFinalBlock();
+
+            bytes = ms.ToArray();
+
+            string shortKey = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
+
             InsertQuery iQuery = new InsertQuery(typeof(ItemInfo));
             iQuery.AddField("info_item_id", itemKey.Id);
             iQuery.AddField("info_item_type_id", itemKey.TypeId);
+            iQuery.AddField("info_shortkey", shortKey);
             iQuery.AddField("info_item_time_ut", UnixTime.UnixTimeStamp());
             
             core.Db.Query(iQuery);

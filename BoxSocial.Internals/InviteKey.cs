@@ -54,7 +54,7 @@ namespace BoxSocial.Internals
 
         public static Dictionary<string, InviteKey> GetInvites(Core core, string emailKey)
         {
-            Dictionary<string, InviteKey> keys = new Dictionary<string, InviteKey>();
+            Dictionary<string, InviteKey> keys = new Dictionary<string, InviteKey>(StringComparer.Ordinal);
 
             SelectQuery query = new SelectQuery(typeof(InviteKey));
             query.AddCondition("email_key", emailKey);

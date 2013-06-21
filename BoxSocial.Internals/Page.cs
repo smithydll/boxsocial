@@ -57,6 +57,8 @@ namespace BoxSocial.Internals
         private string title;
         [DataField("page_text", MYSQL_MEDIUM_TEXT)]
         private string body;
+        [DataField("page_text_cache", MYSQL_MEDIUM_TEXT)]
+        private string bodyCache;
         [DataField("page_license")]
         private byte licenseId;
         [DataField("page_views")]
@@ -152,6 +154,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string BodyCache
+        {
+            get
+            {
+                return bodyCache;
+            }
+            set
+            {
+                SetProperty("bodyCache", value);
+            }
+        }
+
         public string Icon
         {
             get
@@ -240,6 +254,10 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (license == null && LicenseId > 0)
+                {
+                    license = new ContentLicense(core, LicenseId);
+                }
                 return license;
             }
         }
@@ -549,13 +567,13 @@ namespace BoxSocial.Internals
             if (pageTable.Rows.Count == 1)
             {
                 loadPageInfo(pageTable.Rows[0]);
-                try
+                /*try
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
                 }
                 catch (InvalidLicenseException)
                 {
-                }
+                }*/
             }
             else
             {
@@ -577,14 +595,14 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static SelectQuery Page_GetSelectQueryStub()
+        /*public static SelectQuery Page_GetSelectQueryStub()
         {
             SelectQuery query = Page.GetSelectQueryStub(typeof(Page), false);
             query.AddFields(Page.GetFieldsPrefixed(typeof(ContentLicense)));
             query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(ContentLicense)), "page_license", "license_id");
 
             return query;
-        }
+        }*/
 
         private void loadPageInfo(DataRow pageRow)
         {
@@ -846,6 +864,13 @@ namespace BoxSocial.Internals
                 parents = sb.ToString();
             }
 
+            string pageBodyCache = string.Empty;
+
+            if (!pageBody.Contains("[user") && !pageBody.Contains("sid=true]"))
+            {
+                pageBodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(pageBody), null, core.Session.LoggedInMember, true, string.Empty, string.Empty);
+            }
+
             core.Db.BeginTransaction();
             core.Db.Query(uquery);
 
@@ -867,6 +892,7 @@ namespace BoxSocial.Internals
             iquery.AddField("page_title", title);
             iquery.AddField("page_ip", core.Session.IPAddress.ToString());
             iquery.AddField("page_text", pageBody);
+            iquery.AddField("page_text_cache", pageBodyCache);
             iquery.AddField("page_license", license);
             iquery.AddField("page_order", order);
             iquery.AddField("page_parent_id", parent);
@@ -1104,6 +1130,13 @@ namespace BoxSocial.Internals
 
             db.Query(uquery);
 
+            string pageBodyCache = string.Empty;
+
+            if (!pageBody.Contains("[user") && !pageBody.Contains("sid=true]"))
+            {
+                pageBodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(pageBody), null, core.Session.LoggedInMember, true, string.Empty, string.Empty);
+            }
+
             uquery = new UpdateQuery("user_pages");
             //uquery.AddField("user_id", owner.Id);
             uquery.AddField("page_slug", slug);
@@ -1118,6 +1151,7 @@ namespace BoxSocial.Internals
             }
             uquery.AddField("page_ip", core.Session.IPAddress.ToString());
             uquery.AddField("page_text", pageBody);
+            uquery.AddField("page_text_cache", pageBodyCache);
             uquery.AddField("page_license", license);
             if (parentChanged)
             {
@@ -1218,14 +1252,23 @@ namespace BoxSocial.Internals
             BoxSocial.Internals.Classification.ApplyRestrictions(core, thePage.Classification);
 
             core.Template.Parse("PAGE_TITLE", thePage.Title);
-            if (owner is User)
+            /*if (owner is User)
             {
                 core.Display.ParseBbcode("PAGE_BODY", thePage.Body, (User)owner);
             }
             else
             {
                 core.Display.ParseBbcode("PAGE_BODY", thePage.Body);
+            }*/
+            if (!string.IsNullOrEmpty(thePage.BodyCache))
+            {
+                core.Display.ParseBbcodeCache("PAGE_BODY", thePage.BodyCache);
             }
+            else
+            {
+                core.Display.ParseBbcode(core.Template, "PAGE_BODY", thePage.Body, thePage.Owner, true, null, null);
+            }
+
             DateTime pageDateTime = thePage.GetModifiedDate(core.Tz);
             core.Template.Parse("PAGE_LAST_MODIFIED", core.Tz.DateTimeToString(pageDateTime));
 

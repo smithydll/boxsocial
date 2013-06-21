@@ -309,7 +309,7 @@ namespace BoxSocial.Applications.Gallery
         {
             UserGroup thisGroup = (UserGroup)e.Owner;
 
-            if (!(!thisGroup.IsGroupMember(e.core.Session.LoggedInMember.ItemKey) && thisGroup.GroupType == "CLOSED"))
+            if (!(!thisGroup.IsGroupMember(e.core.LoggedInMemberItemKey) && thisGroup.GroupType == "CLOSED"))
             {
                 Template template = new Template(Assembly.GetExecutingAssembly(), "viewprofilegallery");
                 template.Medium = core.Template.Medium;

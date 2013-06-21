@@ -29,8 +29,16 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public delegate bool CommentHandler(CommentPostedEventArgs e);
+
     public interface ICommentableItem
     {
+        /// <summary>
+        /// Event Handler
+        /// </summary>
+        event CommentHandler OnCommentPosted;
+
+        void CommentPosted(CommentPostedEventArgs e);
 
         /// <summary>
         /// Gets the number of comments.

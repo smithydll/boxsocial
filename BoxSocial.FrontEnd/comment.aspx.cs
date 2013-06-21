@@ -450,9 +450,13 @@ namespace BoxSocial.FrontEnd
                     {
                         ae.PublishToFeed(core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId));
                     }
+                    ICommentableItem citem = (ICommentableItem)item;
+
+                    citem.CommentPosted(new CommentPostedEventArgs(commentObject, core.Session.LoggedInMember, new ItemKey(itemId, itemTypeId)));
                 }
 
                 Comment.Commented(core, itemKey);
+                
             }
             catch (NotLoggedInException)
             {

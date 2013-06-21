@@ -161,7 +161,7 @@ namespace BoxSocial.FrontEnd
                     statusMessageVariableCollection.Parse("U_SHARE", newStatus.ShareUri);
                 }
 
-                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+                Dictionary<string, string> returnValues = new Dictionary<string, string>(StringComparer.Ordinal);
 
                 returnValues.Add("update", item.OwnerKey.Equals(newStatus.Owner.ItemKey) ? "true" : "false");
                 returnValues.Add("message", message);

@@ -72,6 +72,8 @@ namespace BoxSocial.Groups
         private Dictionary<ItemKey, bool> groupMemberAbsoluteCache = new Dictionary<ItemKey, bool>();
         private Dictionary<ItemKey, bool> groupOperatorCache = new Dictionary<ItemKey, bool>();
 
+        public event CommentHandler OnCommentPosted;
+
         public long GroupId
         {
             get
@@ -420,6 +422,20 @@ namespace BoxSocial.Groups
 
         void UserGroup_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(UserGroup_CommentPosted);
+        }
+
+        bool UserGroup_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         private void loadUserGroupIcon(DataRow groupRow)
@@ -1375,14 +1391,14 @@ namespace BoxSocial.Groups
             page.template.Parse("L_IS_ARE", langIsAre);
             page.template.Parse("U_MEMBERLIST", page.Group.MemberlistUri);
 
-            if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
-            {
-                page.template.Parse("IS_OPERATOR", "TRUE");
-                page.template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(page.Group.AccountUriStub));
-            }
-
             if (core.Session.IsLoggedIn)
             {
+                if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
+                {
+                    page.template.Parse("IS_OPERATOR", "TRUE");
+                    page.template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(page.Group.AccountUriStub));
+                }
+
                 if (!page.Group.IsGroupMemberAbsolute(core.Session.LoggedInMember.ItemKey))
                 {
                     page.template.Parse("U_JOIN", page.Group.JoinUri);

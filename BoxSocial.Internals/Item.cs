@@ -766,7 +766,7 @@ namespace BoxSocial.Internals
         }
 
         private static Object itemFieldInfoCacheLock = new Object();
-        private static Dictionary<Type, FieldInfo[]> itemFieldInfoCache = null;
+        private static Dictionary<long, FieldInfo[]> itemFieldInfoCache = null;
 
         private static void populateItemFieldInfoCache()
         {
@@ -795,13 +795,13 @@ namespace BoxSocial.Internals
 
             lock (itemFieldInfoCacheLock)
             {
-                if (o != null && o is Dictionary<Type, FieldInfo[]>)
+                if (o != null && o is Dictionary<long, FieldInfo[]>)
                 {
-                    itemFieldInfoCache = (Dictionary<Type, FieldInfo[]>)o;
+                    itemFieldInfoCache = (Dictionary<long, FieldInfo[]>)o;
                 }
                 else
                 {
-                    itemFieldInfoCache = new Dictionary<Type, FieldInfo[]>();
+                    itemFieldInfoCache = new Dictionary<long, FieldInfo[]>();
                 }
             }
         }
@@ -810,11 +810,12 @@ namespace BoxSocial.Internals
         {
             FieldInfo[] fields = type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
+            long typeId = ItemType.GetTypeId(type);
             lock (itemFieldInfoCacheLock)
             {
-                if (!itemFieldInfoCache.ContainsKey(type))
+                if (!itemFieldInfoCache.ContainsKey(typeId))
                 {
-                    itemFieldInfoCache.Add(type, fields);
+                    itemFieldInfoCache.Add(typeId, fields);
                 }
             }
 
@@ -846,9 +847,15 @@ namespace BoxSocial.Internals
         public static FieldInfo[] getFieldInfo(Type type)
         {
             FieldInfo[] fields = null;
-            if (itemFieldInfoCache != null && itemFieldInfoCache.ContainsKey(type))
+            long typeId = ItemType.GetTypeId(type);
+
+            if (itemFieldInfoCache != null)
             {
-                fields = itemFieldInfoCache[type];
+                if (!itemFieldInfoCache.TryGetValue(typeId, out fields))
+                {
+                    populateItemFieldInfoCache();
+                    fields = saveToFieldInfoCache(type);
+                }
             }
             else
             {
@@ -860,7 +867,7 @@ namespace BoxSocial.Internals
         }
 
         private static Object itemFieldsCacheLock = new Object();
-		private static Dictionary<Type, List<DataFieldInfo>> itemFieldsCache = null;
+		private static Dictionary<long, List<DataFieldInfo>> itemFieldsCache = null;
 
         private static void populateItemFieldsCache()
         {
@@ -889,13 +896,13 @@ namespace BoxSocial.Internals
 
             lock (itemFieldsCacheLock)
             {
-                if (o != null && o is Dictionary<Type, List<DataFieldInfo>>)
+                if (o != null && o is Dictionary<long, List<DataFieldInfo>>)
                 {
-                    itemFieldsCache = (Dictionary<Type, List<DataFieldInfo>>)o;
+                    itemFieldsCache = (Dictionary<long, List<DataFieldInfo>>)o;
                 }
                 else
                 {
-                    itemFieldsCache = new Dictionary<Type, List<DataFieldInfo>>();
+                    itemFieldsCache = new Dictionary<long, List<DataFieldInfo>>();
                 }
             }
         }
@@ -912,6 +919,8 @@ namespace BoxSocial.Internals
 
         internal protected static List<DataFieldInfo> GetFields(Type type, bool getRawFields)
         {
+            long typeId = ItemType.GetTypeId(type);
+
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
 			
 			if  (itemFieldsCache != null)
@@ -920,7 +929,7 @@ namespace BoxSocial.Internals
 				{
                     List<DataFieldInfo> dfis = null;
 
-                    if (itemFieldsCache.TryGetValue(type, out dfis))
+                    if (itemFieldsCache.TryGetValue(typeId, out dfis))
                     {
                         return dfis;
                     }
@@ -983,11 +992,14 @@ namespace BoxSocial.Internals
 
             }
 
-            if ((!itemFieldsCache.ContainsKey(type)) && (!getRawFields))
+            if ((!itemFieldsCache.ContainsKey(typeId)) && (!getRawFields))
             {
                 lock (itemFieldsCacheLock)
                 {
-                    itemFieldsCache.Add(type, returnValue);
+                    if (!itemFieldsCache.ContainsKey(typeId))
+                    {
+                        itemFieldsCache.Add(typeId, returnValue);
+                    }
                 }
             }
 
@@ -1618,8 +1630,8 @@ namespace BoxSocial.Internals
             }
 
             /* buffer for item */
-            Dictionary<string, long> ikBufferId = new Dictionary<string,long>();
-            Dictionary<string, long> ikBufferTypeId = new Dictionary<string, long>();
+            Dictionary<string, long> ikBufferId = new Dictionary<string, long>(StringComparer.Ordinal);
+            Dictionary<string, long> ikBufferTypeId = new Dictionary<string, long>(StringComparer.Ordinal);
             string ikBufferPrefix = string.Empty;
 
             if (reader.HasRows)
@@ -1849,26 +1861,28 @@ namespace BoxSocial.Internals
                             if (itemRow.Table.Columns.Contains(columnName))
 	                        {
 	                            columnCount++;
-	                            if (!(itemRow[columnName] is DBNull))
+                                object colValue = itemRow[columnName];
+
+                                if (!(colValue is DBNull))
 	                            {
 	                                try
 	                                {
-	                                    if (fi.FieldType == typeof(bool) && !(itemRow[columnName] is bool))
+                                        if (fi.FieldType == typeof(bool) && !(colValue is bool))
 	                                    {
-	                                        if (itemRow[columnName] is byte)
+                                            if (colValue is byte)
 	                                        {
-	                                            fi.SetValue(this, ((byte)itemRow[columnName] > 0) ? true : false);
+                                                fi.SetValue(this, ((byte)colValue > 0) ? true : false);
 	                                        }
-	                                        else if (itemRow[columnName] is sbyte)
+                                            else if (colValue is sbyte)
 	                                        {
-	                                            fi.SetValue(this, ((sbyte)itemRow[columnName] > 0) ? true : false);
+                                                fi.SetValue(this, ((sbyte)colValue > 0) ? true : false);
 	                                        }
 	                                    }
-                                        else if (itemRow[columnName] is string && fi.FieldType == typeof(char))
+                                        else if (colValue is string && fi.FieldType == typeof(char))
                                         {
-                                            if (((string)itemRow[columnName]).Length > 0)
+                                            if (((string)colValue).Length > 0)
                                             {
-                                                fi.SetValue(this, ((string)itemRow[columnName])[0]);
+                                                fi.SetValue(this, ((string)colValue)[0]);
                                             }
                                             else
                                             {
@@ -1877,12 +1891,12 @@ namespace BoxSocial.Internals
                                         }
 	                                    else
 	                                    {
-	                                        fi.SetValue(this, itemRow[columnName]);
+                                            fi.SetValue(this, colValue);
 	                                    }
 	                                }
 	                                catch (Exception ex)
 	                                {
-	                                    core.Display.ShowMessage("Type error on load", core.Bbcode.Flatten(columnName + " expected type " + fi.FieldType + " type returned was " + itemRow[columnName].GetType() + " of value " + itemRow[columnName].ToString() + "\n\n" + ex));
+                                        core.Display.ShowMessage("Type error on load", core.Bbcode.Flatten(columnName + " expected type " + fi.FieldType + " type returned was " + colValue.GetType() + " of value " + itemRow[columnName].ToString() + "\n\n" + ex));
 	                                }
 	                            }
 	                            else

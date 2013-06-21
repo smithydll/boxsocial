@@ -66,6 +66,8 @@ namespace BoxSocial.Musician
         private Tour tour;
         private Musician musician;
 
+        public event CommentHandler OnCommentPosted;
+
         private long GigId
         {
             get
@@ -329,6 +331,20 @@ namespace BoxSocial.Musician
 
         void Gig_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Gig_CommentPosted);
+        }
+
+        bool Gig_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         public override long Id

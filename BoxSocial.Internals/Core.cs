@@ -81,12 +81,26 @@ namespace BoxSocial.Internals
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
         private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
+        private Dictionary<string, string> meta = new Dictionary<string, string>(StringComparer.Ordinal);
+
         public static bool IsUnix
         {
             get
             {
                 int p = (int)Environment.OSVersion.Platform;
                 return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public Dictionary<string, string> Meta
+        {
+            get
+            {
+                return meta;
+            }
+            set
+            {
+                meta = value;
             }
         }
 
@@ -544,6 +558,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey LoggedInMemberItemKey
+        {
+            get
+            {
+                return new ItemKey(User.GetMemberId(session.LoggedInMember), typeof(User));
+            }
+        }
+
         public bool IsAjax
         {
             get
@@ -796,84 +818,24 @@ namespace BoxSocial.Internals
             template.AddPageAssembly(assembly);
         }
 
-        /*public void AddPrimitiveType(Type type)
-        {
-            bool typeAdded = false;
-            long primitiveTypeId = ItemKey.GetTypeId(type);
-
-            if (type.IsSubclassOf(typeof(Primitive)))
-            {
-                foreach (object attr in type.GetCustomAttributes(typeof(PrimitiveAttribute), false))
-                {
-
-                    if (primitiveTypeId > 0)
-                    {
-                        if (!primitiveTypes.ContainsKey(primitiveTypeId))
-                        {
-                            primitiveAttributes.Add(primitiveTypeId, (PrimitiveAttribute)attr);
-                            primitiveTypes.Add(primitiveTypeId, type);
-                        }
-                        typeAdded = true;
-                    }
-                }
-
-                if (!typeAdded)
-                {
-                    if (!primitiveTypes.ContainsKey(primitiveTypeId))
-                    {
-                        primitiveTypes.Add(primitiveTypeId, type);
-                    }
-                }
-            }
-        }*/
-
-        /* This should be done a better way, have loaded assemblies register their primitives rather than searching every type */
-        /*internal void FindAllPrimitivesLoaded()
-        {
-            AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
-
-            foreach (AssemblyName an in assemblies)
-            {
-                try
-                {
-                    if (an.FullName.StartsWith("BoxSocial.IO"))
-                    {
-                        continue;
-                    }
-                    Assembly asm = Assembly.Load(an);
-                    Type[] types = asm.GetTypes();
-                    foreach (Type type in types)
-                    {
-                        if (type.IsSubclassOf(typeof(Primitive)))
-                        {
-                            AddPrimitiveType(type);
-                        }
-                    }
-                }
-                catch (ReflectionTypeLoadException)
-                {
-                    HttpContext.Current.Response.Write("Panic, error loading: " + an.FullName);
-                    HttpContext.Current.Response.End();
-                }
-            }
-        }*/
-
         public Type GetPrimitiveType(long typeId)
         {
-            if (primitiveTypes.ContainsKey(typeId))
+            ItemType iType = null;
+            if (primitiveTypes.TryGetValue(typeId, out iType))
             {
-                if (primitiveTypeCache.ContainsKey(typeId))
+                Type rType = null;
+                if (primitiveTypeCache.TryGetValue(typeId, out rType))
                 {
-                    return primitiveTypeCache[typeId];
+                    return rType;
                 }
                 else
                 {
                     Type tType = null;
 
-                    if (primitiveTypes[typeId].ApplicationId > 0)
+                    if (iType.ApplicationId > 0)
                     {
                         ItemCache.RegisterType(typeof(ApplicationEntry));
-                        ItemKey applicationKey = new ItemKey(primitiveTypes[typeId].ApplicationId, typeof(ApplicationEntry));
+                        ItemKey applicationKey = new ItemKey(iType.ApplicationId, typeof(ApplicationEntry));
                         ItemCache.RequestItem(applicationKey);
                         //ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
                         ApplicationEntry ae = (ApplicationEntry)ItemCache[applicationKey];
@@ -904,16 +866,16 @@ namespace BoxSocial.Internals
                         }
                         Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
-                        tType = assembly.GetType(primitiveTypes[typeId].TypeNamespace);
+                        tType = assembly.GetType(iType.TypeNamespace);
                     }
                     else
                     {
-                        tType = Type.GetType(primitiveTypes[typeId].TypeNamespace);
+                        tType = Type.GetType(iType.TypeNamespace);
                     }
                     if (tType != null)
                     {
                         primitiveTypeCache.Add(typeId, tType);
-                        return primitiveTypeCache[typeId];
+                        return tType;
                     }
                     else
                     {
@@ -929,9 +891,10 @@ namespace BoxSocial.Internals
 
         public PrimitiveAttribute GetPrimitiveAttributes(long typeId)
         {
-            if (primitiveAttributes.ContainsKey(typeId))
+            PrimitiveAttribute pa = null;
+            if (primitiveAttributes.TryGetValue(typeId, out pa))
             {
-                return primitiveAttributes[typeId];
+                return pa;
             }
             else
             {
@@ -943,7 +906,7 @@ namespace BoxSocial.Internals
                         foreach (object attr in type.GetCustomAttributes(typeof(PrimitiveAttribute), false))
                         {
                             primitiveAttributes.Add(typeId, (PrimitiveAttribute)attr);
-                            return primitiveAttributes[typeId];
+                            return (PrimitiveAttribute)attr;
                         }
                     }
                 }

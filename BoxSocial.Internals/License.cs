@@ -126,7 +126,7 @@ namespace BoxSocial.Internals
             List<string> permissions = new List<string>();
             permissions.Add("Can Read");
 
-            Dictionary<string, string> licenses = new Dictionary<string, string>();
+            Dictionary<string, string> licenses = new Dictionary<string, string>(StringComparer.Ordinal);
             DataTable licensesTable = db.Query("SELECT li.license_id, li.license_title FROM licenses li");
 
             licenses.Add("0", "Default License (All Rights Reserved)");

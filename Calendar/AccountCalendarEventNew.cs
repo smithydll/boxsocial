@@ -349,7 +349,7 @@ namespace BoxSocial.Applications.Calendar
 
                         core.Db.Query(iQuery);
 
-                        RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_event_invite.eml");
+                        Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
 
                         emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
                         emailTemplate.Parse("FROM_EMAIL", core.Session.LoggedInMember.UserInfo.PrimaryEmail);
@@ -361,7 +361,7 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, calendarEvent))));
 
                         core.Email.SendEmail(email, string.Format("{0} has invited you to {1}.",
-                            core.Session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate.ToString());
+                            core.Session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate);
                     }
                     catch (CouldNotInviteEventException)
                     {

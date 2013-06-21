@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -114,6 +115,8 @@ namespace BoxSocial.Internals
         protected List<UserEmail> emailAddresses;
 
         private Access access;
+
+        public event CommentHandler OnCommentPosted;
 
         /// <summary>
         /// user ID (read only)
@@ -622,6 +625,24 @@ namespace BoxSocial.Internals
         {
             ItemUpdated += new EventHandler(User_ItemUpdated);
             ItemDeleted += new ItemDeletedEventHandler(User_ItemDeleted);
+            OnCommentPosted += new CommentHandler(User_CommentPosted);
+        }
+
+        bool User_CommentPosted(CommentPostedEventArgs e)
+        {
+            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "GuestBook");
+            ae.SendNotification(this, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         void User_ItemUpdated(object sender, EventArgs e)

@@ -95,6 +95,8 @@ namespace BoxSocial.Internals
         private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
 
+        public event CommentHandler OnCommentPosted;
+
         public long ApplicationId
         {
             get
@@ -567,8 +569,21 @@ namespace BoxSocial.Internals
 
         private void ApplicationEntry_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(ApplicationEntry_CommentPosted);
         }
 
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
+        }
+
+        bool ApplicationEntry_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
         private void loadApplicationUserInfo(DataRow applicationRow)
         {
             itemId = (long)applicationRow["item_id"];

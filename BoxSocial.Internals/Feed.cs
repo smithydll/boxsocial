@@ -94,6 +94,8 @@ namespace BoxSocial.Internals
 
                         if (!feedReader.HasRows)
                         {
+                            feedReader.Close();
+                            feedReader.Dispose();
                             break;
                         }
 

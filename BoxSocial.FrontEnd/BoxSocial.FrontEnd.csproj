@@ -156,6 +156,9 @@
     <Compile Include="share.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="shorturl.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="sitemap.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

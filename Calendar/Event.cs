@@ -69,6 +69,8 @@ namespace BoxSocial.Applications.Calendar
         protected Access access;
         protected Primitive owner;
 
+        public event CommentHandler OnCommentPosted;
+
         public long EventId
         {
             get
@@ -246,6 +248,20 @@ namespace BoxSocial.Applications.Calendar
 
         private void Event_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Event_CommentPosted);
+        }
+
+        bool Event_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         public static Event Create(Core core, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)

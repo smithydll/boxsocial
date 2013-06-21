@@ -60,6 +60,8 @@ namespace BoxSocial.Internals
         private string commentIp;
         [DataField("comment_text", COMMENT_MAX_LENGTH)]
         private string body;
+        [DataField("comment_text_cache", COMMENT_MAX_LENGTH * 2)]
+        private string bodyCache;
         [DataField("comment_hash", 128)]
         private string commentHash;
         [DataField("comment_deleted")]
@@ -128,6 +130,14 @@ namespace BoxSocial.Internals
             get
             {
                 return body;
+            }
+        }
+
+        public string BodyCache
+        {
+            get
+            {
+                return bodyCache;
             }
         }
 
@@ -206,11 +216,26 @@ namespace BoxSocial.Internals
                 relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.Session.LoggedInMember.ItemKey);
             }
 
-            core.Db.BeginTransaction();
-            long commentId = core.Db.UpdateQuery(string.Format("INSERT INTO comments (comment_item_id, comment_item_type_id, user_id, comment_time_ut, comment_text, comment_ip, comment_spam_score, comment_hash) VALUES ({0}, {1}, {2}, UNIX_TIMESTAMP(), '{3}', '{4}', {5}, '{6}');",
-                    itemKey.Id, itemKey.TypeId, core.LoggedInMemberId, Mysql.Escape(comment), core.Session.IPAddress.ToString(), CalculateSpamScore(core, comment, relations), MessageMd5(comment)));
+            string commentCache = string.Empty;
 
-            return new Comment(core, commentId);
+            if (!comment.Contains("[user") && !comment.Contains("sid=true]"))
+            {
+                commentCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(comment), null, core.Session.LoggedInMember, true, string.Empty, string.Empty);
+            }
+
+            core.Db.BeginTransaction();
+
+            Comment newComment = (Comment)Item.Create(core, typeof(Comment), new FieldValuePair("comment_item_id", itemKey.Id),
+                new FieldValuePair("comment_item_type_id", itemKey.TypeId),
+                new FieldValuePair("user_id", core.LoggedInMemberId),
+                new FieldValuePair("comment_time_ut", UnixTime.UnixTimeStamp()),
+                new FieldValuePair("comment_text", comment),
+                new FieldValuePair("comment_text_cache", commentCache),
+                new FieldValuePair("comment_ip", core.Session.IPAddress.ToString()),
+                new FieldValuePair("comment_spam_score", CalculateSpamScore(core, comment, relations)),
+                new FieldValuePair("comment_hash", MessageMd5(comment)));
+
+            return newComment;
         }
 
         public static List<Comment> GetComments(Core core, ItemKey itemKey, SortOrder commentSortOrder, int currentPage, int perPage, List<User> commenters)

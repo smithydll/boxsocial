@@ -83,6 +83,8 @@ namespace BoxSocial.Applications.Calendar
         private Access access;
         private Primitive owner;
 
+        public event CommentHandler OnCommentPosted;
+
         public long TaskId
         {
             get
@@ -230,6 +232,7 @@ namespace BoxSocial.Applications.Calendar
 
         void Task_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Task_CommentPosted);
             if (percentageComplete == 100 || (TaskStatus)status == TaskStatus.Completed)
             {
                 status = (byte)TaskStatus.Completed;
@@ -237,6 +240,19 @@ namespace BoxSocial.Applications.Calendar
             else if (UnixTime.UnixTimeStamp() > dueTimeRaw && (TaskStatus)status != TaskStatus.Overdue)
             {
                 status = (byte)TaskStatus.Overdue;
+            }
+        }
+
+        bool Task_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
             }
         }
 

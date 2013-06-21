@@ -75,6 +75,8 @@ namespace BoxSocial.Applications.Blog
         private string title;
         [DataField("post_text", MYSQL_MEDIUM_TEXT)]
         private string body;
+        [DataField("post_text_cache", MYSQL_MEDIUM_TEXT)]
+        private string bodyCache;
         [DataField("post_views")]
         private long views;
         [DataField("post_trackbacks")]
@@ -101,6 +103,8 @@ namespace BoxSocial.Applications.Blog
         private Primitive owner;
         private Blog blog;
         private Access access;
+
+        public event CommentHandler OnCommentPosted;
 
         /// <summary>
         /// Gets the blog entry id
@@ -201,6 +205,18 @@ namespace BoxSocial.Applications.Blog
             set
             {
                 SetProperty("body", value);
+            }
+        }
+
+        public string BodyCache
+        {
+            get
+            {
+                return bodyCache;
+            }
+            set
+            {
+                SetProperty("bodyCache", value);
             }
         }
 
@@ -413,6 +429,20 @@ namespace BoxSocial.Applications.Blog
         {
             ItemUpdated += new EventHandler(BlogEntry_ItemUpdated);
             ItemDeleted += new ItemDeletedEventHandler(BlogEntry_ItemDeleted);
+            OnCommentPosted += new CommentHandler(BlogEntry_CommentPosted);
+        }
+
+        bool BlogEntry_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         /// <summary>
@@ -526,12 +556,20 @@ namespace BoxSocial.Applications.Blog
             {
             }*/
 
+            string bodyCache = string.Empty;
+
+            if (!body.Contains("[user") && !body.Contains("sid=true]"))
+            {
+                bodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(body), null, blog.Owner, true, string.Empty, string.Empty);
+            }
+
             BlogEntry blogEntry = (BlogEntry)Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", blog.UserId),
                 new FieldValuePair("post_time_ut", postTime),
                 new FieldValuePair("post_title", title),
                 new FieldValuePair("post_modified_ut", postTime),
                 new FieldValuePair("post_ip", core.Session.IPAddress.ToString()),
                 new FieldValuePair("post_text", body),
+                new FieldValuePair("post_text_cache", bodyCache),
                 new FieldValuePair("post_license", license),
                 new FieldValuePair("post_status", status),
                 new FieldValuePair("post_category", category),

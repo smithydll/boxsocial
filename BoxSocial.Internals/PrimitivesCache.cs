@@ -51,7 +51,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// A cached user Ids.
         /// </summary>
-        private Dictionary<string, long> userIdsCached = new Dictionary<string, long>();
+        private Dictionary<string, long> userIdsCached = new Dictionary<string, long>(StringComparer.Ordinal);
 
         /// <summary>
         /// A list of primitive Ids for batched loading
@@ -206,7 +206,7 @@ namespace BoxSocial.Internals
             long userTypeId = ItemKey.GetTypeId(typeof(User));
 
             List<string> usernameList = new List<string>();
-            Dictionary<string, long> userIds = new Dictionary<string, long>();
+            Dictionary<string, long> userIds = new Dictionary<string, long>(StringComparer.Ordinal);
             foreach (string username in usernames)
             {
                 PrimitiveKey key = new PrimitiveKey(username.ToLower(), userTypeId);

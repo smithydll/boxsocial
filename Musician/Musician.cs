@@ -124,6 +124,8 @@ namespace BoxSocial.Musician
         private string iconUri = string.Empty;
         private string displayNameOwnership;
 
+        public event CommentHandler OnCommentPosted;
+
         public long MusicianId
         {
             get
@@ -406,6 +408,20 @@ namespace BoxSocial.Musician
 
         void Musician_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Musician_CommentPosted);
+        }
+
+        bool Musician_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         protected void loadIcon(DataRow musicianRow)

@@ -46,7 +46,7 @@ namespace BoxSocial.Internals
             this.type = type;
         }
 
-        public int CompareTo(object obj)
+        public new int CompareTo(object obj)
         {
             if (obj.GetType() != typeof(NumberedItemId)) return -1;
             NumberedItemId pk = (NumberedItemId)obj;

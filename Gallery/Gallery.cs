@@ -191,6 +191,8 @@ namespace BoxSocial.Applications.Gallery
         private GallerySettings settings;
         private GalleryItem highlightItem;
 
+        public event CommentHandler OnCommentPosted;
+
         /// <summary>
         /// Gets the gallery Id
         /// </summary>
@@ -848,6 +850,20 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         private void Gallery_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Gallery_CommentPosted);
+        }
+
+        bool Gallery_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         /// <summary>

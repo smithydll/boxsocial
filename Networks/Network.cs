@@ -70,6 +70,8 @@ namespace BoxSocial.Networks
 
         private Dictionary<ItemKey, bool> networkMemberCache = new Dictionary<ItemKey, bool>();
 
+        public event CommentHandler OnCommentPosted;
+
         public long NetworkId
         {
             get
@@ -382,6 +384,20 @@ namespace BoxSocial.Networks
 
         void Network_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Network_CommentPosted);
+        }
+
+        bool Network_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
         }
 
         public List<NetworkMember> GetMembers(int page, int perPage)

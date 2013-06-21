@@ -759,7 +759,7 @@ namespace BoxSocial.Internals
                     // load balanced et al proxies while retaining some reliance on IP security.
                     //
 
-                    // we will use complete matches on ZinZam
+                    // we will use complete matches in BoxSocial
                     if ((string)userSessionRow["session_ip"] == userIp)
                     {
                         UnixTime tzz = new UnixTime(core, UnixTime.UTC_CODE); // UTC

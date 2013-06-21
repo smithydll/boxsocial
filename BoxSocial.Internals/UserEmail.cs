@@ -242,13 +242,13 @@ namespace BoxSocial.Internals
                 string activateUri = string.Format("http://" + Hyperlink.Domain + "/register/?mode=activate-email&id={0}&key={1}",
                     emailId, activateKey);
 
-                RawTemplate emailTemplate = new RawTemplate(core.Http.TemplateEmailPath, "email_activation.eml");
+                Template emailTemplate = new Template(core.Http.TemplateEmailPath, "email_activation.html");
 
                 emailTemplate.Parse("TO_NAME", owner.DisplayName);
                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                 emailTemplate.Parse("USERNAME", owner.UserName);
 
-                core.Email.SendEmail(email, core.Settings.SiteTitle + " email activation", emailTemplate.ToString());
+                core.Email.SendEmail(email, core.Settings.SiteTitle + " email activation", emailTemplate);
             }
 
             UserEmail newEmail = new UserEmail(core, emailId);

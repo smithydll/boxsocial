@@ -53,6 +53,8 @@ namespace BoxSocial.Applications.News
 		private Primitive owner;
 		private User poster;
         private NewsIcon icon;
+
+        public event CommentHandler OnCommentPosted;
 		
 		public long ArticleId
 		{
@@ -173,7 +175,21 @@ namespace BoxSocial.Applications.News
 
         void Article_ItemLoad()
 		{
+            OnCommentPosted += new CommentHandler(Article_CommentPosted);
 		}
+
+        bool Article_CommentPosted(CommentPostedEventArgs e)
+        {
+            return true;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
+        }
 
         public override long Id
         {

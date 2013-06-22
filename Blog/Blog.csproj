@@ -132,6 +132,7 @@
     <Content Include="templates\account_blog_preferences.html" />
     <Content Include="templates\account_blog_roll.html" />
     <Content Include="templates\account_blog_roll_new.html" />
+    <Content Include="templates\account_blog_trackback.html" />
     <Content Include="templates\account_post.html" />
   </ItemGroup>
   <ItemGroup>

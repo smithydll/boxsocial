@@ -101,22 +101,27 @@ h2#sub-title {
 
 #body h2 {
 	font-size: 160%;
+	margin: 6px 0;
 }
 
 #body h3 {
 	font-size: 140%;
+	margin: 4px 0;
 }
 
 #body h4 {
 	font-size: 130%;
+	margin: 3px 0;
 }
 
 #body h5 {
 	font-size: 120%;
+	margin: 3px 0;
 }
 
 #body h6 {
 	font-size: 110%;
+	margin: 3px 0;
 }
 
 #head #search {

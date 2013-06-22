@@ -620,7 +620,7 @@ namespace BoxSocial.Applications.Blog
             List<TrackBack> trackBacks = new List<TrackBack>();
 
             SelectQuery query = TrackBack.GetSelectQueryStub(typeof(TrackBack));
-            query.AddCondition("blog_id", Id);
+            query.AddCondition("user_id", Id);
             query.AddCondition("trackback_spam", false);
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;
@@ -810,6 +810,8 @@ namespace BoxSocial.Applications.Blog
                 page.template.Parse("USER_THUMB", page.User.UserThumbnail);
                 page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
 
+                page.template.Parse("BLOG_TITLE", myBlog.Title);
+
                 if (page.User.UserId == core.LoggedInMemberId)
                 {
                     page.template.Parse("U_POST", core.Hyperlink.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
@@ -969,7 +971,7 @@ namespace BoxSocial.Applications.Blog
                     blogPostVariableCollection.Parse("ID", blogEntries[i].Id);
                     blogPostVariableCollection.Parse("TYPE_ID", blogEntries[i].ItemKey.TypeId);
 
-                    if (!string.IsNullOrEmpty(blogEntries[i].BodyCache))
+                    if ((!core.IsMobile) && (!string.IsNullOrEmpty(blogEntries[i].BodyCache)))
                     {
                         core.Display.ParseBbcodeCache(blogPostVariableCollection, "POST", blogEntries[i].BodyCache);
                     }

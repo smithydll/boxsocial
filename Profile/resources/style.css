@@ -1,20 +1,4 @@
 ﻿
-.status-feed {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.status-post, #compose-status {
-    list-style: none;
-    background-color: #ffffff;
-    border-radius: 5px;
-	margin: 0 0 10px 0;
-    padding: 4px 5px 5px 5px;
-    border: 1px solid #eeeeee;
-    border-top: 1px solid #dddddd !important;
-}
-
 .status-post {
     min-height: 62px;
 }

@@ -256,22 +256,40 @@ namespace BoxSocial.Internals
                 }
             }
 
+            List<IPermissibleItem> tempResults = new List<IPermissibleItem>();
+
             foreach (ItemKey key in itemKeys)
             {
-                NumberedItem thisItem = null;
+                core.ItemCache.RequestItem(key);
+            }
+
+            foreach (ItemKey key in itemKeys)
+            {
                 try
                 {
-                    thisItem = NumberedItem.Reflect(core, key);
-                }
-                catch
-                {
-                    // sometimes we cannot load an item for unknown reasons, we just have to continue trucking on
-                }
+                    NumberedItem thisItem = core.ItemCache[key];
 
-                if (thisItem != null)
-                {
-                    results.Add((ISearchableItem)thisItem);
+                    if (thisItem != null)
+                    {
+                        if (thisItem is IPermissibleItem)
+                        {
+                            tempResults.Add((IPermissibleItem)thisItem);
+                        }
+                        if (thisItem is IPermissibleSubItem)
+                        {
+                            tempResults.Add(((IPermissibleSubItem)thisItem).PermissiveParent);
+                        }
+                        results.Add((ISearchableItem)thisItem);
+                    }
                 }
+                catch (InvalidItemException)
+                {
+                }
+            }
+
+            if (tempResults.Count > 0)
+            {
+                core.AcessControlCache.CacheGrants(tempResults);
             }
 
             return new SearchResult(results, totalResults);

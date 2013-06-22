@@ -682,7 +682,7 @@ namespace BoxSocial.Internals
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
                 //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
-                if (!string.IsNullOrEmpty(comment.BodyCache))
+                if ((!core.IsMobile) && (!string.IsNullOrEmpty(comment.BodyCache)))
                 {
                     core.Display.ParseBbcodeCache(commentsVariableCollection, "COMMENT", comment.BodyCache);
                 }

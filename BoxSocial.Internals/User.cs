@@ -596,6 +596,32 @@ namespace BoxSocial.Internals
             }
         }
 
+        public User(Core core, DataRow userRow)
+            : base(core)
+        {
+            UserLoadOptions loadOptions = UserLoadOptions.All;
+            ItemLoad += new ItemLoadHandler(User_ItemLoad);
+
+            if (userRow != null)
+            {
+                loadItemInfo(typeof(User), userRow);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    userInfo = new UserInfo(core, userRow);
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    userProfile = new UserProfile(core, this, userRow, loadOptions);
+                }
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public User(Core core, DataRow userRow, UserLoadOptions loadOptions)
             : base(core)
         {

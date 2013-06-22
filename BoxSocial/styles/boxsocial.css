@@ -865,7 +865,8 @@ tr:hover td {
 
 #new-stuff, #x-stuff, .r-stuff
 {
-	padding: 1px 2px 5px 2px;
+	padding: 1px 2px 8px 2px;
+	margin-top: 8px;
 }
 
 #x-stuff {
@@ -1189,26 +1190,26 @@ ul#group-members li.member {
 	margin: 0;
 }
 
-ul#group-members li.member div.frame {
+ul#group-members li.member div.frame, div.listing div.frame {
 	padding: 3px;
 	margin: 5px;
 	border: solid 1px #6666CC;
 	height: 106px;
 }
 
-ul#group-members li.member div.frame ul.details {
+ul#group-members li.member div.frame ul.details, div.listing div.frame ul.details {
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
 	margin-left: 110px;
 	margin-right: 125px;
 }
-ul#group-members li.member div.frame ul.details li {
+ul#group-members li.member div.frame ul.details li, div.listing div.frame ul.details li {
 	margin-bottom: 1px;
 	background-color: #DDEEFF;
 }
 
-ul#group-members li.member div.frame ul.actions {
+ul#group-members li.member div.frame ul.actions, div.listing div.frame ul.actions {
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
@@ -1217,7 +1218,7 @@ ul#group-members li.member div.frame ul.actions {
 	height: 100px;
 }
 
-ul#group-members li.member div.frame ul.actions li {
+ul#group-members li.member div.frame ul.actions li, div.listing div.frame ul.actions li {
 	border: solid 1px #333399;
 	border-left: solid 8px #333399;
 	padding: 2px 4px;
@@ -1797,3 +1798,20 @@ p.posted-by
 .bbcode-thumb {
     margin-right: 1px;
 }
+
+.status-feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.status-post, #compose-status {
+    list-style: none;
+    background-color: #ffffff;
+    border-radius: 5px;
+	margin: 0 0 10px 0;
+    padding: 4px 5px 5px 5px;
+    border: 1px solid #eeeeee;
+    border-top: 1px solid #dddddd !important;
+}
+

@@ -18,12 +18,18 @@
 	<!-- IF REDIRECT_URI -->
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->
+    <script type="text/javascript" src="/scripts/jquery-1.8.2.min.js"></script>
 	<script type="text/javascript">
 	<!--
-		var sid = '{SID}';
+	    var sid = '{SID}';
+
+	    $(document).ready(function () {
+	        if (navigator.userAgent.match(/Android/i)) {
+	            window.scrollTo(0, 1);
+	        }
+	    });
 	-->
 	</script>
-	<script type="text/javascript" src="/scripts/jquery-1.8.2.min.js"></script>
     <!--<script type="text/javascript" src="/scripts/jgestures.min.js"></script>-->
 	<!-- BEGIN javascript_list -->
 	<script type="text/javascript" src="{javascript_list.URI}"></script>

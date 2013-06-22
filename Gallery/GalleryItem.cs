@@ -54,6 +54,7 @@ namespace BoxSocial.Applications.Gallery
         Full = 1280,
         Ultra = 2560,
 
+        MobileCover = 480,
         Cover = 960,
 
         Original = 0,
@@ -81,6 +82,8 @@ namespace BoxSocial.Applications.Gallery
 
         // Cover
         static string CoverPrefix = "_cover"; // 960
+        // Mobile Cover
+        static string MobileCoverPrefix = "_mcover"; // 960
 
         /// <summary>
         /// Owner of the photo's user Id
@@ -256,6 +259,12 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [DataField("gallery_item_cover_exists")]
         protected bool coverExists;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        [DataField("gallery_item_mobile_cover_exists")]
+        protected bool mobileCoverExists;
 
         /// <summary>
         /// 
@@ -695,6 +704,18 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public bool MobileCoverExists
+        {
+            get
+            {
+                return mobileCoverExists;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { mobileCoverExists }, value);
+            }
+        }
+
         public int CropPositionVertical
         {
             get
@@ -705,7 +726,9 @@ namespace BoxSocial.Applications.Gallery
             {
                 SetPropertyByRef(new { cropPositionVertical }, value);
                 CoverExists = false;
+                MobileCoverExists = false;
                 core.Storage.DeleteFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_cover"), this.StoragePath);
+                core.Storage.DeleteFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_mcover"), this.StoragePath);
             }
         }
 
@@ -1127,6 +1150,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_full_exists", false);
             iQuery.AddField("gallery_item_ultra_exists", false);
             iQuery.AddField("gallery_item_cover_exists", false);
+            iQuery.AddField("gallery_item_mobile_cover_exists", false);
             iQuery.AddField("gallery_item_width", width);
             iQuery.AddField("gallery_item_height", height);
             iQuery.AddField("gallery_item_vcrop", 0);
@@ -1201,6 +1225,7 @@ namespace BoxSocial.Applications.Gallery
                 uquery.AddField("gallery_item_full_exists", false);
                 uquery.AddField("gallery_item_ultra_exists", false);
                 uquery.AddField("gallery_item_cover_exists", false);
+                uquery.AddField("gallery_item_mobile_cover_exists", false);
                 uquery.AddField("gallery_item_width", ItemHeight);
                 uquery.AddField("gallery_item_height", ItemWidth);
                 uquery.AddCondition("gallery_item_id", itemId);
@@ -1337,6 +1362,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
                     e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+                    e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
                 }
 
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
@@ -1597,6 +1623,7 @@ namespace BoxSocial.Applications.Gallery
 
             // Cover
             bool coverRequest = false; // 960
+            bool mobileCoverRequest = false; // 480
 
             bool originalRequest = false;
    
@@ -1766,6 +1793,22 @@ namespace BoxSocial.Applications.Gallery
                 storagePrefix = CoverPrefix;
                 scale = PictureScale.Cover;
             }
+            else if (photoName.StartsWith(MobileCoverPrefix))
+            {
+                photoName = photoName.Remove(0, 8);
+                if (!retinaModifier)
+                {
+                    mobileCoverRequest = true;
+                    storagePrefix = MobileCoverPrefix;
+                    scale = PictureScale.MobileCover;
+                }
+                else
+                {
+                    coverRequest = true;
+                    storagePrefix = CoverPrefix;
+                    scale = PictureScale.Cover;
+                }
+            }
             else
             {
                 originalRequest = true;
@@ -1865,6 +1908,9 @@ namespace BoxSocial.Applications.Gallery
                         case PictureScale.Cover:
                             scaleExists = galleryItem.CoverExists;
                             break;
+                        case PictureScale.MobileCover:
+                            scaleExists = galleryItem.MobileCoverExists;
+                            break;
                     }
 
                     if (!scaleExists)
@@ -1929,7 +1975,11 @@ namespace BoxSocial.Applications.Gallery
                                 }
                                 break;
                             case PictureScale.Cover:
-                                CreateCoverPhoto(e.Core, galleryItem, galleryItem.StoragePath);
+                                CreateCoverPhoto(e.Core, galleryItem, galleryItem.StoragePath, false);
+                                galleryItem.CoverExists = true;
+                                break;
+                            case PictureScale.MobileCover:
+                                CreateCoverPhoto(e.Core, galleryItem, galleryItem.StoragePath, true);
                                 galleryItem.CoverExists = true;
                                 break;
                         }
@@ -2255,11 +2305,19 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateCoverPhoto(Core core, GalleryItem gi, string fileName)
+        public static void CreateCoverPhoto(Core core, GalleryItem gi, string fileName, bool isMobile)
         {
             string bin = "_cover";
             int width = 960;
             int height = 200;
+
+            if (isMobile)
+            {
+                bin = "_mcover";
+                width = 480;
+                height = 100;
+            }
+
             int crop = gi.CropPositionVertical;
             // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")

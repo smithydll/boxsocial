@@ -287,6 +287,23 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string UserTiny
+        {
+            get
+            {
+                if (UserInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_tiny/_{1}.png",
+                        UriStub, UserName);
+                }
+                else
+                {
+                    return string.Format("/images/user/_tiny/{0}.png",
+                        userName);
+                }
+            }
+        }
+
         public string UserThumbnail
         {
             get
@@ -377,6 +394,49 @@ namespace BoxSocial.Internals
                                 (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
 
                             return string.Format("{0}images/_cover{1}",
+                                UriStub, userCoverPhotoUri);
+                        }
+                    }
+
+                    userCoverPhotoUri = "FALSE";
+                    return "FALSE";
+                }
+            }
+        }
+
+        /// <summary>
+        /// Cover photo
+        /// </summary>
+        public string MobileCoverPhoto
+        {
+            get
+            {
+                if (userCoverPhotoUri == "FALSE")
+                {
+                    return "FALSE";
+                }
+                else if (userCoverPhotoUri != null)
+                {
+                    return string.Format("{0}images/_mcover{1}",
+                        UriStub, userCoverPhotoUri);
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
+
+                    DataTable coverTable = db.Query(query);
+
+                    if (coverTable.Rows.Count == 1)
+                    {
+                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        {
+                            userCoverPhotoUri = string.Format("/{0}/{1}",
+                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+
+                            return string.Format("{0}images/_mcover{1}",
                                 UriStub, userCoverPhotoUri);
                         }
                     }
@@ -2050,8 +2110,10 @@ namespace BoxSocial.Internals
             core.Template.Parse("USER_SUBSCRIPTIONS", core.Functions.LargeIntegerToString(page.User.UserInfo.BlogSubscriptions));
             core.Template.Parse("USER_COUNTRY", page.User.Profile.Country);
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
-            core.Template.Parse("USER_ICON", page.User.UserThumbnail);
+            core.Template.Parse("USER_TINY", page.User.UserTiny);
+            core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
             core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
 
             core.Template.Parse("U_PROFILE", page.User.Uri);
             core.Template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));

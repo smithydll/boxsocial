@@ -1,22 +1,30 @@
 function showSideBar() {
     hideSideBar();
     event.stopPropagation();
-    $('#boxsocial-menu').animate({ left: 0 });
+    $('#boxsocial-menu').show().animate({ left: 0 });
     return false;
 }
 
 function showPagesBar() {
     hideSideBar();
     event.stopPropagation();
-    $('#pages-menu').animate({ right: 0 });
+    $('#pages-menu').show().animate({ right: 0 });
     return false;
 }
 
 function hideSideBar() {
-    $('#boxsocial-menu').animate({ left: -200 });
-    $('#pages-menu').animate({ right: -200 });
-    if ($('#post-menu').is(':visible')) $('#post-menu').animate({ bottom: -200 }, function () { $(this).hide(); });
-    if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: -100 }, function () { $(this).hide(); });
+    if ($('#boxsocial-menu').is(":visible")) {
+        $('#boxsocial-menu').animate({ left: -200 }, function () { $(this).hide(); });
+    }
+    if ($('#pages-menu').is(":visible")) {
+        $('#pages-menu').animate({ right: -200 }, function () { $(this).hide(); });
+    }
+    if ($('#post-menu').is(":visible")) {
+        if ($('#post-menu').is(':visible')) $('#post-menu').animate({ bottom: -200 }, function () { $(this).hide(); });
+    }
+    if ($('#search-menu').is(":visible")) {
+        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: -100 }, function () { $(this).hide(); });
+    }
 }
 
 function showPostBar() {

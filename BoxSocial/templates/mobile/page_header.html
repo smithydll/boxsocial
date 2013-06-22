@@ -117,29 +117,21 @@
         <p><a href="{U_COPYRIGHT}">Copyright</a> &copy; {YEAR} {SITE_TITLE}, Powered By <a href="http://boxsocial.net/">Box Social</a></p>
     </div>
 <div id="main-page" onclick="hideSideBar();">
-	<div>
-            <a href="#" id="search-button" onclick="return showSearchBar();"><span>Search</span></a>
+	<div id="head">
+            <!-- IF PAGE_LIST -->
+            <a href="#" id="pages-button" onclick="return showPagesBar();"><span>Pages</span></a>
+            <!-- ENDIF -->
+            <!-- IF TAB_LIST -->
+            <a href="#" id="pages-button" onclick="return showPagesBar();"><span>Pages</span></a>
+            <!-- ENDIF -->
             <!-- IF LOGGED_IN -->
             <a href="#" id="post-button" onclick="return showPostBar();"><span>Post</span></a>
             <!-- ENDIF -->
+            <a href="#" id="search-button" onclick="return showSearchBar();"><span>Search</span></a>
 			<h1 id="page-title"><a href="#" onclick="return showSideBar();"><span>{HEADING}</span></a></h1>
             <!-- IF SITE_SLOGAN -->
 			<h2 id="sub-title">{SITE_SLOGAN}</h2>
             <!-- ENDIF -->
-		<div id="mobile-nav">
-			<ul>
-                <!-- IF PAGE_LIST -->
-				<li>
-					<a href="#" onclick="return showPagesBar();">Pages</a>
-				</li>
-                <!-- ENDIF -->
-                <!-- IF TAB_LIST -->
-				<li>
-					<a href="#pages-menu">Pages</a>
-				</li>
-                <!-- ENDIF -->
-			</ul>
-		</div>
 	</div>
 	    <!-- BEGIN head_hook -->
 {head_hook.BODY}

@@ -21,7 +21,18 @@ body {
 
 #head {
 	padding: 0px;
-	
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 32pt;
+	z-index: 10000;
+}
+
+#body {
+	padding: 0 5px;
+	text-align: left;
+	margin: 32pt 0 0 0;
 }
 
 a {
@@ -35,7 +46,6 @@ p {
 }
 
 h1#page-title {
-	float: left;
 	margin: 0px;
 	padding: 0px;
 	background: url('/images/boxsocial-logo-mobile.png');
@@ -64,9 +74,8 @@ h1#page-title a span {
     height: 32pt;
     width: 32pt;
     display: block;
-    position: absolute;
+    position: relative;
     top: 0;
-    right: 0;
     z-index: 2;
     background-image: url('/images/mobile-symbols-48.png');
 }
@@ -77,15 +86,27 @@ h1#page-title a span {
     height: 32pt;
     width: 32pt;
     display: block;
-    position: absolute;
+    position: relative;
     top: 0;
-    right: 32pt;
     z-index: 2;
     background-image: url('/images/mobile-symbols-48.png');
-    background-position: -48px 0;
+    background-position: -44px 0;
 }
 
-#search-button span, #post-button span 
+#pages-button
+{
+    float: right;
+    height: 32pt;
+    width: 32pt;
+    display: block;
+    position: relative;
+    top: 0;
+    z-index: 2;
+    background-image: url('/images/mobile-symbols-48.png');
+    background-position: -88px 0;
+}
+
+#search-button span, #post-button span, #pages-button span 
 {
     display: none;
 }
@@ -179,12 +200,6 @@ h2#sub-title {
 
 #foot * {
 	color: #cccccc;
-}
-
-#body {
-	padding: 0 5px;
-	margin: 0;
-	text-align: left;
 }
 
 #new-stuff, #x-stuff, .r-stuff
@@ -843,29 +858,32 @@ blockquote {
 }
 
 /* Menu System */
-#boxsocial-menu 
-{
-    position: absolute;
-    top: 0;
+#boxsocial-menu {
+    position: fixed;
+    top: 32pt;
     width: 200px;
     left: -200px;
     bottom: 0px;
     z-index: 1000;
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    bottom: 0;
 }
 
 #pages-menu {
-    position: absolute;
-    top: 0;
+    position: fixed;
+    top: 32pt;
     width: 200px;
     right: -200px;
     bottom: 0px;
     z-index: 1000;
-    overflow: hidden;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    display: none;
 }
 
 #post-menu {
-    position: absolute;
+    position: fixed;
     height: 200px;
     left: 0;
     right: 0;
@@ -876,7 +894,7 @@ blockquote {
 }
 
 #search-menu {
-    position: absolute;
+    position: fixed;
     height: 100px;
     left: 0;
     right: 0;
@@ -915,4 +933,34 @@ ul.mobile-list li a {
     padding: 8pt;
     width: 100%;
     height: 100%;
+}
+
+.breadcrumbs {
+    display: none;
+}
+
+div.img-fl {
+	float: left;
+	display: inline;
+}
+
+div.img-wb {
+	padding: 3px;
+	margin: 0px;
+	background-color: White;
+	border: solid 1px black;
+	font-size: 0px;
+}
+
+#overview-profile div.info {
+	padding: 5px;
+	background-color: #333333;
+	background-position: center;
+	color: #FFFFFF;
+	padding-left: 90px;
+	min-height: 50px;
+}
+
+#pane-profile-overview div.img-fl {
+	margin: 5px;
 }

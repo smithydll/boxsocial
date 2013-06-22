@@ -7,16 +7,24 @@
 <div id="content">
 	<div id="overview-profile" class="pane">
 		<div class="img-wb img-fl">
-			<!-- IF USER_ICON -->
-			<img src="{USER_ICON}" alt="{USER_DISPLAY_NAME} Display Picture" />
+			<!-- IF $_IS_DESKTOP AND USER_THUMB -->
+			<img src="{USER_THUMB}" alt="{USER_DISPLAY_NAME} Display Picture" />
 			<!-- ELSE -->
+            <!-- IF $_IS_MOBILE AND USER_TINY -->
+            <img src="{USER_TINY}" alt="{USER_DISPLAY_NAME} Display Picture" />
+            <!-- ELSE -->
 			<div class="no-disp-pic">No Picture</div>
 			<!-- ENDIF -->
+            <!-- ENDIF -->
 		</div>
         <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
 		<div class="info" style="height: 190px; background-image: url('{USER_COVER_PHOTO}');">
         <!-- ELSE -->
+        <!-- IF $_IS_MOBILE AND USER_COVER_PHOTO -->
+        <div class="info" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
         <div class="info">
+        <!-- ENDIF -->
         <!-- ENDIF -->
 			<h2><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a></h2>
             <!-- IF USER_AUTOBIOGRAPHY -->

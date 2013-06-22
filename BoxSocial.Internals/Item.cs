@@ -922,8 +922,8 @@ namespace BoxSocial.Internals
             long typeId = ItemType.GetTypeId(type);
 
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
-			
-			if  (itemFieldsCache != null)
+
+            if (itemFieldsCache != null && typeId > 0)
 			{
 				if (!getRawFields)
 				{

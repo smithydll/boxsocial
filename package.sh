@@ -45,6 +45,8 @@ cp EnterpriseResourcePlanning/languages/EnterpriseResourcePlanning.en.resources 
 
 cp BoxSocial.Forms/bin/Debug/BoxSocial.Forms.dll Package/
 cp BoxSocial.Forms/bin/Debug/BosSocial.Forms.mdb Package/
+cp BoxSocial.KnowledgeBase/bin/Debug/BoxSocial.KnowledgeBase.dll Package/
+cp BoxSocial.KnowledgeBase/bin/Debug/BosSocial.KnowledgeBase.mdb Package/
 cp BoxSocial.IO/bin/Debug/BoxSocial.IO.dll Package/
 cp BoxSocial.IO/bin/Debug/BoxSocial.IO.mdb Package/
 

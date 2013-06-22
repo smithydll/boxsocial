@@ -41,6 +41,8 @@ namespace BoxSocial.Internals
         private long applicationId;
         [DataField("app_simple_permissions")]
         private bool simplePermissions;
+        [DataField("app_email_notifications")]
+        private bool emailNotifications;
 
         private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
@@ -50,6 +52,18 @@ namespace BoxSocial.Internals
             get
             {
                 return appId;
+            }
+        }
+
+        public bool EmailNotifications
+        {
+            get
+            {
+                return emailNotifications;
+            }
+            set
+            {
+                SetProperty("emailNotifications", value);
             }
         }
 

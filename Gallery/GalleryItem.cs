@@ -903,21 +903,6 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        /*public GalleryItem(Mysql db, Member owner, long itemId)
-            : this(db, (Primitive)owner, itemId)
-        {
-        }*/
-
-        /*public GalleryItem(Mysql db, Group owner, long itemId)
-            : this(db, (Primitive)owner, itemId)
-        {
-        }*/
-
-        /*public GalleryItem(Mysql db, Network owner, long itemId)
-            : this(db, (Primitive)owner, itemId)
-        {
-        }*/
-
         /// <summary>
         /// Initialises a new instance of the GalleryItem class.
         /// </summary>
@@ -971,20 +956,6 @@ namespace BoxSocial.Applications.Gallery
                 OnCommentPosted(e);
             }
         }
-
-        /// <summary>
-        /// Generates a query stub for generating more complex queries for the
-        /// gallery item data type.
-        /// </summary>
-        /// <returns>A query stub for the gallery item data type</returns>
-        /*public static SelectQuery GalleryItem_GetSelectQueryStub()
-        {
-            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem), false);
-            query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(ContentLicense)));
-            query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(ContentLicense)), "gallery_item_license", "license_id");
-
-            return query;
-        }*/
 
         /// <summary>
         /// Increment the number of views
@@ -1191,25 +1162,6 @@ namespace BoxSocial.Applications.Gallery
 
             throw new Exception("Transaction failed, panic!");
         }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="description"></param>
-        /// <param name="permissions"></param>
-        /// <param name="license"></param>
-        /// <param name="classification"></param>
-        /*public void Update(string title, string description, byte license, Classifications classification)
-        {
-            long rowsChanged = db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_title = '{2}', gallery_item_abstract = '{3}', gallery_item_license = {4}, gallery_item_classification = {7} WHERE user_id = {0} AND gallery_item_id = {1} AND gallery_item_item_id = {5} AND gallery_item_item_type_id = {6};",
-                core.LoggedInMemberId, itemId, Mysql.Escape(title), Mysql.Escape(description), license, owner.Id, owner.TypeId, (byte)classification));
-
-            if (rowsChanged == 0)
-            {
-                throw new GalleryItemNotFoundException();
-            }
-        }*/
 
         /// <summary>
         /// Rotate the gallery item

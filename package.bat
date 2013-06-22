@@ -41,6 +41,8 @@ copy "%1"EnterpriseResourcePlanning\languages\EnterpriseResourcePlanning.en.reso
 
 copy "%1"BoxSocial.Forms\bin\Debug\BoxSocial.Forms.dll "%1"Package\
 copy "%1"BoxSocial.Forms\bin\Debug\BoxSocial.Forms.pdb "%1"Package\
+copy "%1"BoxSocial.KnowledgeBase\bin\Debug\BoxSocial.KnowledgeBase.dll "%1"Package\
+copy "%1"BoxSocial.KnowledgeBase\bin\Debug\BoxSocial.KnowledgeBase.pdb "%1"Package\
 copy "%1"BoxSocial.IO\bin\Debug\BoxSocial.IO.dll "%1"Package\
 copy "%1"BoxSocial.IO\bin\Debug\BoxSocial.IO.pdb "%1"Package\
 copy "%1"Groups\bin\Debug\Groups.dll "%1"Package\

@@ -80,6 +80,7 @@
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
     <Compile Include="AccountNews.cs" />
+    <None Include="resources\news.svg" />
     <Content Include="templates\account_news_icon_edit.html" />
     <Content Include="templates\account_news_icon_manage.html" />
     <Content Include="templates\viewnews.html" />

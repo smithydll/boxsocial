@@ -129,11 +129,10 @@ namespace BoxSocial.Applications.News
 		public List<Article> GetArticles(int currentPage, int count)
 		{
 			List<Article> articles = new List<Article>();
-			
+
 			SelectQuery query = Article.GetSelectQueryStub(typeof(Article));
-            ItemKey ik = new ItemKey(owner.Id, owner.GetType().FullName);
-			query.AddCondition("article_item_id", ik.Id);
-			query.AddCondition("article_item_type_id", ik.TypeId);
+			query.AddCondition("article_item_id", Owner.Id);
+			query.AddCondition("article_item_type_id", Owner.TypeId);
 			query.AddSort(SortOrder.Descending, "article_time_ut");
             query.LimitStart = (currentPage - 1) * count;
             query.LimitCount = count;

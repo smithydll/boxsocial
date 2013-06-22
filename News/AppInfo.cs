@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return null;
+                return Properties.Resources.svgIcon;
             }
         }
 

@@ -43,23 +43,6 @@ namespace BoxSocial.IO
         public Stack<string> QueryList = new Stack<string>();
         public StringBuilder ErrorList = new StringBuilder();
 
-        /*public long LastQueryRows
-        {
-            get
-            {
-                DataTable rowsDataTable = SelectQuery("SELECT FOUND_ROWS() as total_rows;");
-
-                if (rowsDataTable.Rows.Count == 1)
-                {
-                    return (long)rowsDataTable.Rows[0]["total_rows"];
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-        }*/
-
         public Mysql(string username, string database, string host)
         {
             queryCount = 0;
@@ -163,48 +146,6 @@ namespace BoxSocial.IO
                 //return new DataTable();
             }
         }
-
-        /*private DataTable SelectQuery(string sqlquery)
-        {
-            DataTable dt = new DataTable();
-
-            System.Data.Common.DbDataReader reader = SelectReaderQuery(sqlquery);
-
-            for (int i = 0; i < reader.FieldCount; i++)
-            {
-                string column = reader.GetName(i);
-                string c = column;
-                int count = 0;
-                while (dt.Columns.Contains(column))
-                {
-                    count++;
-                    column = c + "." + count;
-                }
-                //if (dt.Columns.Contains(column))
-                //{
-                //    continue;
-                //}
-                dt.Columns.Add(column, reader.GetFieldType(i));
-            }
-
-            if (reader.HasRows)
-            {
-                while (reader.Read())
-                {
-                    DataRow dr = dt.NewRow();
-                    for (int i = 0; i < reader.FieldCount; i++)
-                    {
-                        dr[reader.GetName(i)] = reader.GetValue(i);
-                    }
-                    dt.Rows.Add(dr);
-                }
-            }
-
-            reader.Close();
-            reader.Dispose();
-
-            return dt;
-        }*/
 
         private System.Data.Common.DbDataReader SelectReaderQuery(string sqlquery)
         {

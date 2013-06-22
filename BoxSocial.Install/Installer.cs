@@ -105,6 +105,7 @@ namespace BoxSocial.Install
                     {
                         doUpdate("BoxSocial.Forms", false);
                         doUpdate("BoxSocial.FrontEnd", false);
+                        doUpdate("BoxSocial.KnowledgeBase", false);
                         doUpdate("BoxSocial.IO", false);
                         doUpdate("BoxSocial.Internals");
                         doUpdate("Profile");
@@ -338,6 +339,7 @@ namespace BoxSocial.Install
 
             menuItems.Add(new MenuOption("Blog", UpdateBlog));
             menuItems.Add(new MenuOption("BoxSocial.Internals", UpdateBoxSocialInternals));
+            menuItems.Add(new MenuOption("BoxSocial.KnowledgeBase", UpdateBoxSocialKnowledgeBase));
             menuItems.Add(new MenuOption("Calendar", UpdateCalendar));
             menuItems.Add(new MenuOption("Forum", UpdateForum));
             menuItems.Add(new MenuOption("Gallery", UpdateGallery));
@@ -374,6 +376,13 @@ namespace BoxSocial.Install
             loadUpdateOptions();
             doUpdate("Blog");
             InstallLanguage("en", @"Blog");
+        }
+
+        static void UpdateBoxSocialKnowledgeBase()
+        {
+            loadUpdateOptions();
+            doUpdate("BoxSocial.KnowledgeBase");
+            InstallLanguage("en", @"KnowledgeBase");
         }
 
         static void UpdateBoxSocialInternals()
@@ -1498,6 +1507,9 @@ namespace BoxSocial.Install
             InstallRepository(@"BoxSocial.Internals");
             InstallApplication(@"BoxSocial.Internals");
             /* ==================== */
+            InstallRepository(@"BoxSocial.KnowledgeBase");
+            InstallApplication(@"BoxSocial.KnowledgeBase");
+            /* ==================== */
             InstallRepository(@"Groups");
             InstallApplication(@"Groups");
             /* ==================== */
@@ -2389,6 +2401,7 @@ namespace BoxSocial.Install
                 case "BoxSocial.Forms":
                 case "BoxSocial.FrontEnd":
                 case "BoxSocial.Internals":
+                case "BoxSocial.KnowledgeBase":
                 case "BoxSocial.IO":
                 case "Groups":
                 case "Networks":
@@ -2417,7 +2430,7 @@ namespace BoxSocial.Install
             UnixTime tz = new UnixTime(core, 0);
 
             // disable application
-            if (repo != "BoxSocial.Internals")
+            if (repo != "BoxSocial.Internals" && repo != "BoxSocial.KnowledgeBase")
             {
                 UpdateQuery query = new UpdateQuery("applications");
                 query.AddField("application_update", true);
@@ -2432,6 +2445,7 @@ namespace BoxSocial.Install
             switch (repo)
             {
                 case "BoxSocial.Internals":
+                case "BoxSocial.KnowledgeBase":
                     assemblyPath = Path.Combine(binRoot, repo + ".dll");
                     isInternals = true;
                     isPrimitive = false;

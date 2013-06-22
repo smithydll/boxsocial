@@ -855,6 +855,12 @@ namespace BoxSocial.Applications.Gallery
 
         bool Gallery_CommentPosted(CommentPostedEventArgs e)
         {
+            if (Owner is User)
+            {
+                core.CallingApplication.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+            }
+
             return true;
         }
 

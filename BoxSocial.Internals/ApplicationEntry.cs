@@ -94,8 +94,21 @@ namespace BoxSocial.Internals
 
         private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
+        private PrimitiveApplicationInfo ownerInfo;
 
         public event CommentHandler OnCommentPosted;
+        public PrimitiveApplicationInfo OwnerInfo
+        {
+            get
+            {
+                if (ownerInfo == null || ownerInfo.Owner.Id != owner.Id || ownerInfo.Owner.TypeId != owner.TypeId)
+                {
+                    ownerInfo = new PrimitiveApplicationInfo(core, owner, Id);
+                }
+                return ownerInfo;
+            }
+        }
+
 
         public long ApplicationId
         {
@@ -450,30 +463,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        /*public ApplicationEntry(Core core, ApplicationCommentType act)
-            : base(core)
-        {
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
-            query.AddJoin(JoinTypes.Inner, "comment_types", "application_id", "application_id");
-            query.AddCondition("type_type", act.Type);
-
-            DataTable assemblyTable = db.Query(query);
-
-            if (assemblyTable.Rows.Count == 1)
-            {
-                loadItemInfo(assemblyTable.Rows[0]);
-
-                if (this.owner == null)
-                {
-                    this.owner = new User(core, creatorId);
-                }
-            }
-            else
-            {
-                throw new InvalidApplicationException();
-            }
-        }*/
-
         public ApplicationEntry(Core core, Primitive owner, string assemblyName)
             : base(core)
         {
@@ -541,12 +530,20 @@ namespace BoxSocial.Internals
         public ApplicationEntry(Core core, Primitive installee, DataRow applicationRow)
             : base(core)
         {
+            owner = installee;
             ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
             loadItemInfo(applicationRow);
 
             // TODO: change this
             loadApplicationUserInfo(applicationRow);
+            try
+            {
+                ownerInfo = new PrimitiveApplicationInfo(core, applicationRow);
+            }
+            catch (InvalidPrimitiveAppInfoException)
+            {
+            }
 
             if (installee != null)
             {
@@ -745,11 +742,6 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        /*public bool Install(Core core, Primitive viewer)
-        {
-            return Install(core, viewer, true);
-        }*/
-
         public bool Install(Core core, User owner)
         {
             return Install(core, owner, owner);
@@ -819,6 +811,7 @@ namespace BoxSocial.Internals
                 iQuery.AddField("application_id", applicationId);
                 iQuery.AddField("item_id", owner.Id);
                 iQuery.AddField("item_type_id", owner.TypeId);
+                iQuery.AddField("app_email_notifications", true);
                 // TODO: ACLs
 
                 if (db.Query(iQuery) > 0)
@@ -1018,9 +1011,9 @@ namespace BoxSocial.Internals
 
             // maximum ten per application per day
             // TODO: change this
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 10)
+            if ((long)db.Query(query).Rows[0]["twentyfour"] < 20)
             {
-                return true;
+                return OwnerInfo.EmailNotifications;
             }
             return false;
         }

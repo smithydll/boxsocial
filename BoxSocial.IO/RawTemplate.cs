@@ -32,20 +32,10 @@ namespace BoxSocial.IO
 {
     sealed public class RawTemplate : Template
     {
-        /*public RawTemplate()
-            : base()
-        {
-        }*/
-
         public RawTemplate(Assembly assembly, string templateName)
             : base(assembly, templateName)
         {
         }
-
-        /*public RawTemplate(string fileName)
-            : base(fileName)
-        {
-        }*/
 
         public RawTemplate(string path, string fileName)
             : base(path, fileName)

@@ -263,22 +263,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        /*public static ApplicationEntry Entry
-        {
-            get
-            {
-
-                string assemblyName = Assembly.GetCallingAssembly().GetName().Name;
-
-                if (!Functions.core.ApplicationEntries.ContainsKey(assemblyName))
-                {
-                    Functions.core.LoadApplicationEntry(assemblyName);
-                }
-
-                return Functions.core.ApplicationEntries[assemblyName];
-            }
-        }*/
-
         public virtual void Initialise(Core core)
         {
         }
@@ -774,11 +758,6 @@ namespace BoxSocial.Internals
         {
             return new ApplicationEntry(core, installee, Assembly.GetCallingAssembly().GetName().Name);
         }
-
-        /*public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
-        {
-            return GetExecutingApplication(core, installee);
-        }*/
 
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {

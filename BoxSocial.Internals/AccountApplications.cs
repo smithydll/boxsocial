@@ -129,12 +129,28 @@ namespace BoxSocial.Internals
             {
                 ApplicationEntry ae = new ApplicationEntry(core, Owner, applicationTable.Rows[0]);
 
-                List<string> applicationPermissions = new List<string>();
-                applicationPermissions.Add("Can Access");
+                //List<string> applicationPermissions = new List<string>();
+                //applicationPermissions.Add("Can Access");
 
                 template.Parse("APPLICATION_NAME", ae.Title);
                 //core.Display.ParsePermissionsBox(template, "S_GAPPLICATION_PERMS", ae.Permissions, applicationPermissions);
                 template.Parse("S_APPLICATION_ID", ae.ApplicationId.ToString());
+
+                string radioChecked = " checked=\"checked\"";
+
+                if (Owner is User)
+                {
+                    template.Parse("S_USER", true);
+
+                    if (ae.OwnerInfo.EmailNotifications)
+                    {
+                        template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
+                    }
+                    else
+                    {
+                        template.Parse("S_EMAIL_NOTIFICATIONS_NO", radioChecked);
+                    }
+                }
             }
             else
             {
@@ -154,10 +170,24 @@ namespace BoxSocial.Internals
                 return;
             }
 
+            bool emailNotifications = true;
+
+            try
+            {
+                if (Owner is User)
+                {
+                    emailNotifications = (int.Parse(core.Http.Form["email-notifications"]) == 1);
+                }
+            }
+            catch
+            {
+            }
+
             UpdateQuery uquery = new UpdateQuery("primitive_apps");
             uquery.AddCondition("item_id", Owner.Id);
             uquery.AddCondition("item_type_id", Owner.TypeId);
             uquery.AddCondition("application_id", id);
+            uquery.AddField("app_email_notifications", emailNotifications);
 
             db.Query(uquery);
 

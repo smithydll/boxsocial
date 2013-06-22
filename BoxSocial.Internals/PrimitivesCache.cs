@@ -67,15 +67,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        /*public Primitive this[string type, long key]
-        {
-            get
-            {
-                loadBatchedIds(type, key);
-                return primitivesCached[new PrimitiveId(type, key)];
-            }
-        }*/
-
         public Primitive this[ItemKey key]
         {
             get

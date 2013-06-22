@@ -595,15 +595,6 @@ namespace BoxSocial.Internals
         {
         }
 
-        /*public static SelectQuery Page_GetSelectQueryStub()
-        {
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page), false);
-            query.AddFields(Page.GetFieldsPrefixed(typeof(ContentLicense)));
-            query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(ContentLicense)), "page_license", "license_id");
-
-            return query;
-        }*/
-
         private void loadPageInfo(DataRow pageRow)
         {
             pageId = (long)pageRow["page_id"];

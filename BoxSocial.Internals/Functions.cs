@@ -331,43 +331,6 @@ namespace BoxSocial.Internals
             return core.Http.Query["filter"];
         }
 
-        /*public static string BuildPermissionsBox(ushort permission, List<string> permissions)
-        {
-            StringBuilder permissionsBox = new StringBuilder();
-
-            permissionsBox.AppendLine("<table id=\"perms-table\">");
-            permissionsBox.AppendLine("<tr>");
-            permissionsBox.AppendLine("<th>Setting</th>");
-            permissionsBox.AppendLine("<th>Friends</th>");
-            permissionsBox.AppendLine("<th>Family</th>");
-            permissionsBox.AppendLine("<th>Group</th>");
-            permissionsBox.AppendLine("<th>Other (Everyone else)</th>");
-            permissionsBox.AppendLine("</tr>");
-
-            for (int i = 0; i < permissions.Count; i++)
-            {
-                permissionsBox.AppendLine("<tr>");
-                permissionsBox.AppendLine(string.Format("<td>{0}</td>", permissions[i]));
-                for (int j = 3; j >= 0; j--)
-                {
-                    ushort permissionsMask = (ushort)(1 << i << (j * 4));
-                    if ((ushort)(permission & permissionsMask) == permissionsMask)
-                    {
-                        permissionsBox.AppendLine(string.Format("<td class=\"check\"><input type=\"checkbox\" name=\"perm-{0:X4}\"{1} /></td>", permissionsMask, boxChecked));
-                    }
-                    else
-                    {
-                        permissionsBox.AppendLine(string.Format("<td class=\"check\"><input type=\"checkbox\" name=\"perm-{0:X4}\" /></td>", permissionsMask));
-                    }
-                }
-                permissionsBox.AppendLine("</tr>");
-            }
-
-            permissionsBox.AppendLine("</table>");
-
-            return permissionsBox.ToString();
-        }*/
-
         public static string BuildRadioArray(string name, int columns, List<SelectBoxItem> items, string selectedItem)
         {
             return BuildRadioArray(name, columns, items, selectedItem, new List<string>());

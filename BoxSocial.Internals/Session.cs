@@ -471,14 +471,17 @@ namespace BoxSocial.Internals
                         }
 
                         //core.Display.ShowMessage("Error", "Error starting session");
-                        Response.Write("Error starting session");
+                        /*Response.Write("Error starting session");
 
                         if (db != null)
                         {
                             db.CloseConnection();
                         }
                         Response.End();
-                        return null;
+                        return null;*/
+
+                        /* Let's try just signing out rather than showing an error message */
+                        userId = 0;
                     }
                 }
                 else if (!autoCreate)

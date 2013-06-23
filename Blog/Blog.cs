@@ -809,6 +809,7 @@ namespace BoxSocial.Applications.Blog
 
                 page.template.Parse("USER_THUMB", page.User.UserThumbnail);
                 page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+                page.template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
 
                 page.template.Parse("BLOG_TITLE", myBlog.Title);
 

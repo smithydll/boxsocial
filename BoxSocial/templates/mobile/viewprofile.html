@@ -1,20 +1,15 @@
 <!-- INCLUDE page_header.html -->
 
-<!-- IF BREADCRUMBS -->
-<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
-<!-- ENDIF -->
-
-<div id="content">
 	<div id="overview-profile" class="pane">
 		<div class="img-wb img-fl">
-			<!-- IF $_IS_DESKTOP AND USER_THUMB -->
-			<img src="{USER_THUMB}" alt="{USER_DISPLAY_NAME} Display Picture" />
-			<!-- ELSE -->
+            <!-- IF $_IS_MOBILE AND USER_TINY -->
+            <img src="{USER_TINY}" alt="{USER_DISPLAY_NAME} Display Picture" />
+            <!-- ELSE -->
 			<div class="no-disp-pic">No Picture</div>
-            <!-- ENDIF -->
+			<!-- ENDIF -->
 		</div>
-        <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
-		<div class="info" style="height: 190px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- IF $_IS_MOBILE AND USER_COVER_PHOTO -->
+        <div class="info" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
         <!-- ELSE -->
         <div class="info">
         <!-- ENDIF -->
@@ -25,19 +20,10 @@
 		<div class="cheat-clear"></div>
 	</div>
     </div>
+<div id="content">
 	<div id="pane-profile">
-		<div id="pane-pages" class="pane">
-            <!-- IF $_IS_MOBILE -->
-            <h3 onclick="ShowPages()">Pages</h3>
-            <!-- ELSE -->
-			<h3>Pages</h3>
-            <!-- ENDIF -->
-			<ul class="page-tiles">
-				{PAGE_LIST}
-			</ul>
-		</div>
 		<div id="pane-profile-contact" class="pane">
-			<h3>Contact {USER_DISPLAY_NAME}</h3>
+			<h3>Contact</h3>
 			<dl>
 				<!-- IF LOGGED_IN -->
 				<!--dt><a href=""></a></dt>
@@ -58,7 +44,7 @@
 		</div>
 		<!-- IF HAS_PROFILE_INFO -->
 		<div id="pane-profile-info" class="pane">
-			<h3>About {USER_DISPLAY_NAME}</h3>
+			<h3>About</h3>
 			<dl>
 		    <dt>Joined:</dt>
 		    <dd>{USER_JOINED}</dd>
@@ -109,8 +95,8 @@
 		<li>
 			<dl>
 				<dt><span class="img-wb"><a href="{friend_list.U_PROFILE}">
-				<!-- IF friend_list.TILE -->
-				<img src="{friend_list.TILE}" alt="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- IF friend_list.ICON -->
+				<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
 				<!-- ELSE -->
 				<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
 				<!-- ENDIF -->

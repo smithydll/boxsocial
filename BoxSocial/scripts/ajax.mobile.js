@@ -1,14 +1,18 @@
 function showSideBar() {
-    hideSideBar();
-    event.stopPropagation();
-    $('#boxsocial-menu').show().animate({ left: 0 });
+    if (!$('#boxsocial-menu').is(":visible")) {
+        hideSideBar();
+        event.stopPropagation();
+        $('#boxsocial-menu').show().animate({ left: 0 });
+    }
     return false;
 }
 
 function showPagesBar() {
-    hideSideBar();
-    event.stopPropagation();
-    $('#pages-menu').show().animate({ right: 0 });
+    if (!$('#pages-menu').is(":visible")) {
+        hideSideBar();
+        event.stopPropagation();
+        $('#pages-menu').show().animate({ right: 0 });
+    }
     return false;
 }
 
@@ -28,16 +32,20 @@ function hideSideBar() {
 }
 
 function showPostBar() {
-    hideSideBar();
-    event.stopPropagation();
-    $('#post-menu').show().animate({ bottom: 0 });
+    if (!$('#post-menu').is(":visible")) {
+        hideSideBar();
+        event.stopPropagation();
+        $('#post-menu').show().animate({ bottom: 0 });
+    }
     return false;
 }
 
 function showSearchBar() {
-    hideSideBar();
-    event.stopPropagation();
-    $('#search-menu').show().animate({ bottom: 0 });
+    if (!$('#search-menu').is(":visible")) {
+        hideSideBar();
+        event.stopPropagation();
+        $('#search-menu').show().animate({ bottom: 0 });
+    }
     return false;
 }
 

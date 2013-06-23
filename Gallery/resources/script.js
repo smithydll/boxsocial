@@ -101,13 +101,22 @@ function toggleHd() {
 function showHd() {
     document.body.style.overflow = 'hidden';
 
-    if ($("#display-hd").height() > 1280) {
+    if ($("#display-hd").height() <= 1280) {
         $('#photo-hd').attr('src', hdDisplay);
     }
     else {
         $('#photo-hd').attr('src', retinaDisplay);
     }
+
+    if ($("#mobile-hd").height() <= 640) {
+        $('#photo-hd').attr('src', hdDisplay);
+    }
+    else {
+        $('#photo-hd').attr('src', retinaDisplay);
+    }
+
     $('#display-hd').show();
+    $('#mobile-hd').show();
     //parent.location.hash = 'hd';
 
     var Title = $(this).text();
@@ -127,6 +136,7 @@ function showHd() {
 function showNormal() {
     document.body.style.overflow = 'auto';
     $('#display-hd').hide();
+    $('#mobile-hd').hide();
     //parent.location.hash = '';
 
     var Title = $(this).text();

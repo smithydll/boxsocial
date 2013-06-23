@@ -1,27 +1,36 @@
 <!-- INCLUDE page_header.html -->
-<div>
-  <h2>{GALLERY_TITLE}</h2>
 
-    <div data-role="controlgroup" data-type="horizontal">
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{GALLERY_TITLE}</h2>
+        </div>
+    </div>
+
+<div id="content">
+	<div id="new-stuff">
     <!-- IF U_UPLOAD_PHOTO -->
-      <a href="{U_UPLOAD_PHOTO}" data-role="button" data-theme="a" data-inline="true">Upload Photo</a>
+      <span class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
     <!-- ENDIF -->
     <!-- IF U_NEW_GALLERY -->
-      <a href="{U_NEW_GALLERY}" data-role="button" data-theme="a" data-inline="true">New Gallery</a>
+      <span class="post-button"><a href="{U_NEW_GALLERY}">New Gallery</a></span>
     <!-- ENDIF -->
     </div>
 
   <!-- IF GALLERIES -->
-  <ul data-role="listview" data-inset="true" data-count-theme="b">
+  <ul class="list">
     <!-- BEGIN gallery_list -->
-    <li>
+    <li class="list-item icon">
             <a href="{gallery_list.URI}">
             <!-- IF gallery_list.TILE -->
             <img src="{gallery_list.TILE}" alt="{gallery_list.TITLE}" width="100" height="100" />
             <!-- ELSE -->
             <!-- ENDIF -->
             {gallery_list.TITLE}
-            <span class="ui-li-count">{gallery_list.ITEMS}</span>
+            <span class="count">{gallery_list.ITEMS}</span>
             </a>
     </li>
     <!-- END gallery_list -->

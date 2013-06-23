@@ -121,10 +121,13 @@ namespace BoxSocial.IO
 
             if (cache != null)
             {
-                if (!queries.ContainsKey(typeId))
+                lock (queryLock)
                 {
-                    queries.Add(typeId, query.ToString());
-                    cache.Add("queries", queries, null, Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
+                    if (!queries.ContainsKey(typeId))
+                    {
+                        queries.Add(typeId, query.ToString());
+                        cache.Add("queries", queries, null, Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
+                    }
                 }
             }
         }

@@ -1,9 +1,23 @@
 <!-- INCLUDE page_header.html -->
-<div>
-  <h2>{PHOTO_TITLE}</h2>
+<script type="text/javascript" src="/scripts/jquery.history.js"></script>
+
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{PHOTO_TITLE}</h2>
+        </div>
+    </div>
+
+<div id="content">
+	<div id="new-stuff">
   <!-- IF U_UPLOAD_PHOTO -->
-  <a href="{U_UPLOAD_PHOTO}" data-role="button" data-theme="a" data-inline="true">Upload Photo</a>
+        <span class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
   <!-- ENDIF -->
+    </div>
+
   <div id="mobile-photo">
     <script type="text/javascript">
       <!--
@@ -28,7 +42,7 @@
 
         $(document).ready(function(){
             if (parent.location.hash == '#hd') {
-                //showHd();
+                showHd();
             }
 
           $("#display-hd div").click(function(event){
@@ -40,6 +54,10 @@
           });
 
         });
+
+        function positionHd() {
+            $('#photo-hd').css('top', (($('#mobile-hd').height() - Math.min($('#mobile-hd').height(), Math.min($('#mobile-hd').width(), {HD_WIDTH}) * {HD_HEIGHT} / {HD_WIDTH})) / 2) + 'px');
+        }
 
          $(function(){
             $("#photo-mobile").bind('swipeleft', swipeLeftHandler);
@@ -57,6 +75,7 @@
                 <!-- ENDIF -->
             }
 
+
             <!-- IF OWNER -->
             /*function absorbEvent_(event) {
                 var e = event || window.event;
@@ -72,17 +91,17 @@
                 node.ontouchmove = absorbEvent_;
                 node.ontouchend = absorbEvent_;
                 node.ontouchcancel = absorbEvent_;
-            }*/
+            }
 
             $(document).ready(function(){
                 preventLongPressMenu(document.getElementById('photo-mobile'));
-            });
+            });*/
 
             $("#photo-mobile").bind('taphold', tapholdHandler);
 
             function tapholdHandler( e ){
                 e.preventDefault();
-                $("#photo-menu").popup("open");
+                $("#photo-menu").show();
                 return false;
             }
 
@@ -107,12 +126,12 @@
       <!-- END user_tags -->
       -->
     </script>
-    <div id="mobile-hd">
-        <a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete" data-iconpos="notext" class="ui-btn-right">Close</a><img class="popphoto" src="{PHOTO_MOBILE}" style="max-height: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" alt="Photo">
+    <div id="mobile-hd" onclick="toggleHd()">
+        <div><img id="photo-hd" src="{PHOTO_DISPLAY}" style="max-height: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" alt="Photo" /></div>
     </div>
     <dl>
       <dt style="text-align: center;">
-        <a href="#" onclick="$('#mobile-hd').dialog(); return false;"><img id="photo-mobile" src="{PHOTO_MOBILE}" alt="Photo" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" /></a>
+        <img id="photo-mobile" src="{PHOTO_MOBILE}" alt="Photo" style="max-width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;" onclick="toggleHd()" />
       </dt>
       <!-- IF HAS_USER_TAGS -->
       <dd>

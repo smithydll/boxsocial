@@ -30,9 +30,24 @@ body {
 }
 
 #body {
-	padding: 0 5px;
 	text-align: left;
 	margin: 32pt 0 0 0;
+}
+
+#content {
+    padding: 0 5px;
+}
+
+.cheat-clear {
+	clear: both;
+	height: 0px;
+	font-size: 0px;
+}
+
+.cheat-clear-left {
+	clear: left;
+	height: 0px;
+	font-size: 0px;
 }
 
 a {
@@ -53,6 +68,7 @@ h1#page-title {
 	background-size: auto 32pt;
 	height: 32pt;
 	background-color: #fe6600;
+	border-bottom: solid 1px #e74400;
 	position: relative;
 	width: 100%;
 }
@@ -617,8 +633,8 @@ ul.comment-list li div.comment-head
 
 ul.comment-list li div.comment-text 
 {
-    clear: left;
     padding: 2px;
+	margin-left: 70px;
 	position: relative;
 }
 
@@ -868,6 +884,7 @@ blockquote {
     overflow-y: scroll;
     overflow-x: hidden;
     bottom: 0;
+    display: none;
 }
 
 #pages-menu {
@@ -959,8 +976,124 @@ div.img-wb {
 	color: #FFFFFF;
 	padding-left: 90px;
 	min-height: 50px;
+	background-size: cover;
+}
+
+#overview-profile div.info.no-icon {
+    padding-left: 5px;
+}
+
+#overview-profile div.info a {
+	color: #FFFFFF;
+	text-decoration: none;
+}
+
+#overview-profile h2, #overview-profile p {
+	margin-top: 5px;
+	margin-bottom: 3px;
+}
+
+#overview-profile div.img-wb {
+	margin: 5px;
+	z-index: 2;
 }
 
 #pane-profile-overview div.img-fl {
 	margin: 5px;
+}
+
+ul#profile-friends {
+	list-style: none;
+	padding: 5px;
+	margin: 0px;
+}
+
+ul#profile-friends dl {
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#profile-friends li {
+	float: left;
+	width: 60px;
+	height: 60px;
+	display: inline;
+}
+
+ul#profile-friends li div {
+	width: 50px;
+}
+
+ul.list 
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+ul.list li.list-item 
+{
+    list-style: none;
+    padding: 3px;
+    margin: 0;
+    border: 1px solid #dddddd;
+    border-top: 1px solid #ffffff;
+    background-color: #eeeeee;
+    overflow: auto;
+}
+
+ul.list li.list-item:first-child
+{
+    border-top: 1px solid #dddddd;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+ul.list li.list-item:last-child
+{
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+ul.list li.list-item > a
+{
+    display: block;
+    width: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+ul.list li.list-item.icon 
+{
+    padding-left: 110px;
+    position: relative;
+    height: 95px;
+}
+
+ul.list li.list-item.icon img
+{
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+ul.list li.list-item .count 
+{
+    float: right;
+}
+
+div.ui-grid-b 
+{
+    overflow: auto;
+}
+
+div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui-block-c
+{
+    float: left;
+    width: 33%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }

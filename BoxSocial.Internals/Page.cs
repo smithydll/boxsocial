@@ -1230,6 +1230,7 @@ namespace BoxSocial.Internals
 
                 core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
                 core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
             }
 
             core.Display.ParsePageList(owner, true, thePage);

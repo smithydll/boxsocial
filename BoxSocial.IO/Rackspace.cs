@@ -34,6 +34,7 @@ namespace BoxSocial.IO
     {
         CloudFilesProvider provider;
         CloudIdentity identity;
+        string location = null;
 
         public Rackspace(string keyId, string username, Database db)
             : base (db)
@@ -60,9 +61,14 @@ namespace BoxSocial.IO
             return path1 + path2;
         }
 
+        public void SetLocation(string location)
+        {
+            this.location = location;
+        }
+
         public override void CreateBin(string bin)
         {
-            ObjectStore createContainerResponse = provider.CreateContainer(bin);
+            ObjectStore createContainerResponse = provider.CreateContainer(bin, region: location);
         }
 
         public override string SaveFile(string bin, MemoryStream file)
@@ -73,7 +79,7 @@ namespace BoxSocial.IO
             if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
-                provider.CreateObject(bin, file, fileName);
+                provider.CreateObject(bin, file, fileName, region: location);
             }
             return fileName;
         }
@@ -84,7 +90,7 @@ namespace BoxSocial.IO
             if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
-                provider.CreateObject(bin, file, fileName);
+                provider.CreateObject(bin, file, fileName, region: location);
             }
 
             return fileName;
@@ -95,7 +101,7 @@ namespace BoxSocial.IO
             string fileName = HashFile(file);
 
             file.Position = 0;
-            provider.CreateObject(bin, file, fileName);
+            provider.CreateObject(bin, file, fileName, region: location);
 
             return fileName;
         }
@@ -103,14 +109,14 @@ namespace BoxSocial.IO
         public override string SaveFileWithReducedRedundancy(string bin, string fileName, MemoryStream file)
         {
             file.Position = 0;
-            provider.CreateObject(bin, file, fileName);
+            provider.CreateObject(bin, file, fileName, region: location);
 
             return fileName;
         }
 
         public override void DeleteFile(string bin, string fileName)
         {
-            ObjectStore deleteObjectResponse = provider.DeleteObject(bin, fileName);
+            ObjectStore deleteObjectResponse = provider.DeleteObject(bin, fileName, region: location);
         }
 
         public override void TouchFile(string bin, string fileName)
@@ -123,7 +129,7 @@ namespace BoxSocial.IO
             try
             {
                 MemoryStream ms = new MemoryStream();
-                provider.GetObject(bin, fileName, ms);
+                provider.GetObject(bin, fileName, ms, region: location);
                 return ms;
             }
             catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException ex)
@@ -134,7 +140,7 @@ namespace BoxSocial.IO
 
         public override string RetrieveFileUri(string bin, string fileName)
         {
-            ContainerCDN cdn = provider.GetContainerCDNHeader(bin);
+            ContainerCDN cdn = provider.GetContainerCDNHeader(bin, region: location);
             
             return cdn.CDNUri + "/" + fileName;
 
@@ -143,7 +149,7 @@ namespace BoxSocial.IO
 
         public string RetrieveSecureFileUri(string bin, string fileName)
         {
-            ContainerCDN cdn = provider.GetContainerCDNHeader(bin);
+            ContainerCDN cdn = provider.GetContainerCDNHeader(bin, region: location);
 
             return cdn.CDNSslUri + "/" + fileName;
 
@@ -162,14 +168,14 @@ namespace BoxSocial.IO
 
         public override void CopyFile(string fromBin, string toBin, string fileName)
         {
-            ObjectStore copyObjectResponse = provider.CopyObject(fromBin, fileName, toBin, fileName);
+            ObjectStore copyObjectResponse = provider.CopyObject(fromBin, fileName, toBin, fileName, region: location);
         }
 
         public override bool FileExists(string bin, string fileName)
         {
             try
             {
-                provider.GetObjectMetaData(bin, fileName);
+                provider.GetObjectMetaData(bin, fileName, region: location);
                 return true;
             }
             catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException)

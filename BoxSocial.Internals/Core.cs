@@ -293,7 +293,14 @@ namespace BoxSocial.Internals
             {
                 if (search == null)
                 {
-                    search = new LuceneSearch(this);
+                    if (Settings.SearchProvider == "solr")
+                    {
+                        search = new SolrSearch(this, WebConfigurationManager.AppSettings["solr-server"]);
+                    }
+                    else
+                    {
+                        search = new LuceneSearch(this);
+                    }
                 }
                 return search;
             }

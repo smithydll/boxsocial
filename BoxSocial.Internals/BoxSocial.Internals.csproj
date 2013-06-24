@@ -170,10 +170,12 @@
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="RawHyperlink.cs" />
+    <Compile Include="Search.cs" />
     <Compile Include="SearchItemKeyword.cs" />
     <Compile Include="SearchKeyword.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Share.cs" />
+    <Compile Include="SolrSearch.cs" />
     <Compile Include="StaticShowAttribute.cs" />
     <Compile Include="Subscription.cs" />
     <Compile Include="UPage.cs">
@@ -189,7 +191,7 @@
     <Compile Include="RelationInfo.cs" />
     <Compile Include="Religion.cs" />
     <Compile Include="RssDocument.cs" />
-    <Compile Include="Search.cs" />
+    <Compile Include="Lucene.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="ShowAttribute.cs" />
     <Compile Include="SpamReport.cs" />

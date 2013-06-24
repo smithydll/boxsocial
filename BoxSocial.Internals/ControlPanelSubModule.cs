@@ -343,6 +343,8 @@ namespace BoxSocial.Internals
             }
 
             core.Template.Parse("IS_CONTENT", "FALSE");
+
+            template.Parse("SITE_TITLE", core.Settings.SiteTitle);
         }
 
         /// <summary>

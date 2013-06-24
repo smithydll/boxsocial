@@ -3,6 +3,11 @@
 <!-- IF S_CANNOT_INVITE -->
 <p>Sorry, you have no invites left to send.</p>
 <!-- ELSE -->
+
+<!-- IF MAX_INVITES -->
+<p>You have sent {INVITES_SENT} of {MAX_INVITES} invites.</p>
+<!-- ENDIF -->
+
 <p>Invite a friend to join {SITE_TITLE}, just enter their e-mail address below:</p>
 <form action="{S_ACCOUNT}" method="post">
 <fieldset>

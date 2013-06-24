@@ -293,7 +293,7 @@ namespace BoxSocial.Internals
             {
                 if (search == null)
                 {
-                    search = new Search(this);
+                    search = new LuceneSearch(this);
                 }
                 return search;
             }

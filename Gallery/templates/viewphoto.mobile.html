@@ -50,7 +50,11 @@
           });
 
           $(window).resize(function() {
-            //positionHd();
+            positionHd();
+          });
+
+          $(window).on('orientationchange', function() {
+            positionHd();
           });
 
         });

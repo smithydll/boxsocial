@@ -675,7 +675,7 @@ namespace BoxSocial.Internals
         public static SelectQuery GetSelectQueryStub(Type type, bool check)
         {
             long typeId = ItemType.GetTypeId(type);
-            if (QueryCache.HasQuery(typeId))
+            if (typeId > 0 && QueryCache.HasQuery(typeId))
             {
                 return (SelectQuery)QueryCache.GetQuery(type, typeId);
             }
@@ -811,33 +811,36 @@ namespace BoxSocial.Internals
             FieldInfo[] fields = type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
             long typeId = ItemType.GetTypeId(type);
-            lock (itemFieldInfoCacheLock)
+            if (typeId > 0)
             {
-                if (!itemFieldInfoCache.ContainsKey(typeId))
+                lock (itemFieldInfoCacheLock)
                 {
-                    itemFieldInfoCache.Add(typeId, fields);
+                    if (!itemFieldInfoCache.ContainsKey(typeId))
+                    {
+                        itemFieldInfoCache.Add(typeId, fields);
+                    }
                 }
-            }
 
-            System.Web.Caching.Cache cache;
+                System.Web.Caching.Cache cache;
 
-            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-            {
-                cache = HttpContext.Current.Cache;
-            }
-            else
-            {
-                cache = new Cache();
-            }
-
-            if (cache != null)
-            {
-                try
+                if (HttpContext.Current != null && HttpContext.Current.Cache != null)
                 {
-                    cache.Add("itemFieldInfo", itemFieldInfoCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                    cache = HttpContext.Current.Cache;
                 }
-                catch (NullReferenceException)
+                else
                 {
+                    cache = new Cache();
+                }
+
+                if (cache != null)
+                {
+                    try
+                    {
+                        cache.Add("itemFieldInfo", itemFieldInfoCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
                 }
             }
 
@@ -849,7 +852,7 @@ namespace BoxSocial.Internals
             FieldInfo[] fields = null;
             long typeId = ItemType.GetTypeId(type);
 
-            if (itemFieldInfoCache != null)
+            if (typeId > 0 && itemFieldInfoCache != null)
             {
                 if (!itemFieldInfoCache.TryGetValue(typeId, out fields))
                 {

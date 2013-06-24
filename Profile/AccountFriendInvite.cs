@@ -69,9 +69,14 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_friend_invite");
 
-            if (core.Settings.SignupMode == "invite" && core.Session.LoggedInMember.UserInfo.Invites >= core.Settings.MaxInvitesPerUser)
+            if (core.Settings.SignupMode == "invite")
             {
-                template.Parse("S_CANNOT_INVITE", "TRUE");
+                template.Parse("MAX_INVITES", core.Settings.MaxInvitesPerUser);
+                template.Parse("INVITES_SENT", core.Session.LoggedInMember.UserInfo.Invites);
+                if (core.Session.LoggedInMember.UserInfo.Invites >= core.Settings.MaxInvitesPerUser)
+                {
+                    template.Parse("S_CANNOT_INVITE", "TRUE");
+                }
             }
 
             Save(new EventHandler(AccountFriendInvite_Send));
@@ -174,12 +179,19 @@ namespace BoxSocial.Applications.Profile
 
             SetRedirectUri(BuildUri());
             core.Display.ShowMessage("Invited Friend", "You have invited a friend to " + core.Settings.SiteTitle + ".");
+            core.Session.LoggedInMember.UserInfo.Invites++;
+            core.Session.LoggedInMember.UserInfo.Update();
         }
 
         private void InviteFriendsSend(string[] friendEmails)
         {
+            int sent = 0;
             foreach (string friendEmail in friendEmails)
             {
+                if (core.Settings.SignupMode == "invite" && sent + core.Session.LoggedInMember.UserInfo.Invites >= core.Settings.MaxInvitesPerUser)
+                {
+                    break;
+                }
                 if (User.CheckEmailValid(friendEmail))
                 {
                     if (User.CheckEmailUnique(core, friendEmail))
@@ -212,6 +224,8 @@ namespace BoxSocial.Applications.Profile
 
                             db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
                                 Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
+
+                            sent++;
                         }
                     }
                     else
@@ -265,6 +279,8 @@ namespace BoxSocial.Applications.Profile
 
             SetRedirectUri(BuildUri());
             core.Display.ShowMessage("Invited Friend", "You have invited all your friends to " + core.Settings.SiteTitle + ".");
+            core.Session.LoggedInMember.UserInfo.Invites += sent;
+            core.Session.LoggedInMember.UserInfo.Update();
         }
     }
 }

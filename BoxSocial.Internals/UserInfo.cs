@@ -469,6 +469,10 @@ namespace BoxSocial.Internals
             {
                 return userInvites;
             }
+            set
+            {
+                SetPropertyByRef(new { userInvites }, value);
+            }
         }
 
         /// <summary>

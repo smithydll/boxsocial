@@ -42,6 +42,7 @@ namespace BoxSocial.Internals
     public class SolrSearch : Search
     {
         private string server;
+        Analyzer analyzer;
 
         public SolrSearch(Core core, string server)
             : base(core)
@@ -53,6 +54,7 @@ namespace BoxSocial.Internals
         {
             if (!initialised)
             {
+                analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
                 initialised = true;
             }
         }
@@ -61,6 +63,7 @@ namespace BoxSocial.Internals
         {
             if (initialised)
             {
+                analyzer.Dispose();
             }
         }
 
@@ -72,6 +75,8 @@ namespace BoxSocial.Internals
             int start = (pageNumber - 1) * perPage;
 
             List<ISearchableItem> results = new List<ISearchableItem>();
+            List<ItemKey> itemKeys = new List<ItemKey>();
+            List<long> applicationIds = new List<long>();
 
             QueryParser parser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30, "item_string", analyzer);
 
@@ -133,11 +138,172 @@ namespace BoxSocial.Internals
 
             WebClient wc = new WebClient();
             wc.QueryString = queryString;
-            string solrResultString = wc.DownloadString("http://" + server + "/solr/select");
+            string solrResultString = wc.DownloadString("http://" + server + "/select");
 
-            var solrResult = JsonConvert.DeserializeObject(solrResultString);
+            //HttpContext.Current.Response.Write(solrResultString + "<br />");
+
+            JsonTextReader reader = new JsonTextReader(new StringReader(solrResultString));
 
             int totalResults = 0;
+            List<Dictionary<string, string>> docs = new List<Dictionary<string, string>>();
+            bool readingResponse = false;
+            bool inDocument = false;
+            string lastToken = string.Empty;
+            int current = -1;
+
+            while (reader.Read())
+            {
+                if (readingResponse)
+                {
+                    if (reader.Value != null)
+                    {
+                        if (inDocument)
+                        {
+                            if (reader.TokenType == JsonToken.PropertyName)
+                            {
+                                lastToken = reader.Value.ToString();
+                                //HttpContext.Current.Response.Write(lastToken + "<br />\n");
+                            }
+                            else
+                            {
+                                docs[current].Add(lastToken, reader.Value.ToString());
+                                lastToken = string.Empty;
+                            }
+                            /*else if (reader.TokenType == JsonToken.Integer)
+                            {
+                                docs[docs.Count - 1].Add(lastToken, reader.Value.ToString());
+                            }
+                            else if (reader.TokenType == JsonToken.Boolean)
+                            {
+                                docs[docs.Count - 1].Add(lastToken, reader.Value.ToString());
+                            }
+                            else if (reader.TokenType == JsonToken.Float)
+                            {
+                                docs[docs.Count - 1].Add(lastToken, reader.Value.ToString());
+                            }*/
+                        }
+                        else
+                        {
+                            if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "numFound")
+                            {
+                                lastToken = reader.Value.ToString();
+                            }
+                            if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "docs")
+                            {
+                                lastToken = reader.Value.ToString();
+                            }
+                            if (reader.TokenType == JsonToken.Integer && lastToken == "numFound")
+                            {
+                                totalResults = int.Parse(reader.Value.ToString());
+                                lastToken = string.Empty;
+                                //HttpContext.Current.Response.Write(totalResults + " results<br />\n");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        if (reader.TokenType == JsonToken.StartArray && lastToken == "docs")
+                        {
+                            inDocument = true;
+                            lastToken = string.Empty;
+                        }
+                        if (reader.TokenType == JsonToken.StartObject && inDocument)
+                        {
+                            docs.Add(new Dictionary<string,string>());
+                            current++;
+                        }
+                        if (reader.TokenType == JsonToken.EndArray && inDocument)
+                        {
+                            inDocument = false;
+                        }
+                    }
+                }
+                else
+                {
+                    if (reader.Value != null)
+                    {
+                        if (reader.TokenType == JsonToken.PropertyName && (string)reader.Value == "response")
+                        {
+                            readingResponse = true;
+                        }
+                    }
+
+                }
+            }
+
+            for (int i = 0; i < docs.Count; i++)
+            {
+                long itemId = 0;
+                long itemTypeId = 0;
+                long applicationId = 0;
+
+                long.TryParse(docs[i]["item_id"], out itemId);
+                long.TryParse(docs[i]["item_type_id"], out itemTypeId);
+                long.TryParse(docs[i]["application_id"], out applicationId);
+
+                ItemKey key = new ItemKey(itemId, itemTypeId);
+
+                if (!applicationIds.Contains(applicationId))
+                {
+                    applicationIds.Add(applicationId);
+                }
+                
+                itemKeys.Add(key);
+            }
+
+            // Force each application with results to load
+            for (int i = 0; i < applicationIds.Count; i++)
+            {
+                if (applicationIds[i] > 0)
+                {
+                    ApplicationEntry ae = new ApplicationEntry(core, applicationIds[i]);
+
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                }
+            }
+
+            List<IPermissibleItem> tempResults = new List<IPermissibleItem>();
+
+            foreach (ItemKey key in itemKeys)
+            {
+                core.ItemCache.RequestItem(key);
+            }
+
+            foreach (ItemKey key in itemKeys)
+            {
+                try
+                {
+                    if (core.ItemCache.ContainsItem(key))
+                    {
+                        NumberedItem thisItem = core.ItemCache[key];
+
+                        if (thisItem != null)
+                        {
+                            if (thisItem is IPermissibleItem)
+                            {
+                                tempResults.Add((IPermissibleItem)thisItem);
+                            }
+                            if (thisItem is IPermissibleSubItem)
+                            {
+                                tempResults.Add(((IPermissibleSubItem)thisItem).PermissiveParent);
+                            }
+                            results.Add((ISearchableItem)thisItem);
+                        }
+                    }
+                    else
+                    {
+                        totalResults--;
+                    }
+                }
+                catch (InvalidItemException)
+                {
+                }
+            }
+
+            if (tempResults.Count > 0)
+            {
+                core.AcessControlCache.CacheGrants(tempResults);
+            }
 
             return new SearchResult(results, totalResults);
         }
@@ -192,6 +358,8 @@ namespace BoxSocial.Internals
                 writer.WritePropertyName("doc");
                 writer.WriteStartObject();
                 writer.WritePropertyName("id");
+                writer.WriteValue(item.ItemKey.TypeId.ToString() + "," + item.Id.ToString());
+                writer.WritePropertyName("item_id");
                 writer.WriteValue(item.Id.ToString());
                 writer.WritePropertyName("item_type_id");
                 writer.WriteValue(item.ItemKey.TypeId.ToString());
@@ -227,7 +395,8 @@ namespace BoxSocial.Internals
 
             WebClient wc = new WebClient();
             wc.Headers[HttpRequestHeader.ContentType] = "type:application/json";
-            wc.UploadString("http://" + server + "/solr/update/json", sb.ToString());
+            string response = wc.UploadString("http://" + server + "/update/json", sb.ToString());
+            //HttpContext.Current.Response.Write(sb.ToString() + "<br />\r\n\r\n" + response + "<br />");
 
             return true;
         }
@@ -256,17 +425,21 @@ namespace BoxSocial.Internals
                 writer.WriteStartObject();
                 
                 writer.WritePropertyName("id");
-                writer.WriteValue(item.Id.ToString());
-                writer.WritePropertyName("item_type_id");
-                writer.WriteValue(item.ItemKey.TypeId.ToString());
+                writer.WriteValue(item.ItemKey.TypeId.ToString() + "," + item.Id.ToString());
 
                 writer.WriteEndObject();
                 writer.WriteEndObject();
             }
 
-            WebClient wc = new WebClient();
-            wc.Headers[HttpRequestHeader.ContentType] = "type:application/json";
-            wc.UploadString("http://" + server + "/solr/update/json", sb.ToString());
+            try
+            {
+                WebClient wc = new WebClient();
+                wc.Headers[HttpRequestHeader.ContentType] = "type:application/json";
+                wc.UploadString("http://" + server + "/update/json", sb.ToString());
+            }
+            catch
+            {
+            }
 
             return true;
         }

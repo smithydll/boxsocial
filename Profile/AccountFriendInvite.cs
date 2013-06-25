@@ -177,10 +177,11 @@ namespace BoxSocial.Applications.Profile
                 return;
             }
 
-            SetRedirectUri(BuildUri());
-            core.Display.ShowMessage("Invited Friend", "You have invited a friend to " + core.Settings.SiteTitle + ".");
             core.Session.LoggedInMember.UserInfo.Invites++;
             core.Session.LoggedInMember.UserInfo.Update();
+
+            SetRedirectUri(BuildUri());
+            core.Display.ShowMessage("Invited Friend", "You have invited a friend to " + core.Settings.SiteTitle + ".");
         }
 
         private void InviteFriendsSend(string[] friendEmails)
@@ -277,10 +278,11 @@ namespace BoxSocial.Applications.Profile
                 }
             }
 
-            SetRedirectUri(BuildUri());
-            core.Display.ShowMessage("Invited Friend", "You have invited all your friends to " + core.Settings.SiteTitle + ".");
             core.Session.LoggedInMember.UserInfo.Invites += sent;
             core.Session.LoggedInMember.UserInfo.Update();
+
+            SetRedirectUri(BuildUri());
+            core.Display.ShowMessage("Invited Friend", "You have invited all your friends to " + core.Settings.SiteTitle + ".");
         }
     }
 }

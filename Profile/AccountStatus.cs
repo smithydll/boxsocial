@@ -153,9 +153,9 @@ namespace BoxSocial.Applications.Profile
                 statusMessageVariableCollection.Parse("TYPE_ID", newMessage.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", newMessage.Poster.DisplayName);
                 statusMessageVariableCollection.Parse("U_PROFILE", newMessage.Poster.ProfileUri);
-                statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(newMessage.Id));
-                statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(newMessage.Id));
-                statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(newMessage.Id));
+                statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*core.Hyperlink.BuildCommentQuoteUri(newMessage.Id)*/);
+                statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(newMessage.Id)*/);
+                statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*core.Hyperlink.BuildCommentDeleteUri(newMessage.Id)*/);
                 statusMessageVariableCollection.Parse("U_PERMISSIONS", newMessage.Access.AclUri);
                 statusMessageVariableCollection.Parse("USER_TILE", newMessage.Poster.UserTile);
                 statusMessageVariableCollection.Parse("USER_ICON", newMessage.Poster.UserIcon);

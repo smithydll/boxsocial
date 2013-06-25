@@ -262,9 +262,9 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
                 statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
-                statusMessageVariableCollection.Parse("U_QUOTE", e.Core.Hyperlink.BuildCommentQuoteUri(item.Id));
-                statusMessageVariableCollection.Parse("U_REPORT", e.Core.Hyperlink.BuildCommentReportUri(item.Id));
-                statusMessageVariableCollection.Parse("U_DELETE", e.Core.Hyperlink.BuildCommentDeleteUri(item.Id));
+                statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*e.Core.Hyperlink.BuildCommentQuoteUri(item.Id)*/);
+                statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*e.Core.Hyperlink.BuildCommentReportUri(item.Id)*/);
+                statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*e.Core.Hyperlink.BuildCommentDeleteUri(item.Id)*/);
                 statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
                 statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
 
@@ -503,9 +503,9 @@ namespace BoxSocial.Internals
             statusMessageVariableCollection.Parse("TYPE_ID", ItemKey.TypeId.ToString());
             statusMessageVariableCollection.Parse("USERNAME", Poster.DisplayName);
             statusMessageVariableCollection.Parse("U_PROFILE", Poster.ProfileUri);
-            statusMessageVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(Id));
-            statusMessageVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(Id));
-            statusMessageVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(Id));
+            statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*core.Hyperlink.BuildCommentQuoteUri(Id)*/);
+            statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(Id)*/);
+            statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*core.Hyperlink.BuildCommentDeleteUri(Id)*/);
             statusMessageVariableCollection.Parse("U_PERMISSIONS", Access.AclUri);
             statusMessageVariableCollection.Parse("USER_TILE", Poster.UserTile);
             statusMessageVariableCollection.Parse("USER_ICON", Poster.UserIcon);

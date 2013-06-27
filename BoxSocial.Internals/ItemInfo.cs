@@ -113,6 +113,34 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemInfo(Core core, string key)
+            : base(core)
+        {
+            this.item = item;
+            ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
+
+            SelectQuery query = ItemInfo.GetSelectQueryStub(typeof(ItemInfo));
+            query.AddCondition("info_shortkey", key);
+
+            DataTable infoTable = db.Query(query);
+
+            try
+            {
+                if (infoTable.Rows.Count == 1)
+                {
+                    loadItemInfo(infoTable.Rows[0]);
+                }
+                else
+                {
+                    throw new InvalidIteminfoException();
+                }
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidIteminfoException();
+            }
+        }
+
         public ItemInfo(Core core, DataRow itemRow)
             : base(core)
         {
@@ -473,6 +501,14 @@ namespace BoxSocial.Internals
                 {
                     return string.Empty;
                 }
+            }
+        }
+
+        public string ShareUri
+        {
+            get
+            {
+                return core.Hyperlink.AppendAbsoluteSid("/s/" + shortUrlKey);
             }
         }
     }

@@ -36,6 +36,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        ItemInfo Info
+        {
+            get;
+        }
+
         ItemKey ItemKey
         {
             get;

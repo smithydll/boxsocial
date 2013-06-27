@@ -50,42 +50,78 @@ namespace BoxSocial.FrontEnd
         {
             string profileUserName = core.Http["un"];
             string mode = core.Http["mode"];
+            bool retina = core.Http["retina"] == "true";
             User profileOwner;
 
             int width = 100;
 
-            switch (mode)
+            if (retina)
             {
-                case "icon":
-                    width = 50;
-                    break;
-                case "tile":
-                    width = 100;
-                    break;
-                case "square":
-                    width = 200;
-                    break;
-                case "high":
-                    width = 400;
-                    break;
-                case "tiny":
-                    width = 80;
-                    break;
-                case "thumb":
-                    width = 160;
-                    break;
-                case "mobile":
-                    width = 320;
-                    break;
-                case "display":
-                    width = 640;
-                    break;
-                case "full":
-                    width = 1280;
-                    break;
-                case "ultra":
-                    width = 2560;
-                    break;
+                switch (mode)
+                {
+                    case "icon":
+                        width = 100;
+                        break;
+                    case "tile":
+                        width = 200;
+                        break;
+                    case "square":
+                    case "high":
+                        width = 400;
+                        break;
+                    case "tiny":
+                        width = 160;
+                        break;
+                    case "thumb":
+                        width = 320;
+                        break;
+                    case "mobile":
+                        width = 640;
+                        break;
+                    case "display":
+                        width = 1280;
+                        break;
+                    case "full":
+                    case "ultra":
+                        width = 2560;
+                        break;
+                }
+            }
+            else
+            {
+                switch (mode)
+                {
+                    case "icon":
+                        width = 50;
+                        break;
+                    case "tile":
+                        width = 100;
+                        break;
+                    case "square":
+                        width = 200;
+                        break;
+                    case "high":
+                        width = 400;
+                        break;
+                    case "tiny":
+                        width = 80;
+                        break;
+                    case "thumb":
+                        width = 160;
+                        break;
+                    case "mobile":
+                        width = 320;
+                        break;
+                    case "display":
+                        width = 640;
+                        break;
+                    case "full":
+                        width = 1280;
+                        break;
+                    case "ultra":
+                        width = 2560;
+                        break;
+                }
             }
 
             try
@@ -119,8 +155,18 @@ namespace BoxSocial.FrontEnd
             int hash = BitConverter.ToInt32(md5.ComputeHash(userBytes),0);
             Image image = Identicon.CreateIdenticon(hash, width, false);
 
-            string imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "user"), "_" + mode), string.Format("{0}.png",
+            string imagePath = string.Empty;
+            if (retina)
+            {
+                imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "user"), "_" + mode), string.Format("{0}@2x.png",
                     profileUserName));
+            }
+            else
+            {
+                imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "user"), "_" + mode), string.Format("{0}.png",
+                    profileUserName));
+            }
+
             try
             {
                 FileStream newFileStream = new FileStream(imagePath, FileMode.Create);

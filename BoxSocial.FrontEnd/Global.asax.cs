@@ -178,6 +178,7 @@ namespace BoxSocial.FrontEnd
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
                                 patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
@@ -226,6 +227,8 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
                     patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });
 
+                    patterns.Add(new string[] { @"^/s/([A-Za-z0-9\-_]+)(/|)$", @"/shorturl.aspx?key=$1" });
+
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/groupaccount.aspx?gn=$1&module=$2&sub=$3" });
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account/([a-z\-]+)(/|)$", @"/groupaccount.aspx?gn=$1&module=$2" });
                     patterns.Add(new string[] { @"^/group/([A-Za-z0-9\-_]+)/account(/|)$", @"/groupaccount.aspx?gn=$1" });
@@ -239,6 +242,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_\.]+).css$", @"/musicstyle.aspx?gn=$1" });
 
                     patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?un=$2&mode=$1"});
+                    patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?un=$2&mode=$1&retina=true" });
 
                     patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });

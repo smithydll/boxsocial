@@ -79,6 +79,7 @@ namespace BoxSocial.FrontEnd
 
                     template.Parse("S_SHARE_MESSAGE", messageTextBox);
                     template.Parse("S_SHARE_PERMISSIONS", permissionSelectBox);
+                    template.Parse("S_SHARED_URI", item.Info.ShareUri);
                     core.Display.ParseBbcode(template, "S_SHARED_STRING", core.Functions.Tldr("[share=\"[iurl=\"" + item.Uri + "\"]" + item.Owner.DisplayName + "[/iurl]\"]" + item.ShareString + "[/share]"), core.Session.LoggedInMember);
                 }
                 catch

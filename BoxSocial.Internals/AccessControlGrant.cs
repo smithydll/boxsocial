@@ -242,8 +242,6 @@ namespace BoxSocial.Internals
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
             Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>();
-            /*List<long> itemIds = new List<long>();
-            long itemTypeId = 0;*/
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
             foreach (IPermissibleItem item in items)

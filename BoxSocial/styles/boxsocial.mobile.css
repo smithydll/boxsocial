@@ -832,6 +832,7 @@ ul.feed-list li.feed-item h5 {
 	margin: 0px;
 	font-weight: normal;
 	font-size: 120% !important;
+	margin-left: 60px;
 }
 
 ul.feed-list li div.feed-disp-pic {

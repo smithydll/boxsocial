@@ -47,7 +47,17 @@ namespace BoxSocial.FrontEnd
         {
             string key = core.Http["key"];
 
+            try
+            {
+                ItemInfo info = new ItemInfo(core, key);
 
+                core.Http.StatusCode = 301;
+                core.Http.Redirect(info.Uri);
+            }
+            catch (InvalidIteminfoException)
+            {
+                core.Functions.Generate404();
+            }
         }
     }
 }

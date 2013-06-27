@@ -64,6 +64,7 @@
     <Content Include="applicationpage.aspx" />
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
+    <Content Include="shorturl.aspx" />
     <Content Include="copyright.aspx" />
     <Content Include="corners.aspx" />
     <Content Include="default.aspx" />
@@ -193,6 +194,7 @@
     <Content Include="templates\mobile\page_header.html" />
     <Content Include="templates\mobile\pane.comment.html" />
     <Content Include="templates\mobile\pane.comment.post.html" />
+    <Content Include="templates\mobile\pane.feeditem.html" />
     <Content Include="templates\mobile\today.html" />
     <Content Include="templates\mobile\viewfeed.html" />
     <Content Include="templates\mobile\viewprofile.html" />

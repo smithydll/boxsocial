@@ -241,32 +241,26 @@ namespace BoxSocial.Internals
 
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
-            Dictionary<long, IPermissibleItem> itemDictionary = new Dictionary<long, IPermissibleItem>();
-            List<long> itemIds = new List<long>();
-            long itemTypeId = 0;
-
-            foreach (IPermissibleItem item in items)
-            {
-                if (itemTypeId == item.ItemKey.TypeId || itemTypeId == 0)
-                {
-                    if (!itemDictionary.ContainsKey(item.ItemKey.Id))
-                    {
-                        itemIds.Add(item.ItemKey.Id);
-                        itemTypeId = item.ItemKey.TypeId;
-                        itemDictionary.Add(item.ItemKey.Id, item);
-                    }
-                }
-            }
+            Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>();
+            /*List<long> itemIds = new List<long>();
+            long itemTypeId = 0;*/
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
-            sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
-            sQuery.AddCondition("grant_item_type_id", itemTypeId);
+            foreach (IPermissibleItem item in items)
+            {
+                    if (!itemDictionary.ContainsKey(item.ItemKey))
+                    {
+                        itemDictionary.Add(item.ItemKey, item);
+                        QueryCondition qc1 = sQuery.AddCondition(ConditionRelations.Or, "grant_item_id", item.ItemKey.Id);
+                        qc1.AddCondition(ConditionRelations.And, "grant_item_type_id", item.ItemKey.TypeId);
+                    }
+            }
 
             DataTable grantsTable = core.Db.Query(sQuery);
 
             foreach (DataRow dr in grantsTable.Rows)
             {
-                grants.Add(new AccessControlGrant(core, itemDictionary[(long)dr["grant_item_id"]], dr));
+                grants.Add(new AccessControlGrant(core, itemDictionary[new ItemKey((long)dr["grant_item_id"], (long)dr["grant_item_type_id"])], dr));
             }
 
             return grants;

@@ -213,15 +213,13 @@ namespace BoxSocial.Internals
 
         public void CacheGrants(List<IPermissibleItem> items)
         {
-            long typeId = 0;
-            Dictionary<long, AccessControlGrantKey> keys = new Dictionary<long, AccessControlGrantKey>();
+            Dictionary<ItemKey, AccessControlGrantKey> keys = new Dictionary<ItemKey, AccessControlGrantKey>();
 
             foreach (IPermissibleItem item in items)
             {
-                typeId = item.ItemKey.TypeId;
-                if (!keys.ContainsKey(item.Id))
+                if (!keys.ContainsKey(item.ItemKey))
                 {
-                    keys.Add(item.Id, new AccessControlGrantKey(typeId, item.Id));
+                    keys.Add(item.ItemKey, new AccessControlGrantKey(item.ItemKey.TypeId, item.ItemKey.Id));
                 }
             }
 
@@ -229,7 +227,7 @@ namespace BoxSocial.Internals
 
             foreach (AccessControlGrant grant in grants)
             {
-                AccessControlGrantKey key = keys[grant.ItemKey.Id];
+                AccessControlGrantKey key = keys[grant.ItemKey];
 
                 lock (grantsCacheLock)
                 {
@@ -243,7 +241,7 @@ namespace BoxSocial.Internals
 
             foreach (IPermissibleItem item in items)
             {
-                AccessControlGrantKey key = keys[item.ItemKey.Id];
+                AccessControlGrantKey key = keys[item.ItemKey];
                 lock (grantsCacheLock)
                 {
                     if (!grantsCache.ContainsKey(key))

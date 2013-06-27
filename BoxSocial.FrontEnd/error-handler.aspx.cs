@@ -46,7 +46,7 @@ namespace BoxSocial.FrontEnd
         {
             Exception ex = Server.GetLastError();
 
-            core.Display.ShowMessage("Error Message", ex.ToString(), ShowMessageOptions.Bbcode);
+            core.Display.ShowMessage("Error Message", "An error occured" /*ex.ToString(), ShowMessageOptions.Bbcode*/);
 
             try
             {

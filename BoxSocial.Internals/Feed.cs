@@ -315,6 +315,11 @@ namespace BoxSocial.Internals
                             feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
                         }
                     }
+                    else
+                    {
+                        feedItemVariableCollection.Parse("IS_PUBLIC", "FALSE");
+                        feedItemVariableCollection.Parse("SHAREABLE", "FALSE");
+                    }
 
                     if (feedAction.Owner is User)
                     {

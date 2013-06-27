@@ -744,7 +744,6 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
-        Access access;
         List<string> actions = new List<string> { "VIEW", "RATE", "COMMENT" };
         List<AccessControlPermission> permissionsList;
 

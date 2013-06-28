@@ -269,6 +269,12 @@ namespace BoxSocial.Internals
                     else if (Settings.StorageProvider == "rackspace")
                     {
                         storage = new Rackspace(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+
+                        string location = WebConfigurationManager.AppSettings["rackspace-location"];
+                        if (!string.IsNullOrEmpty(location))
+                        {
+                            ((Rackspace)storage).SetLocation(location);
+                        }
                     }
                     else if (Settings.StorageProvider == "azure")
                     {

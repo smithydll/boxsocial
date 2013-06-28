@@ -64,6 +64,7 @@
     <Content Include="applicationpage.aspx" />
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
+    <Content Include="captcha%402x.aspx" />
     <Content Include="shorturl.aspx" />
     <Content Include="copyright.aspx" />
     <Content Include="corners.aspx" />

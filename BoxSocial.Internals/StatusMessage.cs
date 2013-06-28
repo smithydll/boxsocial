@@ -178,7 +178,8 @@ namespace BoxSocial.Internals
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your status.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+                ae.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your status.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }
 

@@ -36,8 +36,18 @@ namespace BoxSocial.Internals
         private string emailKey;
         [DataField("invite_allow")]
         private bool allowInvite;
+        [DataField("invite_user_id")]
+        private long inviteUserId;
         [DataField("invite_time_ut")]
         private long inviteTimeRaw;
+
+        public long InviteUserId
+        {
+            get
+            {
+                return inviteUserId;
+            }
+        }
 
         public InviteKey(Core core, DataRow inviteRow)
             : base(core)

@@ -196,6 +196,7 @@ namespace BoxSocial.FrontEnd
             {
                 string emailKey = core.Http.Form["key"];
                 bool continueSignup = false;
+                List<long> invitedById = new List<long>();
 
                 Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
 
@@ -208,6 +209,11 @@ namespace BoxSocial.FrontEnd
                     else
                     {
                         continueSignup = true;
+
+                        foreach (string key in keys.Keys)
+                        {
+                            invitedById.Add(keys[key].InviteUserId);
+                        }
                     }
                 }
                 else
@@ -282,7 +288,8 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        if (BoxSocial.Internals.User.Register(Core, core.Http.Form["username"], core.Http.Form["email"], core.Http.Form["password"], core.Http.Form["confirm-password"]) == null)
+                        User newUser = BoxSocial.Internals.User.Register(Core, core.Http.Form["username"], core.Http.Form["email"], core.Http.Form["password"], core.Http.Form["confirm-password"]);
+                        if (newUser == null)
                         {
                             template.Parse("ERROR", "Bad registration details");
                             prepareNewCaptcha();
@@ -298,6 +305,18 @@ namespace BoxSocial.FrontEnd
                             {
                                 db.UpdateQuery(string.Format("DELETE FROM invite_keys WHERE email_key = '{0}'",
                                     Mysql.Escape(emailKey)));
+                            }
+
+                            foreach (long friendId in invitedById)
+                            {
+                                if (friendId > 0)
+                                {
+                                    long relationId = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
+                                        newUser.UserId, friendId));
+
+                                    long relationId2 = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
+                                        friendId, newUser.UserId));
+                                }
                             }
 
                             //Response.Redirect("/", true);

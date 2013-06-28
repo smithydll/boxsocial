@@ -151,8 +151,8 @@ namespace BoxSocial.Applications.Profile
 
                         core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle, LoggedInMember.DisplayName), emailTemplate);
 
-                        db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_time_ut) VALUES ('{0}', 1, '{1}', {2});",
-                            Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail)), Mysql.Escape(UnixTime.UnixTimeStamp().ToString())));
+                        db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_user_id, invite_time_ut) VALUES ('{0}', 1, '{1}', {2}, {3});",
+                            Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail)), Mysql.Escape(core.LoggedInMemberId.ToString()), Mysql.Escape(UnixTime.UnixTimeStamp().ToString())));
                     }
                 }
                 else
@@ -223,8 +223,8 @@ namespace BoxSocial.Applications.Profile
 
                             core.Email.SendEmail(friendEmail, string.Format("{0} has invited you to " + core.Settings.SiteTitle, LoggedInMember.DisplayName), emailTemplate);
 
-                            db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash) VALUES ('{0}', 1, '{1}');",
-                                Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail))));
+                            db.UpdateQuery(string.Format("INSERT INTO invite_keys (email_key, invite_allow, email_hash, invite_user_id, invite_time_ut) VALUES ('{0}', 1, '{1}', {2}, {3});",
+                                Mysql.Escape(emailKey), Mysql.Escape(User.HashPassword(friendEmail)), Mysql.Escape(core.LoggedInMemberId.ToString()), Mysql.Escape(UnixTime.UnixTimeStamp().ToString())));
 
                             sent++;
                         }

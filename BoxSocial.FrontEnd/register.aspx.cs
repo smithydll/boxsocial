@@ -316,6 +316,12 @@ namespace BoxSocial.FrontEnd
 
                                     long relationId2 = db.UpdateQuery(string.Format("INSERT INTO user_relations (relation_me, relation_you, relation_time_ut, relation_type) VALUES ({0}, {1}, UNIX_TIMESTAMP(), 'FRIEND');",
                                         friendId, newUser.UserId));
+
+                                    db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
+                                        friendId));
+
+                                    db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
+                                        newUser.UserId));
                                 }
                             }
 

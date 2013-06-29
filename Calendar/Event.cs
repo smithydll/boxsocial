@@ -632,7 +632,7 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                if (!calendarEvent.Access.Can("VIEW") && !calendarEvent.IsInvitee(e.Core.Session.LoggedInMember.ItemKey))
+                if ((!calendarEvent.Access.Can("VIEW")) && ((!e.Core.Session.IsLoggedIn) || (!calendarEvent.IsInvitee(e.Core.Session.LoggedInMember.ItemKey))))
                 {
                     e.Core.Functions.Generate403();
                     return;

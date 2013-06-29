@@ -27,6 +27,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using BoxSocial.Internals;
@@ -158,24 +159,67 @@ namespace BoxSocial.FrontEnd
 
                     DataTable dnsTable = db.Query(query);
 
-                    SelectQuery query2 = new SelectQuery("item_types");
-                    query2.AddFields("type_id", "type_namespace");
-                    query2.AddCondition("type_primitive", true);
-
-                    DataTable typeTable = db.Query(query2);
-
                     long userTypeId = 0;
                     long groupTypeId = 0;
 
-                    foreach (DataRow dr in typeTable.Rows)
+                    Dictionary<string, long> primitiveTypeIds;
+
+                    System.Web.Caching.Cache cache;
+                    object o = null;
+
+                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+			        {
+				        cache = HttpContext.Current.Cache;
+			        }
+			        else
+			        {
+				        cache = new Cache();
+			        }
+
+                    if (cache != null)
                     {
-                        if ((string)dr["type_namespace"] == typeof(User).FullName)
+                        try
                         {
-                            userTypeId = (long)dr["type_id"];
+                            o = cache.Get("primitiveTypeIds");
                         }
-                        else if ((string)dr["type_namespace"] == typeof(UserGroup).FullName)
+                        catch (NullReferenceException)
                         {
-                            groupTypeId = (long)dr["type_id"];
+                        }
+                    }
+
+                    if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
+                    {
+                        primitiveTypeIds = (Dictionary<string, long>)o;
+
+                        userTypeId = primitiveTypeIds[typeof(User).FullName];
+                        groupTypeId = primitiveTypeIds[typeof(UserGroup).FullName];
+                    }
+                    else
+                    {
+                        SelectQuery query2 = new SelectQuery("item_types");
+                        query2.AddFields("type_id", "type_namespace");
+                        query2.AddCondition("type_primitive", true);
+
+                        DataTable typeTable = db.Query(query2);
+
+                        primitiveTypeIds = new Dictionary<string, long>(StringComparer.Ordinal);
+                        foreach (DataRow dr in typeTable.Rows)
+                        {
+                            primitiveTypeIds.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+
+                            if ((string)dr["type_namespace"] == typeof(User).FullName)
+                            {
+                                userTypeId = (long)dr["type_id"];
+                            }
+                            else if ((string)dr["type_namespace"] == typeof(UserGroup).FullName)
+                            {
+                                groupTypeId = (long)dr["type_id"];
+                            }
+                        }
+
+                        if (cache != null)
+                        {
+                            cache.Add("primitiveTypeIds", primitiveTypeIds, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
                         }
                     }
 

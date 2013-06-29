@@ -38,7 +38,7 @@ namespace BoxSocial.Internals
         [DataField("dns_owner_id", DataFieldKeys.Unique, "dns_owner")]
         private long ownerId;
         [DataField("dns_owner_type", DataFieldKeys.Unique, "dns_owner", 15)]
-        private string ownerType;
+        private long ownerType;
         [DataField("dns_owner_key", 31)]
         private string ownerKey;
 
@@ -106,6 +106,33 @@ namespace BoxSocial.Internals
 
         private void DnsRecord_ItemLoad()
         {
+        }
+
+        public static DnsRecord Create(Core core, Primitive owner, string domain)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item item = Item.Create(core, typeof(DnsRecord), true, new FieldValuePair("dns_domain", domain.ToLower()),
+                new FieldValuePair("dns_owner_id", owner.Id),
+                new FieldValuePair("dns_owner_type", owner.TypeId),
+                new FieldValuePair("dns_owner_key", owner.Key));
+
+            return new DnsRecord(core, owner);
+        }
+
+        public new long Update()
+        {
+            /* TODO: query permissions for this update */
+
+            UpdateQuery uQuery = new UpdateQuery(typeof(DnsRecord));
+            uQuery.AddField("dns_domain", domain);
+            uQuery.AddCondition("dns_owner_id", ownerId);
+            uQuery.AddCondition("dns_owner_type", ownerType);
+
+            return core.Db.Query(uQuery);
         }
 
         public override string Uri

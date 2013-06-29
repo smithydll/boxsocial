@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Net;
 using System.Text;
 using System.Web;
 using BoxSocial.Forms;
@@ -69,6 +70,9 @@ namespace BoxSocial.Internals
 			
             //User loggedInMember = (User)loggedInMember;
             template.SetTemplate("account_preferences.html");
+
+            TextBox customDomainTextBox = new TextBox("custom-domain");
+            customDomainTextBox.Value = LoggedInMember.UserDomain;
 
             TextBox analyticsCodeTextBox = new TextBox("analytics-code");
             analyticsCodeTextBox.Value = LoggedInMember.UserInfo.AnalyticsCode;
@@ -120,6 +124,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISPLAY_VIDEOS_NO", radioChecked);
             }
 
+            template.Parse("S_CUSTOM_DOMAIN", customDomainTextBox);
             template.Parse("S_ANALYTICS_CODE", analyticsCodeTextBox);
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
@@ -162,6 +167,7 @@ namespace BoxSocial.Internals
             bool emailNotifications = true;
             BbcodeOptions showBbcode = BbcodeOptions.None;
             string homepage = "/profile";
+            string customDomain = string.Empty;
             string analyticsCode = string.Empty;
             ushort timeZoneCode = 30;
 
@@ -174,11 +180,24 @@ namespace BoxSocial.Internals
                 showCustomStyles = (int.Parse(core.Http.Form["show-styles"]) == 1);
                 emailNotifications = (int.Parse(core.Http.Form["email-notifications"]) == 1);
                 homepage = core.Http.Form["homepage"];
+                customDomain = core.Http.Form["custom-domain"].ToLower();
                 analyticsCode = core.Http.Form["analytics-code"];
                 timeZoneCode = ushort.Parse(core.Http.Form["timezone"]);
             }
             catch
             {
+            }
+
+            if (!string.IsNullOrEmpty(customDomain))
+            {
+                IPHostEntry host = Dns.GetHostEntry(customDomain);
+                IPHostEntry host2 = Dns.GetHostEntry(Hyperlink.Domain);
+
+                if (host.HostName.ToLower() != host2.HostName.ToLower() && host.HostName.ToLower() != Hyperlink.Domain)
+                {
+                    SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain (currently " + host.HostName + ").");
+                    return;
+                }
             }
 
             if (homepage != "/profile" && homepage != "/blog")
@@ -218,6 +237,8 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.AnalyticsCode = analyticsCode;
 
             LoggedInMember.UserInfo.Update();
+
+            LoggedInMember.UserDomain = customDomain;
 
             //SetRedirectUri(BuildUri());
             //Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");

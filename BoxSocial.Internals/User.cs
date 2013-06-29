@@ -298,8 +298,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return string.Format("/images/user/_tiny/{0}.png",
-                        userName);
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_tiny/{0}.png",
+                        userName));
                 }
             }
         }
@@ -315,8 +315,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return string.Format("/images/user/_thumb/{0}.png",
-                        userName);
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_thumb/{0}.png",
+                        userName));
                 }
             }
         }
@@ -335,8 +335,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return string.Format("/images/user/_icon/{0}.png",
-                        userName);
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_icon/{0}.png",
+                        userName));
                 }
             }
         }
@@ -355,8 +355,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return string.Format("/images/user/_tile/{0}.png",
-                        userName);
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_tile/{0}.png",
+                        userName));
                 }
             }
         }
@@ -452,6 +452,31 @@ namespace BoxSocial.Internals
             get
             {
                 return domain;
+            }
+            set
+            {
+                if (domain != value)
+                {
+                    domain = value;
+
+                    UpdateQuery uQuery = new UpdateQuery(typeof(User));
+                    uQuery.AddField("user_domain", domain);
+                    uQuery.AddCondition("user_id", Id);
+
+                    db.Query(uQuery);
+
+                    try
+                    {
+                        DnsRecord dns = new DnsRecord(core, this);
+
+                        dns.Domain = domain;
+                        dns.Update();
+                    }
+                    catch (InvalidDnsRecordException)
+                    {
+                        DnsRecord dns = DnsRecord.Create(core, this, domain);
+                    }
+                }
             }
         }
 

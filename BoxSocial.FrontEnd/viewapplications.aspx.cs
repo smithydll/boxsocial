@@ -75,6 +75,7 @@ namespace BoxSocial.FrontEnd
 
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + ((byte)viewingPrimitive).ToString(), (byte)viewingPrimitive);
+            query.AddCondition("application_locked", false);
             query.AddSort(SortOrder.Ascending, "application_title");
             query.LimitStart = (TopLevelPageNumber - 1) * 10;
             query.LimitCount = 10;

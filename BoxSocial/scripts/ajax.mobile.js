@@ -36,6 +36,8 @@ function showPostBar() {
         hideSideBar();
         event.stopPropagation();
         $('#post-menu').show().animate({ bottom: 0 });
+        $('#message').outerWidth($('#post-menu').width() - $('#status-submit').outerWidth(true));
+        $('#post-menu').trigger('click');
     }
     return false;
 }
@@ -45,9 +47,20 @@ function showSearchBar() {
         hideSideBar();
         event.stopPropagation();
         $('#search-menu').show().animate({ bottom: 0 });
+        $('#search-text').outerWidth($('#search-menu').width() - $('#search-menu input[type="submit"]').outerWidth(true));
+        $('#search-menu').trigger('click');
     }
     return false;
 }
+
+$(document).ready(function () {
+    $('#post-menu').click(function () {
+        $("#message").focus();
+    });
+    $('#search-menu').click(function () {
+        $("#search-text").focus();
+    });
+});
 
 /*$(document).ready(function () {
     $(window).on('swipeone swiperightup', function (event, obj) {

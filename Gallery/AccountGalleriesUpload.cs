@@ -26,6 +26,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -102,8 +103,12 @@ namespace BoxSocial.Applications.Gallery
             {
                 Gallery gallery = new Gallery(core, Owner, galleryId);
 
+                CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
+                publishToFeedCheckBox.IsChecked = true;
+                
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
 
+                template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
                 core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
@@ -129,6 +134,7 @@ namespace BoxSocial.Applications.Gallery
             long galleryId = core.Functions.FormLong("id", 0);
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
+            bool publishToFeed = (core.Http.Form["publish-feed"] != null);
 
             if (core.Http.Files["photo-file"] == null)
             {
@@ -152,7 +158,7 @@ namespace BoxSocial.Applications.Gallery
 
                     db.BeginTransaction();
 
-                    Image image = Image.FromStream(stream);
+                    System.Drawing.Image image = System.Drawing.Image.FromStream(stream);
                     int width = image.Width;
                     int height = image.Height;
 
@@ -212,7 +218,10 @@ namespace BoxSocial.Applications.Gallery
                     GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
                     stream.Close();
 
-                    core.CallingApplication.PublishToFeed(LoggedInMember, parent, newGalleryItem.ItemKey);
+                    if (publishToFeed)
+                    {
+                        core.CallingApplication.PublishToFeed(LoggedInMember, parent, newGalleryItem.ItemKey);
+                    }
 
                     db.CommitTransaction();
 

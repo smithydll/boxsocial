@@ -104,6 +104,9 @@ namespace BoxSocial.Applications.Blog
             /* Tags TextBox */
             TextBox tagsTextBox = new TextBox("tags");
             tagsTextBox.MaxLength = 127;
+
+            CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
+            publishToFeedCheckBox.IsChecked = true;
 			
             long postId = core.Functions.RequestLong("id", 0);
             byte licenseId = (byte)0;
@@ -228,6 +231,8 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_BLOG_LICENSE", licensesSelectBox);
             template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
 
+            template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
+
             template.Parse("S_ID", postId.ToString());
 
             Save(new EventHandler(AccountBlogWrite_Save));
@@ -247,6 +252,8 @@ namespace BoxSocial.Applications.Blog
             string title = core.Http.Form["title"];
             string tags = core.Http.Form["tags"];
             string postBody = core.Http.Form["post"];
+            bool publishToFeed = (core.Http.Form["publish-feed"] != null);
+
             byte license = 0;
             short category = 1;
             long postId = 0;
@@ -409,7 +416,7 @@ namespace BoxSocial.Applications.Blog
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, tags, true);
 
-                if (publishStatus == PublishStatuses.Publish)
+                if (publishToFeed && publishStatus == PublishStatuses.Publish)
                 {
                     core.CallingApplication.PublishToFeed(LoggedInMember, myBlogEntry);
                 }

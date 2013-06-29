@@ -47,26 +47,21 @@
     </div>
     <!-- ENDIF -->
     <div id="search-menu" class="side-menu">
-        <div style="padding:10px 20px;">
-            <h2>Search</h2>
-			<form action="{S_SEARCH}" method="get">
-				<fieldset>
-					<input type="text" id="search-text" name="q" value="" maxlength="127" />
-					<input type="submit" value="Search" />
-				</fieldset>
-			</form>
-        </div>
+        <h2>Search</h2>
+		<form action="{S_SEARCH}" method="get">
+			<fieldset>
+				<input type="text" id="search-text" name="q" value="" maxlength="127" /><input type="submit" value="Search" />
+			</fieldset>
+		</form>
     </div>
         <!-- IF LOGGED_IN -->
     <div id="post-menu" class="side-menu">
-        <div style="padding:10px 20px;">
-            <h2>Post status</h2>
-			    <form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
-			        <p><input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
-			        <input type="hidden" name="module" value="profile" />
-			        <input type="hidden" name="sub" value="status" /></p>
-			    </form>
-        </div>
+        <h2>Post status</h2>
+			<form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
+			    <input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+			    <input type="hidden" name="module" value="profile" />
+			    <input type="hidden" name="sub" value="status" />
+			</form>
     </div>
         <!-- ENDIF -->
     <div id="boxsocial-menu" class="side-menu">
@@ -74,7 +69,7 @@
             <li><a href="{U_HOME}" data-theme="" data-icon="home">Home</a></li>
 <!-- IF LOGGED_IN -->
     		<li><a href="{U_USER_PROFILE}">Me</a></li>
-            <li><a href="{U_ACCOUNT}">My Account</a>
+            <li><a href="{U_ACCOUNT}" onclick="$(this).siblings().toggle(); return false;">My Account</a>
             <!-- IF module_list -->
                 <ul>
                     <!-- BEGIN module_list -->
@@ -92,21 +87,21 @@
         </ul>
 
         <ul class="mobile-list">
+            <li><a href="{U_FOOT_GROUPS}">Groups</a></li>
+            <li><a href="{U_FOOT_NETWORKS}">Networks</a></li>
+            <!--li>Music
+                <ul>
+						<li><a href="{U_FOOT_MUSIC}">Music Home</a></li>
+
+						<li><a href="{U_FOOT_MUSIC_DIRECTORY}">Artists</a></li>
+						<li><a href="{U_FOOT_MUSIC_CHART}">Charts</a></li>
+                </ul></li-->
             <li>{SITE_TITLE}
                 <ul>
                         <li><a href="{U_ABOUT}">About</a></li>
 						<li><a href="{U_PRIVACY}">Privacy</a></li>
 						<li><a href="{U_TOS}">Terms of Service</a></li>
 						<li><a href="{U_SITEMAP}">Site Map</a></li>
-                </ul></li>
-            <li><a href="{U_FOOT_GROUPS}">Groups</a></li>
-            <li><a href="{U_FOOT_NETWORKS}">Networks</a></li>
-            <li>Music
-                <ul>
-						<li><a href="{U_FOOT_MUSIC}">Music Home</a></li>
-
-						<li><a href="{U_FOOT_MUSIC_DIRECTORY}">Artists</a></li>
-						<li><a href="{U_FOOT_MUSIC_CHART}">Charts</a></li>
                 </ul></li>
             <li>Help
                 <ul>

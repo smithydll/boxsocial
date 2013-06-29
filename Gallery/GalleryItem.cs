@@ -1855,7 +1855,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                e.Core.Http.SetToImageResponse(galleryItem.ContentType, galleryItem.GetCreatedDate(e.Core.Tz));
+                e.Core.Http.SetToImageResponse(galleryItem.ContentType, galleryItem.GetCreatedDate(new UnixTime(e.Core, UnixTime.UTC_CODE)));
 
                 /* we assume exists */
 

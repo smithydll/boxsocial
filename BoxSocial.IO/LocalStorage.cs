@@ -75,14 +75,24 @@ namespace BoxSocial.IO
             return path;
         }
 
-        public override string SaveFile(string bin, MemoryStream file)
+        public override string SaveFile(string bin, Stream file)
         {
             string fileName = HashFile(file);
             string path = RetrieveStoragePath(bin, fileName);
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            file.WriteTo(fs);
+            if (file is MemoryStream)
+            {
+                ((MemoryStream)file).WriteTo(fs);
+            }
+            else
+            {
+                file.Position = 0;
+                byte[] bytes = new byte[file.Length];
+                file.Read(bytes, 0, (int)file.Length);
+                fs.Write(bytes, 0, bytes.Length);
+            }
             //byte[] bytes = file.ToArray();
             //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
@@ -97,13 +107,23 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, MemoryStream file)
+        public override string SaveFile(string bin, string fileName, Stream file)
         {
             string path = RetrieveStoragePath(bin, fileName);
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            file.WriteTo(fs);
+            if (file is MemoryStream)
+            {
+                ((MemoryStream)file).WriteTo(fs);
+            }
+            else
+            {
+                file.Position = 0;
+                byte[] bytes = new byte[file.Length];
+                file.Read(bytes, 0, (int)file.Length);
+                fs.Write(bytes, 0, bytes.Length);
+            }
             //byte[] bytes = file.ToArray();
             //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
@@ -118,14 +138,24 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, MemoryStream file)
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
         {
             string fileName = HashFile(file);
             string path = RetrieveStoragePath(bin, fileName);
             EnsureStoragePathExists(path);
             FileStream fs = File.OpenWrite(Path.Combine(path, fileName));
 
-            file.WriteTo(fs);
+            if (file is MemoryStream)
+            {
+                ((MemoryStream)file).WriteTo(fs);
+            }
+            else
+            {
+                file.Position = 0;
+                byte[] bytes = new byte[file.Length];
+                file.Read(bytes, 0, (int)file.Length);
+                fs.Write(bytes, 0, bytes.Length);
+            }
             //byte[] bytes = file.ToArray();
             //fs.Write(bytes, 0, bytes.Length);
             /*byte[] buffer = new byte[8192];
@@ -140,7 +170,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, MemoryStream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
         {
             return SaveFileWithReducedRedundancy(bin, fileName, file);
         }

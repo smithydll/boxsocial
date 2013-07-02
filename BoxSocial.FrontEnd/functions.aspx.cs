@@ -55,6 +55,8 @@ namespace BoxSocial.FrontEnd
                 case "permission-groups-list":
                     ReturnPermissionGroupList();
                     return;
+                case "embed":
+                    return;
             }
         }
 

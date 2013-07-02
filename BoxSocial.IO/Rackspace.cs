@@ -71,7 +71,7 @@ namespace BoxSocial.IO
             ObjectStore createContainerResponse = provider.CreateContainer(bin, region: location);
         }
 
-        public override string SaveFile(string bin, MemoryStream file)
+        public override string SaveFile(string bin, Stream file)
         {
             string fileName = HashFile(file);
 
@@ -84,7 +84,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, MemoryStream file)
+        public override string SaveFile(string bin, string fileName, Stream file)
         {
             // Do not overwrite or double work files
             if (!FileExists(bin, fileName))
@@ -96,7 +96,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, MemoryStream file)
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
         {
             string fileName = HashFile(file);
 
@@ -106,7 +106,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, MemoryStream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
         {
             file.Position = 0;
             provider.CreateObject(bin, file, fileName, region: location);

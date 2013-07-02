@@ -62,6 +62,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string ImagemagickTempPath
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["imagemagick-temp-path"];
+            }
+        }
+
         public string StorageProvider
         {
             get

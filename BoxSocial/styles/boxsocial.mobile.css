@@ -871,7 +871,6 @@ blockquote {
 
 #post-menu {
     position: fixed;
-    height: 32pt;
     left: 0;
     right: 0;
     bottom: -200px;
@@ -880,6 +879,24 @@ blockquote {
     display: none;
     text-align: left;
     font-size: 200%;
+}
+
+#message, #status-submit {
+    height: 64pt;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    vertical-align:top;
+}
+
+#message {
+    font-size: 80%;
+    margin: 2px 0 2px 0;
+    outline: none;
+}
+
+#message:focus {
+    outline: none;
 }
 
 #post-menu h2 {

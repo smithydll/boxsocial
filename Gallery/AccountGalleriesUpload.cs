@@ -216,6 +216,8 @@ namespace BoxSocial.Applications.Gallery
                     string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
 
                     GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
+                    // TODO: pre-prepare the most common thumbnail size on upload
+                    //GalleryItem.CreateScaleWithSquareRatio(core, newGalleryItem, newGalleryItem.StoragePath, "_square", 200, 200);
                     stream.Close();
 
                     if (publishToFeed)

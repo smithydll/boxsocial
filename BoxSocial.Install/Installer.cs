@@ -105,9 +105,9 @@ namespace BoxSocial.Install
                     {
                         doUpdate("BoxSocial.Forms", false);
                         doUpdate("BoxSocial.FrontEnd", false);
-                        doUpdate("BoxSocial.KnowledgeBase", false);
                         doUpdate("BoxSocial.IO", false);
                         doUpdate("BoxSocial.Internals");
+                        doUpdate("BoxSocial.KnowledgeBase");
                         doUpdate("Profile");
                         doUpdate("Groups");
                         doUpdate("Networks");

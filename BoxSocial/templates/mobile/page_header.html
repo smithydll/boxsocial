@@ -57,8 +57,8 @@
         <!-- IF LOGGED_IN -->
     <div id="post-menu" class="side-menu">
         <h2>Post status</h2>
-			<form action="/account" method="post" class="status-form" onsubmit="return SendStatus();" onblur="$('#post-status-div').dialog().close();">
-			    <input type="text" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+			<form action="/account" method="post" class="status-form" onsubmit="SendStatus(); hideSideBar(); return false;">
+			    <textarea rows="2" cols="50" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"></textarea><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
 			    <input type="hidden" name="module" value="profile" />
 			    <input type="hidden" name="sub" value="status" />
 			</form>
@@ -69,13 +69,15 @@
             <li><a href="{U_HOME}" data-theme="" data-icon="home">Home</a></li>
 <!-- IF LOGGED_IN -->
     		<li><a href="{U_USER_PROFILE}">Me</a></li>
-            <li><a href="{U_ACCOUNT}" onclick="$(this).siblings().toggle(); return false;">My Account</a>
             <!-- IF module_list -->
-                <ul>
+            <li><a href="{U_ACCOUNT}" onclick="$('#account-modules').toggle(); return false;">My Account</a>
+                <ul id="account-modules" style="display: block;">
                     <!-- BEGIN module_list -->
                     <li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
                     <!-- END module_list -->
                 </ul>
+            <!-- ELSE -->
+            <li><a href="{U_ACCOUNT}#boxsocial-menu">My Account</a>
             <!-- ENDIF -->
             </li>
             <li><a href="{U_SIGNOUT}">Sign out</a></li>
@@ -96,14 +98,14 @@
 						<li><a href="{U_FOOT_MUSIC_DIRECTORY}">Artists</a></li>
 						<li><a href="{U_FOOT_MUSIC_CHART}">Charts</a></li>
                 </ul></li-->
-            <li>{SITE_TITLE}
+            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">{SITE_TITLE}</a>
                 <ul>
                         <li><a href="{U_ABOUT}">About</a></li>
 						<li><a href="{U_PRIVACY}">Privacy</a></li>
 						<li><a href="{U_TOS}">Terms of Service</a></li>
 						<li><a href="{U_SITEMAP}">Site Map</a></li>
                 </ul></li>
-            <li>Help
+            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">Help</a>
                 <ul>
 						<li><a href="{U_SAFETY}">Safety</a></li>
 						<li><a href="{U_HELP}">Help</a></li>

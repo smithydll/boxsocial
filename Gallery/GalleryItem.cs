@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
@@ -1949,7 +1950,7 @@ namespace BoxSocial.Applications.Gallery
                             case PictureScale.Display:
                             case PictureScale.Full:
                             case PictureScale.Ultra:
-                                CreateScaleWithRatioPreserved(e.Core, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+                                CreateScaleWithRatioPreserved(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
 
                                 switch (scale)
                                 {
@@ -2131,43 +2132,43 @@ namespace BoxSocial.Applications.Gallery
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
                 Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-                fs.Position = 0;
-                long newLength = fs.Length;
-                byte[] data = new byte[newLength];
 
-                int bytesRead = 0;
-                int totalBytesRead = 0;
-                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                string storageFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, "_storage", fileName);
+                string tempFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, bin, fileName);
+
+                if (fs is MemoryStream)
                 {
-                    totalBytesRead += bytesRead;
+                    MemoryStream ms = (MemoryStream)fs;
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ms.WriteTo(ds);
+                    ds.Close();
+                    fs.Close();
+                }
+                else
+                {
+                    fs.Position = 0;
+                    byte[] bytes = new byte[fs.Length];
+                    fs.Read(bytes, 0, (int)fs.Length);
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ds.Write(bytes, 0, bytes.Length);
+                    ds.Close();
+                    fs.Close();
                 }
 
-                ImageMagick.WandGenesis();
-                IntPtr wand = ImageMagick.NewWand();
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "convert";
+                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 85 -thumbnail {1}x{2}^ -gravity center -extent {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.Start();
 
-                ImageMagick.ReadImageBlob(wand, data);
+                p1.WaitForExit();
 
-                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
-                Size newSize = GetTileSize(imageSize, new Size(width, height));
-
-                int square = Math.Min(imageSize.Width, imageSize.Height);
-                int cropX = imageSize.Width - square;
-                int cropY = imageSize.Height - square;
-
-                ImageMagick.CropImage(wand, (IntPtr)square, (IntPtr)square, (IntPtr)(cropX / 2), (IntPtr)(cropY / 2));
-                ImageMagick.ResizeImage(wand, (IntPtr)(width), (IntPtr)(height), ImageMagick.Filter.Lanczos, 1.0);
-                ImageMagick.SetImagePage(wand, (IntPtr)0, (IntPtr)0, (IntPtr)0, (IntPtr)0);
-
-                byte[] newdata = ImageMagick.GetImageBlob(wand);
-
-                ImageMagick.DestroyWand(wand);
-                ImageMagick.WandTerminus();
-
-                MemoryStream stream = new MemoryStream();
-                stream.Write(newdata, 0, newdata.Length);
+                FileStream stream = new FileStream(tempFilePath, FileMode.Open);
                 core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
                 stream.Close();
                 fs.Close();
+
+                File.Delete(storageFilePath);
+                File.Delete(tempFilePath);
             }
             else
             {
@@ -2215,54 +2216,49 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        private static void CreateScaleWithRatioPreserved(Core core, string fileName, string bin, int width, int height)
+        private static void CreateScaleWithRatioPreserved(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
         {
             // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
                 Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-                fs.Position = 0;
-                long newLength = fs.Length;
-                byte[] data = new byte[newLength];
 
-                int bytesRead = 0;
-                int totalBytesRead = 0;
-                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                string storageFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, "_storage", fileName);
+                string tempFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, bin, fileName);
+
+                if (fs is MemoryStream)
                 {
-                    totalBytesRead += bytesRead;
-                }
-
-                ImageMagick.WandGenesis();
-                IntPtr wand = ImageMagick.NewWand();
-
-                ImageMagick.ReadImageBlob(wand, data);
-
-                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
-
-                if (imageSize.Width > width || imageSize.Height > height)
-                {
-                    Size newSize = GetSize(imageSize, new Size(width, height));
-                    int newWidth = newSize.Width;
-                    int newHeight = newSize.Height;
-
-                    ImageMagick.ResizeImage(wand, (IntPtr)newWidth, (IntPtr)newHeight, ImageMagick.Filter.Lanczos, 1.0);
-
-                    byte[] newdata = ImageMagick.GetImageBlob(wand);
-
-                    ImageMagick.DestroyWand(wand);
-                    ImageMagick.WandTerminus();
-
-                    MemoryStream stream = new MemoryStream();
-                    stream.Write(newdata, 0, newdata.Length);
-                    core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
-                    stream.Close();
+                    MemoryStream ms = (MemoryStream)fs;
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ms.WriteTo(ds);
+                    ds.Close();
                     fs.Close();
                 }
                 else
                 {
+                    fs.Position = 0;
+                    byte[] bytes = new byte[fs.Length];
+                    fs.Read(bytes, 0, (int)fs.Length);
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ds.Write(bytes, 0, bytes.Length);
+                    ds.Close();
                     fs.Close();
-                    core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
                 }
+
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "convert";
+                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 85 -thumbnail {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.Start();
+
+                p1.WaitForExit();
+
+                FileStream stream = new FileStream(tempFilePath, FileMode.Open);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                stream.Close();
+                fs.Close();
+
+                File.Delete(storageFilePath);
+                File.Delete(tempFilePath);
             }
             else
             {
@@ -2322,40 +2318,47 @@ namespace BoxSocial.Applications.Gallery
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
                 Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
-                fs.Position = 0;
-                long newLength = fs.Length;
-                byte[] data = new byte[newLength];
+                string storageFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, "_storage", fileName);
+                string tempFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, bin, fileName);
 
-                int bytesRead = 0;
-                int totalBytesRead = 0;
-                while ((bytesRead = fs.Read(data, totalBytesRead, (int)newLength - totalBytesRead)) > 0)
+                if (fs is MemoryStream)
                 {
-                    totalBytesRead += bytesRead;
+                    MemoryStream ms = (MemoryStream)fs;
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ms.WriteTo(ds);
+                    ds.Close();
+                    fs.Close();
+                }
+                else
+                {
+                    fs.Position = 0;
+                    byte[] bytes = new byte[fs.Length];
+                    fs.Read(bytes, 0, (int)fs.Length);
+                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                    ds.Write(bytes, 0, bytes.Length);
+                    ds.Close();
+                    fs.Close();
                 }
 
-                ImageMagick.WandGenesis();
-                IntPtr wand = ImageMagick.NewWand();
-
-                ImageMagick.ReadImageBlob(wand, data);
-
-                Size imageSize = new Size(ImageMagick.GetWidth(wand).ToInt32(), ImageMagick.GetHeight(wand).ToInt32());
+                Size imageSize = new Size(gi.ItemWidth, gi.ItemHeight);
                 double scale = (double)width / imageSize.Width;
                 int newHeight = (int)(imageSize.Height * scale);
                 int cropY = (int)(crop * scale);
 
-                ImageMagick.ResizeImage(wand, (IntPtr)(width), (IntPtr)(newHeight), ImageMagick.Filter.Lanczos, 1.0);
-                ImageMagick.CropImage(wand, (IntPtr)width, (IntPtr)height, (IntPtr)(0), (IntPtr)(cropY));
+                Process p1 = new Process();
+                p1.StartInfo.FileName = "convert";
+                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 85 -thumbnail {1}x{2} -crop {1}x{2}+0+{4} \"{0}\"", tempFilePath, width, height, storageFilePath, cropY);
+                p1.Start();
 
-                byte[] newdata = ImageMagick.GetImageBlob(wand);
+                p1.WaitForExit();
 
-                ImageMagick.DestroyWand(wand);
-                ImageMagick.WandTerminus();
-
-                MemoryStream stream = new MemoryStream();
-                stream.Write(newdata, 0, newdata.Length);
+                FileStream stream = new FileStream(tempFilePath, FileMode.Open);
                 core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
                 stream.Close();
                 fs.Close();
+
+                File.Delete(storageFilePath);
+                File.Delete(tempFilePath);
             }
             else
             {

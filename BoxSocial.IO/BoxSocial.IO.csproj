@@ -78,7 +78,6 @@
     <Compile Include="Smtp.cs" />
     <Compile Include="Rackspace.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />
-    <Compile Include="ImageMagick.cs" />
     <Compile Include="IProse.cs" />
     <Compile Include="LocalStorage.cs" />
     <Compile Include="RawTemplate.cs" />

@@ -103,7 +103,7 @@ namespace BoxSocial.Applications.Calendar
             if (!(string.IsNullOrEmpty(inviteeUsernameList)))
             {
                 string[] inviteesUsernames = inviteeUsernameList.Split(new char[] { ' ', '\t', ';', ',' });
-                List<string> uns = new List<string>();
+                List<string> uns = new List<string>(inviteesUsernames.Length);
                 foreach (string inviteeUsername in inviteesUsernames)
                 {
                     if (!string.IsNullOrEmpty(inviteeUsername))

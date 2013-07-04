@@ -801,7 +801,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    itemFieldInfoCache = new Dictionary<long, FieldInfo[]>();
+                    itemFieldInfoCache = new Dictionary<long, FieldInfo[]>(16);
                 }
             }
         }
@@ -905,7 +905,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    itemFieldsCache = new Dictionary<long, List<DataFieldInfo>>();
+                    itemFieldsCache = new Dictionary<long, List<DataFieldInfo>>(16);
                 }
             }
         }
@@ -924,7 +924,7 @@ namespace BoxSocial.Internals
         {
             long typeId = ItemType.GetTypeId(type);
 
-            List<DataFieldInfo> returnValue = new List<DataFieldInfo>();
+            List<DataFieldInfo> returnValue = new List<DataFieldInfo>(16);
 
             if (itemFieldsCache != null && typeId > 0)
 			{
@@ -1601,14 +1601,15 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
+            FieldInfo[] ffields = getFieldInfo(type);
+
             int fieldsLoaded = 0;
             int objectFields = 0;
-            Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(StringComparer.Ordinal);
+            Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(ffields.Length, StringComparer.Ordinal);
 
-            FieldInfo[] ffields = getFieldInfo(type);
             foreach (FieldInfo fi in ffields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
+                foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute))) // Surely THIS is SLOW??!!
                 {
                     DataFieldAttribute dfattr = (DataFieldAttribute)attr;
                     objectFields++;
@@ -1633,8 +1634,8 @@ namespace BoxSocial.Internals
             }
 
             /* buffer for item */
-            Dictionary<string, long> ikBufferId = new Dictionary<string, long>(StringComparer.Ordinal);
-            Dictionary<string, long> ikBufferTypeId = new Dictionary<string, long>(StringComparer.Ordinal);
+            Dictionary<string, long> ikBufferId = new Dictionary<string, long>(4, StringComparer.Ordinal);
+            Dictionary<string, long> ikBufferTypeId = new Dictionary<string, long>(4, StringComparer.Ordinal);
             string ikBufferPrefix = string.Empty;
 
             if (reader.HasRows)
@@ -1812,8 +1813,10 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, DataRow itemRow)
         {
+            FieldInfo[] fields = getFieldInfo(type);
+
             //List<string> columns = new List<string>();
-            List<string> columnsAttributed = new List<string>();
+            List<string> columnsAttributed = new List<string>(fields.Length);
             int columnCount = 0;
 
             /*foreach (DataColumn column in itemRow.Table.Columns)
@@ -1821,7 +1824,6 @@ namespace BoxSocial.Internals
                 columns.Add(column.ColumnName);
             }*/
 
-            FieldInfo[] fields = getFieldInfo(type);
             foreach (FieldInfo fi in fields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi))

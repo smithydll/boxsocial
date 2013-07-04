@@ -54,8 +54,8 @@ namespace BoxSocial.IO
     public class VariableCollection
     {
         private string loopName;
-        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(StringComparer.Ordinal);
-        private Dictionary<string, string> variables = new Dictionary<string, string>(StringComparer.Ordinal);
+        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(4, StringComparer.Ordinal);
+        private Dictionary<string, string> variables = new Dictionary<string, string>(128, StringComparer.Ordinal);
         private VariableCollection parentCollection = null;
 
         internal VariableCollection()
@@ -277,7 +277,7 @@ namespace BoxSocial.IO
     {
         private IProse prose;
         protected VariableCollection variables = new VariableCollection();
-        private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>(StringComparer.Ordinal);
+        private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>(8, StringComparer.Ordinal);
 
         private string template;
         //private Dictionary<string, string> loopTemplates;
@@ -435,7 +435,7 @@ namespace BoxSocial.IO
 
         // We want to cache the template file as accessing resources can be slow
         private static Object templatesLock = new object();
-        private static Dictionary<string, string> templates = new Dictionary<string, string>(StringComparer.Ordinal);
+        private static Dictionary<string, string> templates = new Dictionary<string, string>(128, StringComparer.Ordinal);
 
         public static bool populateTemplateCache()
         {
@@ -471,7 +471,7 @@ namespace BoxSocial.IO
                 }
                 else
                 {
-                    templates = new Dictionary<string, string>(StringComparer.Ordinal);
+                    templates = new Dictionary<string, string>(128, StringComparer.Ordinal);
 
                     if (cache != null)
                     {

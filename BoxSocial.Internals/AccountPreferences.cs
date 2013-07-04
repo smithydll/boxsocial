@@ -190,12 +190,20 @@ namespace BoxSocial.Internals
 
             if (!string.IsNullOrEmpty(customDomain))
             {
-                IPHostEntry host = Dns.GetHostEntry(customDomain);
-                IPHostEntry host2 = Dns.GetHostEntry(Hyperlink.Domain);
-
-                if (host.HostName.ToLower() != host2.HostName.ToLower() && host.HostName.ToLower() != Hyperlink.Domain)
+                try
                 {
-                    SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain (currently " + host.HostName + ").");
+                    IPHostEntry host = Dns.GetHostEntry(customDomain);
+                    IPHostEntry host2 = Dns.GetHostEntry(Hyperlink.Domain);
+
+                    if (host.HostName.ToLower() != host2.HostName.ToLower() && host.HostName.ToLower() != Hyperlink.Domain)
+                    {
+                        SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain.");
+                        return;
+                    }
+                }
+                catch (System.Net.Sockets.SocketException)
+                {
+                    SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain.");
                     return;
                 }
             }

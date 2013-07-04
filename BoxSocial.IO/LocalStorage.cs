@@ -75,7 +75,7 @@ namespace BoxSocial.IO
             return path;
         }
 
-        public override string SaveFile(string bin, Stream file)
+        public override string SaveFile(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
             string path = RetrieveStoragePath(bin, fileName);
@@ -107,7 +107,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, Stream file)
+        public override string SaveFile(string bin, string fileName, Stream file, string contentType)
         {
             string path = RetrieveStoragePath(bin, fileName);
             EnsureStoragePathExists(path);
@@ -138,7 +138,7 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
             string path = RetrieveStoragePath(bin, fileName);
@@ -170,9 +170,9 @@ namespace BoxSocial.IO
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file, string contentType)
         {
-            return SaveFileWithReducedRedundancy(bin, fileName, file);
+            return SaveFileWithReducedRedundancy(bin, fileName, file, contentType);
         }
 
         public override void DeleteFile(string bin, string fileName)

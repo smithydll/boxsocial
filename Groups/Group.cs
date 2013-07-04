@@ -1509,7 +1509,7 @@ namespace BoxSocial.Groups
             page.template.Parse("U_FILTER_BEGINS_Y", page.Group.GetMemberlistUri("y"));
             page.template.Parse("U_FILTER_BEGINS_Z", page.Group.GetMemberlistUri("z"));
 
-            if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
+            if (page.Group.IsGroupOperator(core.LoggedInMemberItemKey))
             {
                 page.template.Parse("GROUP_OPERATOR", "TRUE");
 
@@ -1552,7 +1552,7 @@ namespace BoxSocial.Groups
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
                 if (core.LoggedInMemberId > 0)
                 {
-                    if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
+                    if (page.Group.IsGroupOperator(core.LoggedInMemberItemKey))
                     {
                         if (!member.IsOperator)
                         {
@@ -2035,11 +2035,6 @@ namespace BoxSocial.Groups
         internal static string BuildCategoryUri(Core core, Internals.Category category)
         {
             return core.Hyperlink.AppendSid("/groups/" + category.Path);
-        }
-
-        public override string StoreFile(MemoryStream file)
-        {
-            return core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), file);
         }
 
         public string Noun

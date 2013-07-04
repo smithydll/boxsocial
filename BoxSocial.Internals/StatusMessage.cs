@@ -48,6 +48,8 @@ namespace BoxSocial.Internals
         private long shares;
         [DataField("status_time_ut")]
         private long timeRaw;
+        [DataField("status_ip", 50)]
+        private string ip;
         [DataField("status_simple_permissions")]
         private bool simplePermissions;
 
@@ -214,6 +216,7 @@ namespace BoxSocial.Internals
             InsertQuery iQuery = new InsertQuery("user_status_messages");
             iQuery.AddField("user_id", creator.Id);
             iQuery.AddField("status_message", message);
+            iQuery.AddField("status_ip", core.Session.IPAddress.ToString());
             iQuery.AddField("status_time_ut", UnixTime.UnixTimeStamp());
 
             long statusId = core.Db.Query(iQuery);

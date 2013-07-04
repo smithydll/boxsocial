@@ -59,9 +59,9 @@ namespace BoxSocial.Internals
     {
         internal TPage page;
 
-        static readonly string RANK_ACTIVE = "/images/star-on.png";
-        static readonly string RANK_RATING = "/images/star-on.png";
-        static readonly string RANK_SHADOW = "/images/star-off.png";
+        const string RANK_ACTIVE = "/images/star-on.png";
+        const string RANK_RATING = "/images/star-on.png";
+        const string RANK_SHADOW = "/images/star-off.png";
 
         private Core core;
 

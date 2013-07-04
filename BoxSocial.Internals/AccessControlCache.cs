@@ -56,6 +56,11 @@ namespace BoxSocial.Internals
             this.permission = permission;
         }
 
+        public override int GetHashCode()
+        {
+            return typeId.GetHashCode() ^ permission.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (obj.GetType() != typeof(AccessControlPermissionKey)) return false;
@@ -168,12 +173,12 @@ namespace BoxSocial.Internals
             {
                 if (permissionCache == null || permissionCache.Count > 10000)
                 {
-                    permissionCache = new Dictionary<AccessControlPermissionKey, AccessControlPermission>();
+                    permissionCache = new Dictionary<AccessControlPermissionKey, AccessControlPermission>(8);
                 }
             }
             lock (grantsCacheLock)
             {
-                grantsCache = new Dictionary<AccessControlGrantKey, List<AccessControlGrant>>();
+                grantsCache = new Dictionary<AccessControlGrantKey, List<AccessControlGrant>>(16);
             }
         }
 
@@ -213,7 +218,7 @@ namespace BoxSocial.Internals
 
         public void CacheGrants(List<IPermissibleItem> items)
         {
-            Dictionary<ItemKey, AccessControlGrantKey> keys = new Dictionary<ItemKey, AccessControlGrantKey>();
+            Dictionary<ItemKey, AccessControlGrantKey> keys = new Dictionary<ItemKey, AccessControlGrantKey>(items.Count);
 
             foreach (IPermissibleItem item in items)
             {

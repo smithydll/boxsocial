@@ -44,13 +44,13 @@ namespace BoxSocial.IO
 
         public abstract void CreateBin(string bin);
 
-        public abstract string SaveFile(string bin, Stream file);
+        public abstract string SaveFile(string bin, Stream file, string contentType);
 
-        public abstract string SaveFile(string bin, string fileName, Stream file);
+        public abstract string SaveFile(string bin, string fileName, Stream file, string contentType);
 
-        public abstract string SaveFileWithReducedRedundancy(string bin, Stream file);
+        public abstract string SaveFileWithReducedRedundancy(string bin, Stream file, string contentType);
 
-        public abstract string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file);
+        public abstract string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file, string contentType);
 
         public abstract void DeleteFile(string bin, string fileName);
 

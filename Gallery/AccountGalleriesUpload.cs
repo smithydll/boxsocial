@@ -213,7 +213,7 @@ namespace BoxSocial.Applications.Gallery
                         rotate = RotateFlipType.RotateNoneFlipNone;
                     }
 
-                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
+                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream, core.Http.Files["photo-file"].ContentType);
 
                     GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
                     // TODO: pre-prepare the most common thumbnail size on upload

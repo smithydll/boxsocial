@@ -281,7 +281,7 @@ namespace BoxSocial.Internals
                 {
                     if (primitiveTypes == null)
                     {
-                        primitiveTypes = new Dictionary<long, ItemType>();
+                        primitiveTypes = new Dictionary<long, ItemType>(8);
                         foreach (string key in itemTypeCache.Keys)
                         {
                             if (itemTypeCache[key].IsPrimitive)
@@ -342,8 +342,8 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    itemTypeCache = new Dictionary<string, ItemType>(StringComparer.Ordinal);
-                    itemApplicationCache = new Dictionary<string, long>(StringComparer.Ordinal);
+                    itemTypeCache = new Dictionary<string, ItemType>(256, StringComparer.Ordinal);
+                    itemApplicationCache = new Dictionary<string, long>(256, StringComparer.Ordinal);
                     SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
 
                     DataTable typesTable;

@@ -74,6 +74,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public override int GetHashCode()
+        {
+            return permission.GetHashCode() ^ viewer.Id.GetHashCode();
+        }
+
         public override bool Equals(object obj)
         {
             if (obj.GetType() != typeof(PermissionCacheKey)) return false;
@@ -212,7 +217,7 @@ namespace BoxSocial.Internals
         {
             if (cachedPermissions == null)
             {
-                cachedPermissions = new Dictionary<PermissionCacheKey, bool>();
+                cachedPermissions = new Dictionary<PermissionCacheKey, bool>(8);
             }
 
             PermissionCacheKey key = new PermissionCacheKey(permission, viewer);
@@ -647,7 +652,7 @@ namespace BoxSocial.Internals
             if (permissions == null)
             {
                 List<AccessControlPermission> permissionsList = AccessControlPermission.GetPermissions(core, item);
-                permissions = new Dictionary<string, AccessControlPermission>(StringComparer.Ordinal);
+                permissions = new Dictionary<string, AccessControlPermission>(8, StringComparer.Ordinal);
 
                 foreach (AccessControlPermission permission in permissionsList)
                 {

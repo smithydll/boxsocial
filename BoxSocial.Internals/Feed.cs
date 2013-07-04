@@ -40,7 +40,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            List<Action> feedItems = new List<Action>();
+            List<Action> feedItems = new List<Action>(perPage);
             moreContent = false;
 
             SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
@@ -73,8 +73,8 @@ namespace BoxSocial.Internals
 
                     while (feedItems.Count <= perPage)
                     {
-                        List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
-                        List<Action> tempActions = new List<Action>();
+                        List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(perPage);
+                        List<Action> tempActions = new List<Action>(perPage);
 
                         /*DataTable feedTable = core.Db.Query(query);
 

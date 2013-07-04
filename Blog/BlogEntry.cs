@@ -553,7 +553,7 @@ namespace BoxSocial.Applications.Blog
                 throw new InvalidBlogException();
             }
 
-            if (blog.UserId != core.Session.LoggedInMember.Id)
+            if (blog.UserId != core.LoggedInMemberId)
             {
                 throw new UnauthorisedToCreateItemException();
             }

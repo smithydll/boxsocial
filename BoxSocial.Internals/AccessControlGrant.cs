@@ -239,9 +239,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            List<AccessControlGrant> grants = new List<AccessControlGrant>();
-
-            Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>();
+            Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>(items.Count);
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
             foreach (IPermissibleItem item in items)
@@ -255,6 +253,8 @@ namespace BoxSocial.Internals
             }
 
             DataTable grantsTable = core.Db.Query(sQuery);
+
+            List<AccessControlGrant> grants = new List<AccessControlGrant>(grantsTable.Rows.Count);
 
             foreach (DataRow dr in grantsTable.Rows)
             {
@@ -273,8 +273,8 @@ namespace BoxSocial.Internals
 
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
-            Dictionary<long, ItemKey> itemDictionary = new Dictionary<long, ItemKey>();
-            List<long> itemIds = new List<long>();
+            Dictionary<long, ItemKey> itemDictionary = new Dictionary<long, ItemKey>(itemKeys.Count);
+            List<long> itemIds = new List<long>(itemKeys.Count);
             long itemTypeId = 0;
 
             foreach (ItemKey itemKey in itemKeys)

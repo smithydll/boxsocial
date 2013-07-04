@@ -173,7 +173,7 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         protected List<Item> getSubItems(Type typeToGet, int currentPage, int perPage, bool feedParentArgument, string sortColumn, bool sortAsc)
         {
-            List<Item> items = new List<Item>();
+            List<Item> items = new List<Item>(perPage);
 
             SelectQuery query;
 
@@ -223,6 +223,8 @@ namespace BoxSocial.Internals
                     items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
                 }
             }
+
+            itemsTable.Dispose();
 
             return items;
         }

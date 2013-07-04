@@ -411,7 +411,7 @@ namespace BoxSocial.IO
 
         public override Dictionary<string, DataFieldInfo> GetColumns(string tableName)
         {
-            Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>(StringComparer.Ordinal);
+            Dictionary<string, DataFieldInfo> fields = new Dictionary<string, DataFieldInfo>(32, StringComparer.Ordinal);
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW COLUMNS FROM `{0}`",
                 Mysql.Escape(tableName)));
@@ -446,7 +446,7 @@ namespace BoxSocial.IO
 
         public override Dictionary<Index, List<DataField>> GetIndexes(string tableName)
         {
-            Dictionary<Index, List<DataField>> indexes = new Dictionary<Index, List<DataField>>();
+            Dictionary<Index, List<DataField>> indexes = new Dictionary<Index, List<DataField>>(4);
 
             DataTable fieldTable = SelectQuery(string.Format("SHOW INDEXES FROM `{0}`",
                 Mysql.Escape(tableName)));

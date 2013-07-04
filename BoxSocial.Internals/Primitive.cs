@@ -305,8 +305,6 @@ namespace BoxSocial.Internals
 
         public abstract string ParentPermissionKey(Type parentType, string permission);
 
-        public abstract string StoreFile(MemoryStream file);
-
         public override bool Equals(object obj)
         {
             if (obj.GetType().IsSubclassOf(typeof(Primitive)) || obj.GetType() == typeof(Primitive))

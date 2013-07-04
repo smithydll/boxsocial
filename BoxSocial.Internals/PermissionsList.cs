@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
         public PermissionsList(Core core)
         {
             this.core = core;
-            permissions = new List<string>();
+            permissions = new List<string>(8);
         }
 
         public void Add(string permission, bool can)
@@ -50,7 +50,7 @@ namespace BoxSocial.Internals
 
         public void Add(string permission, bool can, params string[] args)
         {
-            List<string> newArgs = new List<string>();
+            List<string> newArgs = new List<string>(8);
 
             if (can)
             {

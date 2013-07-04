@@ -86,178 +86,62 @@ namespace BoxSocial.Applications.Gallery
         // Mobile Cover
         static string MobileCoverPrefix = "_mcover"; // 960
 
-        /// <summary>
-        /// Owner of the photo's user Id
-        /// </summary>
         [DataField("user_id")]
         protected long userId;
-
-        /// <summary>
-        /// Gallery photo Id
-        /// </summary>
         [DataField("gallery_item_id", DataFieldKeys.Primary)]
         protected long itemId;
-
-        /// <summary>
-        /// Gallery photo title
-        /// </summary>
         [DataField("gallery_item_title", 63)]
         protected string itemTitle;
-
-        /// <summary>
-        /// Gallery photo parent path
-        /// </summary>
         [DataField("gallery_item_parent_path", MYSQL_TEXT)]
         protected string parentPath;
-
-        /// <summary>
-        /// Gallery photo path (slug)
-        /// </summary>
         [DataField("gallery_item_uri", 63)]
         protected string path;
-
-        /// <summary>
-        /// Gallery photo (parent) gallery Id
-        /// </summary>
         [DataField("gallery_id")]
         protected long parentId;
-
-        /// <summary>
-        /// Gallery photo views
-        /// </summary>
         [DataField("gallery_item_views")]
         protected long itemViews;
-
-        /// <summary>
-        /// Gallery photo width in pixels
-        /// </summary>
         [DataField("gallery_item_width")]
         protected int itemWidth;
-
-        /// <summary>
-        /// Gallery photo height in pixels
-        /// </summary>
         [DataField("gallery_item_height")]
         protected int itemHeight;
-
-        /// <summary>
-        /// Gallery photo size in bytes
-        /// </summary>
         [DataField("gallery_item_bytes")]
         protected long itemBytes;
-
-        /// <summary>
-        /// Gallery photo rating
-        /// </summary>
         [DataField("gallery_item_rating")]
         protected float itemRating;
-
-        /// <summary>
-        /// Gallery photo content (MIME) type
-        /// </summary>
         [DataField("gallery_item_content_type", 31)]
         protected string contentType;
-
-        /// <summary>
-        /// Gallery photo storage file name
-        /// </summary>
-        /// <remarks>
-        /// The storage file name for a photo is the hash of the photo file
-        /// without a file extension.
-        /// </remarks>
         [DataField("gallery_item_storage_path", 128)]
         protected string storagePath;
-
-        /// <summary>
-        /// Gallery photo abstract (description)
-        /// </summary>
         [DataField("gallery_item_abstract", MYSQL_TEXT)]
         protected string itemAbstract;
-
         [DataField("gallery_item_date_ut")]
         private long itemCreatedRaw;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_classification")]
         protected byte classification;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_license")]
         protected byte license;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_icon_exists")]
         protected bool iconExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_tile_exists")]
         protected bool tileExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_square_exists")]
         protected bool squareExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_high_exists")]
         protected bool highExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_tiny_exists")]
         protected bool tinyExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_thumb_exists")]
         protected bool thumbnailExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_mobile_exists")]
         protected bool mobileExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_display_exists")]
         protected bool displayExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_full_exists")]
         protected bool fullExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_ultra_exists")]
         protected bool ultraExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_cover_exists")]
         protected bool coverExists;
 
@@ -1206,7 +1090,7 @@ namespace BoxSocial.Applications.Gallery
             MemoryStream stream = new MemoryStream();
             image.Save(stream, iF);
 
-            string newFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream);
+            string newFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream, ContentType);
             stream.Close();
             fs.Close();
 
@@ -2163,7 +2047,7 @@ namespace BoxSocial.Applications.Gallery
                 p1.WaitForExit();
 
                 FileStream stream = new FileStream(tempFilePath, FileMode.Open);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                 stream.Close();
                 fs.Close();
 
@@ -2205,7 +2089,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     displayImage.Save(stream, image.RawFormat);
                 }
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                 stream.Close();
                 fs.Close();
             }
@@ -2253,7 +2137,7 @@ namespace BoxSocial.Applications.Gallery
                 p1.WaitForExit();
 
                 FileStream stream = new FileStream(tempFilePath, FileMode.Open);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                 stream.Close();
                 fs.Close();
 
@@ -2283,7 +2167,7 @@ namespace BoxSocial.Applications.Gallery
 
                     MemoryStream stream = new MemoryStream();
                     thumbImage.Save(stream, image.RawFormat);
-                    core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                    core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                     stream.Close();
                     fs.Close();
                 }
@@ -2353,7 +2237,7 @@ namespace BoxSocial.Applications.Gallery
                 p1.WaitForExit();
 
                 FileStream stream = new FileStream(tempFilePath, FileMode.Open);
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                 stream.Close();
                 fs.Close();
 
@@ -2398,7 +2282,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     displayImage.Save(stream, image.RawFormat);
                 }
-                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream);
+                core.Storage.SaveFileWithReducedRedundancy(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName, stream, gi.ContentType);
                 stream.Close();
                 fs.Close();
             }

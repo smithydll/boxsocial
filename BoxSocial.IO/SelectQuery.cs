@@ -247,36 +247,36 @@ namespace BoxSocial.IO
         {
             this.stub = stub;
 
-            tables = new List<string>();
-            fields = new List<string>();
+            tables = new List<string>(4);
+            fields = new List<string>(64);
             groupings = new List<string>();
             conditions = new QueryCondition();
-            joins = new List<TableJoin>();
-            sorts = new List<TableSort>();
+            joins = new List<TableJoin>(4);
+            sorts = new List<TableSort>(4);
 
             tables.Add(DataFieldAttribute.GetTable(type));
         }
 
         public SelectQuery(string baseTableName)
         {
-            tables = new List<string>();
-            fields = new List<string>();
+            tables = new List<string>(4);
+            fields = new List<string>(64);
             groupings = new List<string>();
             conditions = new QueryCondition();
-            joins = new List<TableJoin>();
-            sorts = new List<TableSort>();
+            joins = new List<TableJoin>(4);
+            sorts = new List<TableSort>(4);
 
             tables.Add(baseTableName);
         }
         
         public SelectQuery(Type type)
         {
-            tables = new List<string>();
-            fields = new List<string>();
+            tables = new List<string>(4);
+            fields = new List<string>(64);
             groupings = new List<string>();
             conditions = new QueryCondition();
-            joins = new List<TableJoin>();
-            sorts = new List<TableSort>();
+            joins = new List<TableJoin>(4);
+            sorts = new List<TableSort>(4);
 
             tables.Add(DataFieldAttribute.GetTable(type));
         }

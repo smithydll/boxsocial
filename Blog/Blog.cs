@@ -390,7 +390,7 @@ namespace BoxSocial.Applications.Blog
             List<BlogEntry> entries = new List<BlogEntry>();
             moreContent = false;
 
-            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
+            long loggedIdUid = core.LoggedInMemberId;
 
             SelectQuery query = null;
 

@@ -71,45 +71,55 @@ namespace BoxSocial.IO
             ObjectStore createContainerResponse = provider.CreateContainer(bin, region: location);
         }
 
-        public override string SaveFile(string bin, Stream file)
+        public override string SaveFile(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            //headers.Add("Content-Type", contentType);
 
             // Do not overwrite or double work files
             if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
-                provider.CreateObject(bin, file, fileName, region: location);
+                provider.CreateObject(bin, file, fileName, headers: headers, region: location);
             }
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, Stream file)
+        public override string SaveFile(string bin, string fileName, Stream file, string contentType)
         {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            //headers.Add("Content-Type", contentType);
+
             // Do not overwrite or double work files
             if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
-                provider.CreateObject(bin, file, fileName, region: location);
+                provider.CreateObject(bin, file, fileName, headers: headers, region: location);
             }
 
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
+            Dictionary<string, string> headers = new Dictionary<string,string>();
+            //headers.Add("Content-Type", contentType);
 
             file.Position = 0;
-            provider.CreateObject(bin, file, fileName, region: location);
+            provider.CreateObject(bin, file, fileName, headers: headers, region: location);
 
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file, string contentType)
         {
+            Dictionary<string, string> headers = new Dictionary<string, string>();
+            //headers.Add("Content-Type", contentType);
+
             file.Position = 0;
-            provider.CreateObject(bin, file, fileName, region: location);
+            provider.CreateObject(bin, file, fileName, headers: headers, region: location);
 
             return fileName;
         }

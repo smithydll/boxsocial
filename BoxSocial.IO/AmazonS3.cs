@@ -70,7 +70,7 @@ namespace BoxSocial.IO
             PutBucketResponse response = client.PutBucket(pbr);
         }
 
-        public override string SaveFile(string bin, Stream file)
+        public override string SaveFile(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
 
@@ -83,12 +83,13 @@ namespace BoxSocial.IO
                 request.InputStream = file;
                 request.Key = fileName;
                 request.StorageClass = S3StorageClass.Standard;
+                request.ContentType = contentType;
                 PutObjectResponse response = client.PutObject(request);
             }
             return fileName;
         }
 
-        public override string SaveFile(string bin, string fileName, Stream file)
+        public override string SaveFile(string bin, string fileName, Stream file, string contentType)
         {
             // Do not overwrite or double work files
             if (!FileExists(bin, fileName))
@@ -99,13 +100,14 @@ namespace BoxSocial.IO
                 request.InputStream = file;
                 request.Key = fileName;
                 request.StorageClass = S3StorageClass.Standard;
+                request.ContentType = contentType;
                 PutObjectResponse response = client.PutObject(request);
             }
 
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, Stream file, string contentType)
         {
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
@@ -114,11 +116,12 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
+            request.ContentType = contentType;
             PutObjectResponse response = client.PutObject(request);
             return fileName;
         }
 
-        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file)
+        public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file, string contentType)
         {
             PutObjectRequest request = new PutObjectRequest();
             request.BucketName = bin;
@@ -126,6 +129,7 @@ namespace BoxSocial.IO
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
+            request.ContentType = contentType;
             PutObjectResponse response = client.PutObject(request);
             return fileName;
         }

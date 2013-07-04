@@ -74,14 +74,14 @@ namespace BoxSocial.Internals
         public event LoadHandler LoadApplication;
         public event PermissionGroupHandler primitivePermissionGroupHook;
 
-        private Dictionary<long, ItemType> primitiveTypes = new Dictionary<long, ItemType>();
-        private Dictionary<long, Type> primitiveTypeCache = new Dictionary<long, Type>();
-        private Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>();
-        private List<PageHandle> pages = new List<PageHandle>();
+        private Dictionary<long, ItemType> primitiveTypes = new Dictionary<long, ItemType>(8);
+        private Dictionary<long, Type> primitiveTypeCache = new Dictionary<long, Type>(8);
+        private Dictionary<long, PrimitiveAttribute> primitiveAttributes = new Dictionary<long, PrimitiveAttribute>(8);
+        private List<PageHandle> pages = new List<PageHandle>(16);
         private Dictionary<long, SubscribeHandler> subscribeHandles = new Dictionary<long, SubscribeHandler>();
         private Dictionary<long, UnsubscribeHandler> unsubscribeHandles = new Dictionary<long, UnsubscribeHandler>();
 
-        private Dictionary<string, string> meta = new Dictionary<string, string>(StringComparer.Ordinal);
+        private Dictionary<string, string> meta = new Dictionary<string, string>(4, StringComparer.Ordinal);
 
         public static bool IsUnix
         {
@@ -107,7 +107,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// A cache of application entries.
         /// </summary>
-        private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>(StringComparer.Ordinal);
+        private Dictionary<string, ApplicationEntry> applicationEntryCache = new Dictionary<string, ApplicationEntry>(16, StringComparer.Ordinal);
 
         /// <summary>
         /// The applicaton domain from which the web application is executed.

@@ -1466,11 +1466,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override string StoreFile(MemoryStream file)
-        {
-            return core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), file);
-        }
-
         public string Noun
         {
             get

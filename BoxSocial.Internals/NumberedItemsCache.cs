@@ -128,17 +128,17 @@ namespace BoxSocial.Internals
         /// <summary>
         /// List of types accessed
         /// </summary>
-        private Dictionary<long, Type> typesAccessed = new Dictionary<long, Type>();
+        private Dictionary<long, Type> typesAccessed = new Dictionary<long, Type>(16);
 
         /// <summary>
         /// A cache of items loaded.
         /// </summary>
-        private Dictionary<NumberedItemId, NumberedItem> itemsCached = new Dictionary<NumberedItemId, NumberedItem>();
+        private Dictionary<NumberedItemId, NumberedItem> itemsCached = new Dictionary<NumberedItemId, NumberedItem>(64);
 
         /// <summary>
         /// A list of item Ids for batched loading
         /// </summary>
-        private List<NumberedItemId> batchedItemIds = new List<NumberedItemId>();
+        private List<NumberedItemId> batchedItemIds = new List<NumberedItemId>(20);
 
         public NumberedItem this[ItemKey key]
         {
@@ -161,7 +161,7 @@ namespace BoxSocial.Internals
 
         private void loadItems(long typeId, List<NumberedItemId> itemIds)
         {
-            List<long> itemId = new List<long>();
+            List<long> itemId = new List<long>(20);
 
             foreach (NumberedItemId id in itemIds)
             {

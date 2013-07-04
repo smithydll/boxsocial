@@ -208,6 +208,7 @@
     <Compile Include="User.cs" />
     <Compile Include="UserEmail.cs" />
     <Compile Include="UserInfo.cs" />
+    <Compile Include="UserLink.cs" />
     <Compile Include="UserPhoneNumber.cs" />
     <Compile Include="UserProfile.cs" />
     <Compile Include="UserRelation.cs" />

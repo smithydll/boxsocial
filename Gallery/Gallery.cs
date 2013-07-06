@@ -2057,7 +2057,10 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (settingsId > 0)
                     {
-                        settings = (GallerySettings)NumberedItem.Reflect(core, new ItemKey(settingsId, typeof(GallerySettings)));
+                        ItemKey gik = new ItemKey(settingsId, typeof(GallerySettings));
+                        core.ItemCache.RequestItem(gik);
+                        settings = (GallerySettings)core.ItemCache[gik];
+                        //settings = (GallerySettings)NumberedItem.Reflect(core, new ItemKey(settingsId, typeof(GallerySettings)));
                     }
                     else
                     {

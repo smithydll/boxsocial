@@ -62,7 +62,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                anApplication = new ApplicationEntry(core, null, anAssemblyName);
+                anApplication = core.GetApplication(anAssemblyName);
             }
             catch (InvalidApplicationException)
             {

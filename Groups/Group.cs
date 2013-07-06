@@ -395,6 +395,25 @@ namespace BoxSocial.Groups
             }
         }
 
+        public UserGroup(Core core, DataRow groupRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            if (groupRow != null)
+            {
+                loadItemInfo(typeof(UserGroup), groupRow);
+
+                groupInfo = new UserGroupInfo(core, groupRow);
+
+                loadUserGroupIcon(groupRow);
+            }
+            else
+            {
+                throw new InvalidGroupException();
+            }
+        }
+
         public UserGroup(Core core, DataRow groupRow, UserGroupLoadOptions loadOptions)
             : base(core)
         {
@@ -851,7 +870,7 @@ namespace BoxSocial.Groups
             // Install a couple of applications
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                 profileAe.Install(core, newGroup);
             }
             catch
@@ -860,7 +879,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
+                ApplicationEntry groupsAe = new ApplicationEntry(core, "Groups");
                 groupsAe.Install(core, newGroup);
             }
             catch
@@ -869,7 +888,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, "Gallery");
                 galleryAe.Install(core, newGroup);
             }
             catch
@@ -878,7 +897,7 @@ namespace BoxSocial.Groups
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                 guestbookAe.Install(core, newGroup);
             }
             catch

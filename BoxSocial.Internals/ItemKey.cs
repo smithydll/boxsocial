@@ -412,11 +412,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-			if (obj == null)
-				return false;
-            if (obj.GetType() != typeof(ItemKey))
-                return false;
-            ItemKey ik = (ItemKey)obj;
+            ItemKey ik = obj as ItemKey;
+            if (ik == null) return false;
 
             if (TypeId != ik.TypeId)
                 return false;
@@ -450,15 +447,14 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(ItemKey))
-            {
-                return -1;
-            }
+            ItemKey ik = obj as ItemKey;
+            if (ik == null) return -1;
 
-            int c = ((ItemKey)obj).TypeId.CompareTo(TypeId);
+
+            int c = ik.TypeId.CompareTo(TypeId);
             if (c == 0)
             {
-                return ((ItemKey)obj).Id.CompareTo(Id);
+                return ik.Id.CompareTo(Id);
             }
             else
             {

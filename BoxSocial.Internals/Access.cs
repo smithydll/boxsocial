@@ -172,7 +172,9 @@ namespace BoxSocial.Internals
             {
                 if (item == null)
                 {
-                    item = (IPermissibleItem)NumberedItem.Reflect(core, ItemKey);
+                    core.ItemCache.RequestItem(ItemKey);
+                    item = (IPermissibleItem)core.ItemCache[ItemKey];
+                    //item = (IPermissibleItem)NumberedItem.Reflect(core, ItemKey);
                 }
                 return item;
             }

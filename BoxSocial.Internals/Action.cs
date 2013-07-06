@@ -243,12 +243,8 @@ namespace BoxSocial.Internals
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                     owner = core.PrimitiveCache[ownerKey];
-                    return owner;
                 }
-                else
-                {
-                    return owner;
-                }
+                return owner;
             }
         }
 

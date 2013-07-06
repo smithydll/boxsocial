@@ -160,7 +160,7 @@ namespace BoxSocial.Applications.Forum
                         // TODO: e-mail application author of the error details
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, this.page.Owner, accountModule.assembly.GetName().Name);
+                        ApplicationEntry ae = core.GetApplication(accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());

@@ -207,7 +207,7 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = new ApplicationEntry(core, AnApplication, accountModule.assembly.GetName().Name);
+                        ApplicationEntry ae = core.GetApplication(accountModule.assembly.GetName().Name);
 
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());

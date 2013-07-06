@@ -141,14 +141,14 @@ namespace BoxSocial.FrontEnd
                     // This isn't the most elegant fix, but it works
                     if (core.IsPrimitiveType(itemTypeId))
                     {
-                        ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                        ae = core.GetApplication("GuestBook");
                     }
                     else
                     {
                         ItemType itemType = new ItemType(core, itemTypeId);
                         if (itemType.ApplicationId == 0)
                         {
-                            ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                            ae = core.GetApplication("GuestBook");
                         }
                         else
                         {
@@ -288,14 +288,14 @@ namespace BoxSocial.FrontEnd
                         // This isn't the most elegant fix, but it works
                         if (core.IsPrimitiveType(itemTypeId))
                         {
-                            ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                            ae = core.GetApplication("GuestBook");
                         }
                         else
                         {
                             ItemType itemType = new ItemType(core, itemTypeId);
                             if (itemType.ApplicationId == 0)
                             {
-                                ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                                ae = core.GetApplication("GuestBook");
                             }
                             else
                             {
@@ -372,14 +372,14 @@ namespace BoxSocial.FrontEnd
                 // This isn't the most elegant fix, but it works
                 if (core.IsPrimitiveType(itemTypeId))
                 {
-                    ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                    ae = core.GetApplication("GuestBook");
                 }
                 else
                 {
                     ItemType itemType = new ItemType(core, itemTypeId);
                     if (itemType.ApplicationId == 0)
                     {
-                        ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                        ae = core.GetApplication("GuestBook");
                     }
                     else
                     {

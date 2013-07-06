@@ -48,8 +48,8 @@ namespace BoxSocial.Internals
 
         public new int CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(NumberedItemId)) return -1;
-            NumberedItemId pk = (NumberedItemId)obj;
+            NumberedItemId pk = obj as NumberedItemId;
+            if (pk == null) return -1;
 
             if (TypeId != pk.TypeId)
                 return TypeId.CompareTo(pk.TypeId);
@@ -58,8 +58,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != typeof(NumberedItemId)) return false;
-            NumberedItemId pk = (NumberedItemId)obj;
+            NumberedItemId pk = obj as NumberedItemId;
+            if (pk == null) return false;
 
             if (TypeId != pk.TypeId)
                 return false;
@@ -75,7 +75,7 @@ namespace BoxSocial.Internals
 
         public override string ToString()
         {
-            if (TypeId < 0)
+            if (TypeId > 0)
             {
                 return string.Format("{0}.{1}",
                     TypeId, Id);
@@ -319,36 +319,9 @@ namespace BoxSocial.Internals
                 core.ItemCache.RegisterType(typeof(ApplicationEntry));
                 ItemKey applicationKey = new ItemKey(ik.ApplicationId, typeof(ApplicationEntry));
                 core.ItemCache.RequestItem(applicationKey);
-                //ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
                 ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
     
-                //Application a = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
-                string assemblyPath;
-                if (ae.IsPrimitive)
-                {
-                    if (core.Http != null)
-                    {
-                        assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
-                    }
-                    else
-                    {
-                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
-                    }
-                }
-                else
-                {
-                    if (core.Http != null)
-                    {
-                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
-                    }
-                    else
-                    {
-                        assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), ae.AssemblyName + ".dll");
-                    }
-                }
-                Assembly assembly = Assembly.LoadFrom(assemblyPath);
-
-                tType = assembly.GetType(ik.TypeString);
+                tType = ae.Assembly.GetType(ik.TypeString);
             }
             else
             {

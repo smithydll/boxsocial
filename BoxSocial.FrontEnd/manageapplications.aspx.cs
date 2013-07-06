@@ -88,7 +88,7 @@ namespace BoxSocial.FrontEnd
                     Primitive member = core.PrimitiveCache[itemKey];
                     //members.Add(member);
 
-                    ApplicationEntry ae = new ApplicationEntry(core, member, dr);
+                    ApplicationEntry ae = new ApplicationEntry(core, dr);
 
                     ae.UpdateInstall(core, member);
                 }
@@ -253,7 +253,7 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
-                                        ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
+                                        ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
                                             profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                     }
@@ -263,7 +263,7 @@ namespace BoxSocial.FrontEnd
 
                                     try
                                     {
-                                        ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                                        ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
                                             guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
                                     }

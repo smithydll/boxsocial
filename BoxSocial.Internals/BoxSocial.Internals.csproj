@@ -105,6 +105,7 @@
     <Compile Include="ApplicationSlug.cs" />
     <Compile Include="Bbcode.cs" />
     <Compile Include="BbcodeString.cs" />
+    <Compile Include="CacheableAttribute.cs" />
     <Compile Include="Captcha.cs" />
     <Compile Include="CascadingStyleSheet.cs" />
     <Compile Include="Category.cs" />

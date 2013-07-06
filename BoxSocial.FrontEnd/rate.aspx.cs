@@ -69,14 +69,14 @@ namespace BoxSocial.FrontEnd
                 ApplicationEntry ae = null;
                 if (core.IsPrimitiveType(itemTypeId))
                 {
-                    ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                    ae = core.GetApplication("GuestBook");
                 }
                 else
                 {
                     ItemType itemType = new ItemType(core, itemTypeId);
                     if (itemType.ApplicationId == 0)
                     {
-                        ae = new ApplicationEntry(core, loggedInMember, "GuestBook");
+                        ae = core.GetApplication("GuestBook");
                     }
                     else
                     {

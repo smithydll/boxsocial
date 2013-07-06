@@ -54,7 +54,7 @@ namespace BoxSocial.Applications.GuestBook
             notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
             notificationTemplate.Parse("COMMENT", e.Comment.Body);
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "GuestBook");
+            ApplicationEntry ae = core.GetApplication("GuestBook");
             ae.SendNotification(owner, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
 
             return true;

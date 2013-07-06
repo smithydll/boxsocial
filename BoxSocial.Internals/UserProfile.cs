@@ -618,7 +618,7 @@ namespace BoxSocial.Internals
         {
             core.Search.UpdateIndex(User);
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+            ApplicationEntry ae = core.GetApplication("Profile");
 
             if (HasPropertyUpdated("sexuality"))
             {
@@ -674,7 +674,7 @@ namespace BoxSocial.Internals
                         if (maritialWith > 0)
                         {
                             core.LoadUserProfile(maritialWith);
-                            ApplicationEntry aem = new ApplicationEntry(core, core.PrimitiveCache[maritialWith], "Profile");
+                            ApplicationEntry aem = core.GetApplication("Profile");
                             switch (maritialStatus)
                             {
                                 case "RELATIONSHIP":

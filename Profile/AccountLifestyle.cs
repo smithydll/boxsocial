@@ -185,7 +185,7 @@ namespace BoxSocial.Applications.Profile
                 case "MARRIED":
                     if (relation != null && relation.Id != existingMaritialWith)
                     {
-                        ApplicationEntry ae = new ApplicationEntry(core, LoggedInMember, "Profile");
+                        ApplicationEntry ae = core.GetApplication("Profile");
 
                         RawTemplate atpl = new RawTemplate(core.Http.TemplateEmailPath, "user_relationship_notification.html");
 

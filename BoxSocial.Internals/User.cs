@@ -741,7 +741,7 @@ namespace BoxSocial.Internals
 
         bool User_CommentPosted(CommentPostedEventArgs e)
         {
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "GuestBook");
+            ApplicationEntry ae = core.GetApplication("GuestBook");
             ae.SendNotification(this, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                 e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
 
@@ -1334,7 +1334,7 @@ namespace BoxSocial.Internals
             // Install a couple of applications
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(core, null, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                 profileAe.Install(core, newUser);
             }
             catch
@@ -1343,7 +1343,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry mailAe = new ApplicationEntry(core, null, "Mail");
+                ApplicationEntry mailAe = new ApplicationEntry(core, "Mail");
                 mailAe.Install(core, newUser);
             }
             catch
@@ -1352,7 +1352,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, "Gallery");
                 galleryAe.Install(core, newUser);
             }
             catch
@@ -1361,7 +1361,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                 guestbookAe.Install(core, newUser);
             }
             catch
@@ -1370,7 +1370,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry groupsAe = new ApplicationEntry(core, null, "Groups");
+                ApplicationEntry groupsAe = new ApplicationEntry(core, "Groups");
                 groupsAe.Install(core, newUser);
             }
             catch
@@ -1379,7 +1379,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry networksAe = new ApplicationEntry(core, null, "Networks");
+                ApplicationEntry networksAe = new ApplicationEntry(core, "Networks");
                 networksAe.Install(core, newUser);
             }
             catch
@@ -1388,7 +1388,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry calendarAe = new ApplicationEntry(core, null, "Calendar");
+                ApplicationEntry calendarAe = new ApplicationEntry(core, "Calendar");
                 calendarAe.Install(core, newUser);
             }
             catch

@@ -203,7 +203,7 @@ namespace BoxSocial.FrontEnd
                     ApplicationEntry ae = null;
                     if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
                     {
-                        ae = new ApplicationEntry(core, loggedInMember, accountModule.assembly.GetName().Name);
+                        ae = core.GetApplication(accountModule.assembly.GetName().Name);
                     }
 
                     accountModule.SetOwner = loggedInMember;

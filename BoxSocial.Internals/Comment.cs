@@ -515,7 +515,8 @@ namespace BoxSocial.Internals
             {
                 if (item == null || item.ItemKey.Id != CommentedItemKey.Id || item.ItemKey.TypeId != CommentedItemKey.TypeId)
                 {
-                    item = (ICommentableItem)NumberedItem.Reflect(core, CommentedItemKey);
+                    core.ItemCache.RequestItem(CommentedItemKey);
+                    item = (ICommentableItem)core.ItemCache[CommentedItemKey];
                 }
                 if (item is IPermissibleItem)
                 {

@@ -152,7 +152,7 @@ namespace BoxSocial.Applications.Profile
             // send e-mail notifications
             //
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+            ApplicationEntry ae = core.GetApplication("Profile");
 
             Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_notification.html");
 

@@ -606,7 +606,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                ApplicationEntry musicianAe = new ApplicationEntry(core, null, "Musician");
+                ApplicationEntry musicianAe = new ApplicationEntry(core, "Musician");
                 musicianAe.Install(core, newMusician);
             }
             catch
@@ -615,7 +615,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(core, null, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, "Gallery");
                 galleryAe.Install(core, newMusician);
             }
             catch
@@ -624,7 +624,7 @@ namespace BoxSocial.Musician
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                 guestbookAe.Install(core, newMusician);
             }
             catch

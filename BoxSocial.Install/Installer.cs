@@ -2214,11 +2214,11 @@ namespace BoxSocial.Install
 
         public static void FinaliseApplicationInstall(Core core, User owner, string app)
         {
-            ApplicationEntry ae = new ApplicationEntry(core, owner, app);
+            ApplicationEntry ae = new ApplicationEntry(core, app);
 
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(core, ae, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                 profileAe.Install(core, owner, ae);
             }
             catch (Exception ex)
@@ -2229,7 +2229,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, ae, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                 guestbookAe.Install(core, owner, ae);
             }
             catch (Exception ex)
@@ -2300,7 +2300,7 @@ namespace BoxSocial.Install
 			// Install a couple of applications
             try
             {
-                ApplicationEntry profileAe = new ApplicationEntry(core, newUser, "Profile");
+                ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                 profileAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2311,7 +2311,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry galleryAe = new ApplicationEntry(core, newUser, "Gallery");
+                ApplicationEntry galleryAe = new ApplicationEntry(core, "Gallery");
                 galleryAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2322,7 +2322,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry mailAe = new ApplicationEntry(core, newUser, "Mail");
+                ApplicationEntry mailAe = new ApplicationEntry(core, "Mail");
                 mailAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2333,7 +2333,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, newUser, "GuestBook");
+                ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                 guestbookAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2344,7 +2344,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry groupsAe = new ApplicationEntry(core, newUser, "Groups");
+                ApplicationEntry groupsAe = new ApplicationEntry(core, "Groups");
                 groupsAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2355,7 +2355,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry networksAe = new ApplicationEntry(core, newUser, "Networks");
+                ApplicationEntry networksAe = new ApplicationEntry(core, "Networks");
                 networksAe.Install(core, newUser);
             }
             catch (Exception ex)
@@ -2366,7 +2366,7 @@ namespace BoxSocial.Install
 
             try
             {
-                ApplicationEntry calendarAe = new ApplicationEntry(core, newUser, "Calendar");
+                ApplicationEntry calendarAe = new ApplicationEntry(core, "Calendar");
                 calendarAe.Install(core, newUser);
             }
             catch (Exception ex)

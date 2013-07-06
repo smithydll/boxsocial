@@ -445,8 +445,8 @@ namespace BoxSocial.Applications.Pages
 
             try
             {
-                Page page = new Page(e.Core, e.Page.Owner, "lists/" + e.Slug);
                 List list = new List(e.Core, (User)e.Page.Owner, e.Slug);
+                Page page = new Page(e.Core, e.Page.Owner, "lists/" + e.Slug);
 
                 if (!list.Access.Can("VIEW"))
                 {
@@ -499,6 +499,10 @@ namespace BoxSocial.Applications.Pages
                 page.Owner.ParseBreadCrumbs(breadCrumbParts);
             }
             catch (InvalidListException)
+            {
+                e.Core.Functions.Generate404();
+            }
+            catch (PageNotFoundException)
             {
                 e.Core.Functions.Generate404();
             }

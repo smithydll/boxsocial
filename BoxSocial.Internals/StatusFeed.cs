@@ -254,7 +254,7 @@ namespace BoxSocial.Internals
             AccessControlLists acl = new AccessControlLists(core, statusMessage);
             acl.SaveNewItemPermissions();
 
-            ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+            ApplicationEntry ae = core.GetApplication("Profile");
             ae.PublishToFeed(core.Session.LoggedInMember, statusMessage);
 
             return statusMessage;

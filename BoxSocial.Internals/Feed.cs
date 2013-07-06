@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -33,6 +34,8 @@ namespace BoxSocial.Internals
 
         public static List<Action> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
+            long initTime = 0;
+
             double pessimism = 2.0;
 
             if (core == null)
@@ -110,15 +113,29 @@ namespace BoxSocial.Internals
 
                         /**/
 
+                        
+                        foreach (Action action in tempActions)
+                        {
+                            core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+                        }
+
                         foreach (Action action in tempActions)
                         {
                             core.ItemCache.RequestItem(action.ActionItemKey);
                         }
 
+                        //HttpContext.Current.Response.Write("Time: " + (initTime / 10000000.0) + ", " + core.Db.GetQueryCount() + "<br />");
                         foreach (Action action in tempActions)
                         {
+                            /*Stopwatch initTimer = new Stopwatch();
+                            initTimer.Start();*/
                             tempMessages.Add(action.PermissiveParent);
+                            /*initTimer.Stop();
+                            initTime += initTimer.ElapsedTicks;
+
+                            HttpContext.Current.Response.Write("Time: " + (initTime / 10000000.0) + ", " + action.ActionItemKey.ToString() + ", " + action.ActionItemKey.ApplicationId + ", " + core.Db.GetQueryCount() + "<br />");*/
                         }
+                        
 
                         if (tempMessages.Count > 0)
                         {

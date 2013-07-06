@@ -464,10 +464,9 @@ namespace BoxSocial.Internals
                         }
                     }
                 }
-
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.ToString());
+                    //Console.WriteLine(ex.ToString());
                 }
 
                 if (!string.IsNullOrEmpty(key))
@@ -501,7 +500,7 @@ namespace BoxSocial.Internals
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
+                //Console.WriteLine(ex.ToString());
             }
         }
 
@@ -1962,6 +1961,14 @@ namespace BoxSocial.Internals
             if (ItemLoad != null)
             {
                 ItemLoad();
+            }
+
+            if (type.IsSubclassOf(typeof(NumberedItem)))
+            {
+                if (core != null && core.ItemCache != null)
+                {
+                    core.ItemCache.RegisterItem((NumberedItem)this);
+                }
             }
         }
 

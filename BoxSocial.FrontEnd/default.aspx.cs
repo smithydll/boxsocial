@@ -44,8 +44,8 @@ namespace BoxSocial.FrontEnd
                 template.SetTemplate("today.html");
                 this.Signature = PageSignature.today;
 
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(core, session.LoggedInMember, "Calendar"));
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, new ApplicationEntry(core, session.LoggedInMember, "Profile"));
+                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, core.GetApplication("Calendar"));
+                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, core.GetApplication("Profile"));
 
                 template.Parse("DATE_STRING", tz.Now.ToLongDateString());
 

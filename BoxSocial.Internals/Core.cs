@@ -29,6 +29,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Caching;
 using System.Web.Configuration;
 using BoxSocial.IO;
 
@@ -483,6 +484,175 @@ namespace BoxSocial.Internals
             }
         }
 
+        private static Object loadedAssembliesLock = new object();
+        private static Dictionary<string, ItemKey> loadedAssemblies = null;
+
+        public ApplicationEntry GetApplication(string name)
+        {
+            loadAssemblies();
+
+            if (loadedAssemblies.ContainsKey(name))
+            {
+                ItemKey ik = loadedAssemblies[name];
+                ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
+                return (ApplicationEntry)ItemCache[ik];
+            }
+            else
+            {
+                ApplicationEntry ae = new ApplicationEntry(this, name);
+
+                if (loadedAssemblies != null)
+                {
+                    lock (loadedAssembliesLock)
+                    {
+                        if (!loadedAssemblies.ContainsKey(name))
+                        {
+                            loadedAssemblies.Add(name, ae.ItemKey);
+                        }
+                    }
+
+                    System.Web.Caching.Cache cache;
+
+                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                    {
+                        cache = HttpContext.Current.Cache;
+                    }
+                    else
+                    {
+                        cache = new Cache();
+                    }
+
+                    if (cache != null)
+                    {
+                        try
+                        {
+                            cache.Add("Applications", loadedAssemblies, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
+                        }
+                        catch (NullReferenceException)
+                        {
+                        }
+                    }
+                }
+
+                return ae;
+            }
+        }
+
+        public List<string> GetLoadedAssemblyNames()
+        {
+            loadAssemblies();
+
+            List<string> keys = new List<string>();
+            lock (loadedAssembliesLock)
+            {
+                foreach (string key in loadedAssemblies.Keys)
+                {
+                    keys.Add(key);
+                }
+            }
+
+            return keys;
+        }
+
+        public List<Assembly> GetLoadedAssemblies()
+        {
+            loadAssemblies();
+
+            List<Assembly> asms = new List<Assembly>();
+
+            lock (loadedAssembliesLock)
+            {
+                foreach (string key in loadedAssemblies.Keys)
+                {
+                    ItemKey ik = loadedAssemblies[key];
+                    ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
+                    asms.Add(((ApplicationEntry)ItemCache[ik]).Assembly);
+                }
+            }
+
+            return asms;
+        }
+
+        private void loadAssemblies()
+        {
+            lock (loadedAssembliesLock)
+            {
+                if (loadedAssemblies == null)
+                {
+                    object o = null;
+                    System.Web.Caching.Cache cache;
+
+                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                    {
+                        cache = HttpContext.Current.Cache;
+                    }
+                    else
+                    {
+                        cache = new Cache();
+                    }
+
+                    try
+                    {
+                        if (cache != null)
+                        {
+                            o = cache.Get("Applications");
+                        }
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
+
+
+                    if (o != null && o is Dictionary<string, ItemKey>)
+                    {
+                        loadedAssemblies = (Dictionary<string, ItemKey>)o;
+                    }
+                    else
+                    {
+                        loadedAssemblies = new Dictionary<string, ItemKey>(16);
+                    }
+
+                    AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
+                    List<string> applicationNames = new List<string>();
+
+                    foreach (AssemblyName an in assemblies)
+                    {
+                        if (!loadedAssemblies.ContainsKey(an.Name))
+                        {
+                            applicationNames.Add(an.Name);
+                        }
+                    }
+
+                    SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                    query.AddCondition("application_assembly_name", ConditionEquality.In, applicationNames);
+
+                    DataTable applicationDataTable = db.Query(query);
+
+                    ItemCache.RegisterType(typeof(ApplicationEntry));
+                    foreach (DataRow dr in applicationDataTable.Rows)
+                    {
+                        ApplicationEntry ae = new ApplicationEntry(this, dr);
+                        ItemCache.RegisterItem(ae);
+                        loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
+                    }
+
+                    if (loadedAssemblies != null)
+                    {
+                        if (cache != null)
+                        {
+                            try
+                            {
+                                cache.Add("Applications", loadedAssemblies, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
+                            }
+                            catch (NullReferenceException)
+                            {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         public AccessControlCache AcessControlCache
         {
             get
@@ -601,7 +771,7 @@ namespace BoxSocial.Internals
         /// </summary>
         internal void LoadApplicationEntry(string assemblyName)
         {
-            applicationEntryCache.Add(assemblyName, new ApplicationEntry(this, session.LoggedInMember, assemblyName));
+            applicationEntryCache.Add(assemblyName, GetApplication(assemblyName));
         }
 
         public Core(TPage page, Mysql db, Template template)

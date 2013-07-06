@@ -267,17 +267,6 @@ namespace BoxSocial.Internals
             core.Session = session;
             core.CoreDomain = AppDomain.CurrentDomain;
 
-            // Ensure that core applications are loaded
-            try
-            {
-                System.Reflection.Assembly.Load("Profile");
-                System.Reflection.Assembly.Load("Groups");
-                System.Reflection.Assembly.Load("Networks");
-            }
-            catch
-            {
-            }
-
             if (loggedInMember != null)
             {
                 tz = loggedInMember.UserInfo.GetTimeZone;
@@ -300,12 +289,15 @@ namespace BoxSocial.Internals
             core.Prose = new Prose();
             core.Prose.Initialise(core, "en");
 
-            AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
-
-            foreach (AssemblyName an in assemblies)
+            List<string> asmNames = core.GetLoadedAssemblyNames();
+            foreach (string asm in asmNames)
             {
-                core.Prose.AddApplication(an.Name);
-                Assembly asm = Assembly.Load(an);
+                core.Prose.AddApplication(asm);
+            }
+
+            List<Assembly> asms = core.GetLoadedAssemblies();
+            foreach (Assembly asm in asms)
+            {
                 template.AddPageAssembly(asm);
             }
 

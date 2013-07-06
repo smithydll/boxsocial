@@ -230,6 +230,14 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public Blog(Core core, DataRow blogRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Blog_ItemLoad);
+
+            loadItemInfo(blogRow);
+        }
+
         /// <summary>
         /// ItemLoad event
         /// </summary>

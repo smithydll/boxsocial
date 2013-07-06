@@ -756,7 +756,7 @@ namespace BoxSocial.Internals
         [MethodImpl(MethodImplOptions.NoInlining)]
         public static ApplicationEntry GetExecutingApplication(Core core, Primitive installee)
         {
-            return new ApplicationEntry(core, installee, Assembly.GetCallingAssembly().GetName().Name);
+            return core.GetApplication(Assembly.GetCallingAssembly().GetName().Name);
         }
 
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)

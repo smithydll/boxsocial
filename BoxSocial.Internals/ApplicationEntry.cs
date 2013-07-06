@@ -40,6 +40,7 @@ namespace BoxSocial.Internals
         All = Key | Info,
     }
 
+    [Cacheable]
     [DataTable("applications", "APPLICATION")]
     [Primitive("APPLICATION", ApplicationLoadOptions.All, "application_id", "application_assembly_name")]
     [Permission("COMMENT", "Can comment on the application", PermissionTypes.Interact)]
@@ -92,23 +93,46 @@ namespace BoxSocial.Internals
         private List<string> modules;
         private string displayNameOwnership;
 
-        private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
-        private PrimitiveApplicationInfo ownerInfo;
+        private Assembly assembly;
 
         public event CommentHandler OnCommentPosted;
-        public PrimitiveApplicationInfo OwnerInfo
+
+        public Assembly Assembly
         {
             get
             {
-                if (ownerInfo == null || ownerInfo.Owner.Id != owner.Id || ownerInfo.Owner.TypeId != owner.TypeId)
+                if (assembly == null)
                 {
-                    ownerInfo = new PrimitiveApplicationInfo(core, owner, Id);
+                    string assemblyPath;
+                    if (IsPrimitive)
+                    {
+                        if (core.Http != null)
+                        {
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", AssemblyName));
+                        }
+                        else
+                        {
+                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssemblyName + ".dll");
+                        }
+                    }
+                    else
+                    {
+                        if (core.Http != null)
+                        {
+                            assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", AssemblyName)));
+                        }
+                        else
+                        {
+                            assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), AssemblyName + ".dll");
+                        }
+                    }
+
+                    assembly = Assembly.LoadFrom(assemblyPath);
                 }
-                return ownerInfo;
+                return assembly;
             }
         }
-
 
         public long ApplicationId
         {
@@ -445,28 +469,10 @@ namespace BoxSocial.Internals
         public ApplicationEntry(Core core)
             : base(core)
         {
-            this.owner = core.Session.LoggedInMember;
-
             Assembly asm = Assembly.GetCallingAssembly();
 
             string assemblyName = asm.GetName().Name;
-
-            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
-
-            try
-            {
-                LoadItem("application_assembly_name", assemblyName);
-            }
-            catch (InvalidItemException)
-            {
-                throw new InvalidApplicationException();
-            }
-        }
-
-        public ApplicationEntry(Core core, Primitive owner, string assemblyName)
-            : base(core)
-        {
-            this.owner = owner;
+            assembly = asm;
 
             ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
 
@@ -507,47 +513,6 @@ namespace BoxSocial.Internals
             catch (InvalidItemException)
             {
                 throw new InvalidApplicationException();
-            }
-        }
-
-        public ApplicationEntry(Core core, Primitive owner, long applicationId)
-            : base(core)
-        {
-            this.owner = owner;
-
-            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
-
-            try
-            {
-                LoadItem(applicationId);
-            }
-            catch (InvalidItemException)
-            {
-                throw new InvalidApplicationException();
-            }
-        }
-
-        public ApplicationEntry(Core core, Primitive installee, DataRow applicationRow)
-            : base(core)
-        {
-            owner = installee;
-            ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
-
-            loadItemInfo(applicationRow);
-
-            // TODO: change this
-            loadApplicationUserInfo(applicationRow);
-            try
-            {
-                ownerInfo = new PrimitiveApplicationInfo(core, applicationRow);
-            }
-            catch (InvalidPrimitiveAppInfoException)
-            {
-            }
-
-            if (installee != null)
-            {
-                access = new Access(core, this);
             }
         }
 
@@ -617,7 +582,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry guestbookAe = new ApplicationEntry(core, null, "GuestBook");
+                ApplicationEntry guestbookAe = core.GetApplication("GuestBook");
                 guestbookAe.Install(core, newApplication);
             }
             catch
@@ -1013,7 +978,8 @@ namespace BoxSocial.Internals
             // TODO: change this
             if ((long)db.Query(query).Rows[0]["twentyfour"] < 20)
             {
-                return OwnerInfo.EmailNotifications;
+                PrimitiveApplicationInfo ownerInfo = new PrimitiveApplicationInfo(core, owner, Id);
+                return ownerInfo.EmailNotifications;
             }
             return false;
         }

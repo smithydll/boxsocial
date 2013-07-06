@@ -90,12 +90,8 @@ namespace BoxSocial.Internals
                 {
                     core.LoadUserProfile(ownerId);
                     owner = core.PrimitiveCache[ownerId];
-                    return owner;
                 }
-                else
-                {
-                    return owner;
-                }
+                return owner;
             }
         }
 
@@ -180,7 +176,7 @@ namespace BoxSocial.Internals
         {
             if (Owner is User)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, core.Session.LoggedInMember, "Profile");
+                ApplicationEntry ae = core.GetApplication("Profile");
                 ae.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your status.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }

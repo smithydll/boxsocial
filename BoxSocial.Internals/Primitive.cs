@@ -27,7 +27,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public struct PrimitiveKey : IComparable
+    public sealed class PrimitiveKey : IComparable
     {
         private string key;
         private long typeId;
@@ -56,8 +56,8 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveKey)) return -1;
-            PrimitiveKey pk = (PrimitiveKey)obj;
+            PrimitiveKey pk = obj as PrimitiveKey;
+            if (pk == null) return -1;
 
             if (typeId != pk.typeId)
                 return typeId.CompareTo(pk.typeId);
@@ -66,8 +66,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveKey)) return false;
-            PrimitiveKey pk = (PrimitiveKey)obj;
+            PrimitiveKey pk = obj as PrimitiveKey;
+            if (pk == null) return false;
 
             if (typeId != pk.typeId)
                 return false;
@@ -91,8 +91,8 @@ namespace BoxSocial.Internals
 
         public int CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveId)) return -1;
-            PrimitiveId pk = (PrimitiveId)obj;
+            PrimitiveId pk = obj as PrimitiveId;
+            if (pk == null) return -1;
 
             if (TypeId != pk.TypeId)
                 return TypeId.CompareTo(pk.TypeId);
@@ -101,8 +101,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != typeof(PrimitiveId)) return false;
-            PrimitiveId pk = (PrimitiveId)obj;
+            PrimitiveId pk = obj as PrimitiveId;
+            if (pk == null) return false;
 
             if (TypeId != pk.TypeId)
                 return false;

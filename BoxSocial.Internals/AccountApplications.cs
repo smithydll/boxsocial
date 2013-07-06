@@ -127,7 +127,7 @@ namespace BoxSocial.Internals
 
             if (applicationTable.Rows.Count == 1)
             {
-                ApplicationEntry ae = new ApplicationEntry(core, Owner, applicationTable.Rows[0]);
+                ApplicationEntry ae = new ApplicationEntry(core, applicationTable.Rows[0]);
 
                 //List<string> applicationPermissions = new List<string>();
                 //applicationPermissions.Add("Can Access");
@@ -142,7 +142,8 @@ namespace BoxSocial.Internals
                 {
                     template.Parse("S_USER", true);
 
-                    if (ae.OwnerInfo.EmailNotifications)
+                    PrimitiveApplicationInfo ownerInfo = new PrimitiveApplicationInfo(core, Owner, ae.Id);
+                    if (ownerInfo.EmailNotifications)
                     {
                         template.Parse("S_EMAIL_NOTIFICATIONS_YES", radioChecked);
                     }
@@ -213,7 +214,7 @@ namespace BoxSocial.Internals
 
             /*try
             {*/
-            ApplicationEntry ae = new ApplicationEntry(core, null, id);
+            ApplicationEntry ae = new ApplicationEntry(core, id);
             bool success = ae.Install(core, core.Session.LoggedInMember, Owner);
             /*}
             catch
@@ -250,7 +251,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                ApplicationEntry ae = new ApplicationEntry(core, null, id);
+                ApplicationEntry ae = new ApplicationEntry(core, id);
                 ae.Uninstall(core, Owner);
             }
             catch

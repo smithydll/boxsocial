@@ -18,6 +18,16 @@
         <!-- ELSE -->
         <div class="info">
         <!-- ENDIF -->
+            
+            <ul id="profile-links">
+            <!-- BEGIN link_list -->
+                <li><a href="{link_list.U_LINK}">{link_list.S_FAVICON}
+                <!-- IF link_list.TITLE -->
+                <span>{link_list.TITLE}</span>
+                <!-- ENDIF -->
+                </a></li>
+            <!-- END link_list -->
+            </ul>
 			<h2><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a></h2>
             <!-- IF USER_AUTOBIOGRAPHY -->
             <p id="status-message">{USER_AUTOBIOGRAPHY}</p>

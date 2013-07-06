@@ -2,12 +2,31 @@
 <p>{L_CONTACT_DETAILS_INFO}</p>
 
 <div id="new-stuff">
-	<span id="new-email" class="post-button"><a href="{U_ADD_EMAIL}">Add E-mail Address</a></span>
-  <span id="new-phone" class="post-button"><a href="{U_ADD_PHONE}">Add Phone Number</a></span>
+	<span id="new-link" class="post-button"><a href="{U_ADD_LINK}">Add Link</a></span>
+    <span id="new-email" class="post-button"><a href="{U_ADD_EMAIL}">Add E-mail Address</a></span>
+    <span id="new-phone" class="post-button"><a href="{U_ADD_PHONE}">Add Phone Number</a></span>
 </div>
 
-<!-- IF ADDRESS -->
+<h4>Links</h4>
+
+<table style="width: 100%">
+<tr>
+	<th>Link</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN link_list -->
+<!-- IF link_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
 <!-- ENDIF -->
+	<td>{link_list.S_FAVICON}{link_list.LINK}</td>
+	<td><a href="{link_list.U_EDIT}">{L_EDIT}</a></td>
+	<td><a href="{link_list.U_DELETE}">{L_DELETE}</a></td>
+</tr>
+<!-- END link_list -->
+</table>
 
 <h4>E-mail Addresses</h4>
 
@@ -54,3 +73,6 @@
 </tr>
 <!-- END phone_list -->
 </table>
+
+<!-- IF ADDRESS -->
+<!-- ENDIF -->

@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
@@ -143,6 +144,22 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 LoadItem("gallery_item_id", "gallery_item_type_id", owner);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGallerySettingsException();
+            }
+        }
+
+        public GallerySettings(Core core, DataRow settingsRow)
+            : base(core)
+        {
+
+            ItemLoad += new ItemLoadHandler(GallerySettings_ItemLoad);
+
+            try
+            {
+                loadItemInfo(settingsRow);
             }
             catch (InvalidItemException)
             {

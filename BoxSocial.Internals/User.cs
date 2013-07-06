@@ -2204,6 +2204,22 @@ namespace BoxSocial.Internals
                 core.Template.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(statusMessage.GetTime(core.Tz)));
             }
 
+            List<UserLink> links = page.User.GetLinks();
+
+            foreach (UserLink link in links)
+            {
+                VariableCollection linkVariableCollection = core.Template.CreateChild("link_list");
+
+                linkVariableCollection.Parse("U_LINK", link.Uri);
+                linkVariableCollection.Parse("TITLE", link.Title);
+
+                if (!string.IsNullOrEmpty(link.Favicon))
+                {
+                    BoxSocial.Forms.Image faviconImage = new BoxSocial.Forms.Image("favicon-" + link.Id, core.Hyperlink.AppendAbsoluteSid("/images/favicons/" + link.Favicon));
+                    linkVariableCollection.Parse("S_FAVICON", faviconImage);
+                }
+            }
+
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));
 
             page.User.ProfileViewed(core.Session.LoggedInMember);
@@ -2727,6 +2743,16 @@ namespace BoxSocial.Internals
             {
                 return "guest book";
             }
+        }
+
+        public List<UserLink> GetLinks()
+        {
+            return getSubItems(typeof(UserLink)).ConvertAll<UserLink>(new Converter<Item, UserLink>(convertToUserLink));
+        }
+
+        public UserLink convertToUserLink(Item input)
+        {
+            return (UserLink)input;
         }
     }
 

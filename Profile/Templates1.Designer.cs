@@ -159,24 +159,21 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;p&gt;{L_CONTACT_DETAILS_INFO}&lt;/p&gt;
         ///
         ///&lt;div id=&quot;new-stuff&quot;&gt;
-        ///	&lt;span id=&quot;new-email&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_ADD_EMAIL}&quot;&gt;Add E-mail Address&lt;/a&gt;&lt;/span&gt;
-        ///  &lt;span id=&quot;new-phone&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_ADD_PHONE}&quot;&gt;Add Phone Number&lt;/a&gt;&lt;/span&gt;
+        ///	&lt;span id=&quot;new-link&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_ADD_LINK}&quot;&gt;Add Link&lt;/a&gt;&lt;/span&gt;
+        ///    &lt;span id=&quot;new-email&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_ADD_EMAIL}&quot;&gt;Add E-mail Address&lt;/a&gt;&lt;/span&gt;
+        ///    &lt;span id=&quot;new-phone&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_ADD_PHONE}&quot;&gt;Add Phone Number&lt;/a&gt;&lt;/span&gt;
         ///&lt;/div&gt;
         ///
-        ///&lt;!-- IF ADDRESS --&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;h4&gt;E-mail Addresses&lt;/h4&gt;
+        ///&lt;h4&gt;Links&lt;/h4&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
         ///&lt;tr&gt;
-        ///	&lt;th&gt;Address&lt;/th&gt;
-        ///	&lt;th&gt;&lt;/th&gt;
+        ///	&lt;th&gt;Link&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
         ///	&lt;th&gt;&lt;/th&gt;
         ///&lt;/tr&gt;
-        ///&lt;!-- BEGIN email_list --&gt;
-        ///&lt;!-- IF email_list.$_INDEX_ [rest of string was truncated]&quot;;.
+        ///&lt;!-- BEGIN link_list --&gt;
+        ///&lt;!- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_contact_manage {
             get {
@@ -204,21 +201,20 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Display Picture&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;Cover Photo&lt;/h3&gt;
         ///
-        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
-        ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Display Picture&lt;/legend&gt;
-        ///    &lt;!-- IF I_DISPLAY_PICTURE --&gt;
-        ///		&lt;p&gt;&lt;img src=&quot;{I_DISPLAY_PICTURE}&quot; alt=&quot;Display Picture&quot; /&gt;&lt;/p&gt;
-        ///    &lt;!-- ENDIF --&gt;
-        ///		&lt;dl&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;photo-file&quot;&gt;Select File&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-file&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
-        ///		&lt;/dl&gt;
-        ///		&lt;input type=&quot;hidden&quot; [rest of string was truncated]&quot;;.
+        ///  &lt;script type=&quot;text/javascript&quot;&gt;
+        ///      $(function () {
+        ///          var offset = 0;
+        ///          $(&quot;#crop-area&quot;).draggable({
+        ///              containment: &quot;parent&quot;,
+        ///              revert: true,
+        ///              start: function (event, ui) {
+        ///                  offset = ui.position.top;
+        ///              },
+        ///              drag: function (event, ui) {
+        ///                  $(&quot;#crop-t&quot;).height($(&quot;#crop-t&quot;).height() + (ui.position.top - offset));
+        ///                  $(&quot;#crop-b&quot;).height($(&quot;#crop-b&quot;).he [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_cover_photo {
             get {
@@ -304,17 +300,22 @@ namespace BoxSocial.Applications.Profile {
         
         /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Invite a Friend to {SITE_TITLE}&lt;/h3&gt;
+        ///
+        ///&lt;!-- IF S_CANNOT_INVITE --&gt;
+        ///&lt;p&gt;Sorry, you have no invites left to send.&lt;/p&gt;
+        ///&lt;!-- ELSE --&gt;
+        ///
+        ///&lt;!-- IF MAX_INVITES --&gt;
+        ///&lt;p&gt;You have sent {INVITES_SENT} of {MAX_INVITES} invites.&lt;/p&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///
         ///&lt;p&gt;Invite a friend to join {SITE_TITLE}, just enter their e-mail address below:&lt;/p&gt;
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///&lt;fieldset&gt;
         ///		&lt;legend&gt;Invite a Friend to {SITE_TITLE}&lt;/legend&gt;
         ///		&lt;dl&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;name&quot;&gt;Name:&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;name&quot; name=&quot;name&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;email&quot;&gt;E-mail:&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;email&quot; name=&quot;email&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;send&quot; value=&quot; [rest of string was truncated]&quot;;.
+        ///			&lt;dd&gt;&lt;input type=&quot;te [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_friend_invite {
             get {
@@ -373,6 +374,31 @@ namespace BoxSocial.Applications.Profile {
         internal static string account_lifestyle {
             get {
                 return ResourceManager.GetString("account_lifestyle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;h3&gt;Link&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Link&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;link-address&quot;&gt;Link&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_LINK}&lt;/dd&gt;
+        ///            &lt;dt&gt;&lt;label for=&quot;link-title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_LINK}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+        ///		&lt;/dl&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;profile&quot; /&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;sub&quot; value=&quot;contact&quot; /&gt;
+        ///		&lt;!-- IF EDIT --&gt;
+        ///    &lt;input type=&quot;hidden&quot; name=&quot;id&quot; [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string account_link_edit {
+            get {
+                return ResourceManager.GetString("account_link_edit", resourceCulture);
             }
         }
         
@@ -497,21 +523,19 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;div id=&quot;content&quot;&gt;
+        ///&lt;!-- IF $_IS_MOBILE --&gt;
         ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
-        ///        &lt;!-- IF USER_COVER_PHOTO --&gt;
-        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;);&quot;&gt;
+        ///        &lt;!-- IF USER_MOBILE_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info no-icon&quot; style=&quot;height: 90px; background-image: url(&apos;{USER_MOBILE_COVER_PHOTO}&apos;);&quot;&gt;
         ///        &lt;!-- ELSE --&gt;
-        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;div class=&quot;info no-icon&quot;&gt;
         ///        &lt;!-- ENDIF --&gt;
-        ///&lt;h2&gt;{L_FEED}&lt;/h2&gt;
-        ///&lt;/div&gt;
-        ///&lt;/div&gt;
+        ///        &lt;h2&gt;{L_FEED}&lt;/h2&gt;
+        ///        &lt;/div&gt;
+        ///    &lt;/div&gt;
+        ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;script type=&quot;text/javascript&quot;&gt;
-        ///&lt;!--
-        ///    $(document).ready(function () {
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;div i [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewfeed {
             get {
@@ -526,15 +550,18 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;div id=&quot;content&quot;&gt;
+        ///&lt;!-- IF $_IS_MOBILE --&gt;
         ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
-        ///        &lt;!-- IF USER_COVER_PHOTO --&gt;
-        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;);&quot;&gt;
+        ///        &lt;!-- IF USER_MOBILE_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info no-icon&quot; style=&quot;height: 90px; background-image: url(&apos;{USER_MOBILE_COVER_PHOTO}&apos;);&quot;&gt;
         ///        &lt;!-- ELSE --&gt;
-        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;div class=&quot;info no-icon&quot;&gt;
         ///        &lt;!-- ENDIF --&gt;
-        ///&lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
-        ///&lt;p&gt;&lt;span id=&quot;subscribe&quot; class=&quot;subscribe-button&quot;&gt;&lt;a href=&quot;{U_SUBSCRIBE}&quot;&gt;{L_SUBSCRIBE}&lt; [rest of string was truncated]&quot;;.
+        ///        &lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
+        ///        &lt;/div&gt;
+        ///    &lt;/div&gt;
+        ///&lt;!-- ENDIF --&gt;
+        ///        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewstatusfeed {
             get {

@@ -67,12 +67,16 @@ namespace BoxSocial.Applications.Profile
             AddModeHandler("edit-email", new ModuleModeHandler(AccountContactManage_AddEmail));
             AddModeHandler("add-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("edit-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
+            AddModeHandler("add-link", new ModuleModeHandler(AccountContactManage_AddLink));
+            AddModeHandler("edit-link", new ModuleModeHandler(AccountContactManage_AddLink));
 
             AddSaveHandler("edit-address", new EventHandler(AccountContactManage_EditAddress_save));
             AddSaveHandler("add-email", new EventHandler(AccountContactManage_AddEmail_save));
             AddSaveHandler("edit-email", new EventHandler(AccountContactManage_AddEmail_save));
             AddSaveHandler("add-phone", new EventHandler(AccountContactManage_AddPhone_save));
             AddSaveHandler("edit-phone", new EventHandler(AccountContactManage_AddPhone_save));
+            AddSaveHandler("add-link", new EventHandler(AccountContactManage_AddLink_save));
+            AddSaveHandler("edit-link", new EventHandler(AccountContactManage_AddLink_save));
         }
 
         void AccountContactManage_Show(object sender, EventArgs e)
@@ -81,6 +85,7 @@ namespace BoxSocial.Applications.Profile
 
             List<UserEmail> emails = core.Session.LoggedInMember.GetEmailAddresses();
             List<UserPhoneNumber> phoneNumbers = new List<UserPhoneNumber>();
+            List<UserLink> links = LoggedInMember.GetLinks();
 
             SelectQuery query = Item.GetSelectQueryStub(typeof(UserPhoneNumber));
             query.AddCondition("phone_user_id", core.LoggedInMemberId);
@@ -104,14 +109,30 @@ namespace BoxSocial.Applications.Profile
 
             foreach (UserPhoneNumber phoneNumber in phoneNumbers)
             {
-                VariableCollection emailsVariableCollection = template.CreateChild("phone_list");
+                VariableCollection phoneNumbersVariableCollection = template.CreateChild("phone_list");
 
-                emailsVariableCollection.Parse("PHONE_ID", phoneNumber.Id.ToString());
-                emailsVariableCollection.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
-                emailsVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-phone", phoneNumber.Id));
-                emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
+                phoneNumbersVariableCollection.Parse("PHONE_ID", phoneNumber.Id.ToString());
+                phoneNumbersVariableCollection.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
+                phoneNumbersVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-phone", phoneNumber.Id));
+                phoneNumbersVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
             }
 
+            foreach (UserLink link in links)
+            {
+                VariableCollection linksVariableCollection = template.CreateChild("link_list");
+
+                linksVariableCollection.Parse("LINK_ID", link.Id.ToString());
+                linksVariableCollection.Parse("LINK", link.LinkAddress);
+                linksVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-link", link.Id));
+
+                if (!string.IsNullOrEmpty(link.Favicon))
+                {
+                    Image faviconImage = new Image("favicon-" + link.Id, core.Hyperlink.AppendAbsoluteSid("/images/favicons/" + link.Favicon));
+                    linksVariableCollection.Parse("S_FAVICON", faviconImage);
+                }
+            }
+
+            template.Parse("U_ADD_LINK", BuildUri("contact", "add-link"));
             template.Parse("U_ADD_EMAIL", BuildUri("contact", "add-email"));
             template.Parse("U_ADD_PHONE", BuildUri("contact", "add-phone"));
         }
@@ -286,6 +307,50 @@ namespace BoxSocial.Applications.Profile
             template.Parse("S_PHONE_TYPE", phoneTypeSelectBox);
         }
 
+        void AccountContactManage_AddLink(object sender, ModuleModeEventArgs e)
+        {
+            SetTemplate("account_link_edit");
+
+            /**/
+            TextBox linkAddressTextBox = new TextBox("link-address");
+
+            /* */
+            TextBox linkTitleTextBox = new TextBox("link-title");
+
+            switch (e.Mode)
+            {
+                case "add-link":
+                    break;
+                case "edit-link":
+                    long linkId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+                    UserLink link = null;
+
+                    if (linkId > 0)
+                    {
+                        try
+                        {
+                            link = new UserLink(core, linkId);
+
+                            //phoneNumberTextBox.IsDisabled = true;
+                            linkAddressTextBox.Value = link.LinkAddress;
+                            linkAddressTextBox.IsDisabled = true;
+                            linkTitleTextBox.Value = link.Title;
+
+                            template.Parse("S_ID", link.Id.ToString());
+                        }
+                        catch (InvalidUserLinkException)
+                        {
+                        }
+                    }
+
+                    template.Parse("EDIT", "TRUE");
+                    break;
+            }
+
+            template.Parse("S_LINK", linkAddressTextBox);
+            template.Parse("S_TITLE", linkTitleTextBox);
+        }
+
         void AccountContactManage_EditAddress_save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
@@ -407,6 +472,53 @@ namespace BoxSocial.Applications.Profile
 
                     SetRedirectUri(BuildUri());
                     core.Display.ShowMessage("Phone Number Saved", "Your phone number has been saved in the database.");
+                    return;
+                default:
+                    DisplayError("Error - no mode selected");
+                    return;
+            }
+        }
+
+        void AccountContactManage_AddLink_save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            switch (core.Http.Form["mode"])
+            {
+                case "add-link":
+                    string linkAddress = core.Http.Form["link-address"];
+                    string linkTitle = core.Http.Form["link-title"];
+
+                    try
+                    {
+                        UserLink.Create(core, linkAddress, linkTitle);
+
+                        SetRedirectUri(BuildUri());
+                        core.Display.ShowMessage("Link Saved", "Your link has been saved in the database.");
+                    }
+                    catch (InvalidUserEmailException)
+                    {
+                    }
+                    return;
+                case "edit-link":
+                    long linkId = core.Functions.FormLong("id", 0);
+                    UserLink link = null;
+
+                    try
+                    {
+                        link = new UserLink(core, linkId);
+                    }
+                    catch (InvalidUserPhoneNumberException)
+                    {
+                        return;
+                    }
+
+                    //link.LinkAddress = core.Http.Form["link-address"];
+                    link.Title = core.Http.Form["link-title"];
+                    link.Update();
+
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Link Saved", "Your link has been saved in the database.");
                     return;
                 default:
                     DisplayError("Error - no mode selected");

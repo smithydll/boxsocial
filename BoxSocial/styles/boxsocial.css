@@ -1819,3 +1819,29 @@ p.posted-by
     border-top: 1px solid #dddddd !important;
 }
 
+ul#profile-links {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    float: right;
+}
+
+ul#profile-links li {
+    float: right;
+    list-style: none;
+    padding: 4px;
+    background-color: rgba(255, 255, 255, 0.4);
+    clear: right;
+    margin-bottom: 1px;
+}
+
+ul#profile-links li span, ul#profile-links li img {
+    vertical-align: middle;
+}
+
+ul#profile-links li span {
+    margin-left: 4px;
+    font-weight: bold;
+    color: #333333;
+    display: inline-block;
+}

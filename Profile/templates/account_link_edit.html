@@ -1,0 +1,23 @@
+﻿<h3>Link</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Link</legend>
+		<dl>
+			<dt><label for="link-address">Link</label></dt>
+			<dd>{S_LINK}</dd>
+            <dt><label for="link-title">Title</label></dt>
+			<dd>{S_TITLE}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+		<!-- IF EDIT -->
+    <input type="hidden" name="id" value="{S_ID}" />
+		<input type="hidden" name="mode" value="edit-link" />
+		<!-- ELSE -->
+		<input type="hidden" name="mode" value="add-link" />
+		<!-- ENDIF -->
+	</fieldset>
+</form>

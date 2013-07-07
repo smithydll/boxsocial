@@ -331,7 +331,7 @@ namespace BoxSocial.Internals
                      * don't know if the item has a separately defined VIEW
                      * permission or not.
                      */
-                    if (ItemKey != Item.PermissiveParentKey)
+                    if (ItemKey != Item.PermissiveParentKey && Item.PermissiveParentKey != null)
                     {
                         Access parentAccess = new Access(core, Item.PermissiveParentKey, Owner);
                         //HttpContext.Current.Response.Write("parent result null acp");
@@ -514,7 +514,7 @@ namespace BoxSocial.Internals
                             if (Item.PermissiveParentKey == null)
                             {
                                 //HttpContext.Current.Response.Write(" cached result 0x06");
-                                return CachePermission(permission, viewer, Owner.Access.Can(permission, leaf, true, viewer));
+                                return CachePermission(permission, viewer, Item.GetDefaultCan(permission, viewer)); //Owner.Access.Can(permission, leaf, true, viewer));
                             }
                             else
                             {
@@ -537,7 +537,7 @@ namespace BoxSocial.Internals
                         if (Item.PermissiveParentKey == null)
                         {
                             //HttpContext.Current.Response.Write(" cached result 0x09");
-                            return CachePermission(permission, viewer, Owner.Access.Can(permission, leaf, true, viewer));
+                            return CachePermission(permission, viewer, Item.GetDefaultCan(permission, viewer)); //Owner.Access.Can(permission, leaf, true, viewer));
                         }
                         else
                         {

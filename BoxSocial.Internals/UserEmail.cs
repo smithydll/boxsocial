@@ -234,6 +234,7 @@ namespace BoxSocial.Internals
             }
             iquery.AddField("email_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("email_activate_code", activateKey);
+            iquery.AddField("email_simple_permissions", true);
 
             long emailId = core.Db.Query(iquery);
 
@@ -253,7 +254,11 @@ namespace BoxSocial.Internals
 
             UserEmail newEmail = new UserEmail(core, emailId);
 
-            Access.CreateGrantForPrimitive(core, newEmail, Friend.FriendsGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newEmail, User.CreatorKey, "VIEW");
+            if (!isRegistration)
+            {
+                Access.CreateGrantForPrimitive(core, newEmail, Friend.FriendsGroupKey, "VIEW");
+            }
             Access.CreateGrantForPrimitive(core, newEmail, User.EveryoneGroupKey, "RECIEVE_FROM");
 
             return newEmail;
@@ -311,7 +316,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return Owner;
+                return null;
             }
         }
 
@@ -319,7 +324,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(userId, typeof(User));
+                return null; //new ItemKey(userId, typeof(User));
             }
         }
 

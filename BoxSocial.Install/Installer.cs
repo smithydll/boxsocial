@@ -90,6 +90,7 @@ namespace BoxSocial.Install
 
             PollMenu();
 
+            Console.Clear();
             /* Exit Application */
             thread.Abort();
         }

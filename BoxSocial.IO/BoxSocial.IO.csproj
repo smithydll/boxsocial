@@ -105,6 +105,9 @@
     <Compile Include="PrimaryKey.cs" />
     <Compile Include="TableViewAttribute.cs" />
     <Compile Include="Http.cs" />
+    <Compile Include="WebDownload.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">

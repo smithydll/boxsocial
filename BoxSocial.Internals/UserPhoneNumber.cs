@@ -187,11 +187,13 @@ namespace BoxSocial.Internals
             iquery.AddField("phone_number", phoneNumber);
             iquery.AddField("phone_type", (byte)phoneType);
             iquery.AddField("phone_time_ut", UnixTime.UnixTimeStamp());
+            iquery.AddField("phone_simple_permissions", true);
 
             long phoneId = core.Db.Query(iquery);
 
             UserPhoneNumber newPhoneNumber = new UserPhoneNumber(core, phoneId);
 
+            Access.CreateGrantForPrimitive(core, newPhoneNumber, User.CreatorKey, "VIEW");
             Access.CreateGrantForPrimitive(core, newPhoneNumber, Friend.FriendsGroupKey, "VIEW");
 
             return newPhoneNumber;

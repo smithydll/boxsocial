@@ -859,7 +859,8 @@ namespace BoxSocial.Internals
                     fields = saveToFieldInfoCache(type);
                 }
             }
-            else
+            
+            if (fields == null)
             {
                 populateItemFieldInfoCache();
                 fields = saveToFieldInfoCache(type);
@@ -1965,7 +1966,7 @@ namespace BoxSocial.Internals
 
             if (type.IsSubclassOf(typeof(NumberedItem)))
             {
-                if (core != null && core.ItemCache != null)
+                if (core != null && core.ItemCache != null && (!(type == typeof(ItemType))))
                 {
                     core.ItemCache.RegisterItem((NumberedItem)this);
                 }

@@ -67,8 +67,10 @@ namespace BoxSocial.Applications.Profile
             AddModeHandler("edit-email", new ModuleModeHandler(AccountContactManage_AddEmail));
             AddModeHandler("add-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("edit-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
+            AddModeHandler("delete-phone", new ModuleModeHandler(AccountContactManage_DeletePhone));
             AddModeHandler("add-link", new ModuleModeHandler(AccountContactManage_AddLink));
             AddModeHandler("edit-link", new ModuleModeHandler(AccountContactManage_AddLink));
+            AddModeHandler("delete-link", new ModuleModeHandler(AccountContactManage_DeleteLink));
 
             AddSaveHandler("edit-address", new EventHandler(AccountContactManage_EditAddress_save));
             AddSaveHandler("add-email", new EventHandler(AccountContactManage_AddEmail_save));
@@ -124,6 +126,7 @@ namespace BoxSocial.Applications.Profile
                 linksVariableCollection.Parse("LINK_ID", link.Id.ToString());
                 linksVariableCollection.Parse("LINK", link.LinkAddress);
                 linksVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-link", link.Id));
+                linksVariableCollection.Parse("U_DELETE", BuildUri("contact", "delete-link", link.Id));
 
                 if (!string.IsNullOrEmpty(link.Favicon))
                 {
@@ -523,6 +526,65 @@ namespace BoxSocial.Applications.Profile
                 default:
                     DisplayError("Error - no mode selected");
                     return;
+            }
+        }
+
+        void AccountContactManage_DeletePhone(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long phoneId = core.Functions.FormLong("id", 0);
+
+            try
+            {
+                
+                UserPhoneNumber number = new UserPhoneNumber(core, phoneId);
+
+                if (number.Delete() > 0)
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Phone Number Deleted", "The phone number has been deleted from the database.");
+                    return;
+                }
+                else
+                {
+                    core.Display.ShowMessage("Error", "Could not delete the phone number.");
+                    return;
+                }
+            }
+            catch (PageNotFoundException)
+            {
+                core.Display.ShowMessage("Error", "Could not delete the phone number.");
+                return;
+            }
+        }
+
+        void AccountContactManage_DeleteLink(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long linkId = core.Functions.RequestLong("id", 0);
+
+            try
+            {
+                UserLink link = new UserLink(core, linkId);
+
+                if (link.Delete() > 0)
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Link Deleted", "The link has been deleted from the database.");
+                    return;
+                }
+                else
+                {
+                    core.Display.ShowMessage("Error", "Could not delete the link.");
+                    return;
+                }
+            }
+            catch (PageNotFoundException)
+            {
+                core.Display.ShowMessage("Error", "Could not delete the link.");
+                return;
             }
         }
     }

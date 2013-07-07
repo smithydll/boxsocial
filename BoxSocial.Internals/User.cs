@@ -2113,6 +2113,11 @@ namespace BoxSocial.Internals
 
             page.CanonicalUri = page.User.ProfileUri;
 
+            if (core.LoggedInMemberId == page.User.Id)
+            {
+                core.Template.Parse("OWNER", "TRUE");
+            }
+
             string age;
             int ageInt = page.User.Profile.Age;
             if (ageInt == 0)
@@ -2206,17 +2211,72 @@ namespace BoxSocial.Internals
 
             List<UserLink> links = page.User.GetLinks();
 
-            foreach (UserLink link in links)
+            if (links.Count > 0)
             {
-                VariableCollection linkVariableCollection = core.Template.CreateChild("link_list");
-
-                linkVariableCollection.Parse("U_LINK", link.Uri);
-                linkVariableCollection.Parse("TITLE", link.Title);
-
-                if (!string.IsNullOrEmpty(link.Favicon))
+                int linkCount = 0;
+                foreach (UserLink link in links)
                 {
-                    BoxSocial.Forms.Image faviconImage = new BoxSocial.Forms.Image("favicon-" + link.Id, core.Hyperlink.AppendAbsoluteSid("/images/favicons/" + link.Favicon));
-                    linkVariableCollection.Parse("S_FAVICON", faviconImage);
+                    VariableCollection linkVariableCollection = core.Template.CreateChild("link_list");
+
+                    linkVariableCollection.Parse("U_LINK", link.Uri);
+                    linkVariableCollection.Parse("TITLE", link.Title);
+
+                    if (!string.IsNullOrEmpty(link.Favicon))
+                    {
+                        BoxSocial.Forms.Image faviconImage = new BoxSocial.Forms.Image("favicon-" + link.Id, core.Hyperlink.AppendAbsoluteSid("/images/favicons/" + link.Favicon));
+                        linkVariableCollection.Parse("S_FAVICON", faviconImage);
+                    }
+                    linkCount++;
+                    if (linkCount == 6) break;
+                }
+            }
+
+            List<UserEmail> emails = page.User.GetEmailAddresses();
+
+            if (emails.Count > 0)
+            {
+                List<IPermissibleItem> emailsCache = new List<IPermissibleItem>();
+
+                foreach (UserEmail email in emails)
+                {
+                    emailsCache.Add((IPermissibleItem)email);
+                }
+
+                core.AcessControlCache.CacheGrants(emailsCache);
+
+                foreach (UserEmail email in emails)
+                {
+                    if (email.Access.Can("VIEW"))
+                    {
+                        VariableCollection emailVariableCollection = core.Template.CreateChild("email_list");
+
+                        emailVariableCollection.Parse("U_MAILTO", "mailto:" + email.Email);
+                        emailVariableCollection.Parse("EMAIL", email.Email);
+                    }
+                }
+            }
+
+            List<UserPhoneNumber> phoneNumbers = page.User.GetPhoneNumbers();
+
+            if (phoneNumbers.Count > 0)
+            {
+                List<IPermissibleItem> phoneCache = new List<IPermissibleItem>();
+
+                foreach (UserPhoneNumber phone in phoneNumbers)
+                {
+                    phoneCache.Add((IPermissibleItem)phone);
+                }
+
+                core.AcessControlCache.CacheGrants(phoneCache);
+
+                foreach (UserPhoneNumber phone in phoneNumbers)
+                {
+                    if (phone.Access.Can("VIEW"))
+                    {
+                        VariableCollection phoneVariableCollection = core.Template.CreateChild("phone_list");
+
+                        phoneVariableCollection.Parse("PHONE_NUMBER", phone.PhoneNumber);
+                    }
                 }
             }
 
@@ -2753,6 +2813,16 @@ namespace BoxSocial.Internals
         public UserLink convertToUserLink(Item input)
         {
             return (UserLink)input;
+        }
+
+        public List<UserPhoneNumber> GetPhoneNumbers()
+        {
+            return getSubItems(typeof(UserPhoneNumber)).ConvertAll<UserPhoneNumber>(new Converter<Item, UserPhoneNumber>(convertToUserPhoneNumber));
+        }
+
+        public UserPhoneNumber convertToUserPhoneNumber(Item input)
+        {
+            return (UserPhoneNumber)input;
         }
     }
 

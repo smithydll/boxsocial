@@ -50,6 +50,7 @@
 			<h3>Contact {USER_DISPLAY_NAME}</h3>
 			<dl>
 				<!-- IF LOGGED_IN -->
+                <!-- IF NOT OWNER -->
 				<!--dt><a href=""></a></dt>
 				<dd>Send Message</dd>
 				<dt><a href=""></a></dt>
@@ -60,10 +61,19 @@
 				<dd>Leave a Message</dd-->
 				<dt><a href="{U_BLOCK_USER}" id="u-block-user"></a></dt>
 				<dd><a href="{U_BLOCK_USER}">Block User</a></dd>
+                <!-- ENDIF -->
 				<!-- ELSE -->
-				<dt><a href="/register"></a></dt>
+				<dt><a href="{U_REGISTER}"></a></dt>
 				<dd>Register to Contact</dd>
 				<!-- ENDIF -->
+                <!-- BEGIN email_list -->
+                <dt>Email</dt>
+				<dd><a href="{email_list.U_MAILTO}">{email_list.EMAIL}</a></dd>
+                <!-- END email_list -->
+                <!-- BEGIN phone_list -->
+                <dt>Phone</dt>
+				<dd>{phone_list.PHONE_NUMBER}</dd>
+                <!-- END phone_list -->
 			</dl>
 		</div>
 		<!-- IF HAS_PROFILE_INFO -->

@@ -113,7 +113,7 @@ namespace BoxSocial.Internals
                     fb.Host = "tumblr.com";
                 }
 
-                WebClient wc = new WebClient();
+                WebDownload wc = new WebDownload(2000);
 
                 try
                 {

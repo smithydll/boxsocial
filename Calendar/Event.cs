@@ -610,7 +610,15 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
-                calendarEvent = new Event(e.Core, e.ItemId);
+                try
+                {
+                    calendarEvent = new Event(e.Core, e.ItemId);
+                }
+                catch (InvalidEventException)
+                {
+                    e.Core.Functions.Generate404();
+                    return;
+                }
             }
 
             if (e.Core.LoggedInMemberId == e.Page.Owner.Id && e.Page.Owner.GetType() == typeof(User))

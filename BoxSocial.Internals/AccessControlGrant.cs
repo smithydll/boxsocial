@@ -239,6 +239,11 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            if (items.Count == 0)
+            {
+                return new List<AccessControlGrant>();
+            }
+
             Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>(items.Count);
 
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));

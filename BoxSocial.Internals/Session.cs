@@ -717,6 +717,13 @@ namespace BoxSocial.Internals
                     sessionId = (string)Request.QueryString["sid"];
                 }
                 sessionMethod = SessionMethods.Get;
+
+                if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
+                {
+                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    //return;
+                }
             }
 
             if (!string.IsNullOrEmpty(sessionId))

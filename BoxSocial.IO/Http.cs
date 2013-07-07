@@ -243,5 +243,10 @@ namespace BoxSocial.IO
         {
             current.Response.Redirect(location);
         }
+
+        public string MapPath(string path)
+        {
+            return current.Server.MapPath(path);
+        }
     }
 }

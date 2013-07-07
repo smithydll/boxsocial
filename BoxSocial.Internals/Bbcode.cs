@@ -590,7 +590,7 @@ namespace BoxSocial.Internals
         {
             //MatchCollection matches = 
 
-            input = Regex.Replace(input, "(?:^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", "[url]$1[/url]", RegexOptions.IgnoreCase);
+            input = Regex.Replace(input, "(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", "$1[url]$2[/url]", RegexOptions.IgnoreCase);
 
             /*int offset = 0;
             foreach (Match match in matches)

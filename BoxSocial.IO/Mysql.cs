@@ -247,7 +247,7 @@ namespace BoxSocial.IO
                 }
                 else
                 {
-                    throw new System.Exception(sqlquery + "\n\n" + ex.ToString());
+                    throw new System.Exception(sqlquery + "\n\n" + QueryList.Pop() + "\n\n" + QueryList.Pop() + "\n\n" + QueryList.Pop() + "\n\n" + ex.ToString());
                 }
             }
 

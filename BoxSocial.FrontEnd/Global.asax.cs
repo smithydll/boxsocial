@@ -247,6 +247,10 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                             patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
+                            patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
+                            patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
+                            patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });
+
                             patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                             patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                         }

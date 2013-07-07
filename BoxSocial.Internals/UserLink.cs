@@ -102,7 +102,7 @@ namespace BoxSocial.Internals
                 favicon = "tumblr.com.png";
             }
 
-            string localFaviconPath = Path.Combine("/var/www/images/favicons/", favicon);
+            string localFaviconPath = Path.Combine(core.Http.MapPath("."), "images", "favicons", favicon);
             if (!File.Exists(localFaviconPath))
             {
                 UriBuilder fb = new UriBuilder(uri);

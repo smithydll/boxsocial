@@ -47,7 +47,7 @@ namespace BoxSocial.FrontEnd
                 isAjax = true;
             }
 
-            string type = core.Http.Query["subscribe"];
+            string mode = core.Http.Query["mode"];
             long itemId = core.Functions.RequestLong("item", 0);
             long itemTypeId = core.Functions.RequestLong("type", 0);
 			ItemKey itemKey = null;
@@ -98,7 +98,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                switch (type)
+                switch (mode)
                 {
                     case "subscribe":
                         Subscription.SubscribeToItem(core, itemKey);
@@ -126,46 +126,6 @@ namespace BoxSocial.FrontEnd
             {
                 core.Ajax.ShowMessage(isAjax, "alreadySubscribed", "Already Subscribed", "You have already subscribe to this item, you cannot subscribe to it again");
             }
-
-            //else
-            //{
-            //    /* TODO permissions */
-            //    /* after 7 days release the IP for dynamics ip fairness */
-            //    DataTable ratingsTable = db.Query(string.Format("SELECT user_id FROM ratings WHERE rate_item_id = {0} AND rate_item_type = '{1}' AND (user_id = {2} OR (rate_ip = '{3}' AND rate_time_ut > UNIX_TIMESTAMP() - (60 * 60 * 24 * 7)))",
-            //        itemId, Mysql.Escape(itemType), loggedInMember.UserId, session.IPAddress.ToString()));
-
-            //    if (ratingsTable.Rows.Count > 0)
-            //    {
-            //        //Response.Write("alreadyVoted");
-            //        Ajax.ShowMessage(true, "alreadyVoted", "Already Voted", "You have already rated this item, you cannot rate it again");
-            //        return;
-            //    }
-            //    else
-            //    {
-            //        /* Register a vote */
-            //        /* start transaction */
-            //        InsertQuery iQuery = new InsertQuery("ratings");
-            //        iQuery.AddField("rate_item_id", itemId);
-            //        iQuery.AddField("rate_item_type", itemType);
-            //        iQuery.AddField("user_id", loggedInMember.UserId);
-            //        iQuery.AddField("rate_time_ut", UnixTime.UnixTimeStamp());
-            //        iQuery.AddField("rate_rating", rating);
-            //        iQuery.AddField("rate_ip", session.IPAddress.ToString());
-
-            //        db.UpdateQuery(iQuery, true);
-
-            //        switch (itemType)
-            //        {
-            //            case "PHOTO":
-            //                db.UpdateQuery(string.Format("UPDATE gallery_items SET gallery_item_rating = (gallery_item_rating * gallery_item_ratings + {0}) / (gallery_item_ratings + 1), gallery_item_ratings = gallery_item_ratings + 1 WHERE gallery_item_id = {1}",
-            //                    rating, itemId), false);
-            //                break;
-            //        }
-
-            //        Ajax.SendStatus("voteAccepted");
-            //        return;
-            //    }
-            //}
         }
     }
 }

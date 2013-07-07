@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
     [Permission("VIEW_FAMILY", "Can see your family", PermissionTypes.View)]
     [Permission("VIEW_COLLEAGUES", "Can see your colleagues", PermissionTypes.View)]
     [PermissionGroup]
-    public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem
+    public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem, ISubscribeableItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
@@ -2823,6 +2823,14 @@ namespace BoxSocial.Internals
         public UserPhoneNumber convertToUserPhoneNumber(Item input)
         {
             return (UserPhoneNumber)input;
+        }
+
+        public long Subscribers
+        {
+            get
+            {
+                return Info.Subscribers;
+            }
         }
     }
 

@@ -48,8 +48,8 @@ namespace BoxSocial.Internals
         private long ratings;
         [DataField("info_rating")]
         private float rating;
-        [DataField("info_subscriptions")]
-        private long subscriptions;
+        [DataField("info_subscribers")]
+        private long subscribers;
         [DataField("info_tags")]
         private long tags;
         [DataField("info_shared_times")]
@@ -293,15 +293,15 @@ namespace BoxSocial.Internals
             }
         }
 
-        public long Subscriptions
+        public long Subscribers
         {
             get
             {
-                return subscriptions;
+                return subscribers;
             }
             internal set
             {
-                SetPropertyByRef(new { subscriptions }, value);
+                SetPropertyByRef(new { subscriptions = subscribers }, value);
             }
         }
 
@@ -409,22 +409,22 @@ namespace BoxSocial.Internals
             core.Db.Query(uQuery);
         }
 
-        internal void IncrementSubscriptions()
+        internal void IncrementSubscribers()
         {
-            AdjustSubscriptions(1);
+            AdjustSubscribers(1);
         }
 
-        internal void DecrementSubscriptions()
+        internal void DecrementSubscribers()
         {
-            AdjustSubscriptions(-1);
+            AdjustSubscribers(-1);
         }
 
-        internal void AdjustSubscriptions(int by)
+        internal void AdjustSubscribers(int by)
         {
             UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
             uQuery.AddCondition("info_item_id", itemKey.Id);
             uQuery.AddCondition("info_item_type_id", itemKey.TypeId);
-            uQuery.AddField("info_subscriptions", new QueryOperation("info_subscriptions", QueryOperations.Addition, by));
+            uQuery.AddField("info_subscribers", new QueryOperation("info_subscribers", QueryOperations.Addition, by));
 
             core.Db.Query(uQuery);
         }

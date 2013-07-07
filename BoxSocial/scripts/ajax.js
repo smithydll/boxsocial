@@ -175,6 +175,16 @@ function SubmitedComment(r, e) {
     e.find(".comment-count").text(parseInt(e.find(".comment-count").text()[0]) + 1);
 }
 
+function SubscribeItem(id, type, unsubscribe) {
+    var mode = 'subscribe';
+    if (unsubscribe) mode = 'unsubscribe';
+    return PostToPage(SubmitedComment, "api/subscribe", null, { ajax: "true", item: id, type: type, mode: mode }, { item: itemId, type: itemType });
+}
+
+function SubscribedItem(r, e, a) {
+    $(".subscribe-" + a['type'] + ',' + a['item']).addClass("unsubscribe-button").removeClass("subscribe-button");
+}
+
 function SubmitListItem(id) {
 	var text = $("#text").val();
 	return PostToAccount(SubmitedListItem, "pages", "lists", id, { mode: "append", save: "Add", text: text } );

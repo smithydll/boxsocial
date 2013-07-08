@@ -1825,7 +1825,7 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_display/";
+                                e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_display/" + e.Contents + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "/images/_full/";
                                 e.SuffixText = "\" />";
                             }
                         }
@@ -1869,7 +1869,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "images/_tile/";
+                            e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "images/_tile/" + e.Contents + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Owner.UriStubAbsolute) + "images/_square/";
                             e.SuffixText = "\" />";
                         }
                     }

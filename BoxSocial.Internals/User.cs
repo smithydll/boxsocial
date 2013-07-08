@@ -321,6 +321,23 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string UserMobile
+        {
+            get
+            {
+                if (UserInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_mobile/_{1}.png",
+                        UriStub, UserName);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_mobile/{0}.png",
+                        userName));
+                }
+            }
+        }
+
         /// <summary>
         /// 50x50 display tile
         /// </summary>
@@ -356,6 +373,26 @@ namespace BoxSocial.Internals
                 else
                 {
                     return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_tile/{0}.png",
+                        userName));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 200x200 display tile
+        /// </summary>
+        public string UserSquare
+        {
+            get
+            {
+                if (UserInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_square/_{1}.png",
+                        UriStub, UserName);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/user/_square/{0}.png",
                         userName));
                 }
             }
@@ -2142,6 +2179,7 @@ namespace BoxSocial.Internals
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
             core.Template.Parse("USER_TINY", page.User.UserTiny);
             core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
+            core.Template.Parse("USER_MOBILE", page.User.UserMobile);
             core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
             core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
 
@@ -2191,6 +2229,7 @@ namespace BoxSocial.Internals
                     friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                     friendVariableCollection.Parse("ICON", friend.UserIcon);
                     friendVariableCollection.Parse("TILE", friend.UserTile);
+                    friendVariableCollection.Parse("SQUARE", friend.UserSquare);
                 }
             }
 

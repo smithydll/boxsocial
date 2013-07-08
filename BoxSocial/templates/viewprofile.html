@@ -8,7 +8,7 @@
 	<div id="overview-profile" class="pane">
 		<div class="img-wb img-fl">
 			<!-- IF $_IS_DESKTOP AND USER_THUMB -->
-			<img src="{USER_THUMB}" alt="{USER_DISPLAY_NAME} Display Picture" />
+			<img src="{USER_THUMB}" data-at2x="{USER_MOBILE}" alt="{USER_DISPLAY_NAME} Display Picture" />
 			<!-- ELSE -->
 			<div class="no-disp-pic">No Picture</div>
             <!-- ENDIF -->
@@ -130,7 +130,7 @@
 			<dl>
 				<dt><span class="img-wb"><a href="{friend_list.U_PROFILE}">
 				<!-- IF friend_list.TILE -->
-				<img src="{friend_list.TILE}" alt="{friend_list.USER_DISPLAY_NAME}" />
+				<img src="{friend_list.TILE}" data-at2x="{friend_list.SQUARE}" alt="{friend_list.USER_DISPLAY_NAME}" />
 				<!-- ELSE -->
 				<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
 				<!-- ENDIF -->

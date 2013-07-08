@@ -46,6 +46,8 @@ namespace BoxSocial.Internals
         [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_string", DataFieldKeys.Index, 32)]
         private string sessionString;
+        [DataField("session_root_string", DataFieldKeys.Index, 32)]
+        private string sessionRootString;
         [DataField("session_start_ut")]
         private long sessionStartRaw;
         [DataField("session_time_ut")]
@@ -55,6 +57,8 @@ namespace BoxSocial.Internals
         [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_ip", IP)]
         private string sessionIp;
+        [DataField("session_domain", 63)]
+        private string sessionDomain;
 
         private User user;
 
@@ -356,8 +360,19 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
+            string rootSessionId = string.Empty;
+            if (record != null)
+            {
+                rootSessionId = core.Session.SessionId;
+            }
+
             sessionData = null;
             sessionId = null;
+            string currentDomain = core.Hyperlink.CurrentDomain;
+            if (record != null)
+            {
+                currentDomain = record.Domain;
+            }
 
             if (record == null)
             {
@@ -458,15 +473,19 @@ namespace BoxSocial.Internals
 							Response.Cookies.Clear();
 							
                             HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");
+                            sessionDataCookie.Path = "/";
                             sessionDataCookie.Value = "";
                             sessionDataCookie.Expires = DateTime.MinValue;
                             sessionDataCookie.Secure = false; // TODO: secure cookies
+                            sessionDataCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionDataCookie);
 
                             HttpCookie sessionSidCookie = new HttpCookie(cookieName + "_sid");
+                            sessionSidCookie.Path = "/";
                             sessionSidCookie.Value = "";
                             sessionSidCookie.Expires = DateTime.MinValue;
                             sessionSidCookie.Secure = false; // TODO: secure cookies
+                            sessionSidCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionSidCookie);
                         }
 
@@ -574,8 +593,12 @@ namespace BoxSocial.Internals
                 string rand = HexRNG(randomNumber);
                 sessionId = SessionState.SessionMd5(rand + "bsseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
 
-                db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3})",
-                    sessionId, isLoggedIn, ipAddress.ToString(), userId));
+                if (record == null)
+                {
+                    rootSessionId = sessionId;
+                }
+                db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}')",
+                    sessionId, isLoggedIn, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
             }
 
             if (record == null)
@@ -638,16 +661,22 @@ namespace BoxSocial.Internals
                 xs.Serialize(stw, sessionData);
                 stw.Flush();
                 stw.Close();
-				
+
+                //newSessionDataCookie.Domain = core.Hyperlink.CurrentDomain; // DO NOT DO THIS, exposes cookie to sub domains
+                newSessionDataCookie.Path = "/";
                 newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                 newSessionDataCookie.Secure = false; // TODO: secure cookies
+                newSessionDataCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionDataCookie);
 
                 HttpCookie newSessionSidCookie = new HttpCookie(cookieName + "_sid");
+                //newSessionSidCookie.Domain = core.Hyperlink.CurrentDomain; // DO NOT DO THIS, exposes cookie to sub domains
+                newSessionSidCookie.Path = "/";
                 newSessionSidCookie.Value = sessionId;
                 newSessionSidCookie.Expires = DateTime.MinValue;
                 newSessionSidCookie.Secure = false; // TODO: secure cookies
+                newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
             }
 
@@ -818,14 +847,18 @@ namespace BoxSocial.Internals
                         stw.Flush();
                         stw.Close();
                         newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
+                        newSessionDataCookie.Path = "/";
                         newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                         newSessionDataCookie.Secure = false; // TODO: secure cookies
+                        newSessionDataCookie.HttpOnly = true;
                         Response.Cookies.Add(newSessionDataCookie);
 
                         HttpCookie newSessionSidCookie = new HttpCookie(cookieName + "_sid");
+                        newSessionSidCookie.Path = "/";
                         newSessionSidCookie.Value = sessionId;
                         newSessionSidCookie.Expires = DateTime.MinValue;
                         newSessionSidCookie.Secure = false; // TODO: secure cookies
+                        newSessionSidCookie.HttpOnly = true;
                         Response.Cookies.Add(newSessionSidCookie);
 
                         // Add the session_key to the userdata array if it is set
@@ -849,8 +882,14 @@ namespace BoxSocial.Internals
             long userId = (sessionData != null && sessionData.userId > 0) ? sessionData.userId : 0;
 
 			// If the current domain is not the root domain, and the session is empty
-            if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
+            if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && userId > 0 /*&& string.IsNullOrEmpty(sessionId)*/)
             {
+                if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
+                {
+                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    //return;
+                }
             }
             else
             {
@@ -884,8 +923,36 @@ namespace BoxSocial.Internals
             //
             // Delete existing session
             //
-            db.UpdateQuery(string.Format("DELETE FROM user_sessions WHERE session_id = '{0}' AND user_id = {1}",
-                sessionId, userId));
+            if (record == null)
+            {
+                db.UpdateQuery(string.Format("DELETE FROM user_sessions WHERE (session_string = '{0}' OR session_root_string = '{0}') AND user_id = {1};",
+                    sessionId, userId));
+            }
+            else
+            {
+                SelectQuery query = new SelectQuery(typeof(Session));
+                query.AddCondition("session_string", sessionId);
+                query.AddCondition("user_id", userId);
+                query.AddCondition("session_domain", record.Domain);
+
+                DataTable sessionDataTable = db.Query(query);
+
+                List<string> rootSessionIds = new List<string>();
+                foreach (DataRow dr in sessionDataTable.Rows)
+                {
+                    rootSessionIds.Add((string)dr["session_root_string"]);
+                }
+
+                if (rootSessionIds.Count > 0)
+                {
+                    DeleteQuery dQuery = new DeleteQuery(typeof(Session));
+                    QueryCondition qc1 = dQuery.AddCondition("session_string", ConditionEquality.In, rootSessionIds);
+                    qc1.AddCondition(ConditionRelations.Or, "session_root_string", ConditionEquality.In, rootSessionIds);
+                    dQuery.AddCondition("user_id", userId);
+
+                    db.Query(dQuery);
+                }
+            }
 
             //
             // Remove this auto-login entry (if applicable)
@@ -912,15 +979,19 @@ namespace BoxSocial.Internals
                     loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
                 }
                 HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
+                newSessionDataCookie.Path = "/";
                 newSessionDataCookie.Value = "";
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(-1);
                 newSessionDataCookie.Secure = false; // TODO: secure cookies
+                newSessionDataCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionDataCookie);
 
                 HttpCookie newSessionSidCookie = new HttpCookie(cookieName + "_sid");
+                newSessionSidCookie.Path = "/";
                 newSessionSidCookie.Value = "";
                 newSessionSidCookie.Expires = DateTime.Now.AddYears(-1);
                 newSessionSidCookie.Secure = false; // TODO: secure cookies
+                newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
             }
 

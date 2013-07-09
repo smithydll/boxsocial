@@ -2334,7 +2334,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
 
-                    returnValue += string.Format("[iurl=\"{0}#hd\"][inline]{1}[/inline][/iurl]",
+                    returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"" + item.StoragePath + "\"]{1}[/inline][/iurl]",
                             item.Uri, item.FullPath);
                 }
                 else
@@ -2343,7 +2343,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         GalleryItem item = new GalleryItem(core, Owner, row);
 
-                        returnValue += string.Format("[iurl=\"{0}#hd\"][thumb]{1}[/thumb][/iurl]",
+                        returnValue += string.Format("[iurl=\"{0}#hd\"][thumb cdn-object=\"" + item.StoragePath + "\"]{1}[/thumb][/iurl]",
                                 item.Uri, item.FullPath);
                     }
                 }

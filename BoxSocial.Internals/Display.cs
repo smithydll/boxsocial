@@ -891,6 +891,11 @@ namespace BoxSocial.Internals
             template.Parse("HEAD_COLOUR", "ffffff");
             template.Parse("HEAD_FORE_COLOUR", "black");
 
+            if (core.Settings.UseCdn && !string.IsNullOrEmpty(page.Core.Settings.CdnStaticBucketDomain))
+            {
+                template.Parse("U_STATIC", "http://" + page.Core.Settings.CdnStaticBucketDomain.TrimEnd(new char[] { '/' }));
+            }
+
             /*
              * URIs
              */

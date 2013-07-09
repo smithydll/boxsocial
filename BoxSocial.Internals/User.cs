@@ -2044,7 +2044,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain))
+                if (string.IsNullOrEmpty(domain) || core.IsMobile)
                 {
                     if (core.Http.Domain != Hyperlink.Domain)
                     {
@@ -2075,7 +2075,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain))
+                if (string.IsNullOrEmpty(domain) || core.IsMobile)
                 {
                     return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }

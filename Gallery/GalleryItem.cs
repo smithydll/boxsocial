@@ -1490,6 +1490,7 @@ namespace BoxSocial.Applications.Gallery
         public static void ShowImage(object sender, ShowPPageEventArgs e)
         {
             string photoName = e.Slug;
+            string cdnDomain = e.Core.Settings.CdnStorageBucketDomain;
 
             // Square
             bool iconRequest = false; // 50
@@ -1761,39 +1762,51 @@ namespace BoxSocial.Applications.Gallery
                     {
                         case PictureScale.Icon:
                             scaleExists = galleryItem.IconExists;
+                            cdnDomain = e.Core.Settings.CdnIconBucketDomain;
                             break;
                         case PictureScale.Tile:
                             scaleExists = galleryItem.TileExists;
+                            cdnDomain = e.Core.Settings.CdnTileBucketDomain;
                             break;
                         case PictureScale.Square:
                             scaleExists = galleryItem.SquareExists;
+                            cdnDomain = e.Core.Settings.CdnSquareBucketDomain;
                             break;
                         case PictureScale.High:
                             scaleExists = galleryItem.HighExists;
+                            cdnDomain = e.Core.Settings.CdnHighBucketDomain;
                             break;
                         case PictureScale.Tiny:
                             scaleExists = galleryItem.TinyExists;
+                            cdnDomain = e.Core.Settings.CdnTinyBucketDomain;
                             break;
                         case PictureScale.Thumbnail:
                             scaleExists = galleryItem.ThumbnailExists;
+                            cdnDomain = e.Core.Settings.CdnThumbBucketDomain;
                             break;
                         case PictureScale.Mobile:
                             scaleExists = galleryItem.MobileExists;
+                            cdnDomain = e.Core.Settings.CdnMobileBucketDomain;
                             break;
                         case PictureScale.Display:
                             scaleExists = galleryItem.DisplayExists;
+                            cdnDomain = e.Core.Settings.CdnDisplayBucketDomain;
                             break;
                         case PictureScale.Full:
                             scaleExists = galleryItem.FullExists;
+                            cdnDomain = e.Core.Settings.CdnFullBucketDomain;
                             break;
                         case PictureScale.Ultra:
                             scaleExists = galleryItem.UltraExists;
+                            cdnDomain = e.Core.Settings.CdnUltraBucketDomain;
                             break;
                         case PictureScale.Cover:
                             scaleExists = galleryItem.CoverExists;
+                            cdnDomain = e.Core.Settings.CdnCoverBucketDomain;
                             break;
                         case PictureScale.MobileCover:
                             scaleExists = galleryItem.MobileCoverExists;
+                            cdnDomain = e.Core.Settings.CdnMobileCoverBucketDomain;
                             break;
                     }
 
@@ -1873,8 +1886,16 @@ namespace BoxSocial.Applications.Gallery
 
                     if (e.Core.Storage.IsCloudStorage)
                     {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
+                        if (e.Core.Settings.UseCdn)
+                        {
+                            string imageUri = "http://" + cdnDomain + "/" + galleryItem.StoragePath;
+                            e.Core.Http.Redirect(imageUri);
+                        }
+                        else
+                        {
+                            string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
+                            e.Core.Http.Redirect(imageUri);
+                        }
                     }
                     else
                     {
@@ -1900,8 +1921,16 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (e.Core.Storage.IsCloudStorage)
                     {
-                        string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_storage"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                        e.Core.Http.Redirect(imageUri);
+                        /*if (e.Core.Settings.UseCdn)
+                        {
+                            string imageUri = "http://" + e.Core.Settings.CdnStorageBucketDomain + "/" + galleryItem.StoragePath;
+                            e.Core.Http.Redirect(imageUri);
+                        }
+                        else
+                        {*/
+                            string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, "_storage"), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
+                            e.Core.Http.Redirect(imageUri);
+                        //}
                     }
                     else
                     {

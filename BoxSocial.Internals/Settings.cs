@@ -94,6 +94,126 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool UseCdn
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-enabled"] == "true";
+            }
+        }
+
+        public string CdnStorageBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-storage"];
+            }
+        }
+
+        public string CdnIconBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-icon"];
+            }
+        }
+
+        public string CdnTileBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-tile"];
+            }
+        }
+
+        public string CdnSquareBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-square"];
+            }
+        }
+
+        public string CdnHighBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-high"];
+            }
+        }
+
+        public string CdnTinyBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-tiny"];
+            }
+        }
+
+        public string CdnThumbBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-thumb"];
+            }
+        }
+
+        public string CdnMobileBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-mobile"];
+            }
+        }
+
+        public string CdnDisplayBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-display"];
+            }
+        }
+
+        public string CdnFullBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-full"];
+            }
+        }
+
+        public string CdnUltraBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-ultra"];
+            }
+        }
+
+        public string CdnCoverBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-cover"];
+            }
+        }
+
+        public string CdnMobileCoverBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-mobile-cover"];
+            }
+        }
+
+        public string CdnStaticBucketDomain
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["cdn-domain-static"];
+            }
+        }
+
         public Settings(Core core)
         {
             this.core = core;

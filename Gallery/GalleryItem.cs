@@ -1726,18 +1726,22 @@ namespace BoxSocial.Applications.Gallery
                     gallery = new Gallery(e.Core, e.Page.Owner);
                 }
 
-                if (!gallery.Access.Can("VIEW_ITEMS"))
+                // Do not bother with extra queries when it's a public CDN request
+                if ((!e.Core.Settings.UseCdn) || originalRequest)
                 {
-                    e.Core.Functions.Generate403();
-                    return;
-                }
-
-                if (originalRequest)
-                {
-                    if (!gallery.Access.Can("DOWNLOAD_ORIGINAL"))
+                    if (!gallery.Access.Can("VIEW_ITEMS"))
                     {
                         e.Core.Functions.Generate403();
                         return;
+                    }
+
+                    if (originalRequest)
+                    {
+                        if (!gallery.Access.Can("DOWNLOAD_ORIGINAL"))
+                        {
+                            e.Core.Functions.Generate403();
+                            return;
+                        }
                     }
                 }
 

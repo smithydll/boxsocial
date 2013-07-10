@@ -74,6 +74,8 @@ namespace BoxSocial.FrontEnd
 
             string query = Request["q"];
 
+            template.Parse("SEARCH_QUERY", query);
+
             SearchResult results = core.Search.DoSearch(query, TopLevelPageNumber, null, null);
 
             int resultsRemoved = 0;

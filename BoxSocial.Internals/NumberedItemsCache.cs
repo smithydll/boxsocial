@@ -313,5 +313,20 @@ namespace BoxSocial.Internals
                 loadItems(typeId, batchedItemIds);
             }
         }
+
+        public void ExecuteQueue()
+        {
+            int count = 0; // it is advisable to avoid an infinite loop, and to avoid more than 100 items on a page
+            while (batchedItemIds.Count > 0 && count < 100)
+            {
+                loadBatchedIds(batchedItemIds[0].TypeId, batchedItemIds[0].Id);
+                count++;
+            }
+        }
+
+        public void FlushQueue()
+        {
+            batchedItemIds.Clear();
+        }
     }
 }

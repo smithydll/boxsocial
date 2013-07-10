@@ -249,6 +249,7 @@ namespace BoxSocial.Internals
                 }
                 
                 itemKeys.Add(key);
+                //HttpContext.Current.Response.Write("item_id: " + itemId + ", item_type_id:" + itemTypeId + "<br />\n");
             }
 
             // Force each application with results to load
@@ -269,6 +270,7 @@ namespace BoxSocial.Internals
                 core.ItemCache.RequestItem(key);
             }
 
+            core.ItemCache.ExecuteQueue();
             foreach (ItemKey key in itemKeys)
             {
                 try

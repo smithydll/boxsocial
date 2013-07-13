@@ -687,7 +687,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool HasInstalled(Primitive viewer)
+        public bool HasInstalled(Core core, Primitive viewer)
         {
             if (viewer != null)
             {
@@ -696,7 +696,7 @@ namespace BoxSocial.Internals
                 query.AddCondition("item_id", viewer.Id);
                 query.AddCondition("item_type_id", viewer.TypeId);
 
-                DataTable viewerTable = db.Query(query);
+                DataTable viewerTable = core.Db.Query(query);
 
                 if (viewerTable.Rows.Count > 0)
                 {
@@ -731,7 +731,7 @@ namespace BoxSocial.Internals
                 return false;
             }
 
-            if (!HasInstalled(owner))
+            if (!HasInstalled(core, owner))
             {
                 Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
 
@@ -779,7 +779,7 @@ namespace BoxSocial.Internals
                 iQuery.AddField("app_email_notifications", true);
                 // TODO: ACLs
 
-                if (db.Query(iQuery) > 0)
+                if (core.Db.Query(iQuery) > 0)
                 {
                     return true;
                 }
@@ -795,9 +795,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            this.db = core.Db;
-
-            if (!HasInstalled(viewer))
+            if (!HasInstalled(core, viewer))
             {
                 Install(core, viewer);
             }
@@ -817,7 +815,7 @@ namespace BoxSocial.Internals
                     query.AddCondition("page_slug", slug);
                     query.AddCondition("page_parent_path", string.Empty);
 
-                    if (db.Query(query).Rows.Count == 0)
+                    if (core.Db.Query(query).Rows.Count == 0)
                     {
                         string tSlug = slug;
                         Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
@@ -887,7 +885,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (HasInstalled(viewer))
+            if (HasInstalled(core, viewer))
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
@@ -904,7 +902,7 @@ namespace BoxSocial.Internals
                 dQuery.AddCondition("item_id", viewer.Id);
                 dQuery.AddCondition("item_type_id", viewer.TypeId);
 
-                if (db.Query(dQuery) > 0)
+                if (core.Db.Query(dQuery) > 0)
                 {
                     return true;
                 }
@@ -932,9 +930,9 @@ namespace BoxSocial.Internals
             return output;
         }
 
-        public void SendNotification(User receiver, string subject, string body, Template emailBody)
+        public void SendNotification(Core core, User receiver, string subject, string body, Template emailBody)
         {
-            if (canNotify(receiver))
+            if (canNotify(core, receiver))
             {
                 Notification.Create(core, this, receiver, subject, body);
 
@@ -945,9 +943,9 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void SendNotification(User receiver, string subject, string body)
+        public void SendNotification(Core core, User receiver, string subject, string body)
         {
-            if (canNotify(receiver))
+            if (canNotify(core, receiver))
             {
                 Notification.Create(core, this, receiver, subject, body);
 
@@ -965,7 +963,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        private bool canNotify(User owner)
+        private bool canNotify(Core core, User owner)
         {
             SelectQuery query = new SelectQuery("notifications");
             query.AddField(new QueryFunction("notification_id", QueryFunctions.Count, "twentyfour")); //"COUNT(notification_id) as twentyfour");
@@ -976,7 +974,7 @@ namespace BoxSocial.Internals
 
             // maximum ten per application per day
             // TODO: change this
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 20)
+            if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 20)
             {
                 PrimitiveApplicationInfo ownerInfo = new PrimitiveApplicationInfo(core, owner, Id);
                 return ownerInfo.EmailNotifications;
@@ -984,24 +982,24 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public void PublishToFeed(User owner, IActionableItem item)
+        public void PublishToFeed(Core core, User owner, IActionableItem item)
         {
-            PublishToFeed(owner, item, new List<ItemKey>());
+            PublishToFeed(core, owner, item, new List<ItemKey>());
         }
 
-        public void PublishToFeed(User owner, IActionableItem item, ItemKey subItem)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, ItemKey subItem)
         {
             if (subItem != null)
             {
-                PublishToFeed(owner, item, new List<ItemKey> { subItem });
+                PublishToFeed(core, owner, item, new List<ItemKey> { subItem });
             }
             else
             {
-                PublishToFeed(owner, item, new List<ItemKey>());
+                PublishToFeed(core, owner, item, new List<ItemKey>());
             }
         }
 
-        public void PublishToFeed(User owner, IActionableItem item, List<ItemKey> subItems)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, List<ItemKey> subItems)
         {
             ItemKey itemKey = item.ItemKey;
 
@@ -1013,19 +1011,19 @@ namespace BoxSocial.Internals
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
             // maximum 48 per application per day
-            if ((long)db.Query(query).Rows[0]["twentyfour"] < 48)
+            if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
 
-                query = new SelectQuery(typeof(Action));
-                query.AddCondition("action_primitive_id", owner.ItemKey.Id);
-                query.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
-                query.AddCondition("action_item_id", itemKey.Id);
-                query.AddCondition("action_item_type_id", itemKey.TypeId);
-                query.AddCondition("action_application", applicationId);
-                query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
-                query.AddSort(SortOrder.Descending, "action_time_ut");
+                SelectQuery query2 = Action.GetSelectQueryStub(typeof(Action));
+                query2.AddCondition("action_primitive_id", owner.ItemKey.Id);
+                query2.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
+                query2.AddCondition("action_item_id", itemKey.Id);
+                query2.AddCondition("action_item_type_id", itemKey.TypeId);
+                query2.AddCondition("action_application", applicationId);
+                query2.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
+                query2.AddSort(SortOrder.Descending, "action_time_ut");
 
-                DataTable actionDataTable = db.Query(query);
+                DataTable actionDataTable = core.Db.Query(query2);
 
                 if (actionDataTable.Rows.Count > 0)
                 {
@@ -1033,11 +1031,11 @@ namespace BoxSocial.Internals
                     
                     Action action = new Action(core, owner, actionDataTable.Rows[0]);
 
-                    query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
-                    query.AddCondition("action_id", action.Id);
-                    query.LimitCount = 3;
+                    SelectQuery query3 = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+                    query3.AddCondition("action_id", action.Id);
+                    query3.LimitCount = 3;
 
-                    DataTable actionItemDataTable = db.Query(query);
+                    DataTable actionItemDataTable = core.Db.Query(query3);
 
                     if (actionItemDataTable.Rows.Count < 3)
                     {
@@ -1079,7 +1077,7 @@ namespace BoxSocial.Internals
 
                         uquery.AddCondition("action_id", action.Id);
 
-                        db.Query(uquery);
+                        core.Db.Query(uquery);
 
                         if (subItems != null)
                         {
@@ -1090,7 +1088,7 @@ namespace BoxSocial.Internals
                                 iquery.AddField("item_id", subItem.Id);
                                 iquery.AddField("item_type_id", subItem.TypeId);
 
-                                db.Query(iquery);
+                                core.Db.Query(iquery);
                             }
                         }
                     }
@@ -1127,7 +1125,7 @@ namespace BoxSocial.Internals
                         iquery.AddField("interact_item_type_id", itemKey.TypeId);
                     }
 
-                    long actionId = db.Query(iquery);
+                    long actionId = core.Db.Query(iquery);
 
                     if (subItems != null)
                     {
@@ -1138,7 +1136,7 @@ namespace BoxSocial.Internals
                             iquery.AddField("item_id", subItem.Id);
                             iquery.AddField("item_type_id", subItem.TypeId);
 
-                            db.Query(iquery);
+                            core.Db.Query(iquery);
                         }
                     }
                 }
@@ -1150,7 +1148,7 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="owner"></param>
         /// <returns></returns>
-        public Action GetMostRecentFeedAction(User owner)
+        public Action GetMostRecentFeedAction(Core core, User owner)
         {
             if (core == null)
             {
@@ -1164,7 +1162,7 @@ namespace BoxSocial.Internals
             query.AddCondition("action_primitive_type_id", owner.TypeId);
             query.LimitCount = 1;
 
-            DataTable feedTable = db.Query(query);
+            DataTable feedTable = core.Db.Query(query);
 
             if (feedTable.Rows.Count == 1)
             {
@@ -1199,7 +1197,7 @@ namespace BoxSocial.Internals
                     viewer = core.PrimitiveCache[id, typeId];
                 }
 
-                if (page.AnApplication.HasInstalled(viewer))
+                if (page.AnApplication.HasInstalled(core, viewer))
                 {
                     core.Template.Parse("U_UNINSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
                         page.AnApplication.ApplicationId, viewer.AccountUriStub), true));

@@ -21,11 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -105,10 +108,14 @@ namespace BoxSocial.Applications.Gallery
 
                 CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
                 publishToFeedCheckBox.IsChecked = true;
+
+                CheckBox highQualityCheckBox = new CheckBox("high-quality");
+                highQualityCheckBox.IsChecked = false;
                 
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
 
                 template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
+                template.Parse("S_HIGH_QUALITY", highQualityCheckBox);
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
                 core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
@@ -135,6 +142,7 @@ namespace BoxSocial.Applications.Gallery
             string title = core.Http.Form["title"];
             string description = core.Http.Form["description"];
             bool publishToFeed = (core.Http.Form["publish-feed"] != null);
+            bool highQualitySave = (core.Http.Form["high-quality"] != null);
 
             if (core.Http.Files["photo-file"] == null)
             {
@@ -146,6 +154,12 @@ namespace BoxSocial.Applications.Gallery
             {
                 Gallery parent = new Gallery(core, Owner, galleryId);
 
+                if (core.Http.Files["photo-file"] == null || core.Http.Files["photo-file"].ContentLength == 0)
+                {
+                    SetError("No file selected");
+                    return;
+                }
+
                 string slug = core.Http.Files["photo-file"].FileName;
 
                 try
@@ -153,79 +167,17 @@ namespace BoxSocial.Applications.Gallery
                     MemoryStream stream = new MemoryStream();
                     core.Http.Files["photo-file"].InputStream.CopyTo(stream);
 
-                    // start here for new storage framework
-                    //Owner.StoreFile(core.Http.Files["photo-file"].InputStream);
-
                     db.BeginTransaction();
 
-                    System.Drawing.Image image = System.Drawing.Image.FromStream(stream);
-                    int width = image.Width;
-                    int height = image.Height;
-
-                    RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
-                    foreach (PropertyItem p in image.PropertyItems)
-                    {
-                        if (p.Id == 274)
-                        {
-                            switch ((int)p.Value[0])
-                            {
-                                case 1:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                                case 2:
-                                    rotate = RotateFlipType.RotateNoneFlipX;
-                                    break;
-                                case 3:
-                                    rotate = RotateFlipType.Rotate180FlipNone;
-                                    break;
-                                case 4:
-                                    rotate = RotateFlipType.Rotate180FlipX;
-                                    break;
-                                case 5:
-                                    rotate = RotateFlipType.Rotate90FlipX;
-                                    break;
-                                case 6:
-                                    rotate = RotateFlipType.Rotate90FlipNone;
-                                    break;
-                                case 7:
-                                    rotate = RotateFlipType.Rotate270FlipX;
-                                    break;
-                                case 8:
-                                    rotate = RotateFlipType.Rotate270FlipNone;
-                                    break;
-                                default:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                            }
-                        }
-                    }
-
-                    if (rotate != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        image.RotateFlip(rotate);
-
-                        width = image.Width;
-                        height = image.Height;
-
-                        ImageFormat iF = ImageFormat.Jpeg;
-                        stream = new MemoryStream();
-                        image.Save(stream, iF);
-                        rotate = RotateFlipType.RotateNoneFlipNone;
-                    }
-
-                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream, core.Http.Files["photo-file"].ContentType);
-
-                    GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), width, height);
-                    // TODO: pre-prepare the most common thumbnail size on upload
-                    //GalleryItem.CreateScaleWithSquareRatio(core, newGalleryItem, newGalleryItem.StoragePath, "_square", 200, 200);
+                    GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), stream, highQualitySave /*, width, height*/);
                     stream.Close();
 
                     if (publishToFeed)
                     {
-                        core.CallingApplication.PublishToFeed(LoggedInMember, parent, newGalleryItem.ItemKey);
+                        core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey);
                     }
 
-                    db.CommitTransaction();
+                    //db.CommitTransaction();
 
                     SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
                     core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");

@@ -779,7 +779,7 @@ namespace BoxSocial.Internals
         bool User_CommentPosted(CommentPostedEventArgs e)
         {
             ApplicationEntry ae = core.GetApplication("GuestBook");
-            ae.SendNotification(this, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+            ae.SendNotification(core, this, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                 e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
 
             return true;

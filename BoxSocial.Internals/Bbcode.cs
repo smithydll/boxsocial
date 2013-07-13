@@ -1825,7 +1825,20 @@ namespace BoxSocial.Internals
                             }
                             else
                             {
-                                if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object"))
+                                int width = 0;
+                                int height = 0;
+
+                                if (e.Attributes.HasAttribute("width"))
+                                {
+                                    int.TryParse(e.Attributes.GetAttribute("width"), out width);
+                                }
+
+                                if (e.Attributes.HasAttribute("height"))
+                                {
+                                    int.TryParse(e.Attributes.GetAttribute("height"), out height);
+                                }
+
+                                if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object") && (width > 640 || height > 640))
                                 {
                                     e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnDisplayBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnFullBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
                                     e.SuffixText = "\" />";

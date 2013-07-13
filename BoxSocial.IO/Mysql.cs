@@ -84,7 +84,7 @@ namespace BoxSocial.IO
 
         private void PushQuery(string query)
         {
-            //QueryList.Push(Environment.StackTrace + "\r\n" + query + "\r\n");
+            //QueryList.Push(QueryList.Count + ":\r\n" + query + "\r\n" + Environment.StackTrace + "\r\n--------------------\r\n");
             QueryList.Push(query);
 
             if (QueryList.Count > 100)
@@ -107,13 +107,15 @@ namespace BoxSocial.IO
 
         private new void Connect()
         {
-            sqlConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
-            sqlConnection.Open();
+            if (sqlConnection == null || sqlConnection.State == ConnectionState.Closed || sqlConnection.State == ConnectionState.Broken)
+            {
+                sqlConnection = new MySql.Data.MySqlClient.MySqlConnection(connectionString);
+                sqlConnection.Open();
+            }
         }
 
         private DataTable SelectQuery(string sqlquery)
         {
-            // Don't want to clear the connection pool for performance reasons
             //MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
             Stopwatch timer = new Stopwatch();
             timer.Start();
@@ -122,16 +124,19 @@ namespace BoxSocial.IO
             sqlquery = sqlquery.Replace("\\", "\\\\");
             PushQuery(sqlquery);
 
+            Connect();
+
             DataTable resultTable;
             try
             {
                 PushQuery(sqlConnection.State.ToString());
-                PushQuery(string.Empty);
+                //PushQuery(string.Empty);
                 DataSet resultSet = new DataSet();
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
                 dataAdapter.Fill(resultSet);
                 dataAdapter.SelectCommand.Dispose();
+                dataAdapter.Dispose();
 
                 resultTable = resultSet.Tables[0];
 
@@ -149,7 +154,7 @@ namespace BoxSocial.IO
 
         private System.Data.Common.DbDataReader SelectReaderQuery(string sqlquery)
         {
-            MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
+            //MySql.Data.MySqlClient.MySqlConnection.ClearPool(sqlConnection);
             Stopwatch timer = new Stopwatch();
             timer.Start();
 
@@ -157,10 +162,13 @@ namespace BoxSocial.IO
             sqlquery = sqlquery.Replace("\\", "\\\\");
             PushQuery(sqlquery);
 
+            Connect();
+
             MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
             dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
             System.Data.Common.DbDataReader resultReader = dataAdapter.SelectCommand.ExecuteReader();
             dataAdapter.SelectCommand.Dispose();
+            dataAdapter.Dispose();
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;
@@ -213,6 +221,8 @@ namespace BoxSocial.IO
             queryCount++;
             PushQuery(sqlquery);
 
+            Connect();
+
             if (sqlCommand == null)
             {
                 CommitTransaction();
@@ -223,7 +233,7 @@ namespace BoxSocial.IO
             {
                 sqlCommand.CommandText = sqlquery;
                 PushQuery(sqlConnection.State.ToString());
-                PushQuery(string.Empty);
+                //PushQuery(string.Empty);
                 rowsAffected = sqlCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -234,7 +244,7 @@ namespace BoxSocial.IO
                 {
                     try
                     {
-                        sqlTransaction.Rollback();
+                        RollBackTransaction();
                     }
                     catch (MySql.Data.MySqlClient.MySqlException)
                     {
@@ -247,7 +257,7 @@ namespace BoxSocial.IO
                 }
                 else
                 {
-                    throw new System.Exception(sqlquery + "\n\n" + QueryList.Pop() + "\n\n" + QueryList.Pop() + "\n\n" + QueryList.Pop() + "\n\n" + ex.ToString());
+                    throw new System.Exception(sqlquery + "\n\n" + QueryListToString() + "\n\n" + ex.ToString());
                 }
             }
 
@@ -278,7 +288,7 @@ namespace BoxSocial.IO
                 inTransaction = true;
 
                 PushQuery("BEGIN TRANSACTION");
-                PushQuery(string.Empty);
+                //PushQuery(string.Empty);
             }
         }
 
@@ -287,7 +297,7 @@ namespace BoxSocial.IO
             if (inTransaction)
             {
                 PushQuery("COMMIT TRANSACTION");
-                PushQuery(string.Empty);
+                //PushQuery(string.Empty);
                 inTransaction = false;
                 try
                 {

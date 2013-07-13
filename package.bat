@@ -1,41 +1,54 @@
 erase /F /Q "Package"
+
+md "%1"Package\applications
+
 copy "%1"Blog\bin\Debug\Blog.dll "%1"Package\
+copy "%1"Blog\bin\Debug\Blog.dll "%1"Package\applications\
 copy "%1"Blog\bin\Debug\Blog.pdb "%1"Package\
 copy "%1"Blog\languages\Blog.en.resources "%1"Package\
 
 copy "%1"GuestBook\bin\Debug\GuestBook.dll "%1"Package\
+copy "%1"GuestBook\bin\Debug\GuestBook.dll "%1"Package\applications\
 copy "%1"GuestBook\bin\Debug\GuestBook.pdb "%1"Package\
 copy "%1"GuestBook\languages\GuestBook.en.resources "%1"Package\
 
 copy "%1"Profile\bin\Debug\Profile.dll "%1"Package\
+copy "%1"Profile\bin\Debug\Profile.dll "%1"Package\applications\
 copy "%1"Profile\bin\Debug\Profile.pdb "%1"Package\
 copy "%1"Profile\languages\Profile.en.resources "%1"Package\
 
 copy "%1"Calendar\bin\Debug\Calendar.dll "%1"Package\
+copy "%1"Calendar\bin\Debug\Calendar.dll "%1"Package\applications\
 copy "%1"Calendar\bin\Debug\Calendar.pdb "%1"Package\
 copy "%1"Calendar\languages\Calendar.en.resources "%1"Package\
 
 copy "%1"Gallery\bin\Debug\Gallery.dll "%1"Package\
+copy "%1"Gallery\bin\Debug\Gallery.dll "%1"Package\applications\
 copy "%1"Gallery\bin\Debug\Gallery.pdb "%1"Package\
 copy "%1"Gallery\languages\Gallery.en.resources "%1"Package\
 
 copy "%1"Pages\bin\Debug\Pages.dll "%1"Package\
+copy "%1"Pages\bin\Debug\Pages.dll "%1"Package\applications\
 copy "%1"Pages\bin\Debug\Pages.pdb "%1"Package\
 copy "%1"Pages\languages\Pages.en.resources "%1"Package\
 
 copy "%1"Forum\bin\Debug\Forum.dll "%1"Package\
+copy "%1"Forum\bin\Debug\Forum.dll "%1"Package\applications\
 copy "%1"Forum\bin\Debug\Forum.pdb "%1"Package\
 copy "%1"Forum\languages\Forum.en.resources "%1"Package\
 
 copy "%1"News\bin\Debug\News.dll "%1"Package\
+copy "%1"News\bin\Debug\News.dll "%1"Package\applications\
 copy "%1"News\bin\Debug\News.pdb "%1"Package\
 copy "%1"News\languages\News.en.resources "%1"Package\
 
 copy "%1"Mail\bin\Debug\Mail.dll "%1"Package\
+copy "%1"Mail\bin\Debug\Mail.dll "%1"Package\applications\
 copy "%1"Mail\bin\Debug\Mail.pdb "%1"Package\
 copy "%1"Mail\languages\Mail.en.resources "%1"Package\
 
 copy "%1"EnterpriseResourcePlanning\bin\Debug\EnterpriseResourcePlanning.dll "%1"Package\
+copy "%1"EnterpriseResourcePlanning\bin\Debug\EnterpriseResourcePlanning.dll "%1"Package\applications\
 copy "%1"EnterpriseResourcePlanning\bin\Debug\EnterpriseResourcePlanning.pdb "%1"Package\
 copy "%1"EnterpriseResourcePlanning\languages\EnterpriseResourcePlanning.en.resources "%1"Package\
 

@@ -443,6 +443,23 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string AppendCurrentSid(string uri)
+        {
+            return AppendCurrentSid(uri, false);
+        }
+
+        public string AppendCurrentSid(string uri, bool forceSid)
+        {
+            if (!uri.StartsWith("http://"))
+            {
+                return AppendSid("http://" + CurrentDomain + "/" + uri.TrimStart(new char[] { '/' }), forceSid);
+            }
+            else
+            {
+                return AppendSid(uri, forceSid);
+            }
+        }
+
         public string StripSid(string uri)
         {
             int indexOfSid = uri.IndexOf("?sid");

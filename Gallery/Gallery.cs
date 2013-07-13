@@ -857,7 +857,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification((User)Owner, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                core.CallingApplication.SendNotification(core, (User)Owner, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }
 
@@ -2334,8 +2334,8 @@ namespace BoxSocial.Applications.Gallery
                 {
                     GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
 
-                    returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"" + item.StoragePath + "\"]{1}[/inline][/iurl]",
-                            item.Uri, item.FullPath);
+                    returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",
+                            item.Uri, item.FullPath, item.StoragePath, item.ItemWidth, item.ItemHeight);
                 }
                 else
                 {
@@ -2343,8 +2343,8 @@ namespace BoxSocial.Applications.Gallery
                     {
                         GalleryItem item = new GalleryItem(core, Owner, row);
 
-                        returnValue += string.Format("[iurl=\"{0}#hd\"][thumb cdn-object=\"" + item.StoragePath + "\"]{1}[/thumb][/iurl]",
-                                item.Uri, item.FullPath);
+                        returnValue += string.Format("[iurl=\"{0}#hd\"][thumb cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/thumb][/iurl]",
+                                item.Uri, item.FullPath, item.StoragePath, item.ItemWidth, item.ItemHeight);
                     }
                 }
             }

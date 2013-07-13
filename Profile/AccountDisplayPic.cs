@@ -120,69 +120,12 @@ namespace BoxSocial.Applications.Profile
 
                     db.BeginTransaction();
 
-                    Image image = Image.FromStream(stream);
-                    int width = image.Width;
-                    int height = image.Height;
-
-                    RotateFlipType rotate = RotateFlipType.RotateNoneFlipNone;
-                    foreach (PropertyItem p in image.PropertyItems)
-                    {
-                        if (p.Id == 274)
-                        {
-                            switch ((int)p.Value[0])
-                            {
-                                case 1:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                                case 2:
-                                    rotate = RotateFlipType.RotateNoneFlipX;
-                                    break;
-                                case 3:
-                                    rotate = RotateFlipType.Rotate180FlipNone;
-                                    break;
-                                case 4:
-                                    rotate = RotateFlipType.Rotate180FlipX;
-                                    break;
-                                case 5:
-                                    rotate = RotateFlipType.Rotate90FlipX;
-                                    break;
-                                case 6:
-                                    rotate = RotateFlipType.Rotate90FlipNone;
-                                    break;
-                                case 7:
-                                    rotate = RotateFlipType.Rotate270FlipX;
-                                    break;
-                                case 8:
-                                    rotate = RotateFlipType.Rotate270FlipNone;
-                                    break;
-                                default:
-                                    rotate = RotateFlipType.RotateNoneFlipNone;
-                                    break;
-                            }
-                        }
-                    }
-
-                    if (rotate != RotateFlipType.RotateNoneFlipNone)
-                    {
-                        image.RotateFlip(rotate);
-
-                        width = image.Width;
-                        height = image.Height;
-
-                        ImageFormat iF = ImageFormat.Jpeg;
-                        stream = new MemoryStream();
-                        image.Save(stream, iF);
-                        rotate = RotateFlipType.RotateNoneFlipNone;
-                    }
-
-                    string saveFileName = core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), stream, core.Http.Files["photo-file"].ContentType);
-
-                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, saveFileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, width, height);
+                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, stream, false);
 
                     db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
                         galleryItem.Id, LoggedInMember.UserId));
 
-                    db.CommitTransaction();
+                    //db.CommitTransaction();
                     stream.Close();
 
                     SetRedirectUri(BuildUri());

@@ -233,7 +233,6 @@ namespace BoxSocial.IO
             {
                 sqlCommand.CommandText = sqlquery;
                 PushQuery(sqlConnection.State.ToString());
-                //PushQuery(string.Empty);
                 rowsAffected = sqlCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -288,7 +287,6 @@ namespace BoxSocial.IO
                 inTransaction = true;
 
                 PushQuery("BEGIN TRANSACTION");
-                //PushQuery(string.Empty);
             }
         }
 
@@ -297,7 +295,6 @@ namespace BoxSocial.IO
             if (inTransaction)
             {
                 PushQuery("COMMIT TRANSACTION");
-                //PushQuery(string.Empty);
                 inTransaction = false;
                 try
                 {
@@ -432,12 +429,10 @@ namespace BoxSocial.IO
 
                 if (((string)dr["Key"]).ToUpper() == "PRI")
                 {
-                    //dfi.IsUnique = dfi.IsPrimaryKey = true;
 					dfi.Key = DataFieldKeys.Primary;
                 }
                 if (((string)dr["Key"]).ToUpper() == "UNI")
                 {
-                    //dfi.IsUnique = true;
 					dfi.Key = DataFieldKeys.Unique;
                 }
 

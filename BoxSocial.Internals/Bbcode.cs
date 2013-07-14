@@ -1840,7 +1840,7 @@ namespace BoxSocial.Internals
 
                                 if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object") && (width > 640 || height > 640))
                                 {
-                                    e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnDisplayBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnFullBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
+                                    e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"http://" + HttpUtility.HtmlEncode(e.Core.Settings.CdnDisplayBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnFullBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
                                     e.SuffixText = "\" />";
                                     e.RemoveContents();
                                 }
@@ -1893,7 +1893,7 @@ namespace BoxSocial.Internals
                         {
                             if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object"))
                             {
-                                e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnTileBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnSquareBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
+                                e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"http://" + HttpUtility.HtmlEncode(e.Core.Settings.CdnTileBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnSquareBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
                                 e.SuffixText = "\" />";
                                 e.RemoveContents();
                             }

@@ -1549,6 +1549,14 @@ namespace BoxSocial.Internals
                         }
 
                         string newBody = ((IActionableItem)item).GetActionBody(subItemsShortList);
+                        string newBodyCache = string.Empty;
+
+                        User owner = null;
+
+                        if (!newBody.Contains("[user") && !newBody.Contains("sid=true]"))
+                        {
+                            newBodyCache = Bbcode.Parse(HttpUtility.HtmlEncode(newBody), null, owner, true, string.Empty, string.Empty);
+                        }
 
                         if (string.IsNullOrEmpty(newBody))
                         {
@@ -1561,6 +1569,7 @@ namespace BoxSocial.Internals
                         {
                             UpdateQuery uQuery = new UpdateQuery(typeof(Action));
                             uQuery.AddField("action_body", newBody);
+                            uQuery.AddField("action_body_cache", newBodyCache);
                             uQuery.AddCondition("action_id", actionId);
 
                             if (subItemsShortList != null && subItemsShortList.Count == 1)

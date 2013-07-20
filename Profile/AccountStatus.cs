@@ -126,12 +126,15 @@ namespace BoxSocial.Applications.Profile
                 if (newMessage.PermissiveParent.Access.IsPublic())
                 {
                     feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
-                    //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
-
-                    if (newMessage.Info.SharedTimes > 0)
+                    if (newMessage.ItemKey.ImplementsShareable)
                     {
-                        feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", newMessage.Info.SharedTimes));
+                        feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                        //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                        if (newMessage.Info.SharedTimes > 0)
+                        {
+                            feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", newMessage.Info.SharedTimes));
+                        }
                     }
                 }
 

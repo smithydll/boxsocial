@@ -34,3 +34,29 @@
 	margin-left: 70px;
 	position: relative;
 }
+
+ul#small-friends {
+	list-style: none;
+	padding: 2px;
+	margin: 0px;
+	width: 246px;
+	overflow: hidden;
+}
+
+ul#small-friends dl {
+	padding: 0px;
+	margin: 0px;
+}
+
+ul#small-friends li {
+	float: left;
+	width: 80px;
+	margin-right: 2px;
+	height: 82px;
+	display: inline;
+}
+
+ul#small-friends li img {
+    width: 80px;
+	height: 80px;
+}

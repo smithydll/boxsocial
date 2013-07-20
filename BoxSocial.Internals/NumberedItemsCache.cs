@@ -118,6 +118,14 @@ namespace BoxSocial.Internals
 
         public void RegisterItem(NumberedItem item)
         {
+            try
+            {
+                long id = item.Id;
+            }
+            catch (NotImplementedException)
+            {
+                // Cannot cache this item
+            }
             NumberedItemId itemKey = new NumberedItemId(item.Id, item.ItemKey.TypeId);
 
             if (itemKey.TypeId == 0)

@@ -446,7 +446,14 @@ span.no-disp-pic
 	margin: 0px;
 }
 
-.img-wb img {
+span.img-nb {
+	padding: 3px;
+	font-size: 0px;
+	display: block;
+	width: 50px;
+}
+
+.img-wb img, .img-nb img {
 	padding: 0px;
 	margin: 0px;
 }

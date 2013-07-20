@@ -1,0 +1,19 @@
+﻿	<div id="today-friends" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
+		{L_FRIENDS}
+	<!-- IF friend_list -->
+	<ul id="small-friends">
+	<!-- BEGIN friend_list -->
+		<li>
+			<a href="{friend_list.U_PROFILE}">
+				<!-- IF friend_list.TILE -->
+				<img src="{friend_list.TILE}" data-at2x="{friend_list.SQUARE}" alt="{friend_list.USER_DISPLAY_NAME}" title="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" title="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- ENDIF -->
+			</a>
+		</li>
+	<!-- END friend_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+    <!-- ENDIF -->
+	</div>

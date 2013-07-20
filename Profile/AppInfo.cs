@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -236,8 +237,31 @@ namespace BoxSocial.Applications.Profile
                 if (e.core.PagePath.ToLower() == "/default.aspx")
                 {
                     //ShowStatusUpdates(e);
+                    ShowFriends(e);
                 }
             }
+        }
+
+        void ShowFriends(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "todayfriendpanel");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            List<Friend> friends = e.core.Session.LoggedInMember.GetFriends(1, 9, null);
+
+            foreach (UserRelation friend in friends)
+            {
+                VariableCollection friendVariableCollection = template.CreateChild("friend_list");
+
+                friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
+                friendVariableCollection.Parse("U_PROFILE", friend.Uri);
+                friendVariableCollection.Parse("ICON", friend.UserIcon);
+                friendVariableCollection.Parse("TILE", friend.UserTile);
+                friendVariableCollection.Parse("SQUARE", friend.UserSquare);
+            }
+
+            e.core.AddSidePanel(template);
         }
 
         /*void ShowStatusUpdates(HookEventArgs e)

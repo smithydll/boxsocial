@@ -290,12 +290,15 @@ namespace BoxSocial.Internals
                 if (item.Access.IsPublic())
                 {
                     statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
-                    statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
-
-                    if (item.Info.SharedTimes > 0)
+                    if (item.ItemKey.ImplementsShareable)
                     {
-                        statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
+                        statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
+                        statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
+
+                        if (item.Info.SharedTimes > 0)
+                        {
+                            statusMessageVariableCollection.Parse("SHARES", string.Format(" {0:d}", item.Info.SharedTimes));
+                        }
                     }
                 }
 

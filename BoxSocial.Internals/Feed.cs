@@ -324,12 +324,15 @@ namespace BoxSocial.Internals
                     if (feedAction.PermissiveParent.Access.IsPublic())
                     {
                         feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                        feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
-                        //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
-
-                        if (feedAction.Info.SharedTimes > 0)
+                        if (feedAction.ActionItemKey.ImplementsShareable)
                         {
-                            feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                            feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                            //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                            if (feedAction.Info.SharedTimes > 0)
+                            {
+                                feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                            }
                         }
                     }
                     else
@@ -406,12 +409,15 @@ namespace BoxSocial.Internals
                 if (feedAction.PermissiveParent.Access.IsPublic())
                 {
                     feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
-                    //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
-
-                    if (feedAction.Info.SharedTimes > 0)
+                    if (feedAction.ActionItemKey.ImplementsShareable)
                     {
-                        feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                        feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                        //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                        if (feedAction.Info.SharedTimes > 0)
+                        {
+                            feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                        }
                     }
                 }
 

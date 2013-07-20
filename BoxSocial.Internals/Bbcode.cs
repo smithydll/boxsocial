@@ -102,6 +102,7 @@ namespace BoxSocial.Internals
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
             BbcodeHooks += new BbcodeHookHandler(BbcodeUser);
+            //BbcodeHooks += new BbcodeHookHandler(BbcodeBreak);
 
             styleList = new List<string>();
             styleList.Add("color");

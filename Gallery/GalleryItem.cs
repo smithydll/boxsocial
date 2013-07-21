@@ -1450,6 +1450,10 @@ namespace BoxSocial.Applications.Gallery
                 Size hdSize = galleryItem.GetSize(new Size(1920, 1080));
 
                 e.Core.Meta.Add("twitter:card", "photo");
+                if (!string.IsNullOrEmpty(e.Core.Settings.TwitterName))
+                {
+                    e.Core.Meta.Add("twitter:site", e.Core.Settings.TwitterName);
+                }
                 e.Core.Meta.Add("twitter:image", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.MobileUri)));
                 if (!string.IsNullOrEmpty(galleryItem.ItemTitle))
                 {

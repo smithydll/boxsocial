@@ -584,21 +584,31 @@ namespace BoxSocial.Internals
 
             if (changedRows == 0)
             {
-                RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
-                byte[] randomNumber = new byte[16];
-                rng.GetBytes(randomNumber);
-                //Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
-                //rand.NextDouble().ToString()
-
-                string rand = HexRNG(randomNumber);
-                sessionId = SessionState.SessionMd5(rand + "bsseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
-
-                if (record == null)
+                // This should force new sessions on external domains to re-auth rather than logout
+                if (core.Hyperlink.CurrentDomain != Hyperlink.Domain)
                 {
-                    rootSessionId = sessionId;
+                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    return string.Empty;
                 }
-                db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}')",
-                    sessionId, isLoggedIn, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
+                else
+                {
+                    RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+                    byte[] randomNumber = new byte[16];
+                    rng.GetBytes(randomNumber);
+                    //Random rand = new Random((int)(DateTime.Now.Ticks & 0xFFFF));
+                    //rand.NextDouble().ToString()
+
+                    string rand = HexRNG(randomNumber);
+                    sessionId = SessionState.SessionMd5(rand + "bsseed" + DateTime.Now.Ticks.ToString() + ipAddress.ToString()).ToLower();
+
+                    if (record == null)
+                    {
+                        rootSessionId = sessionId;
+                    }
+                    db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}')",
+                        sessionId, isLoggedIn, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
+                }
             }
 
             if (record == null)

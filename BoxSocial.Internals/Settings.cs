@@ -294,5 +294,45 @@ namespace BoxSocial.Internals
                 return max;
             }
         }
+
+        public bool UseTwitterAuthentication
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["oauth-twitter"] == "true";
+            }
+        }
+
+        public bool UseGoogleAuthentication
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["oauth-google"] == "true";
+            }
+        }
+
+        public string TwitterName
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["twitter-name"];
+            }
+        }
+
+        public string TwitterApiKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["twitter-api-key"];
+            }
+        }
+
+        public string TwitterApiSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["twitter-api-secret"];
+            }
+        }
     }
 }

@@ -243,6 +243,17 @@ namespace BoxSocial.FrontEnd
                         {
                             patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
+                            patterns.Add(new string[] { @"^/api/acl/get-groups(/|)$", @"/functions.aspx?fun=permission-groups-list" });
+                            patterns.Add(new string[] { @"^/api/acl(/|)$", @"/acl.aspx" });
+                            patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
+                            patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });
+                            patterns.Add(new string[] { @"^/api/like(/|)$", @"/like.aspx" });
+                            patterns.Add(new string[] { @"^/api/share(/|)$", @"/share.aspx" });
+                            patterns.Add(new string[] { @"^/api/subscribe(/|)$", @"/subscribe.aspx" });
+                            patterns.Add(new string[] { @"^/api/functions(/|)$", @"/functions.aspx" });
+                            patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
+                            patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
+
                             patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                             patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                             patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });

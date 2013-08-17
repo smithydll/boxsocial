@@ -162,7 +162,10 @@ namespace BoxSocial.Internals
 
         public override long Id
         {
-            get { throw new NotImplementedException(); }
+            get
+            {
+                return appId;
+            }
         }
 
         public override string Uri

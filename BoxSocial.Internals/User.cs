@@ -72,6 +72,7 @@ namespace BoxSocial.Internals
     [Permission("VIEW", "Can view user profile", PermissionTypes.View)]
     [Permission("VIEW_STATUS", "Can view your status", PermissionTypes.View)]
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
+    [Permission("SEND_MESSAGE", "Can send private messages", PermissionTypes.Interact)]
     [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
     [Permission("DELETE_STATUS", "Can status messages", PermissionTypes.Delete)]
     [Permission("VIEW_NAME", "Can see your real name", PermissionTypes.View)]
@@ -2317,6 +2318,11 @@ namespace BoxSocial.Internals
                         phoneVariableCollection.Parse("PHONE_NUMBER", phone.PhoneNumber);
                     }
                 }
+            }
+
+            if (page.User.Access.Can("SEND_MESSAGE"))
+            {
+                core.Template.Parse("U_SEND_MESSAGE", "{todo: send message link}");
             }
 
             core.InvokeHooks(new HookEventArgs(core, AppPrimitives.Member, page.User));

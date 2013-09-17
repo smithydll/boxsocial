@@ -1232,7 +1232,7 @@ namespace BoxSocial.Groups
                 {
                     if (core.Http.Domain != Hyperlink.Domain)
                     {
-                        return Hyperlink.Uri + "group/" + Slug.ToLower() + "/";
+                        return core.Hyperlink.Uri + "group/" + Slug.ToLower() + "/";
                     }
                     else
                     {

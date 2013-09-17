@@ -1434,7 +1434,7 @@ namespace BoxSocial.Internals
             }
 
             string activateUri = string.Format("{0}register/?mode=activate&id={1}&key={2}",
-                Hyperlink.Uri, userId, activateKey);
+                core.Hyperlink.Uri, userId, activateKey);
 
             Template emailTemplate = new Template(core.Http.TemplateEmailPath, "registration_welcome.html");
 
@@ -2045,11 +2045,11 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain) || core.IsMobile)
+                if (string.IsNullOrEmpty(domain) || core.IsMobile || core.Http.IsSecure)
                 {
                     if (core.Http.Domain != Hyperlink.Domain)
                     {
-                        return Hyperlink.Uri + "user/" + UserName.ToLower() + "/";
+                        return core.Hyperlink.Uri + "user/" + UserName.ToLower() + "/";
                     }
                     else
                     {
@@ -2430,7 +2430,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return Hyperlink.Uri + "account/";
+                    return core.Hyperlink.Uri + "account/";
                 }
             }
         }

@@ -1839,9 +1839,9 @@ namespace BoxSocial.Internals
                                     int.TryParse(e.Attributes.GetAttribute("height"), out height);
                                 }
 
-                                if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object") && (width > 640 || height > 640))
+                                if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object") /*&& (width > 640 || height > 640)*/)
                                 {
-                                    e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"http://" + HttpUtility.HtmlEncode(e.Core.Settings.CdnDisplayBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnFullBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
+                                    e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"" + e.Core.Http.DefaultProtocol + HttpUtility.HtmlEncode(e.Core.Settings.CdnDisplayBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + e.Core.Http.DefaultProtocol + HttpUtility.HtmlEncode(e.Core.Settings.CdnFullBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
                                     e.SuffixText = "\" />";
                                     e.RemoveContents();
                                 }
@@ -1894,7 +1894,7 @@ namespace BoxSocial.Internals
                         {
                             if (e.Core.Settings.UseCdn && e.Attributes.HasAttribute("cdn-object"))
                             {
-                                e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"http://" + HttpUtility.HtmlEncode(e.Core.Settings.CdnTileBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + HttpUtility.HtmlEncode(e.Core.Settings.CdnSquareBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
+                                e.PrefixText = "<img alt=\"Bbcode image\" class=\"bbcode-thumb\" src=\"" + e.Core.Http.DefaultProtocol + HttpUtility.HtmlEncode(e.Core.Settings.CdnTileBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object") + "\" data-at2x=\"" + e.Core.Http.DefaultProtocol + HttpUtility.HtmlEncode(e.Core.Settings.CdnSquareBucketDomain) + "/" + e.Attributes.GetAttribute("cdn-object");
                                 e.SuffixText = "\" />";
                                 e.RemoveContents();
                             }
@@ -2258,7 +2258,7 @@ namespace BoxSocial.Internals
                     string latexExpression = HttpUtility.UrlEncode(e.Contents).Replace("+", "%20");
                     e.RemoveContents();
 
-                    e.PrefixText = "<img src=\"http://" + Hyperlink.Domain + "/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
+                    e.PrefixText = "<img src=\"" + e.Core.Http.DefaultProtocol + Hyperlink.Domain + "/mimetex.cgi?" + latexExpression + "\" alt=\"LaTeX Equation\"/>";
                     e.SuffixText = string.Empty;
                     break;
             }

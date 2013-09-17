@@ -683,11 +683,11 @@ namespace BoxSocial.Internals
                 VariableCollection commentsVariableCollection = template.CreateChild("comment-list");
 
                 //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment.Body), core.session.LoggedInMember));
-                if ((!core.IsMobile) && (!string.IsNullOrEmpty(comment.BodyCache)))
+                /*if ((!core.IsMobile) && (!string.IsNullOrEmpty(comment.BodyCache)))
                 {
                     core.Display.ParseBbcodeCache(commentsVariableCollection, "COMMENT", comment.BodyCache);
                 }
-                else
+                else*/
                 {
                     core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment.Body, true, null, null);
                 }
@@ -893,7 +893,14 @@ namespace BoxSocial.Internals
 
             if (core.Settings.UseCdn && !string.IsNullOrEmpty(page.Core.Settings.CdnStaticBucketDomain))
             {
-                template.Parse("U_STATIC", "http://" + page.Core.Settings.CdnStaticBucketDomain.TrimEnd(new char[] { '/' }));
+                if (core.Http.IsSecure)
+                {
+                    template.Parse("U_STATIC", "https://" + page.Core.Settings.CdnStaticBucketDomain.TrimEnd(new char[] { '/' }));
+                }
+                else
+                {
+                    template.Parse("U_STATIC", "http://" + page.Core.Settings.CdnStaticBucketDomain.TrimEnd(new char[] { '/' }));
+                }
             }
 
             /*

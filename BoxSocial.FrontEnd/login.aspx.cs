@@ -138,7 +138,7 @@ namespace BoxSocial.FrontEnd
                                 db.UpdateQuery(string.Format("UPDATE user_info SET user_new_password = '{0}', user_activate_code = '{1}' WHERE user_id = {2}",
                                     Mysql.Escape(newPassword), Mysql.Escape(activateCode), userEmail.Owner.Id));
 
-                                string activateUri = string.Format(Hyperlink.Uri + "register/?mode=activate-password&id={0}&key={1}",
+                                string activateUri = string.Format(core.Hyperlink.Uri + "register/?mode=activate-password&id={0}&key={1}",
                                     userEmail.Owner.Id, activateCode);
 
                                 // send the e-mail

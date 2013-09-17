@@ -77,7 +77,7 @@ namespace BoxSocial.FrontEnd
 
             if (host == "www." + Hyperlink.Domain)
             {
-                Response.Redirect(Hyperlink.Uri);
+                Response.Redirect("http://" + Hyperlink.Domain);
                 return;
             }
 

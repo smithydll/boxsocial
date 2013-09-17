@@ -126,7 +126,13 @@ namespace BoxSocial.IO
 
         public override void DeleteFile(string bin, string fileName)
         {
-            ObjectStore deleteObjectResponse = provider.DeleteObject(bin, fileName, region: location);
+            try
+            {
+                ObjectStore deleteObjectResponse = provider.DeleteObject(bin, fileName, region: location);
+            }
+            catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException)
+            {
+            }
         }
 
         public override void TouchFile(string bin, string fileName)

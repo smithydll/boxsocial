@@ -87,11 +87,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string Uri
+        public string Uri
         {
             get
             {
-                return string.Format("http://{0}/", Domain);
+                return string.Format(core.Http.DefaultProtocol + "{0}/", Domain);
             }
         }
 
@@ -452,7 +452,7 @@ namespace BoxSocial.Internals
         {
             if (!uri.StartsWith("http://"))
             {
-                return AppendSid("http://" + CurrentDomain + "/" + uri.TrimStart(new char[] { '/' }), forceSid);
+                return AppendSid(core.Http.DefaultProtocol + CurrentDomain + "/" + uri.TrimStart(new char[] { '/' }), forceSid);
             }
             else
             {

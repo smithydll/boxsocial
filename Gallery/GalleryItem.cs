@@ -2078,7 +2078,7 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (e.Core.Settings.UseCdn)
                         {
-                            string imageUri = "http://" + cdnDomain + "/" + galleryItem.StoragePath;
+                            string imageUri = e.Core.Http.DefaultProtocol + cdnDomain + "/" + galleryItem.StoragePath;
                             e.Core.Http.Redirect(imageUri);
                         }
                         else
@@ -2633,7 +2633,7 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2} -crop {1}x{2}+0+{4} \"{0}\"", tempFilePath, width, height, storageFilePath, cropY);
+                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -resize {1}x{1} -extent {1}x{2}+0+{4} \"{0}\"", tempFilePath, width, height, storageFilePath, cropY);
                 p1.Start();
 
                 p1.WaitForExit();
@@ -2809,7 +2809,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (core.Settings.UseCdn && IconExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnIconBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnIconBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2834,7 +2834,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (core.Settings.UseCdn && TileExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnTileBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnTileBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2859,7 +2859,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (core.Settings.UseCdn && SquareExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnSquareBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnSquareBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2884,7 +2884,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (core.Settings.UseCdn && HighExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnHighBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnHighBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2915,7 +2915,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && TinyExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnTinyBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnTinyBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2946,7 +2946,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && ThumbnailExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnThumbBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnThumbBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -2977,7 +2977,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && MobileExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnMobileBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnMobileBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -3008,7 +3008,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && DisplayExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnDisplayBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnDisplayBucketDomain, StoragePath);
                 }
                 
 
@@ -3055,7 +3055,7 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && FullExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnFullBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnFullBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -3102,12 +3102,12 @@ namespace BoxSocial.Applications.Gallery
 
                 if (core.Settings.UseCdn && UltraExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnUltraBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnUltraBucketDomain, StoragePath);
                 }
 
                 if (core.Settings.UseCdn &&  ItemWidth <= 2560 && ItemHeight <= 2560)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnStorageBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnStorageBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)
@@ -3152,7 +3152,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 if (core.Settings.UseCdn && CoverExists)
                 {
-                    return string.Format("http://{0}/{1}", core.Settings.CdnCoverBucketDomain, StoragePath);
+                    return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnCoverBucketDomain, StoragePath);
                 }
 
                 if (parentId > 0)

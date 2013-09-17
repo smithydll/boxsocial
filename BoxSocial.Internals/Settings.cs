@@ -106,7 +106,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-storage"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-storage"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-storage"];
+                }
             }
         }
 
@@ -114,7 +121,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-icon"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-icon"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-icon"];
+                }
             }
         }
 
@@ -122,7 +136,14 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-tile"];
+                }
+                else
+                {
                 return WebConfigurationManager.AppSettings["cdn-domain-tile"];
+                }
             }
         }
 
@@ -130,7 +151,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-square"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-square"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-square"];
+                }
             }
         }
 
@@ -138,7 +166,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-high"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-high"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-high"];
+                }
             }
         }
 
@@ -146,7 +181,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-tiny"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-tiny"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-tiny"];
+                }
             }
         }
 
@@ -154,7 +196,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-thumb"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-thumb"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-thumb"];
+                }
             }
         }
 
@@ -162,7 +211,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-mobile"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-mobile"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-mobile"];
+                }
             }
         }
 
@@ -170,7 +226,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-display"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-display"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-display"];
+                }
             }
         }
 
@@ -178,7 +241,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-full"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-full"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-full"];
+                }
             }
         }
 
@@ -186,7 +256,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-ultra"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-ultra"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-ultra"];
+                }
             }
         }
 
@@ -194,7 +271,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-cover"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-cover"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-cover"];
+                }
             }
         }
 
@@ -202,7 +286,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-mobile-cover"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-mobile-cover"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-mobile-cover"];
+                }
             }
         }
 
@@ -210,7 +301,22 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["cdn-domain-static"];
+                if (core.Http.IsSecure)
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-secure-static"];
+                }
+                else
+                {
+                    return WebConfigurationManager.AppSettings["cdn-domain-static"];
+                }
+            }
+        }
+
+        public bool UseSecureCookies
+        {
+            get
+            {
+                return (WebConfigurationManager.AppSettings["secure-cookies"].ToLower() == "true");
             }
         }
 

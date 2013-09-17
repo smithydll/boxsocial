@@ -598,7 +598,7 @@ namespace BoxSocial.Internals
             {
                 if (core.Http.Domain != Hyperlink.Domain)
                 {
-                    return Hyperlink.Uri + "application/" + assemblyName + "/";
+                    return core.Hyperlink.Uri + "application/" + assemblyName + "/";
                 }
                 else
                 {

@@ -248,5 +248,28 @@ namespace BoxSocial.IO
         {
             return current.Server.MapPath(path);
         }
+
+        public bool IsSecure
+        {
+            get
+            {
+                return current.Request.IsSecureConnection;
+            }
+        }
+
+        public string DefaultProtocol
+        {
+            get
+            {
+                if (IsSecure)
+                {
+                    return "https://";
+                }
+                else
+                {
+                    return "http://";
+                }
+            }
+        }
     }
 }

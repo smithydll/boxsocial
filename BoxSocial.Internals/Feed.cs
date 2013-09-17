@@ -277,11 +277,11 @@ namespace BoxSocial.Internals
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
                     core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
-                    if ((!core.IsMobile) && (!string.IsNullOrEmpty(feedAction.BodyCache)))
+                    /*if ((!core.IsMobile) && (!string.IsNullOrEmpty(feedAction.BodyCache)))
                     {
                         core.Display.ParseBbcodeCache(feedItemVariableCollection, "TEXT", feedAction.BodyCache);
                     }
-                    else
+                    else*/
                     {
                         core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
                     }

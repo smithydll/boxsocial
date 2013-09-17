@@ -846,7 +846,7 @@ namespace BoxSocial.Networks
             {
                 if (core.Http.Domain != Hyperlink.Domain)
                 {
-                    return Hyperlink.Uri + "network/" + NetworkNetwork + "/";
+                    return core.Hyperlink.Uri + "network/" + NetworkNetwork + "/";
                 }
                 else
                 {

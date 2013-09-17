@@ -360,6 +360,12 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
+            string protocol = "http://";
+            if (core.Settings.UseSecureCookies)
+            {
+                protocol = "https://";
+            }
+
             string rootSessionId = string.Empty;
             if (record != null)
             {
@@ -476,7 +482,7 @@ namespace BoxSocial.Internals
                             sessionDataCookie.Path = "/";
                             sessionDataCookie.Value = "";
                             sessionDataCookie.Expires = DateTime.MinValue;
-                            sessionDataCookie.Secure = false; // TODO: secure cookies
+                            sessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                             sessionDataCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionDataCookie);
 
@@ -484,7 +490,7 @@ namespace BoxSocial.Internals
                             sessionSidCookie.Path = "/";
                             sessionSidCookie.Value = "";
                             sessionSidCookie.Expires = DateTime.MinValue;
-                            sessionSidCookie.Secure = false; // TODO: secure cookies
+                            sessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                             sessionSidCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionSidCookie);
                         }
@@ -587,7 +593,7 @@ namespace BoxSocial.Internals
                 // This should force new sessions on external domains to re-auth rather than logout
                 if (core.Hyperlink.CurrentDomain != Hyperlink.Domain)
                 {
-                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
                     return string.Empty;
                 }
@@ -676,7 +682,7 @@ namespace BoxSocial.Internals
                 newSessionDataCookie.Path = "/";
                 newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
-                newSessionDataCookie.Secure = false; // TODO: secure cookies
+                newSessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionDataCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionDataCookie);
 
@@ -685,7 +691,7 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Path = "/";
                 newSessionSidCookie.Value = sessionId;
                 newSessionSidCookie.Expires = DateTime.MinValue;
-                newSessionSidCookie.Secure = false; // TODO: secure cookies
+                newSessionSidCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
             }
@@ -698,6 +704,12 @@ namespace BoxSocial.Internals
             string cookieName = "hailToTheChef";
             XmlSerializer xs;
             StringWriter stw;
+
+            string protocol = "http://";
+            if (core.Settings.UseSecureCookies)
+            {
+                protocol = "https://";
+            }
 
             sessionData = null;
             sessionId = null;
@@ -741,7 +753,7 @@ namespace BoxSocial.Internals
 
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
                     //return;
                 }
@@ -759,7 +771,7 @@ namespace BoxSocial.Internals
 
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
                     //return;
                 }
@@ -859,7 +871,7 @@ namespace BoxSocial.Internals
                         newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
                         newSessionDataCookie.Path = "/";
                         newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
-                        newSessionDataCookie.Secure = false; // TODO: secure cookies
+                        newSessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                         newSessionDataCookie.HttpOnly = true;
                         Response.Cookies.Add(newSessionDataCookie);
 
@@ -867,7 +879,7 @@ namespace BoxSocial.Internals
                         newSessionSidCookie.Path = "/";
                         newSessionSidCookie.Value = sessionId;
                         newSessionSidCookie.Expires = DateTime.MinValue;
-                        newSessionSidCookie.Secure = false; // TODO: secure cookies
+                        newSessionSidCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                         newSessionSidCookie.HttpOnly = true;
                         Response.Cookies.Add(newSessionSidCookie);
 
@@ -896,7 +908,7 @@ namespace BoxSocial.Internals
             {
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(Hyperlink.Uri + string.Format("session.aspx?domain={0}&path={1}",
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
                         HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
                     //return;
                 }
@@ -992,7 +1004,7 @@ namespace BoxSocial.Internals
                 newSessionDataCookie.Path = "/";
                 newSessionDataCookie.Value = "";
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(-1);
-                newSessionDataCookie.Secure = false; // TODO: secure cookies
+                newSessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionDataCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionDataCookie);
 
@@ -1000,7 +1012,7 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Path = "/";
                 newSessionSidCookie.Value = "";
                 newSessionSidCookie.Expires = DateTime.Now.AddYears(-1);
-                newSessionSidCookie.Secure = false; // TODO: secure cookies
+                newSessionSidCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
             }

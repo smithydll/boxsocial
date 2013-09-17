@@ -980,11 +980,11 @@ namespace BoxSocial.Applications.Blog
                     blogPostVariableCollection.Parse("ID", blogEntries[i].Id);
                     blogPostVariableCollection.Parse("TYPE_ID", blogEntries[i].ItemKey.TypeId);
 
-                    if ((!core.IsMobile) && (!string.IsNullOrEmpty(blogEntries[i].BodyCache)))
+                    /*if ((!core.IsMobile) && (!string.IsNullOrEmpty(blogEntries[i].BodyCache)))
                     {
                         core.Display.ParseBbcodeCache(blogPostVariableCollection, "POST", blogEntries[i].BodyCache);
                     }
-                    else
+                    else*/
                     {
                         core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
                     }

@@ -388,42 +388,42 @@ namespace BoxSocial.Applications.Forum
 
         public static void ShowMemberlist(Core core, GPage page)
         {
-            page.template.SetTemplate("Forum", "memberlist");
+            core.Template.SetTemplate("Forum", "memberlist");
             ForumSettings.ShowForumHeader(core, page);
 
-            page.template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
-            page.template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.Owner, "a"));
-            page.template.Parse("U_FILTER_BEGINS_B", GenerateMemberlistUri(core, page.Owner, "b"));
-            page.template.Parse("U_FILTER_BEGINS_C", GenerateMemberlistUri(core, page.Owner, "c"));
-            page.template.Parse("U_FILTER_BEGINS_D", GenerateMemberlistUri(core, page.Owner, "d"));
-            page.template.Parse("U_FILTER_BEGINS_E", GenerateMemberlistUri(core, page.Owner, "e"));
-            page.template.Parse("U_FILTER_BEGINS_F", GenerateMemberlistUri(core, page.Owner, "f"));
-            page.template.Parse("U_FILTER_BEGINS_G", GenerateMemberlistUri(core, page.Owner, "g"));
-            page.template.Parse("U_FILTER_BEGINS_H", GenerateMemberlistUri(core, page.Owner, "h"));
-            page.template.Parse("U_FILTER_BEGINS_I", GenerateMemberlistUri(core, page.Owner, "i"));
-            page.template.Parse("U_FILTER_BEGINS_J", GenerateMemberlistUri(core, page.Owner, "j"));
-            page.template.Parse("U_FILTER_BEGINS_K", GenerateMemberlistUri(core, page.Owner, "k"));
-            page.template.Parse("U_FILTER_BEGINS_L", GenerateMemberlistUri(core, page.Owner, "l"));
-            page.template.Parse("U_FILTER_BEGINS_M", GenerateMemberlistUri(core, page.Owner, "m"));
-            page.template.Parse("U_FILTER_BEGINS_N", GenerateMemberlistUri(core, page.Owner, "n"));
-            page.template.Parse("U_FILTER_BEGINS_O", GenerateMemberlistUri(core, page.Owner, "o"));
-            page.template.Parse("U_FILTER_BEGINS_P", GenerateMemberlistUri(core, page.Owner, "p"));
-            page.template.Parse("U_FILTER_BEGINS_Q", GenerateMemberlistUri(core, page.Owner, "q"));
-            page.template.Parse("U_FILTER_BEGINS_R", GenerateMemberlistUri(core, page.Owner, "r"));
-            page.template.Parse("U_FILTER_BEGINS_S", GenerateMemberlistUri(core, page.Owner, "s"));
-            page.template.Parse("U_FILTER_BEGINS_T", GenerateMemberlistUri(core, page.Owner, "t"));
-            page.template.Parse("U_FILTER_BEGINS_U", GenerateMemberlistUri(core, page.Owner, "u"));
-            page.template.Parse("U_FILTER_BEGINS_V", GenerateMemberlistUri(core, page.Owner, "v"));
-            page.template.Parse("U_FILTER_BEGINS_W", GenerateMemberlistUri(core, page.Owner, "w"));
-            page.template.Parse("U_FILTER_BEGINS_X", GenerateMemberlistUri(core, page.Owner, "x"));
-            page.template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.Owner, "y"));
-            page.template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.Owner, "z"));
+            core.Template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
+            core.Template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.Owner, "a"));
+            core.Template.Parse("U_FILTER_BEGINS_B", GenerateMemberlistUri(core, page.Owner, "b"));
+            core.Template.Parse("U_FILTER_BEGINS_C", GenerateMemberlistUri(core, page.Owner, "c"));
+            core.Template.Parse("U_FILTER_BEGINS_D", GenerateMemberlistUri(core, page.Owner, "d"));
+            core.Template.Parse("U_FILTER_BEGINS_E", GenerateMemberlistUri(core, page.Owner, "e"));
+            core.Template.Parse("U_FILTER_BEGINS_F", GenerateMemberlistUri(core, page.Owner, "f"));
+            core.Template.Parse("U_FILTER_BEGINS_G", GenerateMemberlistUri(core, page.Owner, "g"));
+            core.Template.Parse("U_FILTER_BEGINS_H", GenerateMemberlistUri(core, page.Owner, "h"));
+            core.Template.Parse("U_FILTER_BEGINS_I", GenerateMemberlistUri(core, page.Owner, "i"));
+            core.Template.Parse("U_FILTER_BEGINS_J", GenerateMemberlistUri(core, page.Owner, "j"));
+            core.Template.Parse("U_FILTER_BEGINS_K", GenerateMemberlistUri(core, page.Owner, "k"));
+            core.Template.Parse("U_FILTER_BEGINS_L", GenerateMemberlistUri(core, page.Owner, "l"));
+            core.Template.Parse("U_FILTER_BEGINS_M", GenerateMemberlistUri(core, page.Owner, "m"));
+            core.Template.Parse("U_FILTER_BEGINS_N", GenerateMemberlistUri(core, page.Owner, "n"));
+            core.Template.Parse("U_FILTER_BEGINS_O", GenerateMemberlistUri(core, page.Owner, "o"));
+            core.Template.Parse("U_FILTER_BEGINS_P", GenerateMemberlistUri(core, page.Owner, "p"));
+            core.Template.Parse("U_FILTER_BEGINS_Q", GenerateMemberlistUri(core, page.Owner, "q"));
+            core.Template.Parse("U_FILTER_BEGINS_R", GenerateMemberlistUri(core, page.Owner, "r"));
+            core.Template.Parse("U_FILTER_BEGINS_S", GenerateMemberlistUri(core, page.Owner, "s"));
+            core.Template.Parse("U_FILTER_BEGINS_T", GenerateMemberlistUri(core, page.Owner, "t"));
+            core.Template.Parse("U_FILTER_BEGINS_U", GenerateMemberlistUri(core, page.Owner, "u"));
+            core.Template.Parse("U_FILTER_BEGINS_V", GenerateMemberlistUri(core, page.Owner, "v"));
+            core.Template.Parse("U_FILTER_BEGINS_W", GenerateMemberlistUri(core, page.Owner, "w"));
+            core.Template.Parse("U_FILTER_BEGINS_X", GenerateMemberlistUri(core, page.Owner, "x"));
+            core.Template.Parse("U_FILTER_BEGINS_Y", GenerateMemberlistUri(core, page.Owner, "y"));
+            core.Template.Parse("U_FILTER_BEGINS_Z", GenerateMemberlistUri(core, page.Owner, "z"));
 
             Dictionary<long, ForumMember> members = ForumMember.GetMembers(core, page.Owner, core.Functions.GetFilter(), page.TopLevelPageNumber, 20);
 
             foreach (ForumMember member in members.Values)
             {
-                VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
+                VariableCollection memberVariableCollection = core.Template.CreateChild("member_list");
 
                 memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 //memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));
@@ -457,7 +457,7 @@ namespace BoxSocial.Applications.Forum
 
                 core.Display.ShowMessage("Profile Updated", "Your forum profile has been saved in the database.");
 
-                page.template.Parse("REDIRECT_URI", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
+                core.Template.Parse("REDIRECT_URI", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
                     page.Owner.UriStub)));
             }
         }

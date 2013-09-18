@@ -1390,37 +1390,37 @@ namespace BoxSocial.Groups
 
         public static void Show(Core core, GPage page)
         {
-            page.template.SetTemplate("Groups", "viewgroup");
+            core.Template.SetTemplate("Groups", "viewgroup");
 
-            page.template.Parse("U_GROUP", page.Group.Uri);
-            page.template.Parse("GROUP_DISPLAY_NAME", page.Group.DisplayName);
+            core.Template.Parse("U_GROUP", page.Group.Uri);
+            core.Template.Parse("GROUP_DISPLAY_NAME", page.Group.DisplayName);
 
             string langMembers = (page.Group.Members != 1) ? "members" : "member";
             string langIsAre = (page.Group.Members != 1) ? "are" : "is";
 
             //page.template.ParseRaw("DESCRIPTION", Bbcode.Parse(HttpUtility.HtmlEncode(page.ThisGroup.Description), core.session.LoggedInMember));
             core.Display.ParseBbcode("DESCRIPTION", page.Group.Description);
-            page.template.Parse("DATE_CREATED", core.Tz.DateTimeToString(page.Group.DateCreated(core.Tz)));
-            page.template.Parse("CATEGORY", page.Group.Category);
+            core.Template.Parse("DATE_CREATED", core.Tz.DateTimeToString(page.Group.DateCreated(core.Tz)));
+            core.Template.Parse("CATEGORY", page.Group.Category);
 
-            page.template.Parse("MEMBERS", page.Group.Members.ToString());
-            page.template.Parse("OPERATORS", page.Group.Operators.ToString());
-            page.template.Parse("OFFICERS", page.Group.Officers.ToString());
-            page.template.Parse("L_MEMBERS", langMembers);
-            page.template.Parse("L_IS_ARE", langIsAre);
-            page.template.Parse("U_MEMBERLIST", page.Group.MemberlistUri);
+            core.Template.Parse("MEMBERS", page.Group.Members.ToString());
+            core.Template.Parse("OPERATORS", page.Group.Operators.ToString());
+            core.Template.Parse("OFFICERS", page.Group.Officers.ToString());
+            core.Template.Parse("L_MEMBERS", langMembers);
+            core.Template.Parse("L_IS_ARE", langIsAre);
+            core.Template.Parse("U_MEMBERLIST", page.Group.MemberlistUri);
 
             if (core.Session.IsLoggedIn)
             {
                 if (page.Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey))
                 {
-                    page.template.Parse("IS_OPERATOR", "TRUE");
-                    page.template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(page.Group.AccountUriStub));
+                    core.Template.Parse("IS_OPERATOR", "TRUE");
+                    core.Template.Parse("U_GROUP_ACCOUNT", core.Hyperlink.AppendSid(page.Group.AccountUriStub));
                 }
 
                 if (!page.Group.IsGroupMemberAbsolute(core.Session.LoggedInMember.ItemKey))
                 {
-                    page.template.Parse("U_JOIN", page.Group.JoinUri);
+                    core.Template.Parse("U_JOIN", page.Group.JoinUri);
                 }
                 else
                 {
@@ -1428,17 +1428,17 @@ namespace BoxSocial.Groups
                     {
                         if (page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                         {
-                            page.template.Parse("U_LEAVE", page.Group.LeaveUri);
+                            core.Template.Parse("U_LEAVE", page.Group.LeaveUri);
                         }
                         else if (page.Group.IsGroupMemberPending(core.Session.LoggedInMember.ItemKey))
                         {
-                            page.template.Parse("U_CANCEL", page.Group.LeaveUri);
+                            core.Template.Parse("U_CANCEL", page.Group.LeaveUri);
                         }
                     }
 
                     if (page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                     {
-                        page.template.Parse("U_INVITE", page.Group.InviteUri);
+                        core.Template.Parse("U_INVITE", page.Group.InviteUri);
                     }
                 }
             }
@@ -1447,7 +1447,7 @@ namespace BoxSocial.Groups
 
             foreach (GroupMember member in members)
             {
-                VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
+                VariableCollection membersVariableCollection = core.Template.CreateChild("member_list");
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 membersVariableCollection.Parse("U_PROFILE", member.Uri);
@@ -1459,7 +1459,7 @@ namespace BoxSocial.Groups
 
             foreach (GroupMember groupOperator in operators)
             {
-                VariableCollection operatorsVariableCollection = page.template.CreateChild("operator_list");
+                VariableCollection operatorsVariableCollection = core.Template.CreateChild("operator_list");
 
                 operatorsVariableCollection.Parse("USER_DISPLAY_NAME", groupOperator.DisplayName);
                 operatorsVariableCollection.Parse("U_PROFILE", groupOperator.Uri);
@@ -1476,7 +1476,7 @@ namespace BoxSocial.Groups
 
             foreach (GroupOfficer groupOfficer in officers)
             {
-                VariableCollection officersVariableCollection = page.template.CreateChild("officer_list");
+                VariableCollection officersVariableCollection = core.Template.CreateChild("officer_list");
 
                 officersVariableCollection.Parse("USER_DISPLAY_NAME", groupOfficer.DisplayName);
                 officersVariableCollection.Parse("U_PROFILE", groupOfficer.Uri);
@@ -1495,42 +1495,42 @@ namespace BoxSocial.Groups
 
         public static void ShowMemberlist(Core core, GPage page)
         {
-            page.template.SetTemplate("Groups", "viewgroupmemberlist");
+            core.Template.SetTemplate("Groups", "viewgroupmemberlist");
 
-            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Group.DisplayName);
-            page.template.Parse("MEMBERS", ((ulong)page.Group.Members).ToString());
+            core.Template.Parse("MEMBERS_TITLE", "Member list for " + page.Group.DisplayName);
+            core.Template.Parse("MEMBERS", ((ulong)page.Group.Members).ToString());
 
-            page.template.Parse("U_FILTER_ALL", page.Group.MemberlistUri);
-            page.template.Parse("U_FILTER_BEGINS_A", page.Group.GetMemberlistUri("a"));
-            page.template.Parse("U_FILTER_BEGINS_B", page.Group.GetMemberlistUri("b"));
-            page.template.Parse("U_FILTER_BEGINS_C", page.Group.GetMemberlistUri("c"));
-            page.template.Parse("U_FILTER_BEGINS_D", page.Group.GetMemberlistUri("d"));
-            page.template.Parse("U_FILTER_BEGINS_E", page.Group.GetMemberlistUri("e"));
-            page.template.Parse("U_FILTER_BEGINS_F", page.Group.GetMemberlistUri("f"));
-            page.template.Parse("U_FILTER_BEGINS_G", page.Group.GetMemberlistUri("g"));
-            page.template.Parse("U_FILTER_BEGINS_H", page.Group.GetMemberlistUri("h"));
-            page.template.Parse("U_FILTER_BEGINS_I", page.Group.GetMemberlistUri("i"));
-            page.template.Parse("U_FILTER_BEGINS_J", page.Group.GetMemberlistUri("j"));
-            page.template.Parse("U_FILTER_BEGINS_K", page.Group.GetMemberlistUri("k"));
-            page.template.Parse("U_FILTER_BEGINS_L", page.Group.GetMemberlistUri("l"));
-            page.template.Parse("U_FILTER_BEGINS_M", page.Group.GetMemberlistUri("m"));
-            page.template.Parse("U_FILTER_BEGINS_N", page.Group.GetMemberlistUri("n"));
-            page.template.Parse("U_FILTER_BEGINS_O", page.Group.GetMemberlistUri("o"));
-            page.template.Parse("U_FILTER_BEGINS_P", page.Group.GetMemberlistUri("p"));
-            page.template.Parse("U_FILTER_BEGINS_Q", page.Group.GetMemberlistUri("q"));
-            page.template.Parse("U_FILTER_BEGINS_R", page.Group.GetMemberlistUri("r"));
-            page.template.Parse("U_FILTER_BEGINS_S", page.Group.GetMemberlistUri("s"));
-            page.template.Parse("U_FILTER_BEGINS_T", page.Group.GetMemberlistUri("t"));
-            page.template.Parse("U_FILTER_BEGINS_U", page.Group.GetMemberlistUri("u"));
-            page.template.Parse("U_FILTER_BEGINS_V", page.Group.GetMemberlistUri("v"));
-            page.template.Parse("U_FILTER_BEGINS_W", page.Group.GetMemberlistUri("w"));
-            page.template.Parse("U_FILTER_BEGINS_X", page.Group.GetMemberlistUri("x"));
-            page.template.Parse("U_FILTER_BEGINS_Y", page.Group.GetMemberlistUri("y"));
-            page.template.Parse("U_FILTER_BEGINS_Z", page.Group.GetMemberlistUri("z"));
+            core.Template.Parse("U_FILTER_ALL", page.Group.MemberlistUri);
+            core.Template.Parse("U_FILTER_BEGINS_A", page.Group.GetMemberlistUri("a"));
+            core.Template.Parse("U_FILTER_BEGINS_B", page.Group.GetMemberlistUri("b"));
+            core.Template.Parse("U_FILTER_BEGINS_C", page.Group.GetMemberlistUri("c"));
+            core.Template.Parse("U_FILTER_BEGINS_D", page.Group.GetMemberlistUri("d"));
+            core.Template.Parse("U_FILTER_BEGINS_E", page.Group.GetMemberlistUri("e"));
+            core.Template.Parse("U_FILTER_BEGINS_F", page.Group.GetMemberlistUri("f"));
+            core.Template.Parse("U_FILTER_BEGINS_G", page.Group.GetMemberlistUri("g"));
+            core.Template.Parse("U_FILTER_BEGINS_H", page.Group.GetMemberlistUri("h"));
+            core.Template.Parse("U_FILTER_BEGINS_I", page.Group.GetMemberlistUri("i"));
+            core.Template.Parse("U_FILTER_BEGINS_J", page.Group.GetMemberlistUri("j"));
+            core.Template.Parse("U_FILTER_BEGINS_K", page.Group.GetMemberlistUri("k"));
+            core.Template.Parse("U_FILTER_BEGINS_L", page.Group.GetMemberlistUri("l"));
+            core.Template.Parse("U_FILTER_BEGINS_M", page.Group.GetMemberlistUri("m"));
+            core.Template.Parse("U_FILTER_BEGINS_N", page.Group.GetMemberlistUri("n"));
+            core.Template.Parse("U_FILTER_BEGINS_O", page.Group.GetMemberlistUri("o"));
+            core.Template.Parse("U_FILTER_BEGINS_P", page.Group.GetMemberlistUri("p"));
+            core.Template.Parse("U_FILTER_BEGINS_Q", page.Group.GetMemberlistUri("q"));
+            core.Template.Parse("U_FILTER_BEGINS_R", page.Group.GetMemberlistUri("r"));
+            core.Template.Parse("U_FILTER_BEGINS_S", page.Group.GetMemberlistUri("s"));
+            core.Template.Parse("U_FILTER_BEGINS_T", page.Group.GetMemberlistUri("t"));
+            core.Template.Parse("U_FILTER_BEGINS_U", page.Group.GetMemberlistUri("u"));
+            core.Template.Parse("U_FILTER_BEGINS_V", page.Group.GetMemberlistUri("v"));
+            core.Template.Parse("U_FILTER_BEGINS_W", page.Group.GetMemberlistUri("w"));
+            core.Template.Parse("U_FILTER_BEGINS_X", page.Group.GetMemberlistUri("x"));
+            core.Template.Parse("U_FILTER_BEGINS_Y", page.Group.GetMemberlistUri("y"));
+            core.Template.Parse("U_FILTER_BEGINS_Z", page.Group.GetMemberlistUri("z"));
 
             if (page.Group.IsGroupOperator(core.LoggedInMemberItemKey))
             {
-                page.template.Parse("GROUP_OPERATOR", "TRUE");
+                core.Template.Parse("GROUP_OPERATOR", "TRUE");
 
                 SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.All);
                 query.AddCondition("group_members.group_id", page.Group.Id);
@@ -1541,14 +1541,14 @@ namespace BoxSocial.Groups
 
                 if (approvalTable.Rows.Count > 0)
                 {
-                    page.template.Parse("IS_WAITING_APPROVAL", "TRUE");
+                    core.Template.Parse("IS_WAITING_APPROVAL", "TRUE");
                 }
 
                 for (int i = 0; i < approvalTable.Rows.Count; i++)
                 {
                     GroupMember approvalMember = new GroupMember(core, approvalTable.Rows[i], UserLoadOptions.Profile);
 
-                    VariableCollection approvalVariableCollection = page.template.CreateChild("approval_list");
+                    VariableCollection approvalVariableCollection = core.Template.CreateChild("approval_list");
 
                     approvalVariableCollection.Parse("USER_DISPLAY_NAME", approvalMember.DisplayName);
                     approvalVariableCollection.Parse("U_PROFILE", approvalMember.Uri);
@@ -1560,7 +1560,7 @@ namespace BoxSocial.Groups
             List<GroupMember> members = page.Group.GetMembers(page.TopLevelPageNumber, 18, core.Functions.GetFilter());
             foreach (GroupMember member in members)
             {
-                VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
+                VariableCollection memberVariableCollection = core.Template.CreateChild("member_list");
 
                 memberVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 memberVariableCollection.Parse("JOIN_DATE", page.tz.DateTimeToString(member.GetGroupMemberJoinDate(page.tz)));

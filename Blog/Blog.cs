@@ -770,7 +770,7 @@ namespace BoxSocial.Applications.Blog
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
         private static void Show(Core core, UPage page, string category, string tag, long post, int year, int month)
         {
-            page.template.SetTemplate("Blog", "viewblog");
+            core.Template.SetTemplate("Blog", "viewblog");
 
             bool rss = false;
             long comments = 0;
@@ -812,18 +812,18 @@ namespace BoxSocial.Applications.Blog
             if (!rss)
             {
                 core.Display.ParsePageList(page.User, true);
-                page.template.Parse("U_PROFILE", page.User.Uri);
-                page.template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
+                core.Template.Parse("U_PROFILE", page.User.Uri);
+                core.Template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
 
-                page.template.Parse("USER_THUMB", page.User.UserThumbnail);
-                page.template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
-                page.template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
+                core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
 
-                page.template.Parse("BLOG_TITLE", myBlog.Title);
+                core.Template.Parse("BLOG_TITLE", myBlog.Title);
 
                 if (page.User.UserId == core.LoggedInMemberId)
                 {
-                    page.template.Parse("U_POST", core.Hyperlink.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
+                    core.Template.Parse("U_POST", core.Hyperlink.BuildAccountSubModuleUri(myBlog.Owner, "blog", "write"));
                 }
             }
 
@@ -832,11 +832,11 @@ namespace BoxSocial.Applications.Blog
                 DataTable archiveTable = core.Db.Query(string.Format("SELECT DISTINCT YEAR(FROM_UNIXTIME(post_time_ut)) as year, MONTH(FROM_UNIXTIME(post_time_ut)) as month FROM blog_postings WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY year DESC, month DESC;",
                     page.User.UserId, core.LoggedInMemberId));
 
-                page.template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
+                core.Template.Parse("ARCHIVES", archiveTable.Rows.Count.ToString());
 
                 for (int i = 0; i < archiveTable.Rows.Count; i++)
                 {
-                    VariableCollection archiveVariableCollection = page.template.CreateChild("archive_list");
+                    VariableCollection archiveVariableCollection = core.Template.CreateChild("archive_list");
 
                     archiveVariableCollection.Parse("TITLE", string.Format("{0} {1}",
                         core.Functions.IntToMonth((int)archiveTable.Rows[i]["month"]), ((int)archiveTable.Rows[i]["year"]).ToString()));
@@ -847,11 +847,11 @@ namespace BoxSocial.Applications.Blog
                 DataTable categoriesTable = core.Db.Query(string.Format("SELECT DISTINCT post_category, category_title, category_path FROM blog_postings INNER JOIN global_categories ON post_category = category_id WHERE user_id = {0} AND post_status = 'PUBLISH' ORDER BY category_title DESC;",
                     page.User.UserId, core.LoggedInMemberId));
 
-                page.template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
+                core.Template.Parse("CATEGORIES", categoriesTable.Rows.Count.ToString());
 
                 for (int i = 0; i < categoriesTable.Rows.Count; i++)
                 {
-                    VariableCollection categoryVariableCollection = page.template.CreateChild("category_list");
+                    VariableCollection categoryVariableCollection = core.Template.CreateChild("category_list");
 
                     categoryVariableCollection.Parse("TITLE", (string)categoriesTable.Rows[i]["category_title"]);
 
@@ -860,11 +860,11 @@ namespace BoxSocial.Applications.Blog
 
                 List<BlogRollEntry> blogRollEntries = myBlog.GetBlogRoll();
 
-                page.template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
+                core.Template.Parse("BLOG_ROLL_ENTRIES", blogRollEntries.Count.ToString());
 
                 foreach (BlogRollEntry bre in blogRollEntries)
                 {
-                    VariableCollection breVariableCollection = page.template.CreateChild("blog_roll_list");
+                    VariableCollection breVariableCollection = core.Template.CreateChild("blog_roll_list");
 
                     if (!string.IsNullOrEmpty(bre.Title))
                     {
@@ -881,23 +881,23 @@ namespace BoxSocial.Applications.Blog
 
             if (!string.IsNullOrEmpty(category))
             {
-                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, category));
+                core.Template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, category));
             }
             else if (post > 0)
             {
-                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogPostRssUri(page.User, year, month, post));
+                core.Template.Parse("U_RSS", core.Hyperlink.BuildBlogPostRssUri(page.User, year, month, post));
             }
             else if (month > 0)
             {
-                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year, month));
+                core.Template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year, month));
             }
             else if (year > 0)
             {
-                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year));
+                core.Template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User, year));
             }
             else
             {
-                page.template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User));
+                core.Template.Parse("U_RSS", core.Hyperlink.BuildBlogRssUri(page.User));
             }
 
             if (rss)
@@ -966,7 +966,7 @@ namespace BoxSocial.Applications.Blog
                 for (int i = 0; i < blogEntries.Count; i++)
                 {
                     postsOnPage++;
-                    VariableCollection blogPostVariableCollection = page.template.CreateChild("blog_list");
+                    VariableCollection blogPostVariableCollection = core.Template.CreateChild("blog_list");
 
                     blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
 
@@ -1018,8 +1018,8 @@ namespace BoxSocial.Applications.Blog
                     if (blogEntries[i].PostId == post)
                     {
                         comments = blogEntries[i].Comments;
-                        page.template.Parse("BLOG_POST_COMMENTS", core.Functions.LargeIntegerToString(comments));
-                        page.template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
+                        core.Template.Parse("BLOG_POST_COMMENTS", core.Functions.LargeIntegerToString(comments));
+                        core.Template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
                     }
 
                     if (post > 0)
@@ -1042,14 +1042,14 @@ namespace BoxSocial.Applications.Blog
                     {
                         if (blogEntries[0].Access.Can("COMMENT"))
                         {
-                            page.template.Parse("CAN_COMMENT", "TRUE");
+                            core.Template.Parse("CAN_COMMENT", "TRUE");
                         }
                     }
-                    core.Display.DisplayComments(page.template, page.User, blogEntries[0]);
-                    page.template.Parse("SINGLE", "TRUE");
+                    core.Display.DisplayComments(core.Template, page.User, blogEntries[0]);
+                    core.Template.Parse("SINGLE", "TRUE");
                 }
 
-                page.template.Parse("BLOGPOSTS", postsOnPage.ToString());
+                core.Template.Parse("BLOGPOSTS", postsOnPage.ToString());
 
                 string pageUri = "";
                 string breadcrumbExtension = (page.User.UserInfo.ProfileHomepage == "/blog") ? "" : "blog/";
@@ -1107,7 +1107,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (post <= 0)
                 {
-                    core.Display.ParseBlogPagination(page.template, "PAGINATION", pageUri, 0, moreContent ? lastPostId : 0);
+                    core.Display.ParseBlogPagination(core.Template, "PAGINATION", pageUri, 0, moreContent ? lastPostId : 0);
                 }
                 else
                 {

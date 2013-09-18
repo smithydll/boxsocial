@@ -849,7 +849,7 @@ namespace BoxSocial.Applications.Forum
             long m = core.Functions.RequestLong("m", 0); // post, seeing as p has been globally reserved for page and cannot be used for post, we use m for message
             Forum thisForum = null;
 
-            page.template.SetTemplate("Forum", "viewtopic");
+            core.Template.SetTemplate("Forum", "viewtopic");
             ForumSettings.ShowForumHeader(core, page);
 
             ForumSettings settings = new ForumSettings(core, page.Owner);
@@ -889,11 +889,11 @@ namespace BoxSocial.Applications.Forum
                 {
                     if (core.LoggedInMemberId > 0 && (!((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember.ItemKey)))
                     {
-                        page.template.Parse("U_JOIN", ((GPage)page).Group.JoinUri);
+                        core.Template.Parse("U_JOIN", ((GPage)page).Group.JoinUri);
                     }
                 }
 
-                page.template.Parse("TOPIC_TITLE", thisTopic.Title);
+                core.Template.Parse("TOPIC_TITLE", thisTopic.Title);
 
                 List<TopicPost> posts;
                 if (m > 0)
@@ -905,7 +905,7 @@ namespace BoxSocial.Applications.Forum
                     posts = thisTopic.GetPosts(page.TopLevelPageNumber, settings.PostsPerPage);
                 }
 
-                page.template.Parse("POSTS", posts.Count.ToString());
+                core.Template.Parse("POSTS", posts.Count.ToString());
 				
 				List<long> posterIds = new List<long>();
 				List<long> rankIds = new List<long>();
@@ -959,7 +959,7 @@ namespace BoxSocial.Applications.Forum
 
                 foreach (TopicPost post in posts)
                 {
-                    VariableCollection postVariableCollection = page.template.CreateChild("post_list");
+                    VariableCollection postVariableCollection = core.Template.CreateChild("post_list");
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
 					postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(post.GetCreatedDate(core.Tz)));
@@ -1012,11 +1012,11 @@ namespace BoxSocial.Applications.Forum
 
                 if (thisForum.Access.Can("CREATE_TOPICS"))
                 {
-                    page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                    core.Template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                 }
                 if (thisForum.Access.Can("REPLY_TOPICS") && (!thisTopic.IsLocked))
                 {
-                    page.template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
+                    core.Template.Parse("U_NEW_REPLY", thisTopic.ReplyUri);
                 }
 
                 core.Display.ParsePagination(thisTopic.Uri, settings.PostsPerPage, thisTopic.Posts + 1);

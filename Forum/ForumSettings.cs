@@ -244,25 +244,25 @@ namespace BoxSocial.Applications.Forum
 
         public static void ShowForumHeader(Core core, PPage page)
         {
-            page.template.Parse("U_FORUM_INDEX", core.Hyperlink.AppendSid(string.Format("{0}forum",
+            core.Template.Parse("U_FORUM_INDEX", core.Hyperlink.AppendSid(string.Format("{0}forum",
                 page.Owner.UriStub)));
-            page.template.Parse("U_UCP", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
+            core.Template.Parse("U_UCP", core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
                 page.Owner.UriStub)));
-            page.template.Parse("U_MEMBERS", core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist",
+            core.Template.Parse("U_MEMBERS", core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist",
                 page.Owner.UriStub)));
 
             if (page is GPage)
             {
                 if (core.Session.IsLoggedIn && ((GPage)page).Group.IsGroupMember(core.Session.LoggedInMember.ItemKey))
                 {
-                    page.template.Parse("IS_FORUM_MEMBER", "TRUE");
+                    core.Template.Parse("IS_FORUM_MEMBER", "TRUE");
                 }
                 else
                 {
-                    page.template.Parse("IS_FORUM_MEMBER", "FALSE");
+                    core.Template.Parse("IS_FORUM_MEMBER", "FALSE");
                 }
             }
-            page.template.Parse("U_FAQ", core.Hyperlink.AppendSid(string.Format("{0}forum/help",
+            core.Template.Parse("U_FAQ", core.Hyperlink.AppendSid(string.Format("{0}forum/help",
                 page.Owner.UriStub)));
         }
 

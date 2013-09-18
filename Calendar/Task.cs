@@ -293,11 +293,11 @@ namespace BoxSocial.Applications.Calendar
 
         public static void ShowAll(Core core, TPage page, Primitive owner)
         {
-            page.template.SetTemplate("Calendar", "viewcalendartasks");
+            core.Template.SetTemplate("Calendar", "viewcalendartasks");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
+                core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.Tz.Now.Year),
                     string.Format("month={0}", core.Tz.Now.Month),
                     string.Format("day={0}", core.Tz.Now.Day)));
@@ -315,8 +315,8 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner is User)
             {
-                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
             VariableCollection taskDaysVariableCollection = null;
@@ -324,7 +324,7 @@ namespace BoxSocial.Applications.Calendar
 
             if (tasks.Count > 0)
             {
-                page.template.Parse("HAS_TASKS", "TRUE");
+                core.Template.Parse("HAS_TASKS", "TRUE");
             }
 
             foreach (Task calendarTask in tasks)
@@ -334,7 +334,7 @@ namespace BoxSocial.Applications.Calendar
                 if (taskDaysVariableCollection == null || lastDay != core.Tz.ToStringPast(taskDue))
                 {
                     lastDay = core.Tz.ToStringPast(taskDue);
-                    taskDaysVariableCollection = page.template.CreateChild("task_days");
+                    taskDaysVariableCollection = core.Template.CreateChild("task_days");
 
                     taskDaysVariableCollection.Parse("DAY", lastDay);
                 }
@@ -381,15 +381,15 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, long taskId)
         {
-            page.template.SetTemplate("Calendar", "viewcalendartask");
+            core.Template.SetTemplate("Calendar", "viewcalendartask");
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
+                core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
                     string.Format("year={0}", core.Tz.Now.Year),
                     string.Format("month={0}", core.Tz.Now.Month),
                     string.Format("day={0}", core.Tz.Now.Day)));
-                page.template.Parse("U_EDIT_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
+                core.Template.Parse("U_EDIT_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
             }
 
             try
@@ -407,13 +407,13 @@ namespace BoxSocial.Applications.Calendar
 
                 if (owner is User)
                 {
-                    page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                    page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                    core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                    core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
                 }
 
-                page.template.Parse("TOPIC", calendarTask.Topic);
-                page.template.Parse("DESCRIPTION", calendarTask.Description);
-                page.template.Parse("DUE_DATE", calendarTask.GetDueTime(core.Tz).ToString());
+                core.Template.Parse("TOPIC", calendarTask.Topic);
+                core.Template.Parse("DESCRIPTION", calendarTask.Description);
+                core.Template.Parse("DUE_DATE", calendarTask.GetDueTime(core.Tz).ToString());
 
                 List<string[]> calendarPath = new List<string[]>();
 

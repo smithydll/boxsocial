@@ -899,38 +899,38 @@ namespace BoxSocial.Networks
 
         public static void Show(Core core, NPage page)
         {
-            page.template.SetTemplate("Networks", "viewnetwork");
+            core.Template.SetTemplate("Networks", "viewnetwork");
             page.Signature = PageSignature.viewnetwork;
 
             if (core.Session.IsLoggedIn)
             {
                 if (page.Network.IsNetworkMember(core.Session.LoggedInMember.ItemKey))
                 {
-                    page.template.Parse("U_LEAVE", page.Network.BuildLeaveUri());
+                    core.Template.Parse("U_LEAVE", page.Network.BuildLeaveUri());
                 }
                 else
                 {
-                    page.template.Parse("U_JOIN", page.Network.BuildJoinUri());
+                    core.Template.Parse("U_JOIN", page.Network.BuildJoinUri());
                 }
             }
 
-            page.template.Parse("NETWORK_DISPLAY_NAME", page.Network.DisplayName);
+            core.Template.Parse("NETWORK_DISPLAY_NAME", page.Network.DisplayName);
             core.Display.ParseBbcode("DESCRIPTION", page.Network.Description);
 
             string langMembers = (page.Network.Members != 1) ? "members" : "member";
             string langIsAre = (page.Network.Members != 1) ? "are" : "is";
 
-            page.template.Parse("MEMBERS", page.Network.Members.ToString());
-            page.template.Parse("L_MEMBERS", langMembers);
-            page.template.Parse("L_IS_ARE", langIsAre);
-            page.template.Parse("U_MEMBERLIST", page.Network.BuildMemberListUri());
+            core.Template.Parse("MEMBERS", page.Network.Members.ToString());
+            core.Template.Parse("L_MEMBERS", langMembers);
+            core.Template.Parse("L_IS_ARE", langIsAre);
+            core.Template.Parse("U_MEMBERLIST", page.Network.BuildMemberListUri());
 
             List<NetworkMember> members = page.Network.GetMembers(1, 8);
 
             foreach (NetworkMember member in members)
             {
                 Dictionary<string, string> membersLoopVars = new Dictionary<string, string>();
-                VariableCollection membersVariableCollection = page.template.CreateChild("member_list");
+                VariableCollection membersVariableCollection = core.Template.CreateChild("member_list");
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 membersVariableCollection.Parse("U_PROFILE", member.Uri);
@@ -943,14 +943,14 @@ namespace BoxSocial.Networks
 
         public static void ShowMemberlist(Core core, NPage page)
         {
-            page.template.SetTemplate("Networks", "viewnetworkmemberlist");
+            core.Template.SetTemplate("Networks", "viewnetworkmemberlist");
 
-            page.template.Parse("MEMBERS_TITLE", "Member list for " + page.Network.DisplayName);
-            page.template.Parse("MEMBERS", ((ulong)page.Network.Members).ToString());
+            core.Template.Parse("MEMBERS_TITLE", "Member list for " + page.Network.DisplayName);
+            core.Template.Parse("MEMBERS", ((ulong)page.Network.Members).ToString());
 
             foreach (NetworkMember member in page.Network.GetMembers(page.TopLevelPageNumber, 18))
             {
-                VariableCollection memberVariableCollection = page.template.CreateChild("member_list");
+                VariableCollection memberVariableCollection = core.Template.CreateChild("member_list");
 
 
                 string age;

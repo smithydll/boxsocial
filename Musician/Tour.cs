@@ -227,7 +227,7 @@ namespace BoxSocial.Musician
 
         public static void Show(Core core, PPage page)
         {
-            page.template.SetTemplate("Musician", "viewtours");
+            page.Template.SetTemplate("Musician", "viewtours");
 
             if (!(page is MPage))
             {
@@ -239,7 +239,7 @@ namespace BoxSocial.Musician
 
             foreach (Tour tour in tours)
             {
-                VariableCollection tourVariableCollection = page.template.CreateChild("tour_list");
+                VariableCollection tourVariableCollection = core.Template.CreateChild("tour_list");
 
                 tourVariableCollection.Parse("ID", tour.Id.ToString());
                 tourVariableCollection.Parse("TITLE", tour.Title);
@@ -255,7 +255,7 @@ namespace BoxSocial.Musician
 
         public static void Show(Core core, PPage page, long tourId)
         {
-            page.template.SetTemplate("Musician", "viewtour");
+            page.Template.SetTemplate("Musician", "viewtour");
 
             Tour tour = null;
 
@@ -269,16 +269,16 @@ namespace BoxSocial.Musician
                 return;
             }
 
-            page.template.Parse("TOUR_TITLE", tour.Title);
-            page.template.Parse("TOUR_YEAR", tour.StartYear.ToString());
-            page.template.Parse("U_TOUR", tour.Uri);
+            core.Template.Parse("TOUR_TITLE", tour.Title);
+            core.Template.Parse("TOUR_YEAR", tour.StartYear.ToString());
+            core.Template.Parse("U_TOUR", tour.Uri);
             core.Display.ParseBbcode("TOUR_ABSTRACT", tour.TourAbstract);
 
             List<Gig> gigs = tour.GetGigs();
 
             foreach (Gig gig in gigs)
             {
-                VariableCollection gigVariableCollection = page.template.CreateChild("gig_list");
+                VariableCollection gigVariableCollection = core.Template.CreateChild("gig_list");
 
                 gigVariableCollection.Parse("ID", gig.Id.ToString());
                 gigVariableCollection.Parse("U_GIG", gig.Uri);

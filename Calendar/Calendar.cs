@@ -372,7 +372,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, int year)
         {
-            page.template.SetTemplate("Calendar", "viewcalendaryear");
+            core.Template.SetTemplate("Calendar", "viewcalendaryear");
 
             // 15 year window
             if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
@@ -385,24 +385,24 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner is User)
             {
-                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
-            page.template.Parse("CURRENT_YEAR", year.ToString());
+            core.Template.Parse("CURRENT_YEAR", year.ToString());
 
             if (year - 1 >= DateTime.Now.Year - 10)
             {
-                page.template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(core, owner, year - 1));
+                core.Template.Parse("U_PREVIOUS_YEAR", Calendar.BuildYearUri(core, owner, year - 1));
             }
             if (year + 1 <= DateTime.Now.Year + 5)
             {
-                page.template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(core, owner, year + 1));
+                core.Template.Parse("U_NEXT_YEAR", Calendar.BuildYearUri(core, owner, year + 1));
             }
 
             for (int i = 1; i <= 12; i++)
             {
-                DisplayMiniCalendar(core, page.template.CreateChild("month"), owner, year, i);
+                DisplayMiniCalendar(core, core.Template.CreateChild("month"), owner, year, i);
             }
 
             List<string[]> calendarPath = new List<string[]>();
@@ -413,7 +413,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, int year, int month)
         {
-            page.template.SetTemplate("Calendar", "viewcalendarmonth");
+            core.Template.SetTemplate("Calendar", "viewcalendarmonth");
 
             if (month < 1 || month > 12)
             {
@@ -431,18 +431,18 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner is User)
             {
-                page.template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
-            page.template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
-            page.template.Parse("CURRENT_YEAR", year.ToString());
-            page.template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
-            page.template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(core, owner, YearOfNextMonth(year, month), NextMonth(month)));
+            core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
+            core.Template.Parse("CURRENT_YEAR", year.ToString());
+            core.Template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
+            core.Template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(core, owner, YearOfNextMonth(year, month), NextMonth(month)));
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
+                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.Tz.Now.Month) ? core.Tz.Now.Day : 1))));
@@ -480,7 +480,7 @@ namespace BoxSocial.Applications.Calendar
 
             for (int week = 0; week < weeks; week++)
             {
-                VariableCollection weekVariableCollection = page.template.CreateChild("week");
+                VariableCollection weekVariableCollection = core.Template.CreateChild("week");
 
                 weekVariableCollection.Parse("WEEK", (week + 1).ToString());
 
@@ -541,7 +541,7 @@ namespace BoxSocial.Applications.Calendar
 
         public static void Show(Core core, TPage page, Primitive owner, int year, int month, int day)
         {
-            page.template.SetTemplate("Calendar", "viewcalendarday");
+            core.Template.SetTemplate("Calendar", "viewcalendarday");
 
             // 15 year window
             if (year < DateTime.Now.Year - 10 || year > DateTime.Now.Year + 5)
@@ -564,17 +564,17 @@ namespace BoxSocial.Applications.Calendar
 
             if (owner is User)
             {
-                page.template.Parse("USER_THUMB", ((User)owner).UserThumbnail);
-                page.template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_THUMB", ((User)owner).UserThumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
             }
 
-            page.template.Parse("CURRENT_DAY", day.ToString());
-            page.template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
-            page.template.Parse("CURRENT_YEAR", year.ToString());
+            core.Template.Parse("CURRENT_DAY", day.ToString());
+            core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
+            core.Template.Parse("CURRENT_YEAR", year.ToString());
 
             if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
             {
-                page.template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
+                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", day)));
@@ -593,7 +593,7 @@ namespace BoxSocial.Applications.Calendar
                 if (calendarEvent.AllDay)
                 {
                     hasAllDaysEvents = true;
-                    VariableCollection eventVariableCollection = page.template.CreateChild("event");
+                    VariableCollection eventVariableCollection = core.Template.CreateChild("event");
 
                     eventVariableCollection.Parse("TITLE", calendarEvent.Subject);
                     eventVariableCollection.Parse("URI", calendarEvent.Uri);
@@ -602,14 +602,14 @@ namespace BoxSocial.Applications.Calendar
 
             if (hasAllDaysEvents)
             {
-                page.template.Parse("ALL_DAY_EVENTS", "TRUE");
+                core.Template.Parse("ALL_DAY_EVENTS", "TRUE");
             }
 
             VariableCollection[] hours = new VariableCollection[24];
 
             for (int hour = 0; hour < 24; hour++)
             {
-                VariableCollection timeslotVariableCollection = page.template.CreateChild("timeslot");
+                VariableCollection timeslotVariableCollection = core.Template.CreateChild("timeslot");
 
                 DateTime hourTime = new DateTime(year, month, day, hour, 0, 0);
 

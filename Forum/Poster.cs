@@ -46,7 +46,7 @@ namespace BoxSocial.Applications.Forum
         {
             Poster poster = new Poster(e.Core, e.Page);
 
-            e.Page.template.SetTemplate("Forum", "post");
+            e.Template.SetTemplate("Forum", "post");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
             if (e.Core.Http.Form["save"] != null) // DRAFT
@@ -92,7 +92,7 @@ namespace BoxSocial.Applications.Forum
 
             if (page is GPage)
             {
-                page.template.Parse("S_POST", core.Hyperlink.AppendSid(string.Format("{0}forum/post",
+                core.Template.Parse("S_POST", core.Hyperlink.AppendSid(string.Format("{0}forum/post",
                     ((GPage)page).Group.UriStub), true));
 
                 if (((GPage)page).Group.IsGroupOperator(core.Session.LoggedInMember.ItemKey) && topicId == 0)
@@ -109,12 +109,12 @@ namespace BoxSocial.Applications.Forum
 
                 if (posts.Count > 0)
                 {
-                    page.template.Parse("PREVIEW_TOPIC", "TRUE");
+                    core.Template.Parse("PREVIEW_TOPIC", "TRUE");
                 }
 
                 foreach (TopicPost post in posts)
                 {
-                    VariableCollection postVariableCollection = page.template.CreateChild("post_list");
+                    VariableCollection postVariableCollection = core.Template.CreateChild("post_list");
 
                     postVariableCollection.Parse("SUBJECT", post.Title);
                     postVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(post.GetCreatedDate(core.Tz)));
@@ -173,39 +173,39 @@ namespace BoxSocial.Applications.Forum
                 }
             }
 
-            page.template.Parse("S_MODE", mode);
+            core.Template.Parse("S_MODE", mode);
 
             if (forumId > 0)
             {
-                page.template.Parse("S_FORUM", forumId.ToString());
+                core.Template.Parse("S_FORUM", forumId.ToString());
             }
 
             if (topicId > 0)
             {
-                page.template.Parse("S_TOPIC", topicId.ToString());
+                core.Template.Parse("S_TOPIC", topicId.ToString());
             }
 
             if (postId > 0)
             {
-                page.template.Parse("S_ID", postId.ToString());
+                core.Template.Parse("S_ID", postId.ToString());
             }
 
             if (!string.IsNullOrEmpty(subject))
             {
-                page.template.Parse("S_SUBJECT", subject);
+                core.Template.Parse("S_SUBJECT", subject);
             }
             else
             {
                 if (topicId > 0)
                 {
                     ForumTopic topic = new ForumTopic(core, topicId);
-                    page.template.Parse("S_SUBJECT", "RE: " + topic.Title);
+                    core.Template.Parse("S_SUBJECT", "RE: " + topic.Title);
                 }
             }
 
             if (!string.IsNullOrEmpty(text))
             {
-                page.template.Parse("S_POST_TEXT", text);
+                core.Template.Parse("S_POST_TEXT", text);
             }
 
             if (sbis.Count > 1 && (mode == "post" || mode == "edit"))
@@ -217,13 +217,13 @@ namespace BoxSocial.Applications.Forum
             {
                 if (topicId == 0 && (string.IsNullOrEmpty(subject) || subject.Length < 3))
                 {
-                    page.template.Parse("ERROR", "New topic must have a subject");
+                    core.Template.Parse("ERROR", "New topic must have a subject");
                     return;
                 }
 
                 if (string.IsNullOrEmpty(text) || text.Length < 3)
                 {
-                    page.template.Parse("ERROR", "Post too short, must be at least three characters long");
+                    core.Template.Parse("ERROR", "Post too short, must be at least three characters long");
                     return;
                 }
             }
@@ -284,7 +284,7 @@ namespace BoxSocial.Applications.Forum
 
                         TopicPost post = topic.AddReply(core, forum, subject, text);
 
-                        page.template.Parse("REDIRECT_URI", post.Uri);
+                        core.Template.Parse("REDIRECT_URI", post.Uri);
                         core.Display.ShowMessage("Reply Posted", "Reply has been posted");
                         return;
                     }
@@ -335,7 +335,7 @@ namespace BoxSocial.Applications.Forum
 
                         ForumTopic topic = ForumTopic.Create(core, forum, subject, text, topicState);
 
-                        page.template.Parse("REDIRECT_URI", topic.Uri);
+                        core.Template.Parse("REDIRECT_URI", topic.Uri);
                         core.Display.ShowMessage("Topic Posted", "Topic has been posted");
                         return;
                         /*}

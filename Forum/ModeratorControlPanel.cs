@@ -47,7 +47,7 @@ namespace BoxSocial.Applications.Forum
         {
             this.core = core;
             this.page = page;
-            this.template = page.template;
+            this.template = core.Template;
         }
 
         void OnRegisterModule(object sender, EventArgs e)
@@ -195,7 +195,7 @@ namespace BoxSocial.Applications.Forum
         {
             ModeratorControlPanel mcp = new ModeratorControlPanel(e.Core, e.Page);
 
-            e.Page.template.SetTemplate("Forum", "mcp"); // account_master.html
+            e.Template.SetTemplate("Forum", "mcp"); // account_master.html
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
             if (e.Core.PagePathParts.Count == 3)

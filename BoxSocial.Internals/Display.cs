@@ -57,8 +57,6 @@ namespace BoxSocial.Internals
 
     public class Display
     {
-        internal TPage page;
-
         const string RANK_ACTIVE = "/images/star-on.png";
         const string RANK_RATING = "/images/star-on.png";
         const string RANK_SHADOW = "/images/star-off.png";
@@ -520,22 +518,22 @@ namespace BoxSocial.Internals
                 return ConfirmBoxResult.No;
             }
 
-            page.template.SetTemplate("std.confirm.html");
-            page.template.Parse("IS_CONTENT", "FALSE");
+            core.Template.SetTemplate("std.confirm.html");
+            core.Template.Parse("IS_CONTENT", "FALSE");
 
-            page.template.Parse("S_FORM_ACTION", formAction);
-            page.template.Parse("CONFIRM_TITLE", title);
-            page.template.Parse("CONFIRM_TEXT", message);
+            core.Template.Parse("S_FORM_ACTION", formAction);
+            core.Template.Parse("CONFIRM_TITLE", title);
+            core.Template.Parse("CONFIRM_TEXT", message);
 
             foreach (string key in hiddenFieldList.Keys)
             {
-                VariableCollection hiddenVariableCollection = page.template.CreateChild("hidden_list");
+                VariableCollection hiddenVariableCollection = core.Template.CreateChild("hidden_list");
 
                 hiddenVariableCollection.Parse("NAME", key);
                 hiddenVariableCollection.Parse("VALUE", hiddenFieldList[key]);
             }
 
-            page.EndResponse();
+            core.page.EndResponse();
 
             return ConfirmBoxResult.None;
         }
@@ -874,7 +872,7 @@ namespace BoxSocial.Internals
         /// <param name="loggedInMember"></param>
         public void Header(TPage page)
         {
-            Template template = page.template;
+            Template template = core.Template;
             SessionState session = page.session;
 
             template.Parse("TITLE", page.PageTitle); // the set page title function sanitises

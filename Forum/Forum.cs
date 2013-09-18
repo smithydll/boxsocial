@@ -1495,7 +1495,7 @@ namespace BoxSocial.Applications.Forum
             Forum thisForum = null;
             long topicsCount = 0;
 
-            page.template.SetTemplate("Forum", "viewforum");
+            core.Template.SetTemplate("Forum", "viewforum");
             ForumSettings.ShowForumHeader(core, page);
 
             try
@@ -1526,14 +1526,14 @@ namespace BoxSocial.Applications.Forum
 
             if (core.LoggedInMemberId > 0 && (!page.Group.IsGroupMember(core.Session.LoggedInMember.ItemKey)))
             {
-                page.template.Parse("U_JOIN", page.Group.JoinUri);
+                core.Template.Parse("U_JOIN", page.Group.JoinUri);
             }
 
             topicsCount = thisForum.Topics;
 			
 			if (!string.IsNullOrEmpty(thisForum.Rules))
 			{
-                core.Display.ParseBbcode(page.template, "RULES", thisForum.Rules);
+                core.Display.ParseBbcode(core.Template, "RULES", thisForum.Rules);
 			}
 			
 			List<Forum> forums = GetForumLevels(core, thisForum, 2);
@@ -1565,7 +1565,7 @@ namespace BoxSocial.Applications.Forum
                 return;
             }
 
-            page.template.Parse("FORUMS", forums.Count.ToString());
+            core.Template.Parse("FORUMS", forums.Count.ToString());
 
             // ForumId, TopicPost
             Dictionary<long, TopicPost> lastPosts;
@@ -1597,7 +1597,7 @@ namespace BoxSocial.Applications.Forum
 				
                 if ((first && (!forum.IsCategory)) || (lastCategoryId != forum.parentId && (!forum.IsCategory)))
                 {
-                    VariableCollection defaultVariableCollection = page.template.CreateChild("forum_list");
+                    VariableCollection defaultVariableCollection = core.Template.CreateChild("forum_list");
                     defaultVariableCollection.Parse("TITLE", "Forum");
                     defaultVariableCollection.Parse("IS_CATEGORY", "TRUE");
                     if (lastForumVariableCollection != null)
@@ -1609,7 +1609,7 @@ namespace BoxSocial.Applications.Forum
                     lastCategory = true;
                 }
 
-                VariableCollection forumVariableCollection = page.template.CreateChild("forum_list");
+                VariableCollection forumVariableCollection = core.Template.CreateChild("forum_list");
 
                 forumVariableCollection.Parse("TITLE", forum.Title);
                 core.Display.ParseBbcode(forumVariableCollection, "DESCRIPTION", forum.Description);
@@ -1678,7 +1678,7 @@ namespace BoxSocial.Applications.Forum
 
                 topicsCount -= announcements.Count; // aren't counted in pagination
 
-                page.template.Parse("ANNOUNCEMENTS", announcements.Count.ToString());
+                core.Template.Parse("ANNOUNCEMENTS", announcements.Count.ToString());
                 //page.template.Parse("TOPICS", topics.Count.ToString());
 
                 // PostId, TopicPost
@@ -1686,7 +1686,7 @@ namespace BoxSocial.Applications.Forum
 
                 topicLastPosts = TopicPost.GetTopicLastPosts(core, allTopics);
 
-                page.template.Parse("TOPICS", allTopics.Count.ToString());
+                core.Template.Parse("TOPICS", allTopics.Count.ToString());
 				
 				foreach (ForumTopic topic in allTopics)
                 {
@@ -1695,7 +1695,7 @@ namespace BoxSocial.Applications.Forum
 
                 foreach (ForumTopic topic in allTopics)
                 {
-                    VariableCollection topicVariableCollection = page.template.CreateChild("topic_list");
+                    VariableCollection topicVariableCollection = core.Template.CreateChild("topic_list");
 
                     if (topic.Posts > settings.PostsPerPage)
                     {
@@ -1810,7 +1810,7 @@ namespace BoxSocial.Applications.Forum
                 {
                     if (thisForum.Access.Can("CREATE_TOPICS"))
                     {
-                        page.template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
+                        core.Template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                     }
                 }
             }
@@ -1837,10 +1837,10 @@ namespace BoxSocial.Applications.Forum
 			
             if (thisForum.Id == 0)
             {
-                page.template.Parse("INDEX_STATISTICS", "TRUE");
-                page.template.Parse("FORUM_POSTS", core.Functions.LargeIntegerToString(settings.Posts));
-                page.template.Parse("FORUM_TOPICS", core.Functions.LargeIntegerToString(settings.Topics));
-                page.template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.Group.Members));
+                core.Template.Parse("INDEX_STATISTICS", "TRUE");
+                core.Template.Parse("FORUM_POSTS", core.Functions.LargeIntegerToString(settings.Posts));
+                core.Template.Parse("FORUM_TOPICS", core.Functions.LargeIntegerToString(settings.Topics));
+                core.Template.Parse("GROUP_MEMBERS", core.Functions.LargeIntegerToString(page.Group.Members));
             }
 
             PermissionsList permissions = new PermissionsList(core);

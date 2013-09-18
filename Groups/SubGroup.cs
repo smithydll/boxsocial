@@ -803,7 +803,7 @@ namespace BoxSocial.Groups
 
         public static void Show(object sender, ShowPageEventArgs e)
         {
-            e.Page.template.SetTemplate("Groups", "viewsubgroup");
+            e.Template.SetTemplate("Groups", "viewsubgroup");
 
             SubUserGroup subgroup;
 

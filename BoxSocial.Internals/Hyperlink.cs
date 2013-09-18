@@ -416,7 +416,7 @@ namespace BoxSocial.Internals
 
         public string AppendCoreSid(string uri, bool forceSid)
         {
-            if (Domain != CurrentDomain && (!uri.StartsWith("http://")))
+            if (Domain != CurrentDomain && (!uri.StartsWith("http://")) && (!uri.StartsWith("https://")))
             {
                 return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
             }
@@ -433,7 +433,7 @@ namespace BoxSocial.Internals
 
         public string AppendAbsoluteSid(string uri, bool forceSid)
         {
-            if (!uri.StartsWith("http://"))
+            if ((!uri.StartsWith("http://")) && (!uri.StartsWith("https://")))
             {
                 return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
             }
@@ -450,7 +450,7 @@ namespace BoxSocial.Internals
 
         public string AppendCurrentSid(string uri, bool forceSid)
         {
-            if (!uri.StartsWith("http://"))
+            if ((!uri.StartsWith("http://")) && (!uri.StartsWith("https://")))
             {
                 return AppendSid(core.Http.DefaultProtocol + CurrentDomain + "/" + uri.TrimStart(new char[] { '/' }), forceSid);
             }

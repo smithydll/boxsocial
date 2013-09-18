@@ -66,7 +66,7 @@ namespace BoxSocial.Internals
         private string pageTitle;
         private string canonicalUri;
 
-        public Template template;
+        protected Template template;
         public Mysql db;
         public User loggedInMember;
         public SessionState session;
@@ -78,6 +78,14 @@ namespace BoxSocial.Internals
         private bool isAjax;
         private bool isMobile;
         private bool pageEnded;
+
+        public Template Template
+        {
+            get
+            {
+                return core.Template;
+            }
+        }
 
         //
         // Pagination
@@ -262,7 +270,6 @@ namespace BoxSocial.Internals
 
             long loadStart = initTimer.ElapsedTicks;
             tz = new UnixTime(core, UnixTime.UTC_CODE);
-            core.Display.page = this;
 
             core.Session = session;
             core.CoreDomain = AppDomain.CurrentDomain;

@@ -615,6 +615,20 @@ namespace BoxSocial.Internals
             return LargeIntegerToString((long)num);
         }
 
+        public static string SingleLine(string input)
+        {
+            string[] lines = input.Replace("\r\n", "\n").Replace("\r", "\n").Split(new char['\n']);
+
+            string output = string.Empty;
+
+            foreach (string line in lines)
+            {
+                output += " " + line.Trim();
+            }
+
+            return output.Trim();
+        }
+
         public static string TrimStringToWord(string input)
         {
             return TrimStringToWord(input, 60);

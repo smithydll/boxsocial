@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, IShareableItem
     {
         // Square
         public static string IconPrefix = "_icon"; // 50
@@ -1454,7 +1454,11 @@ namespace BoxSocial.Applications.Gallery
                 {
                     e.Core.Meta.Add("twitter:site", e.Core.Settings.TwitterName);
                 }
-                e.Core.Meta.Add("twitter:image", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.MobileUri)));
+                if (galleryItem.Owner is User && !string.IsNullOrEmpty(((User)galleryItem.Owner).UserInfo.TwitterUserName))
+                {
+                    e.Core.Meta.Add("twitter:creator", ((User)galleryItem.Owner).UserInfo.TwitterUserName);
+                }
+                e.Core.Meta.Add("twitter:image:src", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.MobileUri)));
                 if (!string.IsNullOrEmpty(galleryItem.ItemTitle))
                 {
                     e.Core.Meta.Add("twitter:title", galleryItem.ItemTitle);
@@ -3235,6 +3239,29 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return Parent;
+            }
+        }
+
+
+        public ItemKey OwnerKey
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public string ShareString
+        {
+            get
+            {
+                return string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",
+                            Uri, FullPath, StoragePath, ItemWidth, ItemHeight);
+            }
+        }
+
+        public string ShareUri
+        {
+            get
+            {
+                return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
             }
         }
     }

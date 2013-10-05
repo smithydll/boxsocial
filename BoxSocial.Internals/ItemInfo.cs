@@ -56,6 +56,8 @@ namespace BoxSocial.Internals
         private long sharedTimes;
         [DataField("info_viewed_times")]
         private long viewedTimes;
+        [DataField("info_tweet_id")]
+        private long tweetId;
         [DataField("info_item_time_ut")]
         private long timeRaw;
 
@@ -469,6 +471,18 @@ namespace BoxSocial.Internals
             core.Db.Query(uQuery);
         }
 
+        internal long TweetId
+        {
+            get
+            {
+                return tweetId;
+            }
+            set
+            {
+                tweetId = value;
+            }
+        }
+
         private ItemKey ItemKey
         {
             get
@@ -508,7 +522,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return core.Hyperlink.AppendAbsoluteSid("/s/" + shortUrlKey);
+                return core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/" + shortUrlKey));
             }
         }
     }

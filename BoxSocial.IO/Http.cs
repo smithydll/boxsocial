@@ -34,10 +34,13 @@ namespace BoxSocial.IO
     {
         
         HttpContext current;
+
+        private bool forceDomain;
         
         public Http()
         {
             current = HttpContext.Current;
+            forceDomain = false;
             //HttpContext.Current = null;
         }
         
@@ -269,6 +272,18 @@ namespace BoxSocial.IO
                 {
                     return "http://";
                 }
+            }
+        }
+
+        public bool ForceDomain
+        {
+            get
+            {
+                return forceDomain;
+            }
+            set
+            {
+                forceDomain = value;
             }
         }
     }

@@ -448,7 +448,7 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId));
+                        ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId), Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
                     }
                     ICommentableItem citem = (ICommentableItem)item;
 

@@ -62,6 +62,7 @@ namespace BoxSocial.Internals
 
         void AccountPreferences_Load(object sender, EventArgs e)
         {
+            this.AddModeHandler("unlink-twitter", new ModuleModeHandler(AccountPreferences_UnlinkTwitter));
         }
 
         void AccountPreferences_Show(object sender, EventArgs e)
@@ -76,6 +77,12 @@ namespace BoxSocial.Internals
 
             TextBox analyticsCodeTextBox = new TextBox("analytics-code");
             analyticsCodeTextBox.Value = LoggedInMember.UserInfo.AnalyticsCode;
+
+            TextBox twitterUserNameTextBox = new TextBox("twitter-user-name");
+            twitterUserNameTextBox.Value = LoggedInMember.UserInfo.TwitterUserName;
+
+            CheckBox twitterSyndicateCheckBox = new CheckBox("twitter-syndicate");
+            twitterSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.TwitterSyndicate;
 
             string radioChecked = " checked=\"checked\"";
 
@@ -127,6 +134,17 @@ namespace BoxSocial.Internals
             template.Parse("S_CUSTOM_DOMAIN", customDomainTextBox);
             template.Parse("S_ANALYTICS_CODE", analyticsCodeTextBox);
 
+            if (string.IsNullOrEmpty(LoggedInMember.UserInfo.TwitterUserName))
+            {
+                template.Parse("S_TWITTER_USER_NAME", twitterUserNameTextBox);
+            }
+            else
+            {
+                template.Parse("TWITTER_USER_NAME", LoggedInMember.UserInfo.TwitterUserName);
+                template.Parse("S_SYDNDICATE_TWITTER", twitterSyndicateCheckBox);
+                template.Parse("U_UNLINK_TWITTER", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-twitter"), true));
+            }
+
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
                 LoggedInMember.UserId, ItemKey.GetTypeId(typeof(User))));
 
@@ -170,6 +188,7 @@ namespace BoxSocial.Internals
             string customDomain = string.Empty;
             string analyticsCode = string.Empty;
             ushort timeZoneCode = 30;
+            string twitterUserName = string.Empty;
 
             try
             {
@@ -183,6 +202,7 @@ namespace BoxSocial.Internals
                 customDomain = core.Http.Form["custom-domain"].ToLower();
                 analyticsCode = core.Http.Form["analytics-code"];
                 timeZoneCode = ushort.Parse(core.Http.Form["timezone"]);
+                twitterUserName = core.Http.Form["twitter-user-name"];
             }
             catch
             {
@@ -244,6 +264,21 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.TimeZoneCode = timeZoneCode;
             LoggedInMember.UserInfo.AnalyticsCode = analyticsCode;
 
+            if (!string.IsNullOrEmpty(twitterUserName))
+            {
+                Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                TwitterAuthToken auth = t.OAuthRequestToken();
+
+                LoggedInMember.UserInfo.TwitterToken = auth.Token;
+                LoggedInMember.UserInfo.TwitterTokenSecret = auth.Secret;
+                LoggedInMember.UserInfo.TwitterAuthenticated = false;
+                LoggedInMember.UserInfo.TwitterSyndicate = false;
+
+                LoggedInMember.UserInfo.Update();
+
+                core.Http.Redirect("https://api.twitter.com/oauth/authorize?oauth_token=" + auth.Token + "&screen_name=" + twitterUserName + "force_login=true");
+            }
+
             LoggedInMember.UserInfo.Update();
 
             LoggedInMember.UserDomain = customDomain;
@@ -251,6 +286,19 @@ namespace BoxSocial.Internals
             //SetRedirectUri(BuildUri());
             //Display.ShowMessage("Preferences Saved", "Your preferences have been saved in the database.");
 			SetInformation("Your preferences have been saved in the database.");
+        }
+
+        void AccountPreferences_UnlinkTwitter(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            LoggedInMember.UserInfo.TwitterUserName = string.Empty;
+            LoggedInMember.UserInfo.TwitterToken = string.Empty;
+            LoggedInMember.UserInfo.TwitterTokenSecret = string.Empty;
+            LoggedInMember.UserInfo.TwitterAuthenticated = false;
+            LoggedInMember.UserInfo.TwitterSyndicate = false;
+
+            LoggedInMember.UserInfo.Update();
         }
     }
 }

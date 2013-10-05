@@ -982,24 +982,24 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public void PublishToFeed(Core core, User owner, IActionableItem item)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, string description)
         {
-            PublishToFeed(core, owner, item, new List<ItemKey>());
+            PublishToFeed(core, owner, item, new List<ItemKey>(), description);
         }
 
-        public void PublishToFeed(Core core, User owner, IActionableItem item, ItemKey subItem)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, ItemKey subItem, string description)
         {
             if (subItem != null)
             {
-                PublishToFeed(core, owner, item, new List<ItemKey> { subItem });
+                PublishToFeed(core, owner, item, new List<ItemKey> { subItem }, description);
             }
             else
             {
-                PublishToFeed(core, owner, item, new List<ItemKey>());
+                PublishToFeed(core, owner, item, new List<ItemKey>(), description);
             }
         }
 
-        public void PublishToFeed(Core core, User owner, IActionableItem item, List<ItemKey> subItems)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, List<ItemKey> subItems, string description)
         {
             ItemKey itemKey = item.ItemKey;
 
@@ -1013,7 +1013,58 @@ namespace BoxSocial.Internals
             // maximum 48 per application per day
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
+                /* Post to Twitter, individual */
+                if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
+                {
+                    ItemInfo info = item.Info;
+                    ItemKey sharedItem = item.ItemKey;
 
+                    if (subItems.Count == 1)
+                    {
+                        sharedItem = subItems[0];
+                        try
+                        {
+                            info = new ItemInfo(core, subItems[0]);
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            info = ItemInfo.Create(core, subItems[0]);
+                        }
+                    }
+
+                    if (sharedItem.ImplementsShareable)
+                    {
+                        bool publicItem = true;
+
+                        if (item is IPermissibleItem)
+                        {
+                            IPermissibleItem pitem = (IPermissibleItem)item;
+                            publicItem = pitem.Access.IsPublic();
+                        }
+
+                        if (item is IPermissibleSubItem)
+                        {
+                            IPermissibleSubItem pitem = (IPermissibleSubItem)item;
+                            publicItem = pitem.PermissiveParent.Access.IsPublic();
+                        }
+
+                        if (publicItem)
+                        {
+                            description = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
+                            Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                            long tweetId = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(description) ? description + " " : string.Empty) + info.ShareUri);
+
+                            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+                            uQuery.AddField("info_tweet_id", tweetId);
+                            uQuery.AddCondition("info_item_id", sharedItem.Id);
+                            uQuery.AddCondition("info_item_type_id", sharedItem.TypeId);
+
+                            core.Db.Query(uQuery);
+                        }
+                    }
+                }
+
+                /* Post to Box Social feed, coalesce */
                 SelectQuery query2 = Action.GetSelectQueryStub(typeof(Action));
                 query2.AddCondition("action_primitive_id", owner.ItemKey.Id);
                 query2.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);

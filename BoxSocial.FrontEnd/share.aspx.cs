@@ -126,7 +126,7 @@ namespace BoxSocial.FrontEnd
             acl.SaveNewItemPermissions("share-permissions");
 
             ApplicationEntry ae = core.GetApplication("Profile");
-            ae.PublishToFeed(core, core.Session.LoggedInMember, newStatus);
+            ae.PublishToFeed(core, core.Session.LoggedInMember, newStatus, Functions.SingleLine(core.Bbcode.Flatten(newStatus.Message)));
 
             Share.ShareItem(core, itemKey);
 

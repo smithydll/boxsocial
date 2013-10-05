@@ -1,11 +1,11 @@
-<h3>Preferences</h3>
+<h3>{L_PREFERENCES}</h3>
 <p>Here you can save individual preferences when using {SITE_TITLE}. You can save bandwidth by disabling images and videos in profiles and comments.</p>
 
 <form action="{S_ACCOUNT}" method="post">
 	<fieldset>
-		<legend>Preferences</legend>
+		<legend>{L_PREFERENCES}</legend>
 		<dl>
-			<dt><label for="homepage">My Homepage</label></dt>
+			<dt><label for="homepage">{L_MY_HOMEPAGE}</label></dt>
 			<dd>
 				{S_HOMEPAGE}
 			</dd>
@@ -36,6 +36,12 @@
 			</dd>
 			<dt><label for="timezone">My Timezone</label></dt>
 			<dd>{S_TIMEZONE}</dd>
+            <dt><label for="twitter">Syndicate to Twitter</label></dt>
+            <!-- IF S_TWITTER_USER_NAME -->
+            <dd>{S_TWITTER_USER_NAME}</dd>
+            <!-- ELSE -->
+            <dd>{S_SYDNDICATE_TWITTER} {TWITTER_USER_NAME} <a href="{U_UNLINK_TWITTER}">Unlink</a></dd>
+            <!-- ENDIF -->
             <dt><label for="custom-domain">Custom Domain</label></dt>
             <dd>{S_CUSTOM_DOMAIN}</dd>
             <dt><label for="analytics-code">Google Analytics Code</label></dt>

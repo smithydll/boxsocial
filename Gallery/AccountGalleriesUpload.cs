@@ -174,7 +174,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (publishToFeed)
                     {
-                        core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey);
+                        core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
                     }
 
                     //db.CommitTransaction();

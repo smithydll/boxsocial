@@ -418,7 +418,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (publishToFeed && publishStatus == PublishStatuses.Publish)
                 {
-                    core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry);
+                    core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry, myBlogEntry.Title);
                 }
 
             }

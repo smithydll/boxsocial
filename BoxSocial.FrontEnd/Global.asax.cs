@@ -304,6 +304,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/functions(/|)$", @"/functions.aspx" });
                     patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
                     patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
+                    patterns.Add(new string[] { @"^/api/twitter/callback(/|)$", @"/functions.aspx?fun=twitter" });
 
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });

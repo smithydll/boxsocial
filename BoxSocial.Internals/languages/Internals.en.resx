@@ -507,6 +507,9 @@
   <data name="MY_ACCOUNT" xml:space="preserve">
     <value>My Account</value>
   </data>
+  <data name="MY_HOMEPAGE" xml:space="preserve">
+    <value>My Homepage</value>
+  </data>
   <data name="MY_INFORMATION" xml:space="preserve">
     <value>My Information</value>
   </data>
@@ -565,6 +568,9 @@
   </data>
   <data name="POSTED" xml:space="preserve">
     <value>Posted</value>
+  </data>
+  <data name="PREFERENCES" xml:space="preserve">
+    <value>Preferences</value>
   </data>
   <data name="PREV" xml:space="preserve">
     <value>Prev</value>

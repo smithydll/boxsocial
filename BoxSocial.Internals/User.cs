@@ -2045,7 +2045,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain) || core.IsMobile || core.Http.IsSecure)
+                if (string.IsNullOrEmpty(domain) || core.IsMobile || core.Http.IsSecure || core.Http.ForceDomain)
                 {
                     if (core.Http.Domain != Hyperlink.Domain)
                     {

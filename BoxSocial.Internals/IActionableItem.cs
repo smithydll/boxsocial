@@ -50,5 +50,10 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        ItemInfo Info
+        {
+            get;
+        }
     }
 }

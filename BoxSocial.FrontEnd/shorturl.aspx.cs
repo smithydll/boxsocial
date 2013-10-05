@@ -52,6 +52,7 @@ namespace BoxSocial.FrontEnd
                 ItemInfo info = new ItemInfo(core, key);
 
                 core.Http.StatusCode = 301;
+                core.Http.ForceDomain = true;
                 core.Http.Redirect(info.Uri);
             }
             catch (InvalidIteminfoException)

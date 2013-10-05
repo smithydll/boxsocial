@@ -108,6 +108,16 @@ namespace BoxSocial.Internals
         protected string analyticsCode;
         [DataField("user_invites")]
         private long userInvites;
+        [DataField("user_twitter_user_name", 18)]
+        private string userTwitterUserName;
+        [DataField("user_twitter_token", 63)]
+        private string userTwitterToken;
+        [DataField("user_twitter_token_secret", 63)]
+        private string userTwitterTokenSecret;
+        [DataField("user_twitter_syndicate")]
+        private bool userTwitterSyndicate;
+        [DataField("user_twitter_authenticated")]
+        private bool userTwitterAthenticated;
 
         private User user;
         private string userNameOwnership;
@@ -154,6 +164,66 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("userDisplayName", value);
+            }
+        }
+
+        public string TwitterUserName
+        {
+            get
+            {
+                return userTwitterUserName;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTwitterUserName }, value);
+            }
+        }
+
+        public bool TwitterSyndicate
+        {
+            get
+            {
+                return userTwitterSyndicate;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTwitterSyndicate }, value);
+            }
+        }
+
+        public bool TwitterAuthenticated
+        {
+            get
+            {
+                return userTwitterAthenticated;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTwitterAthenticated }, value);
+            }
+        }
+
+        internal string TwitterToken
+        {
+            get
+            {
+                return userTwitterToken;
+            }
+            set
+            {
+                SetPropertyByRef(new { userTwitterToken }, value);
+            }
+        }
+
+        internal string TwitterTokenSecret
+        {
+            get
+            {
+                return userTwitterTokenSecret;
+            }
+            set
+            {
+                SetPropertyByRef(new { userTwitterTokenSecret }, value);
             }
         }
 

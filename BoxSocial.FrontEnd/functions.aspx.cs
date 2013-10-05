@@ -57,6 +57,15 @@ namespace BoxSocial.FrontEnd
                     return;
                 case "embed":
                     return;
+                case "twitter":
+                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                    
+                    string oAuthToken = core.Http.Query["oauth_token"];
+                    string oAuthVerifier = core.Http.Query["oauth_verifier"];
+
+                    t.SaveTwitterAccess(core, oAuthToken, oAuthVerifier);
+
+                    return;
             }
         }
 

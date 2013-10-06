@@ -143,7 +143,7 @@ namespace BoxSocial.Internals
         {
             Regex reg = new Regex(@"%[a-f0-9]{2}");
 
-            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20");
+            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
         }
 
         private static string computeSignature(string baseString, string keyString)
@@ -348,7 +348,7 @@ namespace BoxSocial.Internals
                         {
                             lastToken = reader.Value.ToString();
                         }
-                        if (reader.TokenType == JsonToken.Integer && lastToken == "id")
+                        if (reader.TokenType == JsonToken.Integer && lastToken == "id_str")
                         {
                             tweetId = long.Parse(reader.Value.ToString());
                             lastToken = string.Empty;

@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, IShareableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, IShareableItem, IActionableItem
     {
         // Square
         public static string IconPrefix = "_icon"; // 50
@@ -3263,6 +3263,30 @@ namespace BoxSocial.Applications.Gallery
             {
                 return core.Hyperlink.AppendAbsoluteSid(string.Format("/share?item={0}&type={1}", ItemKey.Id, ItemKey.TypeId), true);
             }
+        }
+
+
+        public string Action
+        {
+            get
+            {
+                return "uploaded a photo";
+            }
+        }
+
+        public string GetActionBody(List<ItemKey> subItems)
+        {
+            string returnValue = string.Empty;
+
+            if (!string.IsNullOrEmpty(ItemAbstract))
+            {
+                returnValue += ItemAbstract + "\r\n";
+            }
+
+            returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",
+                        Uri, FullPath, StoragePath, ItemWidth, ItemHeight);
+
+            return returnValue;
         }
     }
 

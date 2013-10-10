@@ -52,6 +52,9 @@ namespace BoxSocial.FrontEnd
                 case "friend-list":
                     ReturnFriendList();
                     return;
+                case "contact-card":
+                    ReturnContactCard();
+                    return;
                 case "permission-groups-list":
                     ReturnPermissionGroupList();
                     return;
@@ -85,6 +88,31 @@ namespace BoxSocial.FrontEnd
                 }
 
                 core.Ajax.SendUserDictionary("friendSelect", friendNames);
+            }
+        }
+
+        private void ReturnContactCard()
+        {
+            long uid = core.Functions.RequestLong("uid", 0);
+
+            Dictionary<string, string> userInfo = new Dictionary<string, string>();
+
+            try
+            {
+                User user = new Internals.User(core, uid);
+
+                userInfo.Add("cover-photo", user.MobileCoverPhoto);
+                userInfo.Add("display-name", user.DisplayName);
+                userInfo.Add("display-picture", user.UserIcon);
+                userInfo.Add("uri", user.Uri);
+                userInfo.Add("profile", user.ProfileUri);
+                userInfo.Add("abstract", user.Profile.Autobiography);
+                userInfo.Add("subscribers", user.Info.Subscribers.ToString());
+
+                core.Ajax.SendDictionary("contactCard", userInfo);
+            }
+            catch (InvalidUserException)
+            {
             }
         }
 

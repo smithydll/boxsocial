@@ -77,6 +77,12 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Security" />
+    <Reference Include="TwoStepsAuthenticator">
+      <HintPath>C:\Users\Lachlan\Downloads\TwoStepsAuthenticator-master\TwoStepsAuthenticator-master\TwoStepsAuthenticator\bin\Debug\TwoStepsAuthenticator.dll</HintPath>
+    </Reference>
+    <Reference Include="zxing">
+      <HintPath>C:\Users\Lachlan\Downloads\ZXing.Net.0.12.0.0\net4.0\zxing.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Access.cs" />
@@ -91,6 +97,7 @@
     <Compile Include="AccountOverview.cs" />
     <Compile Include="AccountPassword.cs" />
     <Compile Include="AccountPreferences.cs" />
+    <Compile Include="AccountSecurity.cs" />
     <Compile Include="AccountSubModule.cs" />
     <Compile Include="AccountSubModuleAttribute.cs" />
     <Compile Include="Action.cs" />

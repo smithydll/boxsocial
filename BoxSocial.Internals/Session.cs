@@ -1020,6 +1020,11 @@ namespace BoxSocial.Internals
             return;
         }
 
+        public void ForceRecentAuthentication()
+        {
+            
+        }
+
         private void SessionClean(string sessionId)
         {
             //throw new Exception("The method or operation is not implemented.");

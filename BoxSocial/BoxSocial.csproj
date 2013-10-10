@@ -168,6 +168,7 @@
     <Content Include="templates\account_master.html" />
     <Content Include="templates\account_password.html" />
     <Content Include="templates\account_preferences.html" />
+    <Content Include="templates\account_security.html" />
     <Content Include="templates\acl.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />

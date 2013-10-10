@@ -350,8 +350,9 @@ namespace BoxSocial.Internals
                         }
                         if (reader.TokenType == JsonToken.Integer && lastToken == "id_str")
                         {
-                            tweetId = long.Parse(reader.Value.ToString());
+                            long.TryParse(reader.Value.ToString(), out tweetId);
                             lastToken = string.Empty;
+                            break;
                         }
                     }
                 }

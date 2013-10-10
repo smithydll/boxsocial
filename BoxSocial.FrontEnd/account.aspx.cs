@@ -257,6 +257,8 @@ namespace BoxSocial.FrontEnd
 
             accountSubModules.Sort();
 
+            bool orphan = true;
+
             foreach (AccountSubModule asm in accountSubModules)
             {
                 if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
@@ -274,6 +276,7 @@ namespace BoxSocial.FrontEnd
                     if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                     {
                         modulesVariableCollection.Parse("CURRENT", "TRUE");
+                        orphan = false;
                     }
                 }
 
@@ -302,6 +305,11 @@ namespace BoxSocial.FrontEnd
                         throw new Exception(ex.ToString() + "\n\n\n" + db.ErrorList + "\n\n" + db.QueryList);
                     }*/
                 }
+            }
+
+            if (orphan)
+            {
+                template.Parse("ORPHAN", "TRUE");
             }
 
             EndResponse();

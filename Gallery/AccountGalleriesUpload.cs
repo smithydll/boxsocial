@@ -152,7 +152,32 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                Gallery parent = new Gallery(core, Owner, galleryId);
+                Gallery parent;
+
+                if (core.IsAjax)
+                {
+                    string galleryTitle = core.Http.Form["gallery-title"];
+                    string gallerySlug = string.Empty;
+
+                    if (!string.IsNullOrEmpty(galleryTitle))
+                    {
+                        parent = Gallery.Create(core, LoggedInMember, null, galleryTitle, ref gallerySlug, string.Empty);
+
+                        AccessControlLists acl = new AccessControlLists(core, parent);
+                        acl.SaveNewItemPermissions();
+
+                    }
+                    else
+                    {
+                        db.RollBackTransaction();
+                        core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
+                        return;
+                    }
+                }
+                else
+                {
+                    parent = new Gallery(core, Owner, galleryId);
+                }
 
                 if (core.Http.Files["photo-file"] == null || core.Http.Files["photo-file"].ContentLength == 0)
                 {
@@ -174,13 +199,26 @@ namespace BoxSocial.Applications.Gallery
 
                     if (publishToFeed)
                     {
-                        core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                        if (core.IsAjax)
+                        {
+                            core.CallingApplication.PublishToFeed(core, LoggedInMember, newGalleryItem, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                        }
+                        else
+                        {
+                            core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                        }
                     }
 
                     //db.CommitTransaction();
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
-                    core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+                    if (core.IsAjax)
+                    {
+                    }
+                    else
+                    {
+                        SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
+                        core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
+                    }
 
                     return;
                 }
@@ -214,6 +252,7 @@ namespace BoxSocial.Applications.Gallery
                 db.RollBackTransaction();
                 core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
                 return;
+
             }
         }
     }

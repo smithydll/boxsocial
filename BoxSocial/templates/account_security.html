@@ -1,0 +1,31 @@
+﻿<h3>Account Security</h3>
+<p>Enable two-factor authentication to improve the security of your account.</p>
+<p>Two factor authentication uses something you have (like a smart phone) and something you know (like a password) to sign-in to your account.</p>
+<p>{SITE_TITLE} uses RFC 6238 compliant two-factor authentication compatible with Google Authenticator for <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en">Android</a> and <a href="https://itunes.apple.com/au/app/google-authenticator/id388497605?mt=8">iPhone</a> or Microsoft Authenticator for <a href="http://www.windowsphone.com/en-us/store/app/authenticator/e7994dbc-2336-4950-91ba-ca22d653759b">Windows Phone</a>.</p>
+
+<!-- IF S_ENABLE -->
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+<fieldset>
+		<legend>Enable Two-Factor Authentication</legend>
+		<dl>
+			<dt><label for="qr_code">QR Code</label></dt>
+			<dd>{I_QR_CODE}</dd>
+			<dt><label for="verify">Verification Code</label></dt>
+			<dd>{S_VERIFY}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		{S_KEY}
+		<input type="hidden" name="sub" value="security" />
+        <input type="hidden" name="mode" value="enable" />
+</fieldset>
+</form>
+<!-- ENDIF -->
+
+<!-- IF S_ENABLED -->
+<p><a href="{U_DISABLE}">Disable two-factor authentication for your account.</a></p>
+<!-- ENDIF -->
+
+<!-- IF S_DISABLED -->
+<p><a href="{U_ENABLE}">Begin the process of enabling two-factor authentication for your account.</a></p>
+<!-- ENDIF -->

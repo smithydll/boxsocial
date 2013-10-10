@@ -118,6 +118,10 @@ namespace BoxSocial.Internals
         private bool userTwitterSyndicate;
         [DataField("user_twitter_authenticated")]
         private bool userTwitterAthenticated;
+        [DataField("user_two_factor_auth_key", 16)]
+        private string twoFactorAuthKey;
+        [DataField("user_two_factor_auth_verified")]
+        private bool twoFactorAuthVerified;
 
         private User user;
         private string userNameOwnership;
@@ -164,6 +168,30 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("userDisplayName", value);
+            }
+        }
+
+        public string TwoFactorAuthKey
+        {
+            get
+            {
+                return twoFactorAuthKey;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { twoFactorAuthKey }, value);
+            }
+        }
+
+        public bool TwoFactorAuthVerified
+        {
+            get
+            {
+                return twoFactorAuthVerified;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { twoFactorAuthVerified }, value);
             }
         }
 

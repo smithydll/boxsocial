@@ -678,6 +678,21 @@ function LoadedInfinite(r, e, a) {
     infiniteLoading = false;
 }
 
+function loadNewContent(u, n) {
+    PostToPage(LoadedNew, u, n, { ajax: 'true' }, '');
+    return false;
+}
+
+function LoadedNew(r, e, a) {
+    e.prepend(r['message']);
+
+    var c = r['code'];
+    if (c == 'noNewContent') {
+    }
+    else {
+    }
+}
+
 function toggleStatusComments(parent, id, type, el) {
     if (parent.hasClass('active')) {
         parent.removeClass('active');

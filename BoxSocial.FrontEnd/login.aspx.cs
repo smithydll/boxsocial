@@ -175,85 +175,91 @@ namespace BoxSocial.FrontEnd
                     string userName = Request.Form["username"];
                     string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
 
-                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id, ui.user_password FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
+                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id, ui.user_password, ui.user_two_factor_auth_key, ui.user_two_factor_auth_verified FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
                        userName));
 
                     if (userTable.Rows.Count == 1)
                     {
-						DataRow userRow = userTable.Rows[0];
-						bool authenticated = false;
-						string dbPassword = (string)userRow["user_password"];
-						
-						// old phpBB passwords
-						if (dbPassword.Length == 32)
-						{
-							// phpBB2 passwords
-							if (SessionState.SessionMd5(Request.Form["password"]) == dbPassword.ToLower())
-							{
-								authenticated = true;
-							}
-						}
-						else if (dbPassword.Length == 34)
-						{
-									// phpBB3 passwords
-							string itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-							
-							if (SessionState.phpBB3Hash(Request.Form["password"], dbPassword, ref itoa64) == dbPassword)
-							{
-								authenticated = true;
-							}
-						}
-						else
-						{
-							if (dbPassword == password)
-							{
-								authenticated = true;
-							}
-						}
-						
-						if (authenticated)
-						{
-                        if (Request.Form["remember"] == "true")
+                        DataRow userRow = userTable.Rows[0];
+                        bool authenticated = false;
+                        string dbPassword = (string)userRow["user_password"];
+
+                        // old phpBB passwords
+                        if (dbPassword.Length == 32)
                         {
-                            session.SessionBegin((long)userRow["user_id"], false, true);
+                            // phpBB2 passwords
+                            if (SessionState.SessionMd5(Request.Form["password"]) == dbPassword.ToLower())
+                            {
+                                authenticated = true;
+                            }
+                        }
+                        else if (dbPassword.Length == 34)
+                        {
+                            // phpBB3 passwords
+                            string itoa64 = "./0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+                            if (SessionState.phpBB3Hash(Request.Form["password"], dbPassword, ref itoa64) == dbPassword)
+                            {
+                                authenticated = true;
+                            }
                         }
                         else
                         {
-                            session.SessionBegin((long)userRow["user_id"], false, false);
-                        }
-                        if ((!string.IsNullOrEmpty(domain)) && (record != null))
-                        {
-                            string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
-
-                            core.Hyperlink.Sid = sessionId;
-                            if (!string.IsNullOrEmpty(redirect))
+                            if (dbPassword == password)
                             {
-                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                authenticated = true;
+                            }
+                        }
+
+                        if ((bool)userRow["user_two_factor_auth_verified"])
+                        {
+                            template.SetTemplate("login_two_factor_verify.html");
+                            authenticated = false;
+                        }
+
+                        if (authenticated)
+                        {
+                            if (Request.Form["remember"] == "true")
+                            {
+                                session.SessionBegin((long)userRow["user_id"], false, true);
                             }
                             else
                             {
-                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
+                                session.SessionBegin((long)userRow["user_id"], false, false);
                             }
-                            return;
-                        }
-                        if (!string.IsNullOrEmpty(redirect))
-                        {
-                            if (redirect.StartsWith("/account"))
+                            if ((!string.IsNullOrEmpty(domain)) && (record != null))
                             {
-                                redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
+                                string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
+
+                                core.Hyperlink.Sid = sessionId;
+                                if (!string.IsNullOrEmpty(redirect))
+                                {
+                                    Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                }
+                                else
+                                {
+                                    Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
+                                }
+                                return;
                             }
-                            Response.Redirect(redirect, true);
+                            if (!string.IsNullOrEmpty(redirect))
+                            {
+                                if (redirect.StartsWith("/account"))
+                                {
+                                    redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
+                                }
+                                Response.Redirect(redirect, true);
+                            }
+                            else
+                            {
+                                Response.Redirect("/", true);
+                            }
+                            return; /* stop processing the display of this page */
                         }
                         else
                         {
-                            Response.Redirect("/", true);
+                            template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
                         }
-                        return; /* stop processing the display of this page */
-						}
-						else
-						{
-							template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
-						}
                     }
                     else
                     {

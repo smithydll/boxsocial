@@ -1,4 +1,4 @@
-<!-- INCLUDE page_header.html -->
+﻿<!-- INCLUDE page_header.html -->
 <!-- IF ERROR -->
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
@@ -7,12 +7,8 @@
 				<form action="/sign-in/" method="post" id="form-login">
 				<fieldset>
 						<dl>
-							<dt><label for="username">Username:</label></dt>
-							<dd><input type="text" id="username" name="username" /></dd>
-							<dt><label for="password">Password:</label></dt>
-							<dd><input type="password" id="password" name="password" /></dd>
-							<dt><label for="remember">Remember me:</label></dt>
-							<dd><input type="checkbox" value="true" id="remember" name="remember" checked="checked" /></dd>
+							<dt><label for="verify">Verification Code:</label></dt>
+							<dd>{S_VERIFY}</dd>
 							<dt></dt>
 							<dd><input type="submit" value="Sign In" name="submit" /></dd>
 						</dl>

@@ -190,6 +190,7 @@
     <Content Include="templates\error.html" />
     <Content Include="templates\help.html" />
     <Content Include="templates\login.html" />
+    <Content Include="templates\login_two_factor_verify.html" />
     <Content Include="templates\mobile\account_header.html" />
     <Content Include="templates\mobile\account_master.html" />
     <Content Include="templates\mobile\page_footer.html" />

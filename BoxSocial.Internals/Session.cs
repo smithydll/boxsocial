@@ -36,6 +36,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum SessionSignInState : byte
+    {
+        SignedOut = 0,
+        SignedIn = 1,
+        TwoFactorValidated = 2,
+        ElevatedValidation = 3,
+    }
+
     [DataTable("user_sessions", DataTableTypes.Volatile)]
     public class Session : NumberedItem
     {
@@ -53,7 +61,7 @@ namespace BoxSocial.Internals
         [DataField("session_time_ut")]
         private long sessionTimeRaw;
         [DataField("session_signed_in")]
-        private bool sessionSignedIn;
+        private byte sessionSignedIn;
         [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_ip", IP)]
         private string sessionIp;
@@ -119,11 +127,52 @@ namespace BoxSocial.Internals
             }
         }
 
+        internal SessionSignInState SignedInState
+        {
+            get
+            {
+                return (SessionSignInState)sessionSignedIn;
+            }
+        }
+
         internal bool SignedIn
         {
             get
             {
-                return sessionSignedIn;
+                if (SignedInState == SessionSignInState.SignedIn)
+                {
+                    if (core.Session.LoggedInMember.UserInfo.TwoFactorAuthVerified)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else if (SignedInState == SessionSignInState.TwoFactorValidated || SignedInState == SessionSignInState.ElevatedValidation)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal bool TwoFactorValidationRequired
+        {
+            get
+            {
+                if (SignedInState == SessionSignInState.SignedIn)
+                {
+                    if (core.Session.LoggedInMember.UserInfo.TwoFactorAuthVerified)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
@@ -256,6 +305,7 @@ namespace BoxSocial.Internals
         private User loggedInMember;
         private IPAddress ipAddress;
         private bool isLoggedIn;
+        private SessionSignInState signInState;
         private HttpRequest Request;
         private HttpResponse Response;
         private Mysql db;
@@ -281,11 +331,61 @@ namespace BoxSocial.Internals
             }
         }
 
+        [Obsolete("IsLoggedIn is deprecated, please use SignedIn or SignedInState")]
         public bool IsLoggedIn
         {
             get
             {
-                return isLoggedIn;
+                return SignedIn;
+            }
+        }
+
+        internal SessionSignInState SignedInState
+        {
+            get
+            {
+                return signInState;
+            }
+        }
+
+        internal bool SignedIn
+        {
+            get
+            {
+                if (SignedInState == SessionSignInState.SignedIn)
+                {
+                    if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
+                    {
+                        return false;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
+                else if (SignedInState == SessionSignInState.TwoFactorValidated || SignedInState == SessionSignInState.ElevatedValidation)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        internal bool TwoFactorValidationRequired
+        {
+            get
+            {
+                if (SignedInState == SessionSignInState.SignedIn)
+                {
+                    if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 
@@ -301,6 +401,7 @@ namespace BoxSocial.Internals
             this.db = db;
             this.core = core;
             this.isLoggedIn = false;
+            this.signInState = SessionSignInState.SignedOut;
 
             ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
             SessionPagestart(ipAddress.ToString());
@@ -318,6 +419,8 @@ namespace BoxSocial.Internals
 			this.core = core;
 			this.db = core.Db;
 			isLoggedIn = true;
+            /* only used by the installer, two factor will not be enabled at this point */
+            this.signInState = SessionSignInState.SignedIn;
 			loggedInMember = user;
 			ipAddress = new IPAddress(0);
 		}
@@ -469,6 +572,14 @@ namespace BoxSocial.Internals
                     {
                         loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                         enableAutologin = isLoggedIn = true;
+                        if (loggedInMember.UserInfo.TwoFactorAuthVerified)
+                        {
+                            signInState = SessionSignInState.TwoFactorValidated;
+                        }
+                        else
+                        {
+                            signInState = SessionSignInState.SignedIn;
+                        }
                     }
                     else
                     {
@@ -526,6 +637,7 @@ namespace BoxSocial.Internals
                         {
                             loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                             isLoggedIn = true;
+                            signInState = SessionSignInState.SignedIn;
                         }
                         else
                         {
@@ -560,6 +672,7 @@ namespace BoxSocial.Internals
                 sessionData.autoLoginId = "";
                 sessionData.userId = userId = 0;
                 enableAutologin = isLoggedIn = false;
+                signInState = SessionSignInState.SignedOut;
 
                 if (userId > 0)
                 {
@@ -585,7 +698,7 @@ namespace BoxSocial.Internals
             if (record == null)
             {
                 changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), user_id = {0}, session_signed_in = {1} WHERE session_string = '{3}' AND session_ip = '{2}';",
-                    userId, isLoggedIn, ipAddress.ToString(), sessionId));
+                    userId, (byte)signInState, ipAddress.ToString(), sessionId));
             }
 
             if (changedRows == 0)
@@ -613,7 +726,7 @@ namespace BoxSocial.Internals
                         rootSessionId = sessionId;
                     }
                     db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}')",
-                        sessionId, isLoggedIn, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
+                        sessionId, (byte)signInState, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
                 }
             }
 
@@ -812,6 +925,14 @@ namespace BoxSocial.Internals
                     if (loggedInMember.UserId != 0)
                     {
                         isLoggedIn = true;
+                        if (loggedInMember.UserInfo.TwoFactorAuthVerified)
+                        {
+                            signInState = SessionSignInState.TwoFactorValidated;
+                        }
+                        else
+                        {
+                            signInState = SessionSignInState.SignedIn;
+                        }
                     }
 
                     //
@@ -835,7 +956,7 @@ namespace BoxSocial.Internals
                                 sessionId));
 
 
-                            if (isLoggedIn)
+                            if (SignedIn)
                             {
                                 TimeSpan ts = DateTime.Now - loggedInMember.UserInfo.LastOnlineTime;
 

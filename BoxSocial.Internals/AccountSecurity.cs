@@ -94,6 +94,7 @@ namespace BoxSocial.Internals
                 template.Parse("I_QR_CODE", qrCodeImage);
                 template.Parse("S_KEY", keyHiddenField);
                 template.Parse("S_VERIFY", verifyTextBox);
+                template.Parse("USERNAME", LoggedInMember.UserName);
             }
             else if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
             {

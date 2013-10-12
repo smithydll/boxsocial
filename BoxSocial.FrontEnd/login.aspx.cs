@@ -24,8 +24,10 @@ using System.Configuration;
 using System.Data;
 using System.Web;
 using BoxSocial;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using TwoStepsAuthenticator;
 
 namespace BoxSocial.FrontEnd
 {
@@ -170,6 +172,55 @@ namespace BoxSocial.FrontEnd
                         }
                     }
                 }
+                else if (core.Http.Form["mode"] == "verify")
+                {
+                    Authenticator authenticator = new Authenticator();
+                    if (authenticator.CheckCode(core.Session.CandidateMember.UserInfo.TwoFactorAuthKey, core.Http.Form["verify"]))
+                    {
+                        if (Request.Form["remember"] == "true")
+                        {
+                            session.SessionBegin(core.Session.CandidateMember.UserId, false, true, true);
+                        }
+                        else
+                        {
+                            session.SessionBegin(core.Session.CandidateMember.UserId, false, false, true);
+                        }
+                        if ((!string.IsNullOrEmpty(domain)) && (record != null))
+                        {
+                            string sessionId = core.Session.SessionBegin(core.Session.CandidateMember.UserId, false, false, true, record);
+
+                            core.Hyperlink.Sid = sessionId;
+                            if (!string.IsNullOrEmpty(redirect))
+                            {
+                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                            }
+                            else
+                            {
+                                Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
+                            }
+                            return;
+                        }
+                        if (!string.IsNullOrEmpty(redirect))
+                        {
+                            if (redirect.StartsWith("/account"))
+                            {
+                                redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
+                            }
+                            Response.Redirect(redirect, true);
+                        }
+                        else
+                        {
+                            Response.Redirect("/", true);
+                        }
+                        return; /* stop processing the display of this page */
+                    }
+                    else
+                    {
+                        core.Session.SessionEnd(core.Session.SessionId, core.Session.CandidateMember.UserId);
+
+                        template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
+                    }
+                }
                 else
                 {
                     string userName = Request.Form["username"];
@@ -211,55 +262,75 @@ namespace BoxSocial.FrontEnd
                             }
                         }
 
-                        if ((bool)userRow["user_two_factor_auth_verified"])
-                        {
-                            template.SetTemplate("login_two_factor_verify.html");
-                            authenticated = false;
-                        }
-
                         if (authenticated)
                         {
-                            if (Request.Form["remember"] == "true")
+                            if ((byte)userRow["user_two_factor_auth_verified"] > 0)
                             {
-                                session.SessionBegin((long)userRow["user_id"], false, true);
-                            }
-                            else
-                            {
-                                session.SessionBegin((long)userRow["user_id"], false, false);
-                            }
-                            if ((!string.IsNullOrEmpty(domain)) && (record != null))
-                            {
-                                string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
+                                template.SetTemplate("login_two_factor_verify.html");
 
-                                core.Hyperlink.Sid = sessionId;
-                                if (!string.IsNullOrEmpty(redirect))
+                                HiddenField rememberHiddenField = new HiddenField("remember");
+                                rememberHiddenField.Value = core.Http.Form["remember"];
+
+                                TextBox verifyTextBox = new Forms.TextBox("verify");
+
+                                template.Parse("S_REMEMBER", rememberHiddenField);
+                                template.Parse("S_VERIFY", verifyTextBox);
+
+                                if (Request.Form["remember"] == "true")
                                 {
-                                    Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                    session.SessionBegin((long)userRow["user_id"], false, true, false);
                                 }
                                 else
                                 {
-                                    Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
+                                    session.SessionBegin((long)userRow["user_id"], false, false, false);
                                 }
-                                return;
-                            }
-                            if (!string.IsNullOrEmpty(redirect))
-                            {
-                                if (redirect.StartsWith("/account"))
-                                {
-                                    redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
-                                }
-                                Response.Redirect(redirect, true);
                             }
                             else
                             {
-                                Response.Redirect("/", true);
+
+                                if (Request.Form["remember"] == "true")
+                                {
+                                    session.SessionBegin((long)userRow["user_id"], false, true);
+                                }
+                                else
+                                {
+                                    session.SessionBegin((long)userRow["user_id"], false, false);
+                                }
+                                if ((!string.IsNullOrEmpty(domain)) && (record != null))
+                                {
+                                    string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
+
+                                    core.Hyperlink.Sid = sessionId;
+                                    if (!string.IsNullOrEmpty(redirect))
+                                    {
+                                        Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
+                                    }
+                                    else
+                                    {
+                                        Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/", true));
+                                    }
+                                    return;
+                                }
+                                if (!string.IsNullOrEmpty(redirect))
+                                {
+                                    if (redirect.StartsWith("/account"))
+                                    {
+                                        redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
+                                    }
+                                    Response.Redirect(redirect, true);
+                                }
+                                else
+                                {
+                                    Response.Redirect("/", true);
+                                }
+                                return; /* stop processing the display of this page */
                             }
-                            return; /* stop processing the display of this page */
                         }
                         else
                         {
                             template.Parse("ERROR", "Bad log in credentials were given, you could not be logged in. Try again.");
                         }
+                        
                     }
                     else
                     {

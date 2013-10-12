@@ -348,13 +348,13 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal bool SignedIn
+        public bool SignedIn
         {
             get
             {
                 if (SignedInState == SessionSignInState.SignedIn)
                 {
-                    if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
+                    if (CandidateMember.UserInfo.TwoFactorAuthVerified)
                     {
                         return false;
                     }
@@ -445,9 +445,9 @@ namespace BoxSocial.Internals
             return SessionBegin(userId, autoCreate, enableAutologin, false);
         }
 
-        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool admin)
+        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor)
         {
-            return SessionBegin(userId, autoCreate, enableAutologin, admin, null);
+            return SessionBegin(userId, autoCreate, enableAutologin, twoFactor, null);
         }
 
         /// <summary>
@@ -457,7 +457,7 @@ namespace BoxSocial.Internals
         /// <param name="autoCreate"></param>
         /// <param name="enableAutologin"></param>
         /// <param name="admin"></param>
-        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool admin, DnsRecord record)
+        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor, DnsRecord record)
         {
             string cookieName = "hailToTheChef";
             XmlSerializer xs;
@@ -572,7 +572,7 @@ namespace BoxSocial.Internals
                     {
                         loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                         enableAutologin = isLoggedIn = true;
-                        if (loggedInMember.UserInfo.TwoFactorAuthVerified)
+                        if (loggedInMember.UserInfo.TwoFactorAuthVerified && twoFactor)
                         {
                             signInState = SessionSignInState.TwoFactorValidated;
                         }
@@ -637,7 +637,15 @@ namespace BoxSocial.Internals
                         {
                             loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
                             isLoggedIn = true;
-                            signInState = SessionSignInState.SignedIn;
+                            //signInState = SessionSignInState.SignedIn;
+                            if (loggedInMember.UserInfo.TwoFactorAuthVerified && twoFactor)
+                            {
+                                signInState = SessionSignInState.TwoFactorValidated;
+                            }
+                            else
+                            {
+                                signInState = SessionSignInState.SignedIn;
+                            }
                         }
                         else
                         {
@@ -907,7 +915,7 @@ namespace BoxSocial.Internals
                 // data in preparation
                 //
                 SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
-                query.AddFields("session_ip", "session_time_ut");
+                query.AddFields("session_ip", "session_time_ut", "session_signed_in");
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_sessions", "user_id"));
                 query.AddCondition("session_string", sessionId);
 
@@ -927,7 +935,7 @@ namespace BoxSocial.Internals
                         isLoggedIn = true;
                         if (loggedInMember.UserInfo.TwoFactorAuthVerified)
                         {
-                            signInState = SessionSignInState.TwoFactorValidated;
+                            signInState = (SessionSignInState)(byte)userSessionRow["session_signed_in"];
                         }
                         else
                         {
@@ -1160,6 +1168,21 @@ namespace BoxSocial.Internals
         }
 
         public User LoggedInMember
+        {
+            get
+            {
+                if (SignedIn)
+                {
+                    return loggedInMember;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        public User CandidateMember
         {
             get
             {

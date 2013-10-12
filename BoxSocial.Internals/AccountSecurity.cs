@@ -95,6 +95,9 @@ namespace BoxSocial.Internals
                 template.Parse("S_KEY", keyHiddenField);
                 template.Parse("S_VERIFY", verifyTextBox);
                 template.Parse("USERNAME", LoggedInMember.UserName);
+
+                LoggedInMember.UserInfo.TwoFactorAuthKey = key;
+                LoggedInMember.UserInfo.Update();
             }
             else if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
             {
@@ -112,21 +115,44 @@ namespace BoxSocial.Internals
         {
             AuthoriseRequestSid();
 
-            if (core.Http.Form["mode"] == "enable")
+            if (core.Http.Form["mode"] == "enable" && (!LoggedInMember.UserInfo.TwoFactorAuthVerified))
             {
+                Authenticator authenticator = new Authenticator();
+                if (authenticator.CheckCode(LoggedInMember.UserInfo.TwoFactorAuthKey, core.Http.Form["verify"]))
+                {
+                    LoggedInMember.UserInfo.TwoFactorAuthVerified = true;
+                }
+                else
+                {
+                    LoggedInMember.UserInfo.TwoFactorAuthKey = string.Empty;
+                }
+                LoggedInMember.UserInfo.Update();
+
+                // Temporary, this should be done on an elevated session which is higher than two factor
+                UpdateQuery uQuery = new UpdateQuery(typeof(Session));
+                uQuery.AddField("session_signed_in", (byte)SessionSignInState.TwoFactorValidated);
+                uQuery.AddCondition("session_id", core.Session.SessionId);
+
+                core.Db.Query(uQuery);
             }
+
+            core.Display.ShowMessage("Two Factor Authentication Disabled", "Two factor authentication has been disabled for this account.");
+            SetRedirectUri(BuildUri());
         }
 
         void AccountSecurity_Disable(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
+
+            LoggedInMember.UserInfo.TwoFactorAuthVerified = false;
+            LoggedInMember.UserInfo.Update();
+
+            SetRedirectUri(BuildUri("security"));
         }
 
         void AccountSecurity_QrCode(object sender, ModuleModeEventArgs e)
         {
             AuthoriseRequestSid();
-
-            string secret = core.Http.Query["secret"];
 
             var barcodeWriter = new BarcodeWriter
             {
@@ -138,7 +164,7 @@ namespace BoxSocial.Internals
                 }
             };
 
-            Bitmap bitmap = barcodeWriter.Write("otpauth://totp/" + HttpUtility.UrlEncode("@" + LoggedInMember.UserName) + "?secret=" + secret + "&issuer=" + HttpUtility.UrlEncode(core.Settings.SiteTitle));
+            Bitmap bitmap = barcodeWriter.Write("otpauth://totp/" + HttpUtility.UrlEncode("@" + LoggedInMember.UserName) + "?secret=" + LoggedInMember.UserInfo.TwoFactorAuthKey + "&issuer=" + HttpUtility.UrlEncode(core.Settings.SiteTitle));
 
             MemoryStream stream = new MemoryStream();
             bitmap.Save(stream, ImageFormat.Png);

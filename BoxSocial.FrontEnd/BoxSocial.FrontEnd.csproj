@@ -53,6 +53,10 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Web.Services" />
     <Reference Include="System.Xml" />
+    <Reference Include="TwoStepsAuthenticator, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Users\Lachlan\Downloads\TwoStepsAuthenticator-master\TwoStepsAuthenticator-master\TwoStepsAuthenticator\bin\Debug\TwoStepsAuthenticator.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="404.aspx.cs">

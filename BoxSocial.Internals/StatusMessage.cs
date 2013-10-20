@@ -261,6 +261,7 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("ID", item.Id.ToString());
                 statusMessageVariableCollection.Parse("TYPE_ID", item.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", item.Poster.DisplayName);
+                statusMessageVariableCollection.Parse("USER_ID", item.Poster.Id);
                 statusMessageVariableCollection.Parse("U_PROFILE", item.Poster.ProfileUri);
                 statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*e.Core.Hyperlink.BuildCommentQuoteUri(item.Id)*/);
                 statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*e.Core.Hyperlink.BuildCommentReportUri(item.Id)*/);
@@ -505,6 +506,7 @@ namespace BoxSocial.Internals
             statusMessageVariableCollection.Parse("ID", Id.ToString());
             statusMessageVariableCollection.Parse("TYPE_ID", ItemKey.TypeId.ToString());
             statusMessageVariableCollection.Parse("USERNAME", Poster.DisplayName);
+            statusMessageVariableCollection.Parse("USER_ID", Poster.Id);
             statusMessageVariableCollection.Parse("U_PROFILE", Poster.ProfileUri);
             statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*core.Hyperlink.BuildCommentQuoteUri(Id)*/);
             statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(Id)*/);

@@ -93,7 +93,7 @@ namespace BoxSocial.FrontEnd
 
         private void ReturnContactCard()
         {
-            long uid = core.Functions.RequestLong("uid", 0);
+            long uid = core.Functions.RequestLong("uid", core.Functions.FormLong("uid", 0));
 
             Dictionary<string, string> userInfo = new Dictionary<string, string>();
 

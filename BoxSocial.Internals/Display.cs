@@ -933,6 +933,7 @@ namespace BoxSocial.Internals
                     template.Parse("LOGGED_IN", "TRUE");
                     template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
+                    template.Parse("USER_ID", session.LoggedInMember.Id.ToString());
                     template.Parse("USER_DISPLAY_NAME", session.LoggedInMember.DisplayName);
                     template.Parse("USER_TILE", session.LoggedInMember.UserTile);
                     template.Parse("USER_ICON", session.LoggedInMember.UserIcon);

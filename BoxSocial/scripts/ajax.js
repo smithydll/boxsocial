@@ -703,3 +703,21 @@ function toggleStatusComments(parent, id, type, el) {
     }
     return false;
 }
+
+$(document).ready(function () {
+    $(".username-card").on('mouseenter', function (e) {
+        PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX);
+    });
+    $(".username-card").on('mouseleave', function () {
+        $(this).children().remove();
+    });
+});
+
+function LoadedCard(r, e, a) {
+    $('.contact-card').remove();
+    if (a + 370 > $(document).width()) {
+        a = $(document).width() - 370;
+    }
+    a = a - (e.offset().left - e.position().left);
+    e.append('<div class="contact-card" style="left: ' + a + 'px;"><div style="height: 80px; background-image: url(\'' + r['cover-photo'] + '\'); background-position: center; background-size: cover;"><img src="' + r['display-picture'] + '" /></div><span>' + r['display-name'] + '</span><p>' + r['abstract'] + '</p></div>');
+}

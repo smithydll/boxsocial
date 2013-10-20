@@ -1145,3 +1145,23 @@ div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui
     -moz-box-sizing: border-box;
     box-sizing: border-box;
 }
+
+.account-pane legend, .account-wide-pane legend {
+	display: none;
+}
+
+.account-pane fieldset, .account-wide-pane fieldset {
+	border: none;
+	padding-top: 0px;
+}
+
+.account-pane dt, .account-wide-pane dt {
+	font-weight: bold;
+	margin: 0;
+	padding: 0;
+}
+
+.account-pane dd, .account-wide-pane dd {
+	margin: 0;
+	padding: 0;
+}

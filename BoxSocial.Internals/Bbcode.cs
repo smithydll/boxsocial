@@ -2414,14 +2414,14 @@ namespace BoxSocial.Internals
                             if (e.Attributes.HasAttribute("ownership") &&
                                 e.Attributes.GetAttribute("ownership") == "true")
                             {
-                                e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
-                                    userUser.DisplayNameOwnership, userUser.Uri);
+                                e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                    userUser.DisplayNameOwnership, userUser.Uri, userUser.Id);
                                 e.SuffixText = string.Empty;
                             }
                             else
                             {
-                                e.PrefixText = string.Format("<a href=\"{1}\">{0}</a>",
-                                    userUser.DisplayName, userUser.Uri);
+                                e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                    userUser.DisplayName, userUser.Uri, userUser.Id);
                                 e.SuffixText = string.Empty;
                             }
                         }

@@ -155,6 +155,7 @@ namespace BoxSocial.Applications.Profile
                 statusMessageVariableCollection.Parse("ID", newMessage.Id.ToString());
                 statusMessageVariableCollection.Parse("TYPE_ID", newMessage.ItemKey.TypeId.ToString());
                 statusMessageVariableCollection.Parse("USERNAME", newMessage.Poster.DisplayName);
+                statusMessageVariableCollection.Parse("USER_ID", newMessage.Poster.Id);
                 statusMessageVariableCollection.Parse("U_PROFILE", newMessage.Poster.ProfileUri);
                 statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*core.Hyperlink.BuildCommentQuoteUri(newMessage.Id)*/);
                 statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(newMessage.Id)*/);

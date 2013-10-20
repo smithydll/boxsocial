@@ -10,7 +10,7 @@
         <!-- ELSE -->
 		<div class="status-body" style="cursor: pointer;" onclick="toggleStatusComments($(this).parent(), {status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));">
         <!-- ENDIF -->
-            <p class="posted-by"><a href="{status_messages.U_PROFILE}">{status_messages.USERNAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
+            <p class="posted-by"><a href="{status_messages.U_PROFILE}" class="username-card" bs-uid="{status_messages.USER_ID}">{status_messages.USERNAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
 			{status_messages.STATUS_MESSAGE}
 		</div>
         <!-- IF $_IS_MOBILE -->

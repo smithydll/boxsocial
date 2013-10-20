@@ -1852,3 +1852,14 @@ ul#profile-links li span {
     color: #333333;
     display: inline-block;
 }
+
+div.contact-card {
+    position: absolute;
+    width: 360px;
+    height: 202px;
+    box-shadow: 0 3px 6px #666666;
+    overflow: hidden;
+    background-color: #FFFFFF;
+    text-align: left;
+    z-index: 1000;
+}

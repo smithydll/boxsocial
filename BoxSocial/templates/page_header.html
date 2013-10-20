@@ -114,7 +114,7 @@ div#rc-bottom {
             <!-- ENDIF -->
 			<div id="head-nav">
 				<!-- IF LOGGED_IN -->
-				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
+				{L_GREETING} <a href="{U_USER_PROFILE}" class="username-card" bs-uid="{USER_ID}">{USERNAME}</a> |
 				<a href="{U_ACCOUNT}">{L_MY_ACCOUNT}</a>
                 <!-- IF U_UNREAD_NOTIFICATIONS -->
                 <a href="{U_ACCOUNT}"><span class="notifications">{U_UNREAD_NOTIFICATIONS}</span></a>

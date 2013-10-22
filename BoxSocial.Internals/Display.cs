@@ -699,6 +699,7 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("ID", comment.Id.ToString());
                     commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(typeof(Comment)));
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
+                    commentsVariableCollection.Parse("USER_ID", commentPoster.Id.ToString());
                     commentsVariableCollection.Parse("USER_DISPLAY_NAME", commentPoster.DisplayName);
                     commentsVariableCollection.Parse("U_PROFILE", commentPoster.ProfileUri);
                     commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(comment.Id));

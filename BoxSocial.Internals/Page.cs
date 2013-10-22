@@ -45,7 +45,7 @@ namespace BoxSocial.Internals
     [DataTable("user_pages", "PAGE")]
     [Permission("VIEW", "Can view the page", PermissionTypes.View)]
     [Permission("EDIT", "Can edit the page", PermissionTypes.CreateAndEdit)]
-    public class Page : NumberedItem, INestableItem, IPermissibleItem
+    public class Page : NumberedItem, INestableItem, IPermissibleItem, ICommentableItem
     {
         [DataField("page_id", DataFieldKeys.Primary)]
         private long pageId;
@@ -102,6 +102,8 @@ namespace BoxSocial.Internals
         private ContentLicense license;
         private Classifications classification;
         private ParentTree parentTree;
+
+        public event CommentHandler OnCommentPosted;
 
         public long PageId
         {
@@ -593,6 +595,19 @@ namespace BoxSocial.Internals
 
         private void Page_ItemLoad()
         {
+            OnCommentPosted += new CommentHandler(Page_CommentPosted);
+        }
+
+        bool Page_CommentPosted(CommentPostedEventArgs e)
+        {
+            if (Owner is User)
+            {
+                ApplicationEntry ae = core.GetApplication("Profile");
+                ae.SendNotification(core, (User)Owner, string.Format("[user]{0}[/user] commented on your page.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+            }
+
+            return true;
         }
 
         private void loadPageInfo(DataRow pageRow)
@@ -1439,6 +1454,46 @@ namespace BoxSocial.Internals
         public string ParentPermissionKey(Type parentType, string permission)
         {
             return permission;
+        }
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            if (OnCommentPosted != null)
+            {
+                OnCommentPosted(e);
+            }
+        }
+
+        public long Comments
+        {
+            get
+            {
+                return Info.Comments;
+            }
+        }
+
+        public SortOrder CommentSortOrder
+        {
+            get
+            {
+                return SortOrder.Ascending;
+            }
+        }
+
+        public byte CommentsPerPage
+        {
+            get
+            {
+                return 10;
+            }
+        }
+
+        public string Noun
+        {
+            get
+            {
+                return "page";
+            }
         }
     }
 

@@ -504,6 +504,7 @@ namespace BoxSocial.FrontEnd
                 // TODO: finish comments this
                 commentsVariableCollection.Parse("ID", commentId.ToString());
                 commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
+                commentsVariableCollection.Parse("USER_ID", loggedInMember.Id.ToString());
                 commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);
                 commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(commentId));
                 commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(commentId));

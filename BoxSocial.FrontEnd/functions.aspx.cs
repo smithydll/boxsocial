@@ -106,8 +106,12 @@ namespace BoxSocial.FrontEnd
                 userInfo.Add("display-picture", user.UserIcon);
                 userInfo.Add("uri", user.Uri);
                 userInfo.Add("profile", user.ProfileUri);
-                userInfo.Add("abstract", user.Profile.Autobiography);
-                userInfo.Add("subscribers", user.Info.Subscribers.ToString());
+                userInfo.Add("abstract", core.Bbcode.Parse(user.Profile.Autobiography));
+                userInfo.Add("subscribers", core.Functions.LargeIntegerToString(user.Info.Subscribers));
+                userInfo.Add("subscribe-uri", string.Empty);
+                userInfo.Add("location", user.Profile.Country);
+                userInfo.Add("l-location", "Location");
+                userInfo.Add("l-subscribe", "Subscribe");
 
                 core.Ajax.SendDictionary("contactCard", userInfo);
             }

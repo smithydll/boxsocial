@@ -98,6 +98,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeTwitter);
             BbcodeHooks += new BbcodeHookHandler(BbcodeSoundcloud);
             BbcodeHooks += new BbcodeHookHandler(BbcodeInstagram);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeMap);
             // TODO: flash
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
@@ -2012,6 +2013,64 @@ namespace BoxSocial.Internals
                         e.PrefixText = "<a href=\"" + youTubeUrl + "\"><strong>YT:</strong> " + youTubeUrl;
                         e.SuffixText = "</a>";
                     }
+                    break;
+            }
+        }
+
+        private static void BbcodeMap(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "map") return;
+
+            e.SetHandled();
+
+            switch (e.Mode)
+            {
+                case BbcodeParseMode.Tldr:
+                    // Preserve
+                    e.AbortParse();
+                    break;
+                case BbcodeParseMode.StripTags:
+                case BbcodeParseMode.Flatten:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Normal:
+                    string mapUrl = e.Contents;
+                    e.RemoveContents();
+
+                    if (mapUrl.ToLower().StartsWith("http://") || mapUrl.ToLower().StartsWith("https://"))
+                    {
+                        char[] splitChars = { '=', '?', '&' };
+                        string[] argh = mapUrl.Split(splitChars);
+                        if (argh.Length <= 2)
+                        {
+                            e.AbortParse();
+                        }
+                        for (int y = 0; y < argh.Length - 1; y++)
+                        {
+                            if (argh[y] == "mid")
+                            {
+                                mapUrl = argh[y + 1];
+                            }
+                            else if (y == argh.Length - 2)
+                            {
+                                e.AbortParse();
+                            }
+                        }
+                    }
+
+                    mapUrl = "http://mapsengine.google.com/map/embed?mid=" + mapUrl;
+
+                    if (e.Core.IsMobile)
+                    {
+                        e.PrefixText = "<iframe width=\"300\" height=\"194\" src=\"" + mapUrl + "\" ></iframe>";
+                    }
+                    else
+                    {
+                        e.PrefixText = "<iframe width=\"560\" height=\"340\" src=\"" + mapUrl + "\" ></iframe>";
+                    }
+
+                    e.SuffixText = string.Empty;
                     break;
             }
         }

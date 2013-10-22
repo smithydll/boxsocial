@@ -706,10 +706,9 @@ function toggleStatusComments(parent, id, type, el) {
 
 $(document).ready(function () {
     $(".username-card").on('mouseenter', function (e) {
-        PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX);
-    });
-    $(".username-card").on('mouseleave', function () {
-        $(this).children().remove();
+        if (!$(this).parent().hasClass('contact-card-container')) {
+            PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX - 5);
+        }
     });
 });
 
@@ -719,5 +718,10 @@ function LoadedCard(r, e, a) {
         a = $(document).width() - 370;
     }
     a = a - (e.offset().left - e.position().left);
-    e.append('<div class="contact-card" style="left: ' + a + 'px;"><div style="height: 80px; background-image: url(\'' + r['cover-photo'] + '\'); background-position: center; background-size: cover;"><img src="' + r['display-picture'] + '" /></div><span>' + r['display-name'] + '</span><p>' + r['abstract'] + '</p></div>');
+    e.wrap('<span class="contact-card-container"></span>');
+    var loc = (r['location'] != 'FALSE') ? '<p><strong>' + r['l-location'] + ':</strong> ' + r['location'] + '</p>' : '';
+    e.after('<div class="contact-card" style="left: ' + a + 'px;"><div style="height: 80px; background-image: url(\'' + r['cover-photo'] + '\'); background-position: center; background-color: #333333; background-size: cover;"><img src="' + r['display-picture'] + '" /></div><div><p><strong><a href="' + r['uri'] + '">' + r['display-name'] + '</a></strong></p><p><span class="subscribe-button"><a href="' + r['subscribe-uri'] + '">' + r['l-subscribe'] + '</a></span><span class="subscribers">' + r['subscribers'] + '</span></p>' + loc + '<p>' + r['abstract'] + '</p></div></div>');
+    $(".contact-card-container").on('mouseleave', function (e) {
+        $('.contact-card').unwrap().remove();
+    });
 }

@@ -10,6 +10,7 @@ body {
 	font-size: 62.5%;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	text-align: center;
+	line-height: 1.231;
 }
 
 #wrapper {
@@ -68,6 +69,7 @@ a:hover {
 p {
 	padding: 6px 0;
 	margin: 0 0;
+	vertical-align: baseline;
 }
 
 #head h1 {
@@ -347,7 +349,6 @@ li.empty {
 
 #content {
     background-color: #FFFFFF;
-    overflow: auto;
 }
 
 #profile div.pane {
@@ -366,10 +367,6 @@ li.empty {
 	padding: 3px 5px;
 	margin: 0px;
 	font-size: 130%;
-}
-
-#profile div.pane p {
-	padding: 0 5px;
 }
 
 #pane-profile-overview div.img-fl {
@@ -585,7 +582,6 @@ ul.comment-list li {
 	list-style: none;
 	padding: 0 0 1px 0;
 	margin: 0 1px 4px 1px;
-	overflow: hidden;
 	border-radius: 5px;
 	background-color: #ffffff;
 	border: 1px solid #eeeeee;
@@ -916,6 +912,21 @@ span.post-button, span.img-button, button {
 }
 
 span.subscribe-button {
+	border-radius: 3px;
+	border: 1px solid #eecc22;
+	background: #ffee22;
+	color: #664422;
+	margin: 2px;
+	padding: 2px 16px;
+	font-size: 110%;
+}
+
+span.subscribe-button a {
+    color: #664422 !important;
+    text-decoration: none;
+}
+
+span.subscribes {
 	border-radius: 5px;
 	border: 1px solid #eecc22;
 	background: #ffee22;
@@ -923,10 +934,6 @@ span.subscribe-button {
 	margin: 2px;
 	padding: 6px 16px;
 	font-size: 110%;
-}
-
-span.subscribe-button a {
-    color: #664422 !important;
 }
 
 input[type="submit"] {
@@ -1859,7 +1866,26 @@ div.contact-card {
     height: 202px;
     box-shadow: 0 3px 6px #666666;
     overflow: hidden;
+    text-overflow: ellipsis;
     background-color: #FFFFFF;
     text-align: left;
-    z-index: 1000;
+    z-index: 100000;
+    font-size: 12px;
+}
+
+div.contact-card img {
+    margin: 5px;
+}
+
+div.contact-card div {
+    padding: 2px 5px;
+}
+
+span.subscribers {
+	border-radius: 3px;
+	border: 1px solid #cccccc;
+	background: none;
+	color: #888888;
+	margin: 2px;
+	padding: 2px 5px;
 }

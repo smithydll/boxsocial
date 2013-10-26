@@ -915,7 +915,7 @@ namespace BoxSocial.Internals
             string output = string.Empty;
             string path = string.Format("/application/{0}", assemblyName);
             output = string.Format("<a href=\"{1}\">{0}</a>",
-                    title, path);
+                    title, core.Hyperlink.AppendSid(path));
 
             for (int i = 0; i < parts.Count; i++)
             {
@@ -923,7 +923,7 @@ namespace BoxSocial.Internals
                 {
                     path += "/" + parts[i][0];
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path);
+                        parts[i][1], core.Hyperlink.AppendSid(path));
                 }
             }
 

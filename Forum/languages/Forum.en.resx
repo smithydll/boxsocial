@@ -271,7 +271,7 @@
     <value>You [b]{0}[/b] edit your posts in this forum</value>
   </data>
   <data name="YOU_CAN_MODERATE_FORUM" xml:space="preserve">
-    <value>You [b]{0}[/b] [url={1}]moderate[/url] this forum</value>
+    <value>You [b]{0}[/b] [iurl={1}]moderate[/iurl] this forum</value>
   </data>
   <data name="YOU_CAN_POST_REPLIES" xml:space="preserve">
     <value>You [b]{0}[/b] post replies to topics in this forum</value>

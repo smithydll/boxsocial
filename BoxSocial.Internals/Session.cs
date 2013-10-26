@@ -36,8 +36,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public enum SessionSignInState : byte
+    public enum SessionSignInState : sbyte
     {
+        Bot = -1,
         SignedOut = 0,
         SignedIn = 1,
         TwoFactorValidated = 2,
@@ -61,7 +62,7 @@ namespace BoxSocial.Internals
         [DataField("session_time_ut")]
         private long sessionTimeRaw;
         [DataField("session_signed_in")]
-        private byte sessionSignedIn;
+        private sbyte sessionSignedIn;
         [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_ip", IP)]
         private string sessionIp;
@@ -425,6 +426,72 @@ namespace BoxSocial.Internals
 			ipAddress = new IPAddress(0);
 		}
 
+        private Dictionary<string, string> bots = new Dictionary<string, string>();
+
+        private string IsBotUserAgent(string ua)
+        {
+            /* This list of bots from phpBB 3.0.12*/
+
+            if (bots.Count == 0)
+            {
+                bots.Add("AdsBot-Google", "Google AdsBot");
+                bots.Add("ia_archiver", "Alexa");
+                bots.Add("Scooter/", "Alta Vista");
+                bots.Add("Ask Jeeves", "Ask Jeeves");
+                bots.Add("Baiduspider", "Baidu");
+                bots.Add("bingbot/", "Bing");
+                bots.Add("Exabot", "Exabot");
+                bots.Add("FAST Enterprise Crawler", "FAST Enterprise");
+                bots.Add("FAST-WebCrawler/", "FAST WebCrawler");
+                bots.Add("http://www.neomo.de/", "Francis");
+                bots.Add("Gigabot/", "Gigabot");
+                bots.Add("Mediapartners-Google", "Google Adsense");
+                bots.Add("Google Desktop", "Google Desktop");
+                bots.Add("Feedfetcher-Google", "Google Feedfetcher");
+                bots.Add("Googlebot", "Google");
+                bots.Add("heise-IT-Markt-Crawler", "Heise IT-Markt");
+                bots.Add("heritrix/1.", "Heritrix");
+                bots.Add("ibm.com/cs/crawler", "IBM Research");
+                bots.Add("ICCrawler - ICjobs", "ICCrawler");
+                bots.Add("ichiro/", "ichiro");
+                bots.Add("MJ12bot/", "Majestic-12");
+                bots.Add("MetagerBot/", "Metager");
+                bots.Add("msnbot-NewsBlogs/", "MSN NewsBlogs");
+                bots.Add("msnbot/", "MSN");
+                bots.Add("msnbot-media/", "MSNbot Media");
+                bots.Add("http://lucene.apache.org/nutch/", "Nutch");
+                bots.Add("online link validator", "Online link");
+                bots.Add("psbot/0", "psbot");
+                bots.Add("Sensis Web Crawler", "Sensis");
+                bots.Add("SEO search Crawler/", "SEO");
+                bots.Add("Seoma [SEO Crawler]", "Seoma");
+                bots.Add("SEOsearch/", "SEOSearch");
+                bots.Add("Snappy/1.1 ( http://www.urltrends.com/ )", "Snappy");
+                bots.Add("http://www.tkl.iis.u-tokyo.ac.jp/~crawler/", "Steeler");
+                bots.Add("crawleradmin.t-info@telekom.de", "Telekom");
+                bots.Add("TurnitinBot/", "TurnitinBot");
+                bots.Add("voyager/", "Voyager");
+                bots.Add("W3 SiteSearch Crawler", "W3");
+                bots.Add("W3C-checklink/", "W3C");
+                bots.Add("W3C_Validator", "W3C");
+                bots.Add("yacybot", "YaCy");
+                bots.Add("Yahoo-MMCrawler/", "Yahoo MMCrawler");
+                bots.Add("Yahoo! DE Slurp", "Yahoo Slurp");
+                bots.Add("Yahoo! Slurp", "Yahoo");
+                bots.Add("YahooSeeker/", "YahooSeeker");
+            }
+
+            foreach (string key in bots.Keys)
+            {
+                if ((!string.IsNullOrEmpty(key)) && Regex.IsMatch(ua, key.Replace("#", "\\#").Replace("\\*", ".*?"), RegexOptions.IgnoreCase))
+                {
+                    return bots[key];
+                }
+            }
+
+            return null;
+        }
+
         //
         // The following session algorithm was borrowed from phpBB2.0.22,
         // it is considered secure and widely implemented
@@ -481,6 +548,11 @@ namespace BoxSocial.Internals
             if (record != null)
             {
                 currentDomain = record.Domain;
+            }
+
+            if (!String.IsNullOrEmpty(IsBotUserAgent(Request.UserAgent)))
+            {
+                signInState = SessionSignInState.Bot;
             }
 
             if (record == null)
@@ -604,6 +676,11 @@ namespace BoxSocial.Internals
                             sessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                             sessionSidCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionSidCookie);
+
+                            if (Request.Cookies[cookieName + "_sid"] == null)
+                            {
+                                core.Hyperlink.SidUrls = true;
+                            }
                         }
 
                         //core.Display.ShowMessage("Error", "Error starting session");
@@ -815,6 +892,11 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
+
+                if (Request.Cookies[cookieName + "_sid"] == null)
+                {
+                    core.Hyperlink.SidUrls = true;
+                }
             }
 
             return sessionId;
@@ -935,7 +1017,7 @@ namespace BoxSocial.Internals
                         isLoggedIn = true;
                         if (loggedInMember.UserInfo.TwoFactorAuthVerified)
                         {
-                            signInState = (SessionSignInState)(byte)userSessionRow["session_signed_in"];
+                            signInState = (SessionSignInState)(sbyte)userSessionRow["session_signed_in"];
                         }
                         else
                         {
@@ -1013,6 +1095,11 @@ namespace BoxSocial.Internals
                         Response.Cookies.Add(newSessionSidCookie);
 
                         // Add the session_key to the userdata array if it is set
+
+                        if (Request.Cookies[cookieName + "_sid"] == null)
+                        {
+                            core.Hyperlink.SidUrls = true;
+                        }
 
                         return;
                     }
@@ -1144,6 +1231,11 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
+
+                if (Request.Cookies[cookieName + "_sid"] == null)
+                {
+                    core.Hyperlink.SidUrls = true;
+                }
             }
 
             return;

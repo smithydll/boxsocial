@@ -203,7 +203,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return Owner.UriStub + "news/" + articleId.ToString();
+                return core.Hyperlink.AppendSid(Owner.UriStub + "news/" + articleId.ToString());
             }
         }
 		

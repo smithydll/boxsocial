@@ -972,11 +972,8 @@ namespace BoxSocial.Applications.Blog
 
                     DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
 
-                    string postUrl = HttpUtility.HtmlEncode(string.Format("{0}blog/{1}/{2:00}/{3}",
-                            page.User.UriStub, postDateTime.Year, postDateTime.Month, blogEntries[i].PostId));
-
                     blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
-                    blogPostVariableCollection.Parse("URL", postUrl);
+                    blogPostVariableCollection.Parse("URL", blogEntries[i].Uri);
                     blogPostVariableCollection.Parse("ID", blogEntries[i].Id);
                     blogPostVariableCollection.Parse("TYPE_ID", blogEntries[i].ItemKey.TypeId);
 

@@ -209,11 +209,11 @@ namespace BoxSocial.FrontEnd
                 modulesVariableCollection.Parse("NAME", accountModule.Name);
                 if (string.IsNullOrEmpty(accountModule.Key))
                 {
-                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub);
+                    modulesVariableCollection.Parse("URI", core.Hyperlink.AppendSid(loggedInMember.AccountUriStub));
                 }
                 else
                 {
-                    modulesVariableCollection.Parse("URI", loggedInMember.AccountUriStub + accountModule.Key);
+                    modulesVariableCollection.Parse("URI", core.Hyperlink.AppendSid(loggedInMember.AccountUriStub + accountModule.Key));
                 }
 
                 if (module == accountModule.Key)

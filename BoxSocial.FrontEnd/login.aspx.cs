@@ -206,11 +206,15 @@ namespace BoxSocial.FrontEnd
                             {
                                 redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
                             }
+                            else
+                            {
+                                redirect = core.Hyperlink.AppendSid(redirect);
+                            }
                             Response.Redirect(redirect, true);
                         }
                         else
                         {
-                            Response.Redirect("/", true);
+                            Response.Redirect(core.Hyperlink.AppendSid("/"), true);
                         }
                         return; /* stop processing the display of this page */
                     }
@@ -317,11 +321,15 @@ namespace BoxSocial.FrontEnd
                                     {
                                         redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
                                     }
+                                    else
+                                    {
+                                        redirect = core.Hyperlink.AppendSid(redirect);
+                                    }
                                     Response.Redirect(redirect, true);
                                 }
                                 else
                                 {
-                                    Response.Redirect("/", true);
+                                    Response.Redirect(core.Hyperlink.AppendSid("/"), true);
                                 }
                                 return; /* stop processing the display of this page */
                             }

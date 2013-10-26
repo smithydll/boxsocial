@@ -948,6 +948,10 @@ namespace BoxSocial.Internals
                         template.Parse("U_UNSEEN_MAIL", core.Hyperlink.BuildAccountSubModuleUri("mail", "inbox"));
                     }
                 }
+                if (!core.Hyperlink.SidUrls)
+                {
+                    template.Parse("S_TRIM_SID", "TRUE");
+                }
             }
 
             template.Parse("IS_CONTENT", "TRUE");

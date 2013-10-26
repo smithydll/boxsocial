@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Profile
             {
                 VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
 
-                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", BoxSocial.Internals.Action.GetTitle(newMessage.OwnerKey, newMessage.Action, newMessage.Uri));
+                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", BoxSocial.Internals.Action.GetTitle(newMessage.OwnerKey, newMessage.Action, core.Hyperlink.StripSid(newMessage.Uri)));
                 core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", newMessage.GetActionBody(null), newMessage.Owner, true, string.Empty, string.Empty);
 
                 feedItemVariableCollection.Parse("USER_DISPLAY_NAME", newMessage.Owner.DisplayName);

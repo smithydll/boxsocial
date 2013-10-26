@@ -1434,12 +1434,12 @@ namespace BoxSocial.Applications.Forum
                 if (forumId == 0)
                 {
                     return core.Hyperlink.AppendSid(string.Format("{0}forum/mcp",
-                        Owner.UriStubAbsolute), true);
+                        Owner.UriStub), true);
                 }
                 else
                 {
                     return core.Hyperlink.AppendSid(string.Format("{0}forum/mcp?f={1}",
-                        Owner.UriStubAbsolute, forumId), true);
+                        Owner.UriStub, forumId), true);
                 }
             }
         }
@@ -1878,7 +1878,7 @@ namespace BoxSocial.Applications.Forum
             }
             if (thisForum.Access.Can("DELETE_TOPICS") || thisForum.Access.Can("LOCK_TOPICS"))
             {
-                permissions.Add(core.Prose.GetString("YOU_CAN_MODERATE_FORUM"), true, thisForum.ModeratorControlPanelUri);
+                permissions.Add(core.Prose.GetString("YOU_CAN_MODERATE_FORUM"), true, core.Hyperlink.StripSid(thisForum.ModeratorControlPanelUri));
                 flagPermissionsBlock = true;
             }
 

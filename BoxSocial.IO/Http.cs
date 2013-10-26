@@ -286,5 +286,13 @@ namespace BoxSocial.IO
                 forceDomain = value;
             }
         }
+
+        public string UserAgent
+        {
+            get
+            {
+                return current.Request.UserAgent;
+            }
+        }
     }
 }

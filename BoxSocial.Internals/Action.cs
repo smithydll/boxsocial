@@ -186,7 +186,7 @@ namespace BoxSocial.Internals
                     title = ActionedItem.Action;
                     url = ActionedItem.Uri;
                 }
-                return GetTitle(ownerKey, title, url);
+                return GetTitle(ownerKey, title, core.Hyperlink.StripSid(url));
             }
         }
 

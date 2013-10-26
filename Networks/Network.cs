@@ -822,14 +822,14 @@ namespace BoxSocial.Networks
             string output = "";
             string path = string.Format("/network/{0}", NetworkNetwork);
             output = string.Format("<a href=\"{1}\">{0}</a>",
-                    DisplayName, path);
+                    DisplayName, core.Hyperlink.AppendSid(path));
 
             for (int i = 0; i < parts.Count; i++)
             {
                 if (parts[i][0] != "")
                 {
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path + "/" + parts[i][0].TrimStart(new char[] { '*' }));
+                        parts[i][1], core.Hyperlink.AppendSid(path + "/" + parts[i][0].TrimStart(new char[] { '*' })));
                     if (!parts[i][0].StartsWith("*"))
                     {
                         path += "/" + parts[i][0];

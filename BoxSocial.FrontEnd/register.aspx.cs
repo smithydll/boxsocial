@@ -25,6 +25,7 @@ using System.Configuration;
 using System.Data;
 using System.Web;
 using BoxSocial;
+using BoxSocial.Groups;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -322,6 +323,56 @@ namespace BoxSocial.FrontEnd
 
                                     db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
                                         newUser.UserId));
+                                }
+                            }
+
+                            long groupId = core.Functions.RequestLong("gid", 0);
+
+                            if (groupId > 0)
+                            {
+                                try
+                                {
+                                    UserGroup thisGroup = new UserGroup(core, groupId);
+
+                                    int activated = 0;
+
+                                    switch (thisGroup.GroupType)
+                                    {
+                                        case "OPEN":
+                                        case "PRIVATE": // assume as you've been invited that it is enough for activation
+                                            activated = 1;
+                                            break;
+                                        case "REQUEST":
+                                        case "CLOSED":
+                                            activated = 0;
+                                            break;
+                                    }
+
+                                    bool isInvited = thisGroup.IsGroupInvitee(newUser);
+
+                                    // do not need an invite unless the group is private
+                                    // private groups you must be invited to
+                                    if (thisGroup.GroupType != "PRIVATE" || (thisGroup.GroupType == "PRIVATE" && isInvited))
+                                    {
+                                        db.BeginTransaction();
+                                        db.UpdateQuery(string.Format("INSERT INTO group_members (group_id, user_id, group_member_approved, group_member_ip, group_member_date_ut) VALUES ({0}, {1}, {2}, '{3}', UNIX_TIMESTAMP());",
+                                            thisGroup.GroupId, newUser.Id, activated, Mysql.Escape(session.IPAddress.ToString()), true));
+
+                                        if (activated == 1)
+                                        {
+                                            db.UpdateQuery(string.Format("UPDATE group_info SET group_members = group_members + 1 WHERE group_id = {0}",
+                                                thisGroup.GroupId));
+                                        }
+
+                                        // just do it anyway, can be invited to any type of group
+                                        db.UpdateQuery(string.Format("DELETE FROM group_invites WHERE group_id = {0} AND user_id = {1}",
+                                            thisGroup.GroupId, newUser.Id));
+                                    }
+
+                                    core.Template.Parse("REDIRECT_URI", thisGroup.Uri);
+                                }
+                                catch (InvalidGroupException)
+                                {
                                 }
                             }
 

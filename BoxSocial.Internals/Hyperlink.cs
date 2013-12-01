@@ -512,6 +512,11 @@ namespace BoxSocial.Internals
             return AppendCoreSid("/register?key=" + key);
         }
 
+        public string BuildRegisterUri(long groupId)
+        {
+            return AppendCoreSid("/register?gid=" + groupId);
+        }
+
         public string BuildOptOutUri(string emailKey)
         {
             return AppendCoreSid("/register?mode=optout&key=" + emailKey);

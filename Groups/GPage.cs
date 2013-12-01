@@ -117,6 +117,8 @@ namespace BoxSocial.Groups
                 template.Parse("U_JOIN", Group.JoinUri);
             }
 
+            template.Parse("U_REGISTER", core.Hyperlink.BuildRegisterUri(Group.Id));
+
             if (!core.PagePath.StartsWith("/account"))
             {
                 BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, Group));

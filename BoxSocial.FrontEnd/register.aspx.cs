@@ -159,6 +159,7 @@ namespace BoxSocial.FrontEnd
             }
             else if (core.Http.Form["submit"] == null)
             {
+                long groupId = core.Functions.FormLong("gid", core.Functions.RequestLong("gid", 0));
                 string emailKey = core.Http.Query["key"];
                 bool continueSignup = false;
 
@@ -182,6 +183,8 @@ namespace BoxSocial.FrontEnd
 
                 if (continueSignup)
                 {
+                    template.Parse("GID", groupId.ToString());
+
                     prepareNewCaptcha();
                     if (!string.IsNullOrEmpty(emailKey))
                     {
@@ -195,6 +198,7 @@ namespace BoxSocial.FrontEnd
             }
             else
             {
+                long groupId = core.Functions.FormLong("gid", core.Functions.RequestLong("gid", 0));
                 string emailKey = core.Http.Form["key"];
                 bool continueSignup = false;
                 List<long> invitedById = new List<long>();
@@ -228,6 +232,7 @@ namespace BoxSocial.FrontEnd
                     template.Parse("USERNAME", (string)core.Http.Form["username"]);
                     template.Parse("EMAIL", (string)core.Http.Form["email"]);
                     template.Parse("CONFIRM_EMAIL", (string)core.Http.Form["confirm-email"]);
+                    template.Parse("GID", groupId.ToString());
 
                     if (!string.IsNullOrEmpty(emailKey))
                     {
@@ -325,8 +330,6 @@ namespace BoxSocial.FrontEnd
                                         newUser.UserId));
                                 }
                             }
-
-                            long groupId = core.Functions.RequestLong("gid", 0);
 
                             if (groupId > 0)
                             {

@@ -106,7 +106,11 @@ function SendAction(u) {
 }
 
 function SentAction(r, e, a) {
-    $('#status-form').hide();
+    $('#status-form').trigger("reset");
+    $("#permissions-ids").val("");
+    $("#permissions-text").removeAttr("style");
+    $("#permissions").children(".group, .username").remove();
+    $("#permissions").children(".empty").show();
     if (r['update'] == 'true') {
         $('.today-feed ul.feed-list').first().before(r['template']);
     }

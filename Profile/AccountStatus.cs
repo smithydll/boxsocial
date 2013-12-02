@@ -123,7 +123,7 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 //Access access = new Access(core, feedAction.ActionItemKey, true);
-                if (newMessage.PermissiveParent.Access.IsPublic())
+                if (newMessage.Access.IsPublic())
                 {
                     feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
                     if (newMessage.ItemKey.ImplementsShareable)

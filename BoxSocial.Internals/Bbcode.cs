@@ -1991,7 +1991,14 @@ namespace BoxSocial.Internals
 
                     if (TagAllowed(e.Tag.Tag, e.Options))
                     {
-                        youTubeUrl = "http://www.youtube.com/embed/" + youTubeUrl;
+                        if (e.Core.Http.IsSecure)
+                        {
+                            youTubeUrl = "https://www.youtube.com/embed/" + youTubeUrl;
+                        }
+                        else
+                        {
+                            youTubeUrl = "http://www.youtube.com/embed/" + youTubeUrl;
+                        }
 
                         // Old YouTube Flash Embed Code
                         //e.PrefixText = "<object width=\"425\" height=\"350\"><param name=\"movie\" value=\"" + youTubeUrl + "\"></param><embed src=\"" + youTubeUrl + "\" type=\"application/x-shockwave-flash\" width=\"425\" height=\"350\"></embed></object>";

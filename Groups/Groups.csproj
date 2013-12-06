@@ -130,6 +130,7 @@
     </Content>
     <Content Include="templates\groups_default.html" />
     <Content Include="templates\group_footer.html" />
+    <Content Include="templates\todaygrouppanel.html" />
     <Content Include="templates\viewgroup.html">
       <SubType>Designer</SubType>
     </Content>

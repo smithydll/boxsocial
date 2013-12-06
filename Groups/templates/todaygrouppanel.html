@@ -1,0 +1,19 @@
+﻿	<div id="today-groups" style="border: solid 1px #EEEEEE; margin-bottom: 5px;">
+		{L_GROUPS}
+	<!-- IF groups_list -->
+	<ul id="small-groups">
+	<!-- BEGIN groups_list -->
+		<li>
+			<a href="{groups_list.U_GROUP}">
+				<!-- IF groups_list.TILE -->
+				<img src="{groups_list.TILE}" data-at2x="{groups_list.SQUARE}" alt="{groups_list.TITLE}" title="{groups_list.TITLE}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{groups_list.TITLE}" title="{groups_list.TITLE}" />
+				<!-- ENDIF -->
+			</a>
+		</li>
+	<!-- END groups_list -->
+	</ul>
+	<div class="cheat-clear-left"></div>
+    <!-- ENDIF -->
+	</div>

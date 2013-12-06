@@ -202,6 +202,13 @@ namespace BoxSocial.Groups
 
         void core_PageHooks(HookEventArgs e)
         {
+            if (e.PageType == AppPrimitives.None)
+            {
+                if (e.core.PagePath.ToLower() == "/default.aspx")
+                {
+                    ShowGroups(e);
+                }
+            }
             if (e.PageType == AppPrimitives.Member)
             {
                 ShowMemberGroups(e);
@@ -210,6 +217,25 @@ namespace BoxSocial.Groups
 
         void core_FootHooks(HookEventArgs e)
         {
+        }
+
+        void ShowGroups(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "todaygrouppanel");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, e.core.Session.LoggedInMember);
+
+            foreach (UserGroup group in groups)
+            {
+                VariableCollection groupVariableCollection = template.CreateChild("groups_list");
+
+                groupVariableCollection.Parse("TITLE", group.DisplayName);
+                groupVariableCollection.Parse("U_GROUP", group.Uri);
+            }
+
+            e.core.AddSidePanel(template);
         }
 
         public void ShowMemberGroups(HookEventArgs e)

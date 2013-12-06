@@ -190,6 +190,28 @@ namespace BoxSocial.FrontEnd
                     {
                         template.Parse("EMAIL_KEY", emailKey);
                     }
+
+                    if (groupId > 0)
+                    {
+                        try
+                        {
+                            UserGroup thisGroup = new UserGroup(core, groupId);
+                            if (loggedInMember != null)
+                            {
+                                if (loggedInMember.UserInfo.ShowCustomStyles)
+                                {
+                                    template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                                }
+                            }
+                            else
+                            {
+                                template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                            }
+                        }
+                        catch
+                        {
+                        }
+                    }
                 }
                 else
                 {
@@ -336,6 +358,18 @@ namespace BoxSocial.FrontEnd
                                 try
                                 {
                                     UserGroup thisGroup = new UserGroup(core, groupId);
+
+                                    if (loggedInMember != null)
+                                    {
+                                        if (loggedInMember.UserInfo.ShowCustomStyles)
+                                        {
+                                            template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                                        }
+                                    }
+                                    else
+                                    {
+                                        template.Parse("USER_STYLE_SHEET", string.Format("group/{0}.css", thisGroup.Key));
+                                    }
 
                                     int activated = 0;
 

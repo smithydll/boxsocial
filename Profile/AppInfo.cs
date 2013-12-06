@@ -238,8 +238,16 @@ namespace BoxSocial.Applications.Profile
                 {
                     //ShowStatusUpdates(e);
                     ShowFriends(e);
+                    PostContent(e);
                 }
             }
+        }
+
+        void PostContent(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "poststatusmessage");
+
+            e.core.AddPostPanel("Status", template);
         }
 
         void ShowFriends(HookEventArgs e)

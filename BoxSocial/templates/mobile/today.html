@@ -1,6 +1,13 @@
 <!-- INCLUDE page_header.html -->
 <div id="content">
 	<h3 class="today-date">{DATE_STRING}</h3>
+    <div>
+    <!-- IF post_panel -->
+    <!-- BEGIN post_panel -->
+{post_panel.BODY}
+    <!-- END post_panel -->
+    <!-- ENDIF -->
+    </div>
 	<!-- IF actions_list -->
 	<div id="today-actions">
 		<!-- BEGIN actions_list -->

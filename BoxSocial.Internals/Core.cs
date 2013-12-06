@@ -968,6 +968,11 @@ namespace BoxSocial.Internals
             return template.CreateChild("app_panel_side");
         }
 
+        private VariableCollection createPostPanel()
+        {
+            return template.CreateChild("app_panel_post");
+        }
+
         public void AddHeadPanel(Template t)
         {
             VariableCollection panelVariableCollection = createHeadPanel();
@@ -993,6 +998,14 @@ namespace BoxSocial.Internals
         {
             VariableCollection panelVariableCollection = createSidePanel();
 
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
+        }
+
+        public void AddPostPanel(string title, Template t)
+        {
+            VariableCollection panelVariableCollection = createPostPanel();
+
+            panelVariableCollection.ParseRaw("TITLE", title);
             panelVariableCollection.ParseRaw("BODY", t.ToString());
         }
 

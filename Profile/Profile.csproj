@@ -151,6 +151,7 @@
       <SubType>Designer</SubType>
     </Content>
     <Content Include="templates\account_cover_photo.html" />
+    <Content Include="templates\poststatusmessage.html" />
     <Content Include="templates\todayfriendpanel.html" />
     <Content Include="templates\viewfeed.html" />
     <Content Include="templates\viewstatusfeed.html" />

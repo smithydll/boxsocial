@@ -1,0 +1,33 @@
+﻿<form action="{S_ACCOUNT}" method="post">
+		<div id="compose-status">
+		<dl>
+			<dt><label for="subject">{L_SUBJECT}</label></dt>
+			<dd><input type="text" id="subject" name="subject" value="{S_SUBJECT}" style="width: 100%;" /></dd>
+			<dt><label for="location">{L_LOCATION}</label></dt>
+			<dd><input type="text" id="location" name="location" value="{S_LOCATION}" style="width: 100%;" /></dd>
+      <dt><label for="location">{L_INVITEES}</label></dt>
+			<dd>{S_INVITEES}
+      </dd>
+			<dt><label>{L_START_TIME}</label></dt>
+			<dd>
+        {S_START_DATE}
+			</dd>
+			<dt><label>{L_END_TIME}</label></dt>
+			<dd>
+        {S_END_DATE}
+			</dd>
+      <dt><label for="timezone">{L_TIMEZONE}</label></dt>
+      <dd>{S_TIMEZONE}</dd>
+			<dt><label for="description">{L_DESCRIPTION}</label></dt>
+			<dd>
+				<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 50px; cols="70" rows="4">{S_DESCRIPTION}</textarea>
+			</dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="{L_SAVE}" />
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="calendar" />
+		<input type="hidden" name="sub" value="new-event" />
+        </div>
+</form>

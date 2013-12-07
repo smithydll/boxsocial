@@ -72,6 +72,7 @@ namespace BoxSocial.Internals
         public event HookHandler HeadHooks;
         public event HookHandler FootHooks;
         public event HookHandler PageHooks;
+        public event HookHandler PostHooks;
         public event LoadHandler LoadApplication;
         public event PermissionGroupHandler primitivePermissionGroupHook;
 
@@ -779,6 +780,7 @@ namespace BoxSocial.Internals
             HeadHooks += new HookHandler(Core_HeadHooks);
             FootHooks +=new HookHandler(Core_FootHooks);
             PageHooks += new HookHandler(Core_Hooks);
+            PostHooks += new HookHandler(Core_PostHooks);
             LoadApplication += new LoadHandler(Core_LoadApplication);
 
             this.page = page;
@@ -815,6 +817,11 @@ namespace BoxSocial.Internals
 
         }
 
+        void Core_PostHooks(HookEventArgs e)
+        {
+
+        }
+
         void Core_Hooks(HookEventArgs eventArgs)
         {
             
@@ -828,6 +835,11 @@ namespace BoxSocial.Internals
         public void InvokeFootHooks(HookEventArgs eventArgs)
         {
             FootHooks(eventArgs);
+        }
+
+        public void InvokePostHooks(HookEventArgs eventArgs)
+        {
+            PostHooks(eventArgs);
         }
 
         public void InvokeHooks(HookEventArgs eventArgs)

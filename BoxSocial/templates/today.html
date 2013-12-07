@@ -1,12 +1,20 @@
 <!-- INCLUDE page_header.html -->
+
+  <script>
+      function switchTab(i) {
+          $(".post-content-tab").hide();
+          $("#post-tab-" + i).show();
+          $(".post-tab").removeClass("current");
+          $("#tab-" + i).addClass("current");
+          return false;
+      }
+  </script>
+
+  <style>
+  </style>
+
 <div id="today-main">
 	<h3>{DATE_STRING}</h3>
-    <div id="post-content">
-        <!-- BEGIN post_content -->
-        <div class="post-content-tab">
-        </div>
-        <!-- END post_content -->
-    </div>
 	<!-- IF actions_list -->
 	<div id="today-actions">
 		<!-- BEGIN actions_list -->
@@ -19,6 +27,28 @@
 {app_panel_side.BODY}
 	<!-- END app_panel_side -->
 	</div>
+    <div id="post-content" style="margin-right: 260px; border: solid 1px #EEEEEE; margin-bottom: 5px; padding: 5px 10px;">
+        <div id="tabs">
+        <ul class="post-tabs">
+        <!-- BEGIN app_panel_post -->
+        <!-- IF app_panel_post.$_INDEX_FIRST -->
+        <li class="post-tab current" id="tab-{app_panel_post.$_INDEX}"><a href="#post-tab-{app_panel_post.$_INDEX}" onclick="return switchTab({app_panel_post.$_INDEX});"><span>{app_panel_post.TITLE}</span></a></li>
+        <!-- ELSE -->
+        <li class="post-tab" id="tab-{app_panel_post.$_INDEX}"><a href="#post-tab-{app_panel_post.$_INDEX}" onclick="return switchTab({app_panel_post.$_INDEX});"><span>{app_panel_post.TITLE}</span></a></li>
+        <!-- ENDIF -->
+        <!-- END app_panel_post -->
+        </ul>
+        </div>
+        <!-- BEGIN app_panel_post -->
+        <!-- IF app_panel_post.$_INDEX_FIRST -->
+        <div class="post-content-tab" id="post-tab-{app_panel_post.$_INDEX}">
+        <!-- ELSE -->
+        <div class="post-content-tab" id="post-tab-{app_panel_post.$_INDEX}" style="display: none;">
+        <!-- ENDIF -->
+            {app_panel_post.BODY}
+        </div>
+        <!-- END app_panel_post -->
+    </div>
 	<!-- BEGIN app_panel -->
 {app_panel.BODY}
 	<!-- END app_panel -->

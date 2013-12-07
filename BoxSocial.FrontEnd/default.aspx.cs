@@ -44,9 +44,12 @@ namespace BoxSocial.FrontEnd
                 template.SetTemplate("today.html");
                 this.Signature = PageSignature.today;
 
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, core.GetApplication("Calendar"));
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, core.GetApplication("Groups"));
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, core.GetApplication("Profile"));
+                List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, core.Session.LoggedInMember);
+
+                foreach (ApplicationEntry ae in applications)
+                {
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, ae);
+                }
 
                 template.Parse("DATE_STRING", tz.Now.ToLongDateString());
 
@@ -74,6 +77,7 @@ namespace BoxSocial.FrontEnd
             if (session != null && session.IsLoggedIn)
             {
                 core.InvokeHooks(new HookEventArgs(core, AppPrimitives.None, null));
+                core.InvokePostHooks(new HookEventArgs(core, AppPrimitives.Member, core.Session.LoggedInMember));
 
                 Feed.Show(core, this, core.Session.LoggedInMember);
             }

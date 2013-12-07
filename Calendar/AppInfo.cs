@@ -25,6 +25,7 @@ using System.Data;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -116,6 +117,7 @@ namespace BoxSocial.Applications.Calendar
             this.core = core;
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.PostHooks += new Core.HookHandler(core_PostHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -229,12 +231,68 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        void core_PostHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Member)
+            {
+                PostContent(e);
+            }
+        }
+
+        void PostContent(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "postevent");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
+            template.Parse("U_ACCOUNT", formSubmitUri);
+            template.Parse("S_ACCOUNT", formSubmitUri);
+
+            int year = core.Functions.RequestInt("year", core.Tz.Now.Year);
+            int month = core.Functions.RequestInt("month", core.Tz.Now.Month);
+            int day = core.Functions.RequestInt("day", core.Tz.Now.Day);
+
+            DateTimePicker startDateTimePicker = new DateTimePicker(core, "start-date");
+            startDateTimePicker.ShowTime = true;
+            startDateTimePicker.ShowSeconds = false;
+
+            DateTimePicker endDateTimePicker = new DateTimePicker(core, "end-date");
+            endDateTimePicker.ShowTime = true;
+            endDateTimePicker.ShowSeconds = false;
+
+            UserSelectBox inviteesUserSelectBox = new UserSelectBox(core, "invitees");
+
+            /* */
+            SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
+
+            DateTime startDate = new DateTime(year, month, day, 8, 0, 0);
+            DateTime endDate = new DateTime(year, month, day, 9, 0, 0);
+            timezoneSelectBox.SelectedKey = core.Tz.TimeZoneCode.ToString();
+
+            template.Parse("S_YEAR", year.ToString());
+            template.Parse("S_MONTH", month.ToString());
+            template.Parse("S_DAY", day.ToString());
+
+
+            startDateTimePicker.Value = startDate;
+            endDateTimePicker.Value = endDate;
+
+            template.Parse("S_START_DATE", startDateTimePicker);
+            template.Parse("S_END_DATE", endDateTimePicker);
+            template.Parse("S_TIMEZONE", timezoneSelectBox);
+            template.Parse("S_INVITEES", inviteesUserSelectBox);
+
+            e.core.AddPostPanel("Event", template);
+        }
+
         void ShowMiniCalendar(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "todaymonthpanel");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
+            template.Parse("URI", Calendar.BuildMonthUri(e.core, e.core.Session.LoggedInMember, e.core.Tz.Now.Year, e.core.Tz.Now.Month));
             Calendar.DisplayMiniCalendar(e.core, template, e.core.Session.LoggedInMember, e.core.Tz.Now.Year, e.core.Tz.Now.Month);
 
             e.core.AddSidePanel(template);

@@ -93,13 +93,20 @@ div.month-small div.week
 	height: 20px;
 }
 
-div.month-small div.week div.day
-{
+div.month-small div.week div.day {
 	float: left;
-	width: 24px;
-	height: 18px;
+	width: 14.285714285714285714285714285714%;
+	height: 20px;
 	text-align: center;
 	border: solid 1px #F7F7F7;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+div.month-small div.week div.day:hover {
+    background-color: #F7F7F7;
+    border: solid 1px #EEEEEE;
 }
 
 ul#today-events {
@@ -134,6 +141,7 @@ div#today-tasks {
 div#today-calendar h4, div#today-feed h4.today-day, div#today-tasks h4 {
 	margin-bottom: 5px;
 	margin-top: 4px;
+	padding: 1px 0;
 }
 
 div#today-calendar h5 {

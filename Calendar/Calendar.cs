@@ -276,19 +276,19 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        private static string BuildDateUri(Core core, Primitive owner, int year, int month, int day)
+        internal static string BuildDateUri(Core core, Primitive owner, int year, int month, int day)
         {
             return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}/{2}/{3}",
                 owner.UriStub, year, month, day));
         }
 
-        private static string BuildMonthUri(Core core, Primitive owner, int year, int month)
+        internal static string BuildMonthUri(Core core, Primitive owner, int year, int month)
         {
             return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}/{2}",
                 owner.UriStub, year, month));
         }
 
-        private static string BuildYearUri(Core core, Primitive owner, int year)
+        internal static string BuildYearUri(Core core, Primitive owner, int year)
         {
             return core.Hyperlink.AppendSid(string.Format("{0}calendar/{1}",
                 owner.UriStub, year));

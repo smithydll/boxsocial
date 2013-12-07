@@ -26,6 +26,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -162,6 +163,7 @@ namespace BoxSocial.Applications.Blog
             this.core = core;
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.PostHooks += new Core.HookHandler(core_PostHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -296,6 +298,120 @@ namespace BoxSocial.Applications.Blog
         void core_PageHooks(HookEventArgs eventArgs)
         {
 
+        }
+
+        void core_PostHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Member)
+            {
+                PostContent(e);
+            }
+        }
+
+        void PostContent(HookEventArgs e)
+        {
+            Template template = new Template(Assembly.GetExecutingAssembly(), "postblog");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
+            template.Parse("U_ACCOUNT", formSubmitUri);
+            template.Parse("S_ACCOUNT", formSubmitUri);
+
+            template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
+
+            Blog blog = new Blog(core, (User)e.Owner);
+
+            /* Title TextBox */
+            TextBox titleTextBox = new TextBox("title");
+            titleTextBox.MaxLength = 127;
+
+            /* Post TextBox */
+            TextBox postTextBox = new TextBox("post");
+            postTextBox.IsFormatted = true;
+            postTextBox.Lines = 15;
+
+            /* Tags TextBox */
+            TextBox tagsTextBox = new TextBox("tags");
+            tagsTextBox.MaxLength = 127;
+
+            CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
+            publishToFeedCheckBox.IsChecked = true;
+
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", blog.ItemKey);
+            HiddenField aclModeField = new HiddenField("aclmode");
+            aclModeField.Value = "simple";
+
+            template.Parse("S_PERMISSIONS", permissionSelectBox);
+            template.Parse("S_ACLMODE", aclModeField);
+
+            DateTime postTime = DateTime.Now;
+
+            SelectBox postYearsSelectBox = new SelectBox("post-year");
+            for (int i = DateTime.Now.AddYears(-7).Year; i <= DateTime.Now.Year; i++)
+            {
+                postYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            postYearsSelectBox.SelectedKey = postTime.Year.ToString();
+
+            SelectBox postMonthsSelectBox = new SelectBox("post-month");
+            for (int i = 1; i < 13; i++)
+            {
+                postMonthsSelectBox.Add(new SelectBoxItem(i.ToString(), core.Functions.IntToMonth(i)));
+            }
+
+            postMonthsSelectBox.SelectedKey = postTime.Month.ToString();
+
+            SelectBox postDaysSelectBox = new SelectBox("post-day");
+            for (int i = 1; i < 32; i++)
+            {
+                postDaysSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
+            }
+
+            postDaysSelectBox.SelectedKey = postTime.Day.ToString();
+
+            template.Parse("S_POST_YEAR", postYearsSelectBox);
+            template.Parse("S_POST_MONTH", postMonthsSelectBox);
+            template.Parse("S_POST_DAY", postDaysSelectBox);
+            template.Parse("S_POST_HOUR", postTime.Hour.ToString());
+            template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
+
+            SelectBox licensesSelectBox = new SelectBox("license");
+            DataTable licensesTable = core.Db.Query(ContentLicense.GetSelectQueryStub(typeof(ContentLicense)));
+
+            licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
+            foreach (DataRow licenseRow in licensesTable.Rows)
+            {
+                ContentLicense li = new ContentLicense(core, licenseRow);
+                licensesSelectBox.Add(new SelectBoxItem(li.Id.ToString(), li.Title));
+            }
+
+            SelectBox categoriesSelectBox = new SelectBox("category");
+            SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
+            query.AddSort(SortOrder.Ascending, "category_title");
+
+            DataTable categoriesTable = core.Db.Query(query);
+
+            foreach (DataRow categoryRow in categoriesTable.Rows)
+            {
+                Category cat = new Category(core, categoryRow);
+                categoriesSelectBox.Add(new SelectBoxItem(cat.Id.ToString(), cat.Title));
+            }
+
+            categoriesSelectBox.SelectedKey = 1.ToString();
+
+            /* Parse the form fields */
+            template.Parse("S_TITLE", titleTextBox);
+            template.Parse("S_BLOG_TEXT", postTextBox);
+            template.Parse("S_TAGS", tagsTextBox);
+
+            template.Parse("S_BLOG_LICENSE", licensesSelectBox);
+            template.Parse("S_BLOG_CATEGORY", categoriesSelectBox);
+
+            template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
+
+            e.core.AddPostPanel("Blog", template);
         }
     }
 }

@@ -1,8 +1,15 @@
 <!-- INCLUDE page_header.html -->
+
+<!-- IF BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<div id="content">
+<div id="page-body">
+
 <!-- IF TITLE -->
 <h2><a href="{ARTICLE_U_ARTICLE}">{ARTICLE_TITLE}</a></h2>
 <!-- ENDIF -->
-<p>{BREADCRUMBS}</p>
 <div>
 		<p class="details"><strong>{ARTICLE_DATE}</strong> <em>Posted by: <a href="{ARTICLE_U_POSTER}">{ARTICLE_USERNAME}</a></em></p>
 	<p>{ARTICLE_BODY}</p>
@@ -11,5 +18,7 @@
 	<div class="comment-pane">
 		<!-- INCLUDE pane.comments.html -->
 	</div>
+</div>
+</div>
 
 <!-- INCLUDE page_footer.html -->

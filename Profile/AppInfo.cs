@@ -117,6 +117,7 @@ namespace BoxSocial.Applications.Profile
             this.core = core;
 
             core.PageHooks += new Core.HookHandler(core_PageHooks);
+            core.PostHooks += new Core.HookHandler(core_PostHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
 
         }
@@ -238,14 +239,29 @@ namespace BoxSocial.Applications.Profile
                 {
                     //ShowStatusUpdates(e);
                     ShowFriends(e);
-                    PostContent(e);
                 }
+            }
+        }
+
+        void core_PostHooks(HookEventArgs e)
+        {
+            if (e.PageType == AppPrimitives.Member)
+            {
+                PostContent(e);
             }
         }
 
         void PostContent(HookEventArgs e)
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "poststatusmessage");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
+            template.Parse("U_ACCOUNT", formSubmitUri);
+            template.Parse("S_ACCOUNT", formSubmitUri);
+
+            template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
 
             e.core.AddPostPanel("Status", template);
         }

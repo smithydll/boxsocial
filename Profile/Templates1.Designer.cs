@@ -540,8 +540,17 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string poststatusmessage {
+            get {
+                return ResourceManager.GetString("poststatusmessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to 	&lt;div id=&quot;today-friends&quot; style=&quot;border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
-        ///		{L_FRIENDS}
+        ///		&lt;h4&gt;{L_FRIENDS}&lt;/h4&gt;
         ///	&lt;!-- IF friend_list --&gt;
         ///	&lt;ul id=&quot;small-friends&quot;&gt;
         ///	&lt;!-- BEGIN friend_list --&gt;
@@ -550,7 +559,7 @@ namespace BoxSocial.Applications.Profile {
         ///				&lt;!-- IF friend_list.TILE --&gt;
         ///				&lt;img src=&quot;{friend_list.TILE}&quot; data-at2x=&quot;{friend_list.SQUARE}&quot; alt=&quot;{friend_list.USER_DISPLAY_NAME}&quot; title=&quot;{friend_list.USER_DISPLAY_NAME}&quot; /&gt;
         ///				&lt;!-- ELSE --&gt;
-        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{friend_list.USER_DISPLAY_NAME}&quot; title [rest of string was truncated]&quot;;.
+        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{friend_list.USER_DISPLAY_NAM [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string todayfriendpanel {
             get {

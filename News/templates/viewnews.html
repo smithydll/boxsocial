@@ -1,8 +1,12 @@
 <!-- INCLUDE page_header.html -->
 
-<h2>News</h2>
-<p>{BREADCRUMBS}</p>
+<!-- IF BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
 
+<div id="content">
+<div id="page-body">
+<h2>News</h2>
 	<!-- IF U_CREATE_ARTICLE -->
 	<div id="new-stuff">
 		<span id="post-news-article" class="post-button"><a href="{U_CREATE_ARTICLE}">{L_POST_NEWS_ARTICLE}</a></span>
@@ -14,18 +18,20 @@
 <ul id="news-list">
 <!-- BEGIN news_list -->
 <li>
-  <span class="corners-top"><span></span><span></span></span>
+  <div class="cornered-posting">
 	<!-- IF news_list.TITLE -->
 	<h3><a href="{news_list.U_ARTICLE}">{news_list.TITLE}</a></h3>
 	<!-- ENDIF -->
 		<p class="details"><strong>{news_list.DATE}</strong> <em>Posted by: <a href="{news_list.U_POSTER}">{news_list.USERNAME}</a></em></p>
 	<p>{news_list.BODY}</p>
 	<p><a href="{news_list.U_ARTICLE}#comments">Comments ({news_list.COMMENTS})</a></p>
-  <span class="corners-bottom"><span></span><span></span></span>
+  </div>
 </li>
 <!-- END news_list -->
 </ul>
 <!-- ENDIF -->
 <p><strong>Go to page:</strong> {PAGINATION}</p>
+</div>
+</div>
 
 <!-- INCLUDE page_footer.html -->

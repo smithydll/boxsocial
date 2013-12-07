@@ -127,6 +127,9 @@
   <data name="account_calendar_task_new" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_calendar_task_new.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
+  <data name="postevent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\postevent.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="todaymonthpanel" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\todaymonthpanel.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>

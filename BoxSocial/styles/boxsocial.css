@@ -1889,3 +1889,14 @@ span.subscribers {
 	margin: 2px;
 	padding: 2px 5px;
 }
+
+#today-right h4 {
+    font-size: 110%;
+    color: #333333;
+    padding: 1px 5px;
+    margin: 0;
+}
+
+#today-right h4 a {
+    color: #333333;
+}

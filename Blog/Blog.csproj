@@ -140,6 +140,7 @@
     <EmbeddedResource Include="templates\blogentry.html">
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <Content Include="templates\postblog.html" />
     <Content Include="templates\user_blog_notification.html" />
   </ItemGroup>
   <ItemGroup>

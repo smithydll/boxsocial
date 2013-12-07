@@ -1,0 +1,38 @@
+﻿<form action="{S_ACCOUNT}" method="post">
+		<div id="compose-status">
+		<dl>
+			<dt><label for="title">{L_TITLE}</label></dt>
+			<dd>{S_TITLE}</dd>
+			<dt><label for="post">{L_POST_TEXT}</label></dt>
+			<dd>{S_BLOG_TEXT}</dd>
+      <dt>{L_TAGS}</dt>
+      <dd>{S_TAGS}</dd>
+			<dt><label for="category">{L_POST_CATEGORY}</label></dt>
+			<dd>{S_BLOG_CATEGORY}</dd>
+			<dt><label for="license">{L_POST_LICENSE}</label></dt>
+			<dd>{S_BLOG_LICENSE} <a href="">{L_LEARN_MORE}</a></dd>
+            <dt>Permissions:</dt>
+            <dd>{S_PERMISSIONS}{S_ACLMODE}</dd>
+            <dt><label>Publish to Feed</label></dt>
+			<dd>
+				{S_PUBLISH_FEED}
+			</dd>
+			<dt><label>{L_EDIT_TIMESTAMP}: <input type="checkbox" id="edit-timestamp" name="edit-timestamp" value="1" onclick="if (document.getElementById('edit-timestamp').checked) { document.getElementById('timestamp-dd').style.display = 'block'; } else { document.getElementById('timestamp-dd').style.display = 'none'; }" /></label></dt>
+			<dd id="timestamp-dd" style="display: none; ">
+				<label>{L_YEAR}: {S_POST_YEAR}</label>
+				<label>{L_MONTH}: {S_POST_MONTH}</label>
+				<label>{L_DAY}: {S_POST_DAY}</label>
+				<label>{L_TIME}:</label>
+				<input type="text" id="post-hour" name="post-hour" value="{S_POST_HOUR}" maxlength="2" style="width: 32px;" /> :
+				<input type="text" id="post-minute" name="post-minute" value="{S_POST_MINUTE}" maxlength="2" style="width: 32px;" />
+			</dd>
+			<dt></dt>
+			<dd>
+				<input type="submit" name="save" value="{L_SAVE_DRAFT}" />
+				<input type="submit" name="publish" value="{L_PUBLISH}" />
+			</dd>
+		</dl>
+		<input type="hidden" name="module" value="blog" />
+		<input type="hidden" name="sub" value="write" />
+        </div>
+</form>

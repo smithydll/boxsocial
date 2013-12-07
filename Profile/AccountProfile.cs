@@ -36,7 +36,7 @@ using BoxSocial.Applications.Gallery; // This is why Gallery is an uninstallable
 
 namespace BoxSocial
 {
-    [AccountModule("profile")]
+    [AccountModule(AppPrimitives.Member, "profile")]
     public class AccountProfile : AccountModule
     {
 

@@ -225,14 +225,18 @@ namespace BoxSocial.Groups
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
-            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, e.core.Session.LoggedInMember);
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, e.core.Session.LoggedInMember, 1, 4);
 
             foreach (UserGroup group in groups)
             {
                 VariableCollection groupVariableCollection = template.CreateChild("groups_list");
 
                 groupVariableCollection.Parse("TITLE", group.DisplayName);
+                groupVariableCollection.Parse("MEMBERS", core.Functions.LargeIntegerToString(group.Members));
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
+                groupVariableCollection.Parse("ICON", group.GroupIcon);
+                groupVariableCollection.Parse("TILE", group.GroupTile);
+                groupVariableCollection.Parse("SQUARE", group.GroupSquare);
             }
 
             e.core.AddSidePanel(template);
@@ -245,7 +249,7 @@ namespace BoxSocial.Groups
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
-            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner);
+            List<UserGroup> groups = UserGroup.GetUserGroups(e.core, profileOwner, 1, 4);
             if (groups.Count > 0)
             {
                 template.Parse("HAS_GROUPS", "TRUE");
@@ -257,6 +261,9 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("TITLE", group.DisplayName);
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
+                groupVariableCollection.Parse("ICON", group.GroupIcon);
+                groupVariableCollection.Parse("TILE", group.GroupTile);
+                groupVariableCollection.Parse("SQUARE", group.GroupSquare);
             }
 
             e.core.AddSidePanel(template);

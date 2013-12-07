@@ -144,7 +144,7 @@ namespace BoxSocial.Applications.Profile
 
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Application;
+            return AppPrimitives.Member | AppPrimitives.Application | AppPrimitives.Group;
         }
 
         [PageSlug("Profile")]

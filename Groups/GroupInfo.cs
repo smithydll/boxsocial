@@ -156,6 +156,21 @@ namespace BoxSocial.Groups
             }
         }
 
+        /// <summary>
+        /// Gets the user's display picture Id
+        /// </summary>
+        public long DisplayPictureId
+        {
+            get
+            {
+                return groupIcon;
+            }
+            set
+            {
+                SetPropertyByRef(new { groupIcon }, value);
+            }
+        }
+
         public string Category
         {
             get

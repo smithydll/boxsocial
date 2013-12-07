@@ -1,9 +1,19 @@
 		<!-- IF HAS_GROUPS -->
 		<div id="pane-profile-groups" class="pane">
 			<h3>{USER_DISPLAY_NAME_OWNERSHIP} Groups</h3>
-			<ul>
+			<ul id="small-groups">
 				<!-- BEGIN groups_list -->
-				<li><a href="{groups_list.U_GROUP}">{groups_list.TITLE}</a></li>
+		<li>
+			<a href="{groups_list.U_GROUP}">
+				<!-- IF groups_list.TILE -->
+				<img src="{groups_list.TILE}" data-at2x="{groups_list.SQUARE}" alt="{groups_list.TITLE}" title="{groups_list.TITLE}" />
+				<!-- ELSE -->
+				<img src="/images/no_picture_100.png" alt="{groups_list.TITLE}" title="{groups_list.TITLE}" />
+				<!-- ENDIF -->
+                </a>
+                <div class="small-group-info"><a href="{groups_list.U_GROUP}">{groups_list.TITLE}</a><br />{groups_list.MEMBERS} {L_MEMBERS}</div>
+			
+		</li>
 				<!-- END groups_list -->
 			</ul>
 		</div>

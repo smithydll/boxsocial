@@ -186,55 +186,58 @@ namespace BoxSocial.FrontEnd
 
             foreach (AccountModule accountModule in accountModules)
             {
-                VariableCollection modulesVariableCollection = template.CreateChild("module_list");
-
-                modulesVariableCollection.Parse("NAME", accountModule.Name);
-                if (string.IsNullOrEmpty(accountModule.Key))
+                if ((accountModule.Primitives & AppPrimitives.Group) == AppPrimitives.Group)
                 {
-                    modulesVariableCollection.Parse("URI", Group.AccountUriStub);
-                }
-                else
-                {
-                    modulesVariableCollection.Parse("URI", Group.AccountUriStub + accountModule.Key);
-                }
+                    VariableCollection modulesVariableCollection = template.CreateChild("module_list");
 
-                if (module == accountModule.Key)
-                {
-                    ApplicationEntry ae = null;
-                    if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
+                    modulesVariableCollection.Parse("NAME", accountModule.Name);
+                    if (string.IsNullOrEmpty(accountModule.Key))
                     {
-                        ae = core.GetApplication(accountModule.assembly.GetName().Name);
+                        modulesVariableCollection.Parse("URI", Group.AccountUriStub);
+                    }
+                    else
+                    {
+                        modulesVariableCollection.Parse("URI", Group.AccountUriStub + accountModule.Key);
                     }
 
-                    accountModule.SetOwner = loggedInMember;
-                    accountModule.CreateTemplate();
-                    // catch all errors, don't want a single application to crash the account panel
-                    try
+                    if (module == accountModule.Key)
                     {
-                        accountModule.RegisterSubModules(submodule);
-                        modules = accountModule.SubModules;
-                        //accountModule.RenderTemplate();
-                    }
-                    catch (System.Threading.ThreadAbortException)
-                    {
-                        // ignore this informational exception
-                    }
-                    catch (Exception ex)
-                    {
-                        // TODO: e-mail application author of the error details
-                        ///Response.Write("<hr />" + ex.ToString() + "<hr />");
-                        accountModule.DisplayError("");
+                        ApplicationEntry ae = null;
+                        if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
+                        {
+                            ae = core.GetApplication(accountModule.assembly.GetName().Name);
+                        }
 
-                        core.LoadUserProfile(ae.CreatorId);
-                        core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
-                    }
+                        accountModule.SetOwner = loggedInMember;
+                        accountModule.CreateTemplate();
+                        // catch all errors, don't want a single application to crash the account panel
+                        try
+                        {
+                            accountModule.RegisterSubModules(submodule);
+                            modules = accountModule.SubModules;
+                            //accountModule.RenderTemplate();
+                        }
+                        catch (System.Threading.ThreadAbortException)
+                        {
+                            // ignore this informational exception
+                        }
+                        catch (Exception ex)
+                        {
+                            // TODO: e-mail application author of the error details
+                            ///Response.Write("<hr />" + ex.ToString() + "<hr />");
+                            accountModule.DisplayError("");
 
-                    modulesVariableCollection.Parse("CURRENT", "TRUE");
-                    if (ae != null && ae.HasJavascript)
-                    {
-                        VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+                            core.LoadUserProfile(ae.CreatorId);
+                            core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
+                        }
 
-                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                        modulesVariableCollection.Parse("CURRENT", "TRUE");
+                        if (ae != null && ae.HasJavascript)
+                        {
+                            VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+
+                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                        }
                     }
                 }
             }

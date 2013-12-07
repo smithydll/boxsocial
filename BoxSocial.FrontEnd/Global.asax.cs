@@ -231,6 +231,8 @@ namespace BoxSocial.FrontEnd
                                 patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/groupstyle.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?gn={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?gn={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });
 
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
@@ -328,6 +330,9 @@ namespace BoxSocial.FrontEnd
 
                     patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?un=$2&mode=$1"});
                     patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?un=$2&mode=$1&retina=true" });
+
+                    patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?gn=$2&mode=$1" });
+                    patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?gn=$2&mode=$1&retina=true" });
 
                     patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });

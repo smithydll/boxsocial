@@ -1336,11 +1336,22 @@ namespace BoxSocial.Groups
 
         public static List<UserGroup> GetUserGroups(Core core, User member)
         {
+            return GetUserGroups(core, member, 1, 10);
+        }
+
+        public static List<UserGroup> GetUserGroups(Core core, User member, int page, int perPage)
+        {
             List<UserGroup> groups = new List<UserGroup>();
 
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddJoin(JoinTypes.Left, GetTable(typeof(GroupMember)), "group_id", "group_id");
             query.AddCondition("user_id", member.Id);
+            /*if ((!string.IsNullOrEmpty(filter)) && filter.Length == 1)
+            {
+                query.AddCondition(new DataField(typeof(User), "user_name_first"), filter);
+            }*/
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
 
             DataTable groupsTable = core.Db.Query(query);
 
@@ -2063,6 +2074,117 @@ namespace BoxSocial.Groups
                 return "guest book";
             }
         }
+
+        public string GroupTiny
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_tiny/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_tiny/{0}.png",
+                        Key));
+                }
+            }
+        }
+
+        public string GroupThumbnail
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_thumb/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_thumb/{0}.png",
+                        Key));
+                }
+            }
+        }
+
+        public string GroupMobile
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_mobile/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_mobile/{0}.png",
+                        Key));
+                }
+            }
+        }
+        /// <summary>
+        /// 50x50 display tile
+        /// </summary>
+        public string GroupIcon
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_icon/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_icon/{0}.png",
+                        Key));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 100x100 display tile
+        /// </summary>
+        public string GroupTile
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_tile/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_tile/{0}.png",
+                        Key));
+                }
+            }
+        }
+
+        /// <summary>
+        /// 200x200 display tile
+        /// </summary>
+        public string GroupSquare
+        {
+            get
+            {
+                if (GroupInfo.DisplayPictureId > 0)
+                {
+                    return string.Format("{0}images/_square/_{1}.png",
+                        UriStub, Key);
+                }
+                else
+                {
+                    return core.Hyperlink.AppendCoreSid(string.Format("/images/group/_square/{0}.png",
+                        Key));
+                }
+            }
+        }
+
     }
 
     public class InvalidGroupException : Exception

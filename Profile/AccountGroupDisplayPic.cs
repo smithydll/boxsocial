@@ -21,25 +21,24 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Groups;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Applications.Gallery;
 
 namespace BoxSocial.Applications.Profile
 {
-    [AccountSubModule(AppPrimitives.Member, "profile", "display-picture")]
-    public class AccountDisplayPic : AccountSubModule
+    [AccountSubModule(AppPrimitives.Group, "groups", "display-picture")]
+    public class AccountGroupDisplayPic : AccountSubModule
     {
         public override string Title
         {
             get
             {
-                return "Display Picture";
+                return "Group Display Picture";
             }
         }
 
@@ -47,54 +46,68 @@ namespace BoxSocial.Applications.Profile
         {
             get
             {
-                return 3;
+                return 2;
             }
         }
 
         /// <summary>
-        /// Initializes a new instance of the AccountDisplayPic class. 
+        /// Initializes a new instance of the AccountGroupDisplayPic class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountDisplayPic(Core core)
+        public AccountGroupDisplayPic(Core core)
             : base(core)
         {
-            this.Load += new EventHandler(AccountDisplayPic_Load);
-            this.Show += new EventHandler(AccountDisplayPic_Show);
+            this.Load += new EventHandler(AccountGroupDisplayPic_Load);
+            this.Show += new EventHandler(AccountGroupDisplayPic_Show);
         }
 
-        void AccountDisplayPic_Load(object sender, EventArgs e)
+        void AccountGroupDisplayPic_Load(object sender, EventArgs e)
         {
         }
 
-        void AccountDisplayPic_Show(object sender, EventArgs e)
+        void AccountGroupDisplayPic_Show(object sender, EventArgs e)
         {
-            SetTemplate("account_display_picture");
+            SetTemplate("account_group_icon");
 
-            LoggedInMember.LoadProfileInfo();
-
-            if (!string.IsNullOrEmpty(LoggedInMember.UserThumbnail))
+            if (Owner.GetType() != typeof(UserGroup))
             {
-                template.Parse("I_DISPLAY_PICTURE", LoggedInMember.UserThumbnail);
+                DisplayGenericError();
+                return;
             }
 
-            Save(new EventHandler(AccountDisplayPic_Save));
+            UserGroup thisGroup = (UserGroup)Owner;
+
+            if (!string.IsNullOrEmpty(thisGroup.GroupThumbnail))
+            {
+                template.Parse("I_DISPLAY_PICTURE", thisGroup.GroupThumbnail);
+            }
+
+            Save(new EventHandler(AccountGroupDisplayPic_Save));
         }
 
-        void AccountDisplayPic_Save(object sender, EventArgs e)
+        void AccountGroupDisplayPic_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
+
+            if (Owner.GetType() != typeof(UserGroup))
+            {
+                DisplayGenericError();
+                return;
+            }
+
+            UserGroup thisGroup = (UserGroup)Owner;
 
             string meSlug = "display-pictures";
 
             BoxSocial.Applications.Gallery.Gallery profileGallery;
             try
             {
-                profileGallery = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember, meSlug);
+                profileGallery = new BoxSocial.Applications.Gallery.Gallery(core, thisGroup, meSlug);
             }
             catch (InvalidGalleryException)
             {
-                BoxSocial.Applications.Gallery.Gallery root = new BoxSocial.Applications.Gallery.Gallery(core, LoggedInMember);
-                profileGallery = BoxSocial.Applications.Gallery.Gallery.Create(core, LoggedInMember, root, "Display Pictures", ref meSlug, "All my uploaded display pictures");
+                BoxSocial.Applications.Gallery.Gallery root = new BoxSocial.Applications.Gallery.Gallery(core, thisGroup);
+                profileGallery = BoxSocial.Applications.Gallery.Gallery.Create(core, thisGroup, root, "Display Pictures", ref meSlug, "Group display pictures");
             }
 
             if (profileGallery != null)
@@ -120,10 +133,10 @@ namespace BoxSocial.Applications.Profile
 
                     db.BeginTransaction();
 
-                    GalleryItem galleryItem = GalleryItem.Create(core, LoggedInMember, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, stream, false);
+                    GalleryItem galleryItem = GalleryItem.Create(core, thisGroup, profileGallery, title, ref slug, core.Http.Files["photo-file"].FileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, 0, Classifications.Everyone, stream, false);
 
-                    db.UpdateQuery(string.Format("UPDATE user_info SET user_icon = {0} WHERE user_id = {1}",
-                        galleryItem.Id, LoggedInMember.UserId));
+                    db.UpdateQuery(string.Format("UPDATE group_info SET group_icon = {0} WHERE group_id = {1}",
+                        galleryItem.Id, thisGroup.GroupId));
 
                     //db.CommitTransaction();
                     stream.Close();

@@ -309,7 +309,18 @@ namespace BoxSocial.Groups {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;today-groups&quot; style=&quot;border: solid 1px #EEEEEE; margin-bottom: 5px;&quot;&gt;
+        ///		{L_GROUPS}
+        ///	&lt;!-- IF groups_list --&gt;
+        ///	&lt;ul id=&quot;small-groups&quot;&gt;
+        ///	&lt;!-- BEGIN groups_list --&gt;
+        ///		&lt;li&gt;
+        ///			&lt;a href=&quot;{groups_list.U_GROUP}&quot;&gt;
+        ///				&lt;!-- IF groups_list.TILE --&gt;
+        ///				&lt;img src=&quot;{groups_list.TILE}&quot; data-at2x=&quot;{groups_list.SQUARE}&quot; alt=&quot;{groups_list.TITLE}&quot; title=&quot;{groups_list.TITLE}&quot; /&gt;
+        ///				&lt;!-- ELSE --&gt;
+        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{groups_list.TITLE}&quot; title=&quot;{groups_list.TITLE}&quot; /&gt;
+        ///				&lt;!-- ENDIF [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string todaygrouppanel {
             get {
@@ -372,13 +383,15 @@ namespace BoxSocial.Groups {
         ///   Looks up a localized string similar to 		&lt;!-- IF HAS_GROUPS --&gt;
         ///		&lt;div id=&quot;pane-profile-groups&quot; class=&quot;pane&quot;&gt;
         ///			&lt;h3&gt;{USER_DISPLAY_NAME_OWNERSHIP} Groups&lt;/h3&gt;
-        ///			&lt;ul&gt;
+        ///			&lt;ul id=&quot;small-groups&quot;&gt;
         ///				&lt;!-- BEGIN groups_list --&gt;
-        ///				&lt;li&gt;&lt;a href=&quot;{groups_list.U_GROUP}&quot;&gt;{groups_list.TITLE}&lt;/a&gt;&lt;/li&gt;
-        ///				&lt;!-- END groups_list --&gt;
-        ///			&lt;/ul&gt;
-        ///		&lt;/div&gt;
-        ///		&lt;!-- ENDIF --&gt;.
+        ///		&lt;li&gt;
+        ///			&lt;a href=&quot;{groups_list.U_GROUP}&quot;&gt;
+        ///				&lt;!-- IF groups_list.TILE --&gt;
+        ///				&lt;img src=&quot;{groups_list.TILE}&quot; data-at2x=&quot;{groups_list.SQUARE}&quot; alt=&quot;{groups_list.TITLE}&quot; title=&quot;{groups_list.TITLE}&quot; /&gt;
+        ///				&lt;!-- ELSE --&gt;
+        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{groups_list.TITLE}&quot; title=&quot;{groups_list.TITLE}&quot; /&gt;
+        ///				&lt;!- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewprofilegroups {
             get {

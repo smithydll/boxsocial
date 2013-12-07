@@ -1901,6 +1901,10 @@ namespace BoxSocial.Applications.Gallery
                 {
                     galleryItem = new GalleryItem(e.Core, e.Page.Owner, ((User)e.Page.Owner).UserInfo.DisplayPictureId);
                 }
+                else if (Gallery.GetNameFromPath(photoName) == "_" + e.Page.Owner.Key + ".png" && e.Page.Owner is UserGroup)
+                {
+                    galleryItem = new GalleryItem(e.Core, e.Page.Owner, ((UserGroup)e.Page.Owner).GroupInfo.DisplayPictureId);
+                }
                 else
                 {
                     galleryItem = new GalleryItem(e.Core, e.Page.Owner, photoName);

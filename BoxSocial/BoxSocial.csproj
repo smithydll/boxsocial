@@ -65,6 +65,13 @@
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
     <Content Include="captcha%402x.aspx" />
+    <Content Include="scripts\canvas-to-blob.min.js" />
+    <Content Include="scripts\jquery.fileupload-image.js" />
+    <Content Include="scripts\jquery.fileupload-process.js" />
+    <Content Include="scripts\jquery.fileupload.js" />
+    <Content Include="scripts\jquery.iframe-transport.js" />
+    <Content Include="scripts\jquery.ui.widget.js" />
+    <Content Include="scripts\load-image.min.js" />
     <Content Include="shorturl.aspx" />
     <Content Include="copyright.aspx" />
     <Content Include="corners.aspx" />

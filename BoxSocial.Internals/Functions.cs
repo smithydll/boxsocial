@@ -641,6 +641,11 @@ namespace BoxSocial.Internals
 
         public static string TrimStringToWord(string input, int max, bool ellipse)
         {
+            if (string.IsNullOrEmpty(input))
+            {
+                return string.Empty;
+            }
+
             char[] spacers = { ' ', '.', '-', '!', '?', '(', ')', '[', ']', '{', '}', ',', '#' };
 
             max -= 3; // Account for the ellipse in the character count

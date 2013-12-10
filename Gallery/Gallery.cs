@@ -1997,7 +1997,7 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 //return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
-                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "galleries/upload?id=" + Id.ToString(), true);
+                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "galleries/upload?gallery-id=" + Id.ToString(), true);
             }
         }
         

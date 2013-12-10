@@ -885,6 +885,14 @@ button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner {
   border: 0;
 }
 
+.ui-widget {
+    font-size: inherit !important;
+}
+
+.ui-state-default {
+    font-weight: normal !important;
+}
+
 input[type="text"], input[type="password"], textarea
 {
 	border: 1px solid #002288;
@@ -936,7 +944,7 @@ span.subscribes {
 	font-size: 110%;
 }
 
-input[type="submit"] {
+input[type="submit"], button.submit {
 	border-radius: 5px;
 	border: 1px solid #008822;
 	background: #22aa44;
@@ -990,7 +998,7 @@ span.subscribe-button:hover {
     color: #664422;
 }
 
-input[type="submit"]:hover {
+input[type="submit"]:hover, button.submit:hover {
     background: #ffffff;
     color: #00aa44;
 }
@@ -1899,4 +1907,49 @@ span.subscribers {
 
 #today-right h4 a {
     color: #333333;
+}
+
+.post-content-tab dt {
+    font-weight: bold;
+    float: left;
+    width: 120px;
+    text-align: right;
+}
+
+.post-content-tab dd {
+    margin: 0 0 5px 130px;
+    position: relative;
+}
+
+div#upload.drop {
+    background-color: #fff5ef;
+    border-color: #ff8533;
+}
+
+div#upload {
+    background-color: #F7F7F7;
+    height: 206px;
+    border: 1px dashed #999999;
+    text-align: center;
+    overflow: auto;
+}
+
+div#upload span {
+    line-height: 206px;
+    color: #999999;
+    font-size: 2em;
+}
+
+div#upload.drop span {
+    color: #ff8533;
+}
+
+div#upload canvas {
+    margin: 2px 0 0 2px;
+    float: left;
+}
+
+.progress-bar {
+    height: 18px;
+    background: green;
 }

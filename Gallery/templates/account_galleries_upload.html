@@ -7,7 +7,7 @@
 			<dt><label for="title">Title</label></dt>
 			<dd><input type="text" id="title" name="title" value="{S_TITLE}" style="width: 100%;" /></dd>
 			<dt><label for="photo-file">Select File</label></dt>
-			<dd><input type="file" id="photo-file" name="photo-file" /></dd>
+			<dd><input type="file" id="photo-file" name="photo-files[]" multiple="multiple" /></dd>
 			<dt><label for="description">Description</label></dt>
 			<dd>
 				<textarea id="description" name="description" style="margin: 0px; width: 100%; height: 50px;" cols="70" rows="4">{S_DESCRIPTION}</textarea>
@@ -33,6 +33,6 @@
 		</dl>
 		<input type="hidden" name="module" value="galleries" />
 		<input type="hidden" name="sub" value="upload" />
-		<input type="hidden" name="id" value="{S_GALLERY_ID}" />
+		<input type="hidden" name="gallery-id" value="{S_GALLERY_ID}" />
 	</fieldset>
 </form>

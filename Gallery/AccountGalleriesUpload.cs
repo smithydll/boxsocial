@@ -93,7 +93,7 @@ namespace BoxSocial.Applications.Gallery
         {
             SetTemplate("account_galleries_upload");
 
-            long galleryId = core.Functions.RequestLong("id", 0);
+            long galleryId = core.Functions.RequestLong("gallery-id", 0);
 
             if (galleryId == 0)
             {
@@ -138,72 +138,89 @@ namespace BoxSocial.Applications.Gallery
         {
             AuthoriseRequestSid();
 
-            long galleryId = core.Functions.FormLong("id", 0);
+            long galleryId = core.Functions.FormLong("gallery-id", 0);
             string title = core.Http.Form["title"];
+            string galleryTitle = core.Http.Form["gallery-title"];
             string description = core.Http.Form["description"];
             bool publishToFeed = (core.Http.Form["publish-feed"] != null);
             bool highQualitySave = (core.Http.Form["high-quality"] != null);
 
-            if (core.Http.Files["photo-file"] == null)
+            if (string.IsNullOrEmpty(galleryTitle))
             {
-                core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission.");
+                galleryTitle = "Uploaded " + core.Tz.Now.ToString("MMMM dd, yyyy");
+            }
+
+            bool newGallery = core.Http.Form["album"] == "create";
+
+            int filesUploaded = 0;
+            for (int i = 0; i < core.Http.Files.Count; i++)
+            {
+                //HttpContext.Current.Response.Write(core.Http.Files.GetKey(i));
+                //HttpContext.Current.Response.Write(core.Http.Files.Get(i).FileName);
+                if (core.Http.Files.GetKey(i).StartsWith("photo-file"))
+                {
+                    filesUploaded++;
+                    if (core.Http.Files[i] == null || core.Http.Files[i].ContentLength == 0)
+                    {
+                        core.Display.ShowMessage("No files selected", "You need to select some files to upload");
+                    }
+                }
+            }
+
+            if (filesUploaded == 0)
+            {
+                core.Display.ShowMessage("No files selected", "You need to select some files to upload");
                 return;
             }
 
             try
             {
-                Gallery parent;
+                Gallery parent = null;
 
-                if (core.IsAjax)
+                if (newGallery)
                 {
-                    string galleryTitle = core.Http.Form["gallery-title"];
+                    Gallery grandParent = new Gallery(core, Owner);
+
                     string gallerySlug = string.Empty;
 
-                    if (!string.IsNullOrEmpty(galleryTitle))
+                    try
                     {
-                        parent = Gallery.Create(core, LoggedInMember, null, galleryTitle, ref gallerySlug, string.Empty);
-
-                        AccessControlLists acl = new AccessControlLists(core, parent);
-                        acl.SaveNewItemPermissions();
-
+                        parent = Gallery.Create(core, LoggedInMember, grandParent, galleryTitle, ref gallerySlug, string.Empty);
                     }
-                    else
+                    catch (GallerySlugNotUniqueException)
                     {
-                        db.RollBackTransaction();
-                        core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
-                        return;
+                        core.Display.ShowMessage("Gallery not unique", "Please give a different name to the gallery");
                     }
+
+                    AccessControlLists acl = new AccessControlLists(core, parent);
+                    acl.SaveNewItemPermissions();
                 }
                 else
                 {
                     parent = new Gallery(core, Owner, galleryId);
                 }
 
-                if (core.Http.Files["photo-file"] == null || core.Http.Files["photo-file"].ContentLength == 0)
-                {
-                    SetError("No file selected");
-                    return;
-                }
-
-                string slug = core.Http.Files["photo-file"].FileName;
-
+                string slug = string.Empty;
                 try
                 {
-                    MemoryStream stream = new MemoryStream();
-                    core.Http.Files["photo-file"].InputStream.CopyTo(stream);
-
-                    db.BeginTransaction();
-
-                    GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files["photo-file"].FileName, core.Http.Files["photo-file"].ContentType, (ulong)core.Http.Files["photo-file"].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), stream, highQualitySave /*, width, height*/);
-                    stream.Close();
-
-                    if (publishToFeed)
+                    for (int i = 0; i < core.Http.Files.Count; i++)
                     {
-                        if (core.IsAjax)
+                        if (!core.Http.Files.GetKey(i).StartsWith("photo-file"))
                         {
-                            core.CallingApplication.PublishToFeed(core, LoggedInMember, newGalleryItem, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                            continue;
                         }
-                        else
+
+                        slug = core.Http.Files[i].FileName;
+
+                        MemoryStream stream = new MemoryStream();
+                        core.Http.Files[i].InputStream.CopyTo(stream);
+
+                        db.BeginTransaction();
+
+                        GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, title, ref slug, core.Http.Files[i].FileName, core.Http.Files[i].ContentType, (ulong)core.Http.Files[i].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), stream, highQualitySave /*, width, height*/);
+                        stream.Close();
+
+                        if (publishToFeed && i < 3)
                         {
                             core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
                         }
@@ -213,10 +230,24 @@ namespace BoxSocial.Applications.Gallery
 
                     if (core.IsAjax)
                     {
+                        Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                        returnValues.Add("update", "true");
+                        returnValues.Add("message", description);
+                        returnValues.Add("template", string.Empty);
+
+                        core.Ajax.SendDictionary("statusPosted", returnValues);
                     }
                     else
                     {
-                        SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
+                        if (filesUploaded == 1)
+                        {
+                            SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
+                        }
+                        else
+                        {
+                            SetRedirectUri(parent.Uri);
+                        }
                         core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                     }
 

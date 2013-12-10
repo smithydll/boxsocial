@@ -25,6 +25,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Groups;
@@ -320,7 +321,62 @@ namespace BoxSocial.Applications.Gallery
             template.Parse("U_ACCOUNT", formSubmitUri);
             template.Parse("S_ACCOUNT", formSubmitUri);
 
+            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.ui.widget.js");
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/load-image.min.js");
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/canvas-to-blob.min.js");
+
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.iframe-transport.js");
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.fileupload.js");
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.fileupload-process.js");
+            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
+            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.fileupload-image.js");
+
             template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
+
+            CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
+            publishToFeedCheckBox.IsChecked = true;
+
+            CheckBox highQualityCheckBox = new CheckBox("high-quality");
+            highQualityCheckBox.IsChecked = false;
+
+            core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
+
+            template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
+            template.Parse("S_HIGH_QUALITY", highQualityCheckBox);
+
+            core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
+
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", e.Owner.ItemKey);
+            HiddenField aclModeField = new HiddenField("aclmode");
+            aclModeField.Value = "simple";
+
+            template.Parse("S_PERMISSIONS", permissionSelectBox);
+            template.Parse("S_ACLMODE", aclModeField);
+
+            //GallerySettings settings = new GallerySettings(core, e.Owner);
+            Gallery rootGallery = new Gallery(core, e.Owner);
+            List<Gallery> galleries = rootGallery.GetGalleries();
+
+            SelectBox galleriesSelectBox = new SelectBox("gallery-id");
+
+            foreach (Gallery gallery in galleries)
+            {
+                galleriesSelectBox.Add(new SelectBoxItem(gallery.Id.ToString(), gallery.GalleryTitle));
+            }
+
+            template.Parse("S_GALLERIES", galleriesSelectBox);
+
+            /* Title TextBox */
+            TextBox galleryTitleTextBox = new TextBox("gallery-title");
+            galleryTitleTextBox.MaxLength = 127;
+
+            template.Parse("S_GALLERY_TITLE", galleryTitleTextBox);
 
             e.core.AddPostPanel("Photo", template);
         }

@@ -166,10 +166,18 @@ namespace BoxSocial.Internals
 
             bool moreContent;
             long lastId = 0;
+            bool first = true;
+
             List<Action> feedActions = CombinedFeed.GetItems(core, owner, page.TopLevelPageNumber, 20, page.TopLevelPageOffset, out moreContent);
 
             foreach (Action feedAction in feedActions)
             {
+                if (first)
+                {
+                    first = false;
+                    core.Template.Parse("NEWEST_ID", feedAction.Id.ToString());
+                }
+
                 VariableCollection feedItemVariableCollection = core.Template.CreateChild("feed_days_list.feed_item");
 
                 core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);

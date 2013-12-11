@@ -31,6 +31,80 @@ namespace BoxSocial.Internals
 {
     public class Feed
     {
+        public static List<Action> GetNewerItems(Core core, User owner, long newerThanOffset)
+        {
+            List<Action> feedItems = new List<Action>(10);
+
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            query.AddSort(SortOrder.Descending, "action_time_ut");
+            query.LimitCount = 20;
+
+            List<long> friendIds = owner.GetFriendIds(100);
+            if (core.Session.IsLoggedIn)
+            {
+                friendIds.Add(core.LoggedInMemberId);
+            }
+
+            QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
+
+            List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
+            List<Action> tempActions = new List<Action>(10);
+
+            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+
+            if (!feedReader.HasRows)
+            {
+                feedReader.Close();
+                feedReader.Dispose();
+                return feedItems;
+            }
+
+            while (feedReader.Read())
+            {
+                Action action = new Action(core, owner, feedReader);
+                tempActions.Add(action);
+            }
+
+            feedReader.Close();
+            feedReader.Dispose();
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+            }
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(action.ActionItemKey);
+            }
+
+            foreach (Action action in tempActions)
+            {
+                tempMessages.Add(action.PermissiveParent);
+            }
+
+            if (tempMessages.Count > 0)
+            {
+                core.AcessControlCache.CacheGrants(tempMessages);
+            }
+
+            foreach (Action action in tempActions)
+            {
+                if (action.PermissiveParent.Access.Can("VIEW"))
+                {
+                    if (feedItems.Count == 10)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        feedItems.Add(action);
+                    }
+                }
+            }
+
+            return feedItems;
+        }
 
         public static List<Action> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
@@ -254,6 +328,8 @@ namespace BoxSocial.Internals
 
             bool moreContent = false;
             long lastId = 0;
+            bool first = true;
+
             List<Action> feedActions = Feed.GetItems(core, owner, page.TopLevelPageNumber, 20, page.TopLevelPageOffset, out moreContent);
 
             if (feedActions.Count > 0)
@@ -272,6 +348,12 @@ namespace BoxSocial.Internals
                         feedDateVariableCollection = template.CreateChild("feed_days_list");
 
                         feedDateVariableCollection.Parse("DAY", lastDay);
+                    }
+
+                    if (first)
+                    {
+                        first = false;
+                        template.Parse("NEWEST_ID", feedAction.Id.ToString());
                     }
 
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");

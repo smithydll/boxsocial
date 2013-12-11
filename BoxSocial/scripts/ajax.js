@@ -1,6 +1,7 @@
 ﻿var host = "/";
 var dtp = Array(); /* Date Time Pickers */
 var usb = Array(); /* User Select Boxes */
+var nid = 0; /* newest ID */
 
 // Append to Value List
 function avl(e, i) {

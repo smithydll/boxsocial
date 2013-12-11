@@ -14,31 +14,31 @@
       $(function () {
           var filesList = [];
           $('#fileupload').hide().fileupload({
-              dataType: 'json',
               dropZone: $("#upload"),
               disableImageResize: /Android(?!.*Chrome)|Opera/
                   .test(window.navigator.userAgent),
+              imageMaxWidth: 2560,
+              imageMaxHeight: 2560,
               previewMaxWidth: 100,
               previewMaxHeight: 100,
               previewCrop: true,
               acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
               autoUpload: false
-          }).on('fileuploaddone', function (e, data) {
-              data.context.text('Upload finished.');
           }).on('fileuploadprogressall', function (e, data) {
               var progress = parseInt(data.loaded / data.total * 100, 10);
               $('#progress .progress-bar').css(
                   'width',
                   progress + '%'
               );
+              if (progress > 99.9) {
+                  $("#progress .progress-bar").text('Processing...');
+              }
           }).on('fileuploadadd', function (e, data) {
               $.each(data.files, function (index, file) {
-                  console.log(file.name);
                   filesList.push(file);
               });
           }).on('fileuploadprocessalways', function (e, data) {
               var file = data.files[data.index];
-              console.log(file.name);
               if (file.preview) {
                   $("#upload span").hide();
                   $("#upload").append(file.preview);
@@ -54,14 +54,19 @@
           });
 
           $("#save-photo").click(function () {
-              var data = $(this).data();
-              data.context = $('<p/>').text('Uploading...').replaceAll($(this));
+              $("#newest-id").val(nid);
+              //var data = $(this).data();
+              //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
               //data.submit();
-              var xhr = $('#fileupload').fileupload('send', { files: filesList }).complete(function (data) {
-                  var r = ProcessAjaxResult(data);
-                  if (r != null) SentStatus(r);
+              $(".progress-bar").text('Uploading...');
+              var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
+                  var r = ProcessAjaxResult(result);
+                  if (r != null) {
+                      SentAction(r);
+                      switchTab(0);
+                  }
               });
-
+              return false;
           });
 
           $("#form-photo").append('<input type="hidden" name="ajax" value="true" />');
@@ -130,5 +135,6 @@
 		<input type="hidden" name="module" value="galleries" />
 		<input type="hidden" name="sub" value="upload" />
         <input type="hidden" name="save" value="Upload" />
+        <input type="hidden" id="newest-id" name="newest-id" value="0" />
         </div>
 </form>

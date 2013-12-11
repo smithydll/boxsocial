@@ -1952,4 +1952,5 @@ div#upload canvas {
 .progress-bar {
     height: 18px;
     background: green;
+    color: white;
 }

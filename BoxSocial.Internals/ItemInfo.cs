@@ -202,37 +202,46 @@ namespace BoxSocial.Internals
             byte[] encryptBytes = { 0x44, 0x33, 0x22, 0x11, 0x00, 0x99, 0x88, 0x77 };
             string encryptKey = "boxsocia";
 
-            byte[] bytes = new byte[] { 
-                (byte)itemKey.TypeId, 
-                (byte)((itemKey.TypeId >> 8) + (itemKey.Id >> 40)), 
-                (byte)(itemKey.Id >> 32), 
-                (byte)(itemKey.Id >> 24), 
-                (byte)(itemKey.Id >> 16), 
-                (byte)(itemKey.Id >> 8), 
-                (byte)itemKey.Id };
+            try
+            {
+                byte[] bytes = new byte[] { 
+                (byte)(itemKey.TypeId& 0x0000000F), 
+                (byte)((itemKey.TypeId & 0x000000F0>> 8) + (itemKey.Id & 0x00F00000>> 40)), 
+                (byte)(itemKey.Id & 0x000F0000>> 32), 
+                (byte)(itemKey.Id & 0x0000F000>> 24), 
+                (byte)(itemKey.Id & 0x00000F0>> 16), 
+                (byte)(itemKey.Id & 0x000000F0>> 8), 
+                (byte)(itemKey.Id& 0x0000000F) };
 
-            byte[] keyBytes = Encoding.UTF8.GetBytes(encryptKey);
-            DESCryptoServiceProvider des = new DESCryptoServiceProvider();
-            MemoryStream ms = new MemoryStream();
-            CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(keyBytes, encryptBytes), CryptoStreamMode.Write);
-            cs.Write(bytes, 0, bytes.Length);
-            cs.FlushFinalBlock();
+                byte[] keyBytes = Encoding.UTF8.GetBytes(encryptKey);
+                DESCryptoServiceProvider des = new DESCryptoServiceProvider();
+                MemoryStream ms = new MemoryStream();
+                CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(keyBytes, encryptBytes), CryptoStreamMode.Write);
+                cs.Write(bytes, 0, bytes.Length);
+                cs.FlushFinalBlock();
 
-            bytes = ms.ToArray();
+                bytes = ms.ToArray();
 
-            string shortKey = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
+                string shortKey = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
 
-            InsertQuery iQuery = new InsertQuery(typeof(ItemInfo));
-            iQuery.AddField("info_item_id", itemKey.Id);
-            iQuery.AddField("info_item_type_id", itemKey.TypeId);
-            iQuery.AddField("info_shortkey", shortKey);
-            iQuery.AddField("info_item_time_ut", UnixTime.UnixTimeStamp());
-            
-            core.Db.Query(iQuery);
+                InsertQuery iQuery = new InsertQuery(typeof(ItemInfo));
+                iQuery.AddField("info_item_id", itemKey.Id);
+                iQuery.AddField("info_item_type_id", itemKey.TypeId);
+                iQuery.AddField("info_shortkey", shortKey);
+                iQuery.AddField("info_item_time_ut", UnixTime.UnixTimeStamp());
 
-            ItemInfo ii = new ItemInfo(core, item, itemKey.Id, itemKey.TypeId);
+                core.Db.Query(iQuery);
 
-            return ii;
+                ItemInfo ii = new ItemInfo(core, item, itemKey.Id, itemKey.TypeId);
+
+                return ii;
+            }
+            catch (OverflowException)
+            {
+                HttpContext.Current.Response.Write(itemKey.TypeId.ToString() + "," + itemKey.Id.ToString() + "<br />");
+                HttpContext.Current.Response.End();
+                return null;
+            }
         }
 
         public long Comments

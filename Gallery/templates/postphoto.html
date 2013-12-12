@@ -55,25 +55,31 @@
 
           $("#save-photo").click(function () {
               $("#newest-id").val(nid);
-              //var data = $(this).data();
-              //data.context = $('<p/>').text('Uploading...').replaceAll($(this));
-              //data.submit();
+              $(this).hide();
+              $("#photo-form :input").attr("disabled", true);
               $(".progress-bar").text('Uploading...');
               var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
                   var r = ProcessAjaxResult(result);
                   if (r != null) {
                       SentAction(r);
+                      filesList = [];
+                      $('#photo-form').trigger("reset");
+                      $('#upload canvas').remove();
+                      $("#upload span").show();
+                      $("#progress .progress-bar").text('').css('width', '0%');
+                      $("#photo-form :input").attr("disabled", false);
+                      $("#save-photo").show();
                       switchTab(0);
                   }
               });
               return false;
           });
 
-          $("#form-photo").append('<input type="hidden" name="ajax" value="true" />');
+          $("#photo-form").append('<input type="hidden" name="ajax" value="true" />');
       });
   </script>
 
-<form id="form-photo" action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+<form id="photo-form" action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
 		<div id="compose-status">
 
         <dl>

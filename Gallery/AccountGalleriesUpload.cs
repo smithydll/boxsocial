@@ -155,8 +155,6 @@ namespace BoxSocial.Applications.Gallery
             int filesUploaded = 0;
             for (int i = 0; i < core.Http.Files.Count; i++)
             {
-                //HttpContext.Current.Response.Write(core.Http.Files.GetKey(i));
-                //HttpContext.Current.Response.Write(core.Http.Files.Get(i).FileName);
                 if (core.Http.Files.GetKey(i).StartsWith("photo-file"))
                 {
                     filesUploaded++;
@@ -181,18 +179,34 @@ namespace BoxSocial.Applications.Gallery
                 {
                     Gallery grandParent = null;
 
-                    string grandParentSlug = "photos-from-posts";
-                    try
+                    if (string.IsNullOrEmpty(galleryTitle))
                     {
-                        grandParent = new Gallery(core, Owner, grandParentSlug);
+                        string grandParentSlug = "photos-from-posts";
+                        try
+                        {
+                            grandParent = new Gallery(core, Owner, grandParentSlug);
+                        }
+                        catch (InvalidGalleryException)
+                        {
+                            Gallery root = new Gallery(core, Owner);
+                            grandParent = Gallery.Create(core, Owner, root, "Photos From Posts", ref grandParentSlug, "All my unsorted uploads");
+                        }
                     }
-                    catch (InvalidGalleryException)
+                    else
                     {
-                        Gallery root = new Gallery(core, Owner);
-                        grandParent = Gallery.Create(core, Owner, root, "Photos From Posts", ref grandParentSlug, "All my unsorted uploads");
+                        grandParent = new Gallery(core, Owner);
                     }
 
-                    string gallerySlug = "photos-" + UnixTime.UnixTimeStamp().ToString();
+                    string gallerySlug = string.Empty;
+
+                    if (string.IsNullOrEmpty(galleryTitle))
+                    {
+                        gallerySlug = "photos-" + UnixTime.UnixTimeStamp().ToString();
+                    }
+                    else
+                    {
+                        gallerySlug = Gallery.GetSlugFromTitle(galleryTitle, "");
+                    }
 
                     try
                     {

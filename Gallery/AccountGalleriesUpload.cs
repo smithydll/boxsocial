@@ -144,9 +144,11 @@ namespace BoxSocial.Applications.Gallery
             string description = core.Http.Form["description"];
             bool publishToFeed = (core.Http.Form["publish-feed"] != null);
             bool highQualitySave = (core.Http.Form["high-quality"] != null);
+            bool submittedTitle = true;
 
             if (string.IsNullOrEmpty(galleryTitle))
             {
+                submittedTitle = false;
                 galleryTitle = "Uploaded " + core.Tz.Now.ToString("MMMM dd, yyyy");
             }
 
@@ -160,14 +162,14 @@ namespace BoxSocial.Applications.Gallery
                     filesUploaded++;
                     if (core.Http.Files[i] == null || core.Http.Files[i].ContentLength == 0)
                     {
-                        core.Display.ShowMessage("No files selected", "You need to select some files to upload");
+                        core.Ajax.ShowMessage(core.IsAjax, "error", "No files selected", "You need to select some files to upload");
                     }
                 }
             }
 
             if (filesUploaded == 0)
             {
-                core.Display.ShowMessage("No files selected", "You need to select some files to upload");
+                core.Ajax.ShowMessage(core.IsAjax, "error", "No files selected", "You need to select some files to upload");
                 return;
             }
 
@@ -179,7 +181,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     Gallery grandParent = null;
 
-                    if (string.IsNullOrEmpty(galleryTitle))
+                    if (!submittedTitle)
                     {
                         string grandParentSlug = "photos-from-posts";
                         try
@@ -199,7 +201,7 @@ namespace BoxSocial.Applications.Gallery
 
                     string gallerySlug = string.Empty;
 
-                    if (string.IsNullOrEmpty(galleryTitle))
+                    if (!submittedTitle)
                     {
                         gallerySlug = "photos-" + UnixTime.UnixTimeStamp().ToString();
                     }
@@ -214,7 +216,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch (GallerySlugNotUniqueException)
                     {
-                        core.Display.ShowMessage("Gallery not unique", "Please give a different name to the gallery");
+                         core.Ajax.ShowMessage(core.IsAjax, "error", "Gallery not unique", "Please give a different name to the gallery");
                     }
 
                     AccessControlLists acl = new AccessControlLists(core, parent);
@@ -256,6 +258,7 @@ namespace BoxSocial.Applications.Gallery
                     if (core.IsAjax)
                     {
                         long newestId = core.Functions.FormLong("newest-id", 0);
+                        long newerId = 0;
 
                         List<BoxSocial.Internals.Action> feedActions = Feed.GetNewerItems(core, LoggedInMember, newestId);
 
@@ -266,6 +269,11 @@ namespace BoxSocial.Applications.Gallery
                         foreach (BoxSocial.Internals.Action feedAction in feedActions)
                         {
                             VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
+
+                            if (feedAction.Id > newerId)
+                            {
+                                newerId = feedAction.Id;
+                            }
 
                             core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
                             core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
@@ -326,6 +334,7 @@ namespace BoxSocial.Applications.Gallery
                         returnValues.Add("update", "true");
                         returnValues.Add("message", description);
                         returnValues.Add("template", template.ToString());
+                        returnValues.Add("newest-id", newerId.ToString());
 
                         core.Ajax.SendDictionary("statusPosted", returnValues);
                     }
@@ -347,32 +356,32 @@ namespace BoxSocial.Applications.Gallery
                 catch (GalleryItemTooLargeException)
                 {
                     db.RollBackTransaction();
-                    core.Display.ShowMessage("Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
                     return;
                 }
                 catch (GalleryQuotaExceededException)
                 {
                     db.RollBackTransaction();
-                    core.Display.ShowMessage("Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                     return;
                 }
                 catch (InvalidGalleryItemTypeException)
                 {
                     db.RollBackTransaction();
-                    core.Display.ShowMessage("Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                     return;
                 }
                 catch (InvalidGalleryFileNameException)
                 {
                     db.RollBackTransaction();
-                    core.Display.ShowMessage("Submission failed", "Submission failed, try uploading with a different file name.");
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Submission failed", "Submission failed, try uploading with a different file name.");
                     return;
                 }
             }
             catch (InvalidGalleryException)
             {
                 db.RollBackTransaction();
-                core.Display.ShowMessage("Submission failed", "Submission failed, Invalid Gallery.");
+                core.Ajax.ShowMessage(core.IsAjax, "error", "Submission failed", "Submission failed, Invalid Gallery.");
                 return;
 
             }

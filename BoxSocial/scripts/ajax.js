@@ -115,6 +115,9 @@ function SentAction(r, e, a) {
     if (r['update'] == 'true') {
         $('.today-feed ul.feed-list').first().before(r['template']);
     }
+    if (r['newest-id'] > 0) {
+        nid = r['newest-id'];
+    }
 }
 
 function DeleteComment(id, iid) {

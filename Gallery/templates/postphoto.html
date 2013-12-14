@@ -26,12 +26,10 @@
               autoUpload: false
           }).on('fileuploadprogressall', function (e, data) {
               var progress = parseInt(data.loaded / data.total * 100, 10);
-              $('#progress .progress-bar').css(
-                  'width',
-                  progress + '%'
-              );
+              progressBar.progressbar("value", progress);
               if (progress > 99.9) {
-                  $("#progress .progress-bar").text('Processing...');
+                  progressBar.progressbar("value", false);
+                  progressLabel.text("Processing...");
               }
           }).on('fileuploadadd', function (e, data) {
               $.each(data.files, function (index, file) {
@@ -56,8 +54,7 @@
           $("#save-photo").click(function () {
               $("#newest-id").val(nid);
               $(this).hide();
-              $("#photo-form :input").attr("disabled", true);
-              $(".progress-bar").text('Uploading...');
+              progressBar.show().progressbar("value");
               var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
                   var r = ProcessAjaxResult(result);
                   if (r != null) {
@@ -65,17 +62,30 @@
                       filesList = [];
                       $('#photo-form').trigger("reset");
                       $('#upload canvas').remove();
-                      $("#upload span").show();
-                      $("#progress .progress-bar").text('').css('width', '0%');
-                      $("#photo-form :input").attr("disabled", false);
-                      $("#save-photo").show();
                       switchTab(0);
                   }
+                  progressBar.hide();
+                  $("#upload span").show();
+                  $("#photo-form :input").attr("disabled", false);
+                  $("#save-photo").show();
               });
+              $("#photo-form :input").attr("disabled", true);
               return false;
           });
 
           $("#photo-form").append('<input type="hidden" name="ajax" value="true" />');
+          var progressBar = $("#progressbar"), progressLabel = $(".progress-label");
+
+          progressBar.hide().progressbar({
+              value: false,
+              change: function () {
+                  progressLabel.text(progressBar.progressbar("value") + "%");
+              },
+              complete: function () {
+                  progressLabel.text("Upload complete");
+              }
+          });
+
       });
   </script>
 
@@ -131,8 +141,8 @@
 			</dd>
 			<dt></dt>
 			<dd>
-                <div id="progress">
-                    <div class="progress-bar" style="width: 0%;"></div>
+                <div id="progressbar">
+                    <div class="progress-label" style="width: 0%;">Processing...</div>
                 </div>
 				<button class="submit" name="save-photo" id="save-photo" title="Upload">Upload</button>
 			</dd>

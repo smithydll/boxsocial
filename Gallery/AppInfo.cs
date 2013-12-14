@@ -322,8 +322,6 @@ namespace BoxSocial.Applications.Gallery
             template.Parse("S_ACCOUNT", formSubmitUri);
 
             VariableCollection styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
-            styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.ui.widget.js");
-            styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
             styleSheetVariableCollection.Parse("URI", @"/scripts/load-image.min.js");
             styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
             styleSheetVariableCollection.Parse("URI", @"/scripts/canvas-to-blob.min.js");

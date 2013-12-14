@@ -51,10 +51,10 @@ namespace BoxSocial.FrontEnd
             if (core.IsMobile)
             {
                 VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
-                javaScriptVariableCollection.Parse("URI", @"/scripts/jquery-ui-1.9.1.boxsocial.min.js");
+                javaScriptVariableCollection.Parse("URI", @"/scripts/jquery-ui-1.10.3.boxsocial.min.js");
 
                 VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
-                styleSheetVariableCollection.Parse("URI", @"/styles/jquery-ui-1.9.1.boxsocial.min.css");
+                styleSheetVariableCollection.Parse("URI", @"/styles/jquery-ui-1.10.3.boxsocial.min.css");
             }
 
             long itemId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));

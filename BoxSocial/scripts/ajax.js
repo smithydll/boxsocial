@@ -456,7 +456,7 @@ $(document).ready(function () {
             },
             position: { collision: "flip" }
         })
-        .data("autocomplete")._renderItem = function (ul, item) {
+        .data("ui-autocomplete")._renderItem = function (ul, item) {
             return $('<li class="droplist-user">')
                 .data("item.autocomplete", item)
                 .append('<a><img src="' + item.tile + '" />' + item.value + '</a>')
@@ -519,7 +519,7 @@ function preparePermissionsList(id) {
                 },
                 position: { collision: "flip" }
             })
-            .data("autocomplete")._renderItem = function (ul, item) {
+            .data("ui-autocomplete")._renderItem = function (ul, item) {
                 return $('<li class="droplist-' + ((item.id > 0) ? 'user' : 'group') + '">')
                     .data("item.autocomplete", item)
                     .append('<a>' + ((item.tile != '') ? '<img src="' + item.tile + '" />' : '') + item.value + '</a>')

@@ -1458,7 +1458,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     e.Core.Meta.Add("twitter:creator", ((User)galleryItem.Owner).UserInfo.TwitterUserName);
                 }
-                e.Core.Meta.Add("twitter:image:src", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.MobileUri)));
+                e.Core.Meta.Add("twitter:image:src", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.DisplayUri)));
                 if (!string.IsNullOrEmpty(galleryItem.ItemTitle))
                 {
                     e.Core.Meta.Add("twitter:title", galleryItem.ItemTitle);

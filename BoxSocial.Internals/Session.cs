@@ -677,7 +677,7 @@ namespace BoxSocial.Internals
                             sessionSidCookie.HttpOnly = true;
                             Response.Cookies.Add(sessionSidCookie);
 
-                            if (Request.Cookies[cookieName + "_sid"] == null)
+                            if (Request.Cookies[cookieName + "_sid"] == null && signInState != SessionSignInState.Bot)
                             {
                                 core.Hyperlink.SidUrls = true;
                             }
@@ -893,7 +893,7 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
 
-                if (Request.Cookies[cookieName + "_sid"] == null)
+                if (Request.Cookies[cookieName + "_sid"] == null && signInState != SessionSignInState.Bot)
                 {
                     core.Hyperlink.SidUrls = true;
                 }
@@ -916,6 +916,13 @@ namespace BoxSocial.Internals
 
             sessionData = null;
             sessionId = null;
+
+            if (!String.IsNullOrEmpty(IsBotUserAgent(Request.UserAgent)))
+            {
+                signInState = SessionSignInState.Bot;
+                core.Hyperlink.SidUrls = false;
+                return;
+            }
 
             if (Request.Cookies[cookieName + "_sid"] != null || Request.Cookies[cookieName + "_data"] != null)
             {
@@ -1096,7 +1103,7 @@ namespace BoxSocial.Internals
 
                         // Add the session_key to the userdata array if it is set
 
-                        if (Request.Cookies[cookieName + "_sid"] == null)
+                        if (Request.Cookies[cookieName + "_sid"] == null && signInState != SessionSignInState.Bot)
                         {
                             core.Hyperlink.SidUrls = true;
                         }
@@ -1232,7 +1239,7 @@ namespace BoxSocial.Internals
                 newSessionSidCookie.HttpOnly = true;
                 Response.Cookies.Add(newSessionSidCookie);
 
-                if (Request.Cookies[cookieName + "_sid"] == null)
+                if (Request.Cookies[cookieName + "_sid"] == null && signInState != SessionSignInState.Bot)
                 {
                     core.Hyperlink.SidUrls = true;
                 }

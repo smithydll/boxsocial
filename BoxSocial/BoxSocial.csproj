@@ -70,7 +70,6 @@
     <Content Include="scripts\jquery.fileupload-process.js" />
     <Content Include="scripts\jquery.fileupload.js" />
     <Content Include="scripts\jquery.iframe-transport.js" />
-    <Content Include="scripts\jquery.ui.widget.js" />
     <Content Include="scripts\load-image.min.js" />
     <Content Include="shorturl.aspx" />
     <Content Include="copyright.aspx" />
@@ -161,6 +160,7 @@
     <Content Include="styles\images\ui-icons_ffaa00_256x240.png" />
     <Content Include="styles\images\ui-icons_ffffff_256x240.png" />
     <Content Include="styles\jquery-ui-1.9.1.boxsocial.min.css" />
+    <Content Include="subscribe.aspx" />
     <Content Include="templates\1201.html" />
     <Content Include="templates\1202.html" />
     <Content Include="templates\1301.html" />
@@ -269,6 +269,9 @@
       <ProductName>Windows Installer 3.1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

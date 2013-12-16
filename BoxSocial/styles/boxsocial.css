@@ -934,14 +934,24 @@ span.subscribe-button a {
     text-decoration: none;
 }
 
-span.subscribes {
-	border-radius: 5px;
-	border: 1px solid #eecc22;
-	background: #ffee22;
-	color: #664422;
+span.subscribe-button.subscribed {
+	border-color: #888888;
+	background: #dddddd;
+	color: #666666;
+}
+
+span.subscribe-button.subscribed a {
+    background: #ffffff;
+    color: #333333 !important;
+}
+
+span.subscribers {
+	border-radius: 3px;
+	border: 1px solid #cccccc;
+	background: #ffffff;
+	color: #888888;
 	margin: 2px;
-	padding: 6px 16px;
-	font-size: 110%;
+	padding: 2px 5px;
 }
 
 input[type="submit"], button.submit {
@@ -1887,15 +1897,6 @@ div.contact-card img {
 
 div.contact-card div {
     padding: 2px 5px;
-}
-
-span.subscribers {
-	border-radius: 3px;
-	border: 1px solid #cccccc;
-	background: none;
-	color: #888888;
-	margin: 2px;
-	padding: 2px 5px;
 }
 
 #today-right h4 {

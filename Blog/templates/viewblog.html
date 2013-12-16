@@ -35,7 +35,15 @@
         <!-- ELSE -->
 <h2>{L_BLOG}</h2>
         <!-- ENDIF -->
-<!--p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span></p-->
+<!-- IF NOT SELF -->
+<!-- IF LOGGED_IN -->
+<!-- IF SUBSCRIBED -->
+<p><span id="subscribe" class="subscribe-button subscribed"><a href="{U_UNSUBSCRIBE}">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ELSE -->
+<p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- ENDIF -->
 </div>
 </div>
 <div id="pane-profile">

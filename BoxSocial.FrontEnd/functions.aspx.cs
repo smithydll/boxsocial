@@ -101,17 +101,20 @@ namespace BoxSocial.FrontEnd
             {
                 User user = new Internals.User(core, uid);
 
+                bool subscribed = Subscription.IsSubscribed(core, user.ItemKey);
+
                 userInfo.Add("cover-photo", user.MobileCoverPhoto);
                 userInfo.Add("display-name", user.DisplayName);
                 userInfo.Add("display-picture", user.UserIcon);
                 userInfo.Add("uri", user.Uri);
                 userInfo.Add("profile", user.ProfileUri);
                 userInfo.Add("abstract", core.Bbcode.Parse(user.Profile.Autobiography));
+                userInfo.Add("subscribed", subscribed.ToString().ToLower());
                 userInfo.Add("subscribers", core.Functions.LargeIntegerToString(user.Info.Subscribers));
-                userInfo.Add("subscribe-uri", string.Empty);
+                userInfo.Add("subscribe-uri", (subscribed) ? core.Hyperlink.BuildUnsubscribeUri(user.ItemKey) : core.Hyperlink.BuildSubscribeUri(user.ItemKey));
                 userInfo.Add("location", user.Profile.Country);
                 userInfo.Add("l-location", "Location");
-                userInfo.Add("l-subscribe", "Subscribe");
+                userInfo.Add("l-subscribe", (subscribed) ? "Unsubscribe" : "Subscribe");
 
                 core.Ajax.SendDictionary("contactCard", userInfo);
             }

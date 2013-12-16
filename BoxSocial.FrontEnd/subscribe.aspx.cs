@@ -47,6 +47,11 @@ namespace BoxSocial.FrontEnd
                 isAjax = true;
             }
 
+            if (!core.Session.SignedIn)
+            {
+                core.Ajax.ShowMessage(isAjax, "notSignedIn", "Subscription Error", "You must be logged in to subscribe.");
+            }
+
             string mode = core.Http.Query["mode"];
             long itemId = core.Functions.RequestLong("item", 0);
             long itemTypeId = core.Functions.RequestLong("type", 0);
@@ -96,21 +101,50 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
+            bool success = false;
             try
             {
                 switch (mode)
                 {
                     case "subscribe":
-                        Subscription.SubscribeToItem(core, itemKey);
+                        success = Subscription.SubscribeToItem(core, itemKey);
                         Core.ItemSubscribed(itemKey, loggedInMember);
 
-                        core.Ajax.SendStatus("subscriptionAccepted");
+                        if (success)
+                        {
+                            if (isAjax)
+                            {
+                                core.Ajax.SendStatus("subscriptionAccepted");
+                            }
+                            else
+                            {
+                                core.Display.ShowMessage("Subscribed", "You have successfully subscribed.");
+                            }
+                        }
+                        else
+                        {
+                            core.Ajax.ShowMessage(isAjax, "error", "Error", "Subscription unsuccessful.");
+                        }
                         break;
                     case "unsubscribe":
-                        Subscription.UnsubscribeFromItem(core, itemKey);
+                        success = Subscription.UnsubscribeFromItem(core, itemKey);
                         Core.ItemUnsubscribed(itemKey, loggedInMember);
 
-                        core.Ajax.SendStatus("subscriptionAccepted");
+                        if (success)
+                        {
+                            if (isAjax)
+                            {
+                                core.Ajax.SendStatus("subscriptionAccepted");
+                            }
+                            else
+                            {
+                                core.Display.ShowMessage("Unsubscribed", "You have successfully unsubscribed.");
+                            }
+                        }
+                        else
+                        {
+                            core.Ajax.ShowMessage(isAjax, "error", "Error", "Unsubscription unsuccessful.");
+                        }
                         break;
                 }
             }

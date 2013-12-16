@@ -108,20 +108,84 @@ namespace BoxSocial.Internals
 
         }
 
-        public static void SubscribeToItem(Core core, ItemKey itemKey)
+        public static bool IsSubscribed(Core core, ItemKey itemKey)
         {
-            if (core == null)
+            if (core.Session.SignedIn)
             {
-                throw new NullCoreException();
+                SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+                query.AddCondition("subscription_item_id", itemKey.Id);
+                query.AddCondition("subscription_item_type_id", itemKey.TypeId);
+                query.AddCondition("user_id", core.LoggedInMemberId);
+
+                DataTable subscriptionDataTable = core.Db.Query(query);
+
+                return (subscriptionDataTable.Rows.Count > 0);
+            }
+            else
+            {
+                return false;
             }
         }
 
-        public static void UnsubscribeFromItem(Core core, ItemKey itemKey)
+        public static bool SubscribeToItem(Core core, ItemKey itemKey)
         {
             if (core == null)
             {
                 throw new NullCoreException();
             }
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition("subscription_item_id", itemKey.Id);
+            query.AddCondition("subscription_item_type_id", itemKey.TypeId);
+            query.AddCondition("user_id", core.LoggedInMemberId);
+
+            DataTable subscriptionDataTable = core.Db.Query(query);
+
+            if (subscriptionDataTable.Rows.Count == 0)
+            {
+                InsertQuery iQuery = new InsertQuery(typeof(Subscription));
+                iQuery.AddField("subscription_item", itemKey);
+                iQuery.AddField("user_id", core.LoggedInMemberId);
+                iQuery.AddField("subscription_time_ut", UnixTime.UnixTimeStamp());
+                iQuery.AddField("subscription_ip", core.Session.IPAddress.ToString());
+
+                core.Db.Query(iQuery);
+
+                return true;
+            }
+            else
+            {
+                throw new AlreadySubscribedException();
+            }
+        }
+
+        public static bool UnsubscribeFromItem(Core core, ItemKey itemKey)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition("subscription_item_id", itemKey.Id);
+            query.AddCondition("subscription_item_type_id", itemKey.TypeId);
+            query.AddCondition("user_id", core.LoggedInMemberId);
+
+            DataTable subscriptionDataTable = core.Db.Query(query);
+
+            if (subscriptionDataTable.Rows.Count == 1)
+            {
+                DeleteQuery dQuery = new DeleteQuery(typeof(Subscription));
+                dQuery.AddCondition("subscription_item_id", itemKey.Id);
+                dQuery.AddCondition("subscription_item_type_id", itemKey.TypeId);
+                dQuery.AddCondition("user_id", core.LoggedInMemberId);
+
+                core.Db.Query(dQuery);
+
+                return true;
+            }
+
+            return false;
         }
 
         public override string Uri

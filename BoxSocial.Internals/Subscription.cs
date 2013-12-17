@@ -134,6 +134,8 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            core.Db.BeginTransaction();
+
             SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
@@ -144,12 +146,16 @@ namespace BoxSocial.Internals
             if (subscriptionDataTable.Rows.Count == 0)
             {
                 InsertQuery iQuery = new InsertQuery(typeof(Subscription));
-                iQuery.AddField("subscription_item", itemKey);
+                iQuery.AddField("subscription_item_id", itemKey.Id);
+                iQuery.AddField("subscription_item_type_id", itemKey.TypeId);
                 iQuery.AddField("user_id", core.LoggedInMemberId);
                 iQuery.AddField("subscription_time_ut", UnixTime.UnixTimeStamp());
                 iQuery.AddField("subscription_ip", core.Session.IPAddress.ToString());
 
                 core.Db.Query(iQuery);
+
+                ItemInfo info = new ItemInfo(core, itemKey);
+                info.IncrementSubscribers();
 
                 return true;
             }
@@ -166,6 +172,8 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+            core.Db.BeginTransaction();
+
             SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
@@ -181,6 +189,9 @@ namespace BoxSocial.Internals
                 dQuery.AddCondition("user_id", core.LoggedInMemberId);
 
                 core.Db.Query(dQuery);
+
+                ItemInfo info = new ItemInfo(core, itemKey);
+                info.DecrementSubscribers();
 
                 return true;
             }

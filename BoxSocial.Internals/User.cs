@@ -853,6 +853,31 @@ namespace BoxSocial.Internals
             this.userIconUri = member.userIconUri;
         }
 
+        public List<long> GetSubscriptionIds()
+        {
+            return GetSubscriptionIds(255);
+        }
+
+        public List<long> GetSubscriptionIds(int count)
+        {
+            List<long> subscriptionIds = new List<long>();
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition("user_id", userId);
+            query.AddCondition("subscription_item_type_id", ItemType.GetTypeId(typeof(User)));
+            query.AddSort(SortOrder.Descending, "subscription_time_ut");
+            query.LimitCount = count;
+
+            DataTable subscriptionsTable = db.Query(query);
+
+            foreach (DataRow dr in subscriptionsTable.Rows)
+            {
+                subscriptionIds.Add((long)dr["subscription_item_id"]);
+            }
+
+            return subscriptionIds;
+        }
+
         public List<long> GetFriendIds()
         {
             return GetFriendIds(255);

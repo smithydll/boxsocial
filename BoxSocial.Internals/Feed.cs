@@ -45,6 +45,8 @@ namespace BoxSocial.Internals
                 friendIds.Add(core.LoggedInMemberId);
             }
 
+            friendIds.AddRange(owner.GetSubscriptionIds(100));
+
             QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
 
             List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
@@ -131,6 +133,7 @@ namespace BoxSocial.Internals
             }
 
             // TODO: Add subscriptions to feed
+            friendIds.AddRange(owner.GetSubscriptionIds(100));
 
             if (friendIds.Count > 0)
             {

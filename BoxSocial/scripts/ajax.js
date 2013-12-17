@@ -728,7 +728,7 @@ function LoadedCard(r, e, a) {
     a = a - (e.offset().left - e.position().left);
     e.wrap('<span class="contact-card-container"></span>');
     var loc = (r['location'] != 'FALSE') ? '<p><strong>' + r['l-location'] + ':</strong> ' + r['location'] + '</p>' : '';
-    e.after('<div class="contact-card" style="left: ' + a + 'px;"><div style="height: 80px; background-image: url(\'' + r['cover-photo'] + '\'); background-position: center; background-color: #333333; background-size: cover;"><img src="' + r['display-picture'] + '" /></div><div><p><strong><a href="' + r['uri'] + '">' + r['display-name'] + '</a></strong></p><p><span class="subscribe-button' + (r['subscribed'] == 'true' ? "subscribed" : "") + '"><a href="' + r['subscribe-uri'] + '">' + r['l-subscribe'] + '</a></span><span class="subscribers">' + r['subscribers'] + '</span></p>' + loc + '<p>' + r['abstract'] + '</p></div></div>');
+    e.after('<div class="contact-card" style="left: ' + a + 'px;"><div style="height: 80px; background-image: url(\'' + r['cover-photo'] + '\'); background-position: center; background-color: #333333; background-size: cover;"><img src="' + r['display-picture'] + '" /></div><div><p><strong><a href="' + r['uri'] + '">' + r['display-name'] + '</a></strong></p><p><span class="subscribe-button' + (r['subscribed'] == 'true' ? "subscribed" : "") + '"><a href="' + r['subscribe-uri'] + '" onclick="return SubscribeItem(' + r['id'] + ',' + r['type'] + ',' + (r['subscribed'] != 'true') + ');">' + r['l-subscribe'] + '</a></span><span class="subscribers">' + r['subscribers'] + '</span></p>' + loc + '<p>' + r['abstract'] + '</p></div></div>');
     $(".contact-card-container").on('mouseleave', function (e) {
         $('.contact-card').unwrap().remove();
     });

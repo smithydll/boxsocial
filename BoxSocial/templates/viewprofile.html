@@ -29,9 +29,15 @@
             <!-- END link_list -->
             </ul>
 			<h2><a href="{U_PROFILE}">{USER_DISPLAY_NAME}</a></h2>
-            <!-- IF USER_AUTOBIOGRAPHY -->
-            <p id="status-message">{USER_AUTOBIOGRAPHY}</p>
-            <!-- ENDIF -->
+<!-- IF NOT SELF -->
+<!-- IF LOGGED_IN -->
+<!-- IF SUBSCRIBED -->
+<p><span id="subscribe" class="subscribe-button subscribed"><a href="{U_UNSUBSCRIBE}">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ELSE -->
+<p><span id="subscribe" class="subscribe-button"><a href="{U_SUBSCRIBE}">{L_SUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- ENDIF -->
 		<div class="cheat-clear"></div>
 	</div>
     </div>
@@ -122,6 +128,12 @@
 		<!-- END app_panel_side -->
 	</div>
 	<div id="profile">
+    <!-- IF USER_AUTOBIOGRAPHY -->
+    <div id="profile-autobiography-pane" class="pane">
+    <h3>{L_AUTOBIOGRAPHY}</h3>
+    <p id="status-message">{USER_AUTOBIOGRAPHY}</p>
+    </div>
+    <!-- ENDIF -->
     <!-- IF SHOW_FRIENDS -->
 	<div id="profile-friends-pane" class="pane">
 	<h3>{USER_DISPLAY_NAME_OWNERSHIP} Friends ({FRIENDS})</h3>

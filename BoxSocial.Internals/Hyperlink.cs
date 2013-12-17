@@ -586,13 +586,13 @@ namespace BoxSocial.Internals
 
         public string BuildSubscribeUri(ItemKey itemKey)
         {
-            return AppendCoreSid(string.Format("/subscribe?mode=subscribe&item={0}&type={1}",
+            return AppendCoreSid(string.Format("/api/subscribe?mode=subscribe&item={0}&type={1}",
                 itemKey.Id, itemKey.TypeId));
         }
 
         public string BuildUnsubscribeUri(ItemKey itemKey)
         {
-            return AppendCoreSid(string.Format("/subscribe?mode=unsubscribe&item={0}&type={1}",
+            return AppendCoreSid(string.Format("/api/subscribe?mode=unsubscribe&item={0}&type={1}",
                 itemKey.Id, itemKey.TypeId));
         }
 

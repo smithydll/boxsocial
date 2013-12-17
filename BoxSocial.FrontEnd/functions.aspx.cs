@@ -115,6 +115,8 @@ namespace BoxSocial.FrontEnd
                 userInfo.Add("location", user.Profile.Country);
                 userInfo.Add("l-location", "Location");
                 userInfo.Add("l-subscribe", (subscribed) ? "Unsubscribe" : "Subscribe");
+                userInfo.Add("id", user.ItemKey.Id.ToString());
+                userInfo.Add("type", user.ItemKey.TypeId.ToString());
 
                 core.Ajax.SendDictionary("contactCard", userInfo);
             }

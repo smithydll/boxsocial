@@ -2333,6 +2333,16 @@ namespace BoxSocial.Internals
             breadCrumbParts.Add(new string[] { "profile", "Profile" });
 
             page.User.ParseBreadCrumbs(breadCrumbParts);
+
+            if (Subscription.IsSubscribed(core, page.User.ItemKey))
+            {
+                core.Template.Parse("SUBSCRIBED", "TRUE");
+            }
+
+            core.Template.Parse("U_SUBSCRIBE", core.Hyperlink.BuildSubscribeUri(page.User.ItemKey));
+            core.Template.Parse("U_UNSUBSCRIBE", core.Hyperlink.BuildUnsubscribeUri(page.User.ItemKey));
+
+            core.Template.Parse("SUBSCRIBERS", core.Functions.LargeIntegerToString(page.User.Info.Subscribers));
         }
 
         public static void ShowFriends(object sender, ShowUPageEventArgs e)

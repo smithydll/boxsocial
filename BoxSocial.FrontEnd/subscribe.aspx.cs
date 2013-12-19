@@ -52,11 +52,11 @@ namespace BoxSocial.FrontEnd
                 core.Ajax.ShowMessage(isAjax, "notSignedIn", "Subscription Error", "You must be logged in to subscribe.");
             }
 
-            string mode = core.Http.Query["mode"];
+            string mode = core.Http["mode"];
             long itemId = core.Functions.RequestLong("item", 0);
             long itemTypeId = core.Functions.RequestLong("type", 0);
 			ItemKey itemKey = null;
-			
+
 			try
 			{
 				itemKey = new ItemKey(itemId, itemTypeId);
@@ -134,7 +134,7 @@ namespace BoxSocial.FrontEnd
                         {
                             if (isAjax)
                             {
-                                core.Ajax.SendStatus("subscriptionAccepted");
+                                core.Ajax.SendStatus("unsubscriptionAccepted");
                             }
                             else
                             {
@@ -148,15 +148,15 @@ namespace BoxSocial.FrontEnd
                         break;
                 }
             }
-            catch (InvalidItemException ex)
+            catch (InvalidItemException)
             {
                 core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
             }
-            catch (InvalidLikeException)
+            catch (InvalidSubscriptionException)
             {
                 core.Ajax.ShowMessage(isAjax, "invalidSubscription", "Invalid Subscription", "The subscription is not valid.");
             }
-            catch (AlreadyLikedException)
+            catch (AlreadySubscribedException)
             {
                 core.Ajax.ShowMessage(isAjax, "alreadySubscribed", "Already Subscribed", "You have already subscribe to this item, you cannot subscribe to it again");
             }

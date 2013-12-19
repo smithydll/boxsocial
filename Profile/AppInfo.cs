@@ -190,6 +190,16 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        [PageSlug("Subscribers")]
+        [Show("subscribers", AppPrimitives.Member)]
+        private void showSubscribers(Core core, object sender)
+        {
+            if (sender is UPage)
+            {
+                User.ShowSubscribers(sender, new ShowUPageEventArgs((UPage)sender));
+            }
+        }
+
         [Show("contacts/family", AppPrimitives.Member)]
         private void showFamily(Core core, object sender)
         {

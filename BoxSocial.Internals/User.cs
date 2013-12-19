@@ -2370,6 +2370,10 @@ namespace BoxSocial.Internals
             core.Template.Parse("SUBSCRIBERS", core.Functions.LargeIntegerToString(page.User.Info.Subscribers));
         }
 
+        public static void ShowSubscribers(object sender, ShowUPageEventArgs e)
+        {
+        }
+
         public static void ShowFriends(object sender, ShowUPageEventArgs e)
         {
             e.Template.SetTemplate("viewfriends.html");

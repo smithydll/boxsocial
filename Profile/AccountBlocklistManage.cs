@@ -161,6 +161,9 @@ namespace BoxSocial.Applications.Profile
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_block = ui.user_block + 1 WHERE ui.user_id = {0};",
                 LoggedInMember.UserId));
 
+            // also unsubscribe
+            Subscription.UnsubscribeFromItem(core, new ItemKey(blockId, ItemType.GetTypeId(typeof(User))));
+
             SetRedirectUri(BuildUri());
             core.Display.ShowMessage("Blocked Person", "You have blocked a person.");
         }

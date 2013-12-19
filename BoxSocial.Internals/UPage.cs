@@ -145,6 +145,9 @@ namespace BoxSocial.Internals
                 template.Parse("OWNER", "FALSE");
                 template.Parse("SELF", "FALSE");
             }
+
+            template.Parse("USER_ID", User.Id.ToString());
+            template.Parse("USER_TYPE_ID", User.TypeId.ToString());
         }
     }
 

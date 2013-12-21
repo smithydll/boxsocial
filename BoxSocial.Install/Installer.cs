@@ -1764,6 +1764,18 @@ namespace BoxSocial.Install
                 FileInfo fi = new FileInfo(file);
                 File.Copy(file, Path.Combine(tabletDir.FullName, fi.Name), true);
             }
+
+            // side load
+            if (Directory.Exists(Path.Combine("sideload", "templates")))
+            {
+                files = Directory.GetFiles(Path.Combine("sideload", "templates"));
+
+                foreach (string file in files)
+                {
+                    FileInfo fi = new FileInfo(file);
+                    File.Copy(file, Path.Combine(templatesDir.FullName, fi.Name), true);
+                }
+            }
         }
 
         private static void InstallGDK()

@@ -192,12 +192,16 @@ function SubscribeItem(id, type, unsubscribe) {
 function SubscribedItem(r, e, a) {
     var s = $(".subscribe-" + a['type'] + '-' + a['item']);
     var c = s.children("a");
-    if (s.toggleClass("subscribed").hasClass("subscribed")) {
-        c.text('Unsubscribe');
-        s.next('span').text(parseInt(s.next('span').eq(0).text()) + 1);
-    } else {
-        c.text('Subscribe');
-        s.next('span').text(parseInt(s.next('span').eq(0).text()) - 1);
+    var t = s.next('span').eq(0).text();
+    var i = parseInt(t);
+    if (i == t) { // If the number ends in k or M then don't bother to increment/decrement
+        if (s.toggleClass("subscribed").hasClass("subscribed")) {
+            c.text('Unsubscribe');
+            s.next('span').text(i + 1);
+        } else {
+            c.text('Subscribe');
+            s.next('span').text(i - 1);
+        }
     }
 }
 

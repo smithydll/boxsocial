@@ -117,14 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CC" xml:space="preserve">
+    <value>Cc</value>
+  </data>
   <data name="COMPOSE_MESSAGE" xml:space="preserve">
     <value>Compose Message</value>
   </data>
   <data name="FORWARD" xml:space="preserve">
     <value>Forward</value>
   </data>
+  <data name="MESSAGE" xml:space="preserve">
+    <value>Message</value>
+  </data>
   <data name="NO_MAIL_MESSAGES" xml:space="preserve">
     <value>This folder has no mail messages.</value>
+  </data>
+  <data name="RECIPIENT" xml:space="preserve">
+    <value>Recipient</value>
+  </data>
+  <data name="RECIPIENTS" xml:space="preserve">
+    <value>Recipients</value>
   </data>
   <data name="SAVE_DRAFT" xml:space="preserve">
     <value>Save Draft</value>
@@ -134,5 +146,11 @@
   </data>
   <data name="SENDER" xml:space="preserve">
     <value>Sender</value>
+  </data>
+  <data name="SUBJECT" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="TO" xml:space="preserve">
+    <value>To</value>
   </data>
 </root>

@@ -2372,6 +2372,7 @@ namespace BoxSocial.Internals
 
         public static void ShowSubscribers(object sender, ShowUPageEventArgs e)
         {
+            e.Template.SetTemplate("viewsubscribers.html");
         }
 
         public static void ShowFriends(object sender, ShowUPageEventArgs e)

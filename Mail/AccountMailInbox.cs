@@ -173,10 +173,35 @@ namespace BoxSocial.Applications.Mail
 
                 messageVariableCollection.Parse("SUBJECT", message.Subject);
                 messageVariableCollection.Parse("URI", message.Uri);
-                if (message.SenderId > 0)
+                switch (mailFolder.FolderType)
                 {
-                    messageVariableCollection.Parse("SENDER", message.Sender.DisplayName);
-                    messageVariableCollection.Parse("U_SENDER", message.Sender.Uri);
+                    case FolderTypes.Inbox:
+                    case FolderTypes.Custom:
+                        // INBOX show sender
+                        if (message.SenderId > 0)
+                        {
+                            messageVariableCollection.Parse("SENDER", message.Sender.DisplayName);
+                            messageVariableCollection.Parse("U_SENDER", message.Sender.Uri);
+                        }
+                        template.Parse("INBOX", "TRUE");
+                        break;
+                    case FolderTypes.Draft:
+                    case FolderTypes.Outbox:
+                    case FolderTypes.SentItems:
+                        List<MessageRecipient> recipients = message.GetRecipients();
+                        int i = 0;
+                        while (recipients.Count > i)
+                        {
+                            if (recipients[i].RecipientType == RecipientType.To)
+                            {
+                                core.PrimitiveCache.LoadUserProfile(recipients[i].UserId);
+                                messageVariableCollection.Parse("SENDER", core.PrimitiveCache[recipients[i].UserId].DisplayName);
+                                messageVariableCollection.Parse("U_SENDER", core.PrimitiveCache[recipients[i].UserId].Uri);
+                                break;
+                            }
+                            i++;
+                        }
+                        break;
                 }
                 messageVariableCollection.Parse("DATE", core.Tz.DateTimeToString(message.GetSentDate(core.Tz)));
             }

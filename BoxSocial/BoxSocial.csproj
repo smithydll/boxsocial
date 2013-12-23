@@ -240,6 +240,7 @@
     <Content Include="templates\viewmusicians.html" />
     <Content Include="templates\viewnetworks.html" />
     <Content Include="templates\viewprofile.html" />
+    <Content Include="templates\viewsubscribers.html" />
     <Content Include="templates\view_contact.html" />
     <Content Include="templates\view_contacts.html" />
     <Content Include="tos.aspx" />

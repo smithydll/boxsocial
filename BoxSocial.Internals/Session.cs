@@ -553,6 +553,8 @@ namespace BoxSocial.Internals
             if (!String.IsNullOrEmpty(IsBotUserAgent(Request.UserAgent)))
             {
                 signInState = SessionSignInState.Bot;
+                core.Hyperlink.SidUrls = false;
+                return sessionId;
             }
 
             if (record == null)

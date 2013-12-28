@@ -24,10 +24,10 @@ function hideSideBar() {
         $('#pages-menu').animate({ right: -250 }, function () { $(this).hide(); });
     }
     if ($('#post-menu').is(":visible")) {
-        if ($('#post-menu').is(':visible')) $('#post-menu').animate({ bottom: '-64pt' }, function () { $(this).hide(); });
+        if ($('#post-menu').is(':visible')) $('#post-menu').animate({ bottom: '-64pt' }, function () { $(this).hide(); }).removeClass('iosfixed');
     }
     if ($('#search-menu').is(":visible")) {
-        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); });
+        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); }).removeClass('iosfixed');
     }
 }
 
@@ -35,7 +35,7 @@ function showPostBar() {
     if (!$('#post-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
-        $('#post-menu').show().css('bottom', 0);
+        $('#post-menu').addClass('iosfixed').show().css('bottom', 0);
         $('#message').outerWidth($('#post-menu').width() - $('#status-submit').outerWidth(true));
         $('#post-menu').trigger('click');
     }
@@ -46,7 +46,7 @@ function showSearchBar() {
     if (!$('#search-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
-        $('#search-menu').show().css('bottom', 0);
+        $('#search-menu').addClass('iosfixed').show().css('bottom', 0);
         $('#search-text').outerWidth($('#search-menu').width() - $('#search-menu input[type="submit"]').outerWidth(true));
         $('#search-menu').trigger('click');
     }

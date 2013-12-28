@@ -178,6 +178,12 @@ namespace BoxSocial.Applications.Gallery
         private bool simplePermissions;
 
         /// <summary>
+        /// Mark the gallery as a system gallery, it cannot be deleted as long as an application is attached to it
+        /// </summary>
+        [DataField("gallery_application")]
+        private long galleryApplication;
+
+        /// <summary>
         /// Parent Tree
         /// </summary>
         private ParentTree parentTree;

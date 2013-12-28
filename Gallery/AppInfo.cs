@@ -313,6 +313,11 @@ namespace BoxSocial.Applications.Gallery
 
         void PostContent(HookEventArgs e)
         {
+            if (e.core.IsMobile)
+            {
+                return;
+            }
+
             Template template = new Template(Assembly.GetExecutingAssembly(), "postphoto");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);

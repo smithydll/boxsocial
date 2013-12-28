@@ -123,6 +123,7 @@
     <Compile Include="ContentPreviewCache.cs" />
     <Compile Include="ControlPanelModule.cs" />
     <Compile Include="ControlPanelSubModule.cs" />
+    <Compile Include="ReferralKey.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Country.cs" />
     <Compile Include="CreatePermissionAttribute.cs" />

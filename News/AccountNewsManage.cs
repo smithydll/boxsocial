@@ -68,7 +68,16 @@ namespace BoxSocial.Applications.News
         {
             SetTemplate("account_news_manage");
 
-            News news = new News(core, Owner);
+            News news = null;
+            try
+            {
+                news = new News(core, Owner);
+            }
+            catch (InvalidNewsException)
+            {
+                news = News.Create(core, Owner, Owner.TitleNameOwnership + " News", 10);
+            }
+
             List<Article> articles = news.GetArticles(core.TopLevelPageNumber, 25);
 
             foreach (Article article in articles)

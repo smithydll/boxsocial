@@ -537,6 +537,14 @@ namespace BoxSocial.Internals
                 return core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/" + shortUrlKey));
             }
         }
+
+        public string UniqueString
+        {
+            get
+            {
+                return shortUrlKey;
+            }
+        }
     }
 
     public class InvalidIteminfoException : Exception

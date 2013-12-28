@@ -14,10 +14,11 @@
 	<!-- ENDIF -->
     <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<!-- IF REDIRECT_URI -->
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->
-    <script type="text/javascript" src="/scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript">
 	<!--
 	    var sid = '{SID}';
@@ -29,12 +30,12 @@
 	    });
 	-->
 	</script>
-    <script type="text/javascript" src="/scripts/jgestures.min.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/jgestures.min.js"></script>
 	<!-- BEGIN javascript_list -->
 	<script type="text/javascript" src="{javascript_list.URI}"></script>
 	<!-- END javascript_list -->
-    <script type="text/javascript" src="/scripts/ajax.js"></script>
-    <script type="text/javascript" src="/scripts/ajax.mobile.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.mobile.js"></script>
 </head>
 <body>
     <!-- IF PAGE_LIST -->
@@ -45,7 +46,7 @@
         </ul>
     </div>
     <!-- ENDIF -->
-    <div id="search-menu" class="side-menu">
+    <div id="search-menu" class="side-menu bottom-menu">
         <h2>Search</h2>
 		<form action="{S_SEARCH}" method="get">
 			<fieldset>
@@ -54,7 +55,7 @@
 		</form>
     </div>
         <!-- IF LOGGED_IN -->
-    <div id="post-menu" class="side-menu">
+    <div id="post-menu" class="side-menu bottom-menu">
         <h2>Post status</h2>
 			<form action="/account" method="post" class="status-form" onsubmit="SendStatus(); hideSideBar(); return false;">
 			    <textarea rows="2" cols="50" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"></textarea><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />

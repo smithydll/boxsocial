@@ -19,9 +19,12 @@
  */
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Security;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
@@ -77,6 +80,70 @@ namespace BoxSocial.Applications.Profile
                 {
                     template.Parse("S_CANNOT_INVITE", "TRUE");
                 }
+                else
+                {
+                    template.Parse("S_CAN_INVITE", "TRUE");
+                }
+
+                string key = string.Empty;
+
+                SelectQuery query = new SelectQuery(typeof(InviteKey));
+                query.AddCondition("referral_user_id", core.LoggedInMemberId);
+
+                DataTable referralDataTable = core.Db.Query(query);
+
+                if (referralDataTable.Rows.Count > 0)
+                {
+                    ReferralKey referralKey = new ReferralKey(core, referralDataTable.Rows[0]);
+                    key = referralKey.Key;
+                }
+                else
+                {
+                    byte[] encryptBytes = { 0x44, 0x33, 0x22, 0x11, 0x00, 0x99, 0x88, 0x77 };
+                    string encryptKey = "bxsclusr";
+
+                    try
+                    {
+                        ItemKey itemKey = core.LoggedInMemberItemKey;
+
+                        // Seed the user ID with a random number so the referral key is not predictable
+                        Random rand = new Random();
+                        int seed = rand.Next(0xFFFF);
+
+                        byte[] bytes = new byte[] { 
+                        (byte)(seed & 0x00FF), 
+                        (byte)((seed & 0xFF00 >> 8)), 
+                        (byte)(itemKey.Id & 0x00FF00000000 >> 32), 
+                        (byte)(itemKey.Id & 0x0000FF000000 >> 24), 
+                        (byte)(itemKey.Id & 0x000000FF0000 >> 16), 
+                        (byte)(itemKey.Id & 0x00000000FF00 >> 8), 
+                        (byte)(itemKey.Id & 0x0000000000FF) };
+
+                        byte[] keyBytes = Encoding.UTF8.GetBytes(encryptKey);
+                        DESCryptoServiceProvider des = new DESCryptoServiceProvider();
+                        MemoryStream ms = new MemoryStream();
+                        CryptoStream cs = new CryptoStream(ms, des.CreateEncryptor(keyBytes, encryptBytes), CryptoStreamMode.Write);
+                        cs.Write(bytes, 0, bytes.Length);
+                        cs.FlushFinalBlock();
+
+                        bytes = ms.ToArray();
+
+                        string shortKey = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
+                    }
+                    catch
+                    {
+                    }
+
+                    // Make sure that the referral key exists in the database
+                    InsertQuery iquery = new InsertQuery(typeof(ReferralKey));
+                    iquery.AddField("referral_key", key);
+                    iquery.AddField("referral_user_id", core.LoggedInMemberId);
+                    iquery.AddField("referral_time_ut", UnixTime.UnixTimeStamp());
+
+                    core.Db.Query(iquery);
+                }
+
+                template.Parse("U_REFERRAL", core.Hyperlink.StripSid(core.Hyperlink.AppendCoreSid("/register?refer=" + key)));
             }
 
             Save(new EventHandler(AccountFriendInvite_Send));

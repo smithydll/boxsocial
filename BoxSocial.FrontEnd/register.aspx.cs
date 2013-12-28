@@ -161,13 +161,15 @@ namespace BoxSocial.FrontEnd
             {
                 long groupId = core.Functions.FormLong("gid", core.Functions.RequestLong("gid", 0));
                 string emailKey = core.Http.Query["key"];
+                string referralKey = core.Http.Query["refer"];
                 bool continueSignup = false;
 
                 Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
+                Dictionary<string, ReferralKey> referrals = ReferralKey.GetReferrals(core, referralKey);
 
                 if (core.Settings.SignupMode == "invite")
                 {
-                    if (keys.Count == 0)
+                    if (keys.Count == 0 && referrals.Count == 0)
                     {
                         continueSignup = false;
                     }
@@ -189,6 +191,11 @@ namespace BoxSocial.FrontEnd
                     if (!string.IsNullOrEmpty(emailKey))
                     {
                         template.Parse("EMAIL_KEY", emailKey);
+                    }
+
+                    if (!string.IsNullOrEmpty(referralKey))
+                    {
+                        template.Parse("REFERRAL_KEY", referralKey);
                     }
 
                     if (groupId > 0)
@@ -222,14 +229,16 @@ namespace BoxSocial.FrontEnd
             {
                 long groupId = core.Functions.FormLong("gid", core.Functions.RequestLong("gid", 0));
                 string emailKey = core.Http.Form["key"];
+                string referralKey = core.Http.Form["refer"];
                 bool continueSignup = false;
                 List<long> invitedById = new List<long>();
 
                 Dictionary<string, InviteKey> keys = InviteKey.GetInvites(core, emailKey);
+                Dictionary<string, ReferralKey> referrals = ReferralKey.GetReferrals(core, referralKey);
 
                 if (core.Settings.SignupMode == "invite")
                 {
-                    if (keys.Count == 0)
+                    if (keys.Count == 0 && referrals.Count == 0)
                     {
                         continueSignup = false;
                     }
@@ -259,6 +268,11 @@ namespace BoxSocial.FrontEnd
                     if (!string.IsNullOrEmpty(emailKey))
                     {
                         template.Parse("EMAIL_KEY", emailKey);
+                    }
+
+                    if (!string.IsNullOrEmpty(referralKey))
+                    {
+                        template.Parse("REFERRAL_KEY", referralKey);
                     }
 
                     DataTable confirmTable = db.Query(string.Format("SELECT confirm_code FROM confirm WHERE confirm_type = 1 AND session_id = '{0}' LIMIT 1",

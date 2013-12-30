@@ -70,7 +70,7 @@ namespace BoxSocial.Internals
         {
             Dictionary<string, ReferralKey> keys = new Dictionary<string, ReferralKey>(StringComparer.Ordinal);
 
-            SelectQuery query = new SelectQuery(typeof(InviteKey));
+            SelectQuery query = new SelectQuery(typeof(ReferralKey));
             query.AddCondition("referral_key", key);
 
             DataTable inviteDataTable = core.Db.Query(query);

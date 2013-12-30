@@ -97,7 +97,7 @@ namespace BoxSocial.Applications.Gallery
                     pg = new Gallery(core, Owner, parentGalleryId);
 
                     template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", pg.Id));
-                    template.Parse("U_UPLOAD_PHOTO", BuildUri("upload", pg.Id));
+                    template.Parse("U_UPLOAD_PHOTO", BuildUri("upload", new Dictionary<string, string> { { "gallery-id", pg.Id.ToString() } }));
                     template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", pg.Id, ItemType.GetTypeId(typeof(Gallery))), true));
 
                     galleryParentPath = pg.FullPath;

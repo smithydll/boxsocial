@@ -1128,7 +1128,10 @@ namespace BoxSocial.Applications.Gallery
             slug = GalleryItem.GetSlugFromFileName(fileName, slug);
             slug = Functions.TrimStringWithExtension(slug);
 
-            GalleryItem.EnsureGallerySlugUnique(core, parent, owner, ref slug);
+            if (slug != "image.jpg")
+            {
+                GalleryItem.EnsureGallerySlugUnique(core, parent, owner, ref slug);
+            }
 
             InsertQuery iQuery = new InsertQuery("gallery_items");
             iQuery.AddField("gallery_item_uri", slug);
@@ -1167,6 +1170,17 @@ namespace BoxSocial.Applications.Gallery
 
             if (itemId >= 0)
             {
+                // ios uploads anonymously
+                if (slug == "image.jpg")
+                {
+                    slug = string.Format("image-{0}.jpg", itemId);
+                    UpdateQuery iosQuery = new UpdateQuery("gallery_items");
+                    iosQuery.AddField("gallery_item_uri", slug);
+                    iosQuery.AddCondition("gallery_item_id", itemId);
+
+                    db.Query(iosQuery);
+                }
+
                 //owner.UpdateGalleryInfo(parent, itemId, 1, (long)bytes);
                 //if (owner is User)
                 {

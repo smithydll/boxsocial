@@ -87,7 +87,7 @@ namespace BoxSocial.Applications.Profile
 
                 string key = string.Empty;
 
-                SelectQuery query = new SelectQuery(typeof(InviteKey));
+                SelectQuery query = new SelectQuery(typeof(ReferralKey));
                 query.AddCondition("referral_user_id", core.LoggedInMemberId);
 
                 DataTable referralDataTable = core.Db.Query(query);
@@ -128,7 +128,7 @@ namespace BoxSocial.Applications.Profile
 
                         bytes = ms.ToArray();
 
-                        string shortKey = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
+                        key = Convert.ToBase64String(bytes).Replace("+", "-").Replace("/", "_").Trim(new char[] { '=' });
                     }
                     catch
                     {
@@ -143,7 +143,7 @@ namespace BoxSocial.Applications.Profile
                     core.Db.Query(iquery);
                 }
 
-                template.Parse("U_REFERRAL", core.Hyperlink.StripSid(core.Hyperlink.AppendCoreSid("/register?refer=" + key)));
+                template.Parse("U_REFERRAL", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/register?refer=" + key)));
             }
 
             Save(new EventHandler(AccountFriendInvite_Send));

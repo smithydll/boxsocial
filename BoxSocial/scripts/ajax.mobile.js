@@ -24,19 +24,19 @@ function hideSideBar() {
         $('#pages-menu').animate({ right: -250 }, function () { $(this).hide(); });
     }
     if ($('#post-menu').is(":visible")) {
-        if ($('#post-menu').is(':visible')) $('#post-menu').animate({ bottom: '-64pt' }, function () { $(this).hide(); }).removeClass('iosfixed');
+        $('#post-menu').hide();
     }
     if ($('#search-menu').is(":visible")) {
-        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); }).removeClass('iosfixed');
+        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); });
     }
+    return false;
 }
 
 function showPostBar() {
     if (!$('#post-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
-        $('#post-menu').addClass('iosfixed').show().css('bottom', 0);
-        $('#message').outerWidth($('#post-menu').width() - $('#status-submit').outerWidth(true));
+        $('#post-menu').show();
         $('#post-menu').trigger('click');
     }
     return false;
@@ -46,19 +46,25 @@ function showSearchBar() {
     if (!$('#search-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
-        $('#search-menu').addClass('iosfixed').show().css('bottom', 0);
+        $('#search-menu').show().css('bottom', 0);
         $('#search-text').outerWidth($('#search-menu').width() - $('#search-menu input[type="submit"]').outerWidth(true));
         $('#search-menu').trigger('click');
     }
     return false;
 }
 
+var currentScrollPosition = 0;
+
 $(document).ready(function () {
     $('#post-menu').click(function () {
+        currentScrollPosition = $(document).scrollTop();
         $("#message").focus();
+        $(document).scrollTop(currentScrollPosition);
     });
     $('#search-menu').click(function () {
+        currentScrollPosition = $(document).scrollTop();
         $("#search-text").focus();
+        $(document).scrollTop(currentScrollPosition);
     });
 
     if (parent.location.hash == '#boxsocial-menu') {

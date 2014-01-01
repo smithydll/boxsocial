@@ -874,19 +874,21 @@ blockquote {
 }
 
 #post-menu {
-    position: fixed;
+    position: absolute;
     left: 0;
     right: 0;
-    bottom: -200px;
-    z-index: 1000;
+    z-index: 100000;
     overflow: hidden;
     display: none;
     text-align: left;
     font-size: 200%;
+    top: 0px;
+    bottom: 0px;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 #message, #status-submit {
-    height: 64pt;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
@@ -1170,6 +1172,26 @@ div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui
 	padding: 0;
 }
 
-#search-menu.iosfixed, #post-menu.iosfixed {
+.iosfixed #search-menu, .iosfixed #post-menu {
     position: absolute;
+}
+
+div.action-bar {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #eeeeee;
+    height: 32pt;
+}
+
+div.action-bar button, div.action-bar input {
+    border: none;
+    color: #ff9955;
+    background: transparent;
+    float: left;
+    font-size: 12pt;
+    margin: 2pt;
+    padding: 8pt 16px;
+}
+
+div.action-bar input {
+    font-weight: bold;
 }

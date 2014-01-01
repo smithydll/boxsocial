@@ -273,6 +273,10 @@ namespace BoxSocial.Applications.Profile
 
             template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
 
+            PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", e.Owner.ItemKey);
+
+            template.Parse("S_STATUS_PERMISSIONS", permissionSelectBox);
+
             e.core.AddPostPanel("Status", template);
         }
 

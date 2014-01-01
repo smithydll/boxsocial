@@ -12,7 +12,7 @@
 	<!-- IF CANONICAL_URI -->
 	<link rel="canonical" href="{CANONICAL_URI}" />
 	<!-- ENDIF -->
-    <meta name="viewport" content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 	<!-- IF REDIRECT_URI -->
@@ -58,7 +58,14 @@
     <div id="post-menu" class="side-menu bottom-menu">
         <h2>Post status</h2>
 			<form action="/account" method="post" class="status-form" onsubmit="SendStatus(); hideSideBar(); return false;">
-			    <textarea rows="2" cols="50" id="message" name="message" style="border: 1px solid #082; border-right: none; outline: none;"></textarea><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+                <div class="action-bar">
+                    <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
+                    <input type="submit" id="status-submit" value="Post" style="float: right;" />
+                </div>
+                <!--div class="permission-group-droplist">
+                    <span class="group">Public</span>
+                </div-->
+			    <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
 			    <input type="hidden" name="module" value="profile" />
 			    <input type="hidden" name="sub" value="status" />
 			</form>

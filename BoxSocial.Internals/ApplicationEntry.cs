@@ -1050,16 +1050,23 @@ namespace BoxSocial.Internals
 
                         if (publicItem)
                         {
-                            description = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
-                            Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                            long tweetId = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(description) ? description + " " : string.Empty) + info.ShareUri);
+                            try
+                            {
+                                description = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
+                                Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                                long tweetId = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(description) ? description + " " : string.Empty) + info.ShareUri);
 
-                            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-                            uQuery.AddField("info_tweet_id", tweetId);
-                            uQuery.AddCondition("info_item_id", sharedItem.Id);
-                            uQuery.AddCondition("info_item_type_id", sharedItem.TypeId);
+                                UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+                                uQuery.AddField("info_tweet_id", tweetId);
+                                uQuery.AddCondition("info_item_id", sharedItem.Id);
+                                uQuery.AddCondition("info_item_type_id", sharedItem.TypeId);
 
-                            core.Db.Query(uQuery);
+                                core.Db.Query(uQuery);
+                            }
+                            catch (System.Net.WebException)
+                            {
+                                // If Twitter is overloaded then we can't update twitter
+                            }
                         }
                     }
                 }

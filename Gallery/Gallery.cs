@@ -2340,6 +2340,11 @@ namespace BoxSocial.Applications.Gallery
                 {
                     GalleryItem item = new GalleryItem(core, Owner, itemDataTable.Rows[0]);
 
+                    if (!string.IsNullOrEmpty(item.ItemAbstract))
+                    {
+                        returnValue += item.ItemAbstract + "\r\n";
+                    }
+
                     returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",
                             item.Uri, item.FullPath, item.StoragePath, item.ItemWidth, item.ItemHeight);
                 }

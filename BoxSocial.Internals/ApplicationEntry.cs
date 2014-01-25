@@ -976,8 +976,8 @@ namespace BoxSocial.Internals
             // TODO: change this
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 20)
             {
-                PrimitiveApplicationInfo ownerInfo = new PrimitiveApplicationInfo(core, owner, Id);
-                return ownerInfo.EmailNotifications;
+                // this used to return true only if e-mail notifications which is should be checked separately
+                return true;
             }
             return false;
         }

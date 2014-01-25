@@ -313,19 +313,6 @@ namespace BoxSocial.Applications.Gallery
 
         void PostContent(HookEventArgs e)
         {
-            if (e.core.IsMobile)
-            {
-                return;
-            }
-
-            Template template = new Template(Assembly.GetExecutingAssembly(), "postphoto");
-            template.Medium = core.Template.Medium;
-            template.SetProse(core.Prose);
-
-            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
-            template.Parse("U_ACCOUNT", formSubmitUri);
-            template.Parse("S_ACCOUNT", formSubmitUri);
-
             VariableCollection styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
             styleSheetVariableCollection.Parse("URI", @"/scripts/load-image.min.js");
             styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
@@ -339,6 +326,19 @@ namespace BoxSocial.Applications.Gallery
             styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.fileupload-process.js");
             styleSheetVariableCollection = core.Template.CreateChild("javascript_list");
             styleSheetVariableCollection.Parse("URI", @"/scripts/jquery.fileupload-image.js");
+
+            if (e.core.IsMobile)
+            {
+                return;
+            }
+
+            Template template = new Template(Assembly.GetExecutingAssembly(), "postphoto");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
+            template.Parse("U_ACCOUNT", formSubmitUri);
+            template.Parse("S_ACCOUNT", formSubmitUri);
 
             template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
 

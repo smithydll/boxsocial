@@ -1195,3 +1195,27 @@ div.action-bar button, div.action-bar input {
 div.action-bar input {
     font-weight: bold;
 }
+
+input#fileupload {
+    display: none;
+}
+
+#fileupload-label {
+    border-radius: 4px;
+    display: inline-block;
+    margin: 0 12px;
+    width: 16px;
+    height: 16px;
+    border: 1px solid #eeeeee;
+    background-color: #f7f7f7;
+    padding: 4px 4px;
+}
+
+#fileupload-label span {
+    background-image: url(images/ui-icons_ffaa00_256x240.png);
+    background-repeat: no-repeat;
+    background-position: -208px -128px;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}

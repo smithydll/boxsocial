@@ -25,6 +25,8 @@ function hideSideBar() {
     }
     if ($('#post-menu').is(":visible")) {
         $('#post-menu').hide();
+        $('#post-form').trigger("reset");
+        checkPhotoUpload();
     }
     if ($('#search-menu').is(":visible")) {
         if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); });
@@ -81,3 +83,67 @@ $(document).ready(function () {
         $('#boxsocial-menu').animate({ left: -200 });
     });
 });*/
+
+function checkPhotoUpload() {
+    if ($("#fileupload").val() == '') {
+        $("#form-module").val('profile');
+        $("#form-sub").val('status');
+        $("#message").attr('name', 'message');
+    } else {
+        $("#form-module").val('galleries');
+        $("#form-sub").val('upload');
+        $("#message").attr('name', 'description');
+    }
+    return false;
+}
+
+var filesList = [];
+
+function submitPost() {
+    var status = false;
+    switch ($("#form-module").val()) {
+        case 'profile':
+            status = SendStatus();
+            break;
+        case 'galleries':
+            var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
+                var r = ProcessAjaxResult(result);
+                if (r != null) {
+                    SentAction(r);
+                    filesList = [];
+                    $('#upload canvas').remove();
+                }
+                $("#form-module :input").attr("disabled", false);
+            });
+            $("#form-module :input").attr("disabled", true);
+            break;
+    }
+    hideSideBar();
+    return status;
+}
+
+$(function () {
+    /*.hide()*/
+    $('#fileupload').fileupload({
+        disableImageResize: /Android(?!.*Chrome)|Opera/
+            .test(window.navigator.userAgent),
+        imageMaxWidth: 2560,
+        imageMaxHeight: 2560,
+        previewMaxWidth: 200,
+        previewMaxHeight: 300,
+        previewCrop: false,
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        autoUpload: false
+    }).on('fileuploadadd', function (e, data) {
+        $.each(data.files, function (index, file) {
+            filesList.push(file);
+        });
+    }).on('fileuploadprocessalways', function (e, data) {
+        var file = data.files[data.index];
+        if (file.preview) {
+            $("#upload").append(file.preview);
+        }
+    });
+
+    $("#form-module").append('<input type="hidden" name="ajax" value="true" />');
+});

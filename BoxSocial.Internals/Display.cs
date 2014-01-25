@@ -876,6 +876,12 @@ namespace BoxSocial.Internals
             Template template = core.Template;
             SessionState session = page.session;
 
+            string noHeader = core.Http["no-header"];
+            if (noHeader == null || noHeader.ToLower() != "true")
+            {
+                template.Parse("S_HEADER", "TRUE");
+            }
+
             template.Parse("TITLE", page.PageTitle); // the set page title function sanitises
             template.Parse("HEADING", page.Core.Settings.SiteTitle);
             template.Parse("SITE_TITLE", page.Core.Settings.SiteTitle);
@@ -940,6 +946,9 @@ namespace BoxSocial.Internals
                     template.Parse("USER_ICON", session.LoggedInMember.UserIcon);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                     template.Parse("U_ACCOUNT", core.Hyperlink.BuildAccountUri());
+
+                    string formSubmitUri = core.Hyperlink.AppendSid(session.LoggedInMember.AccountUriStub, true);
+                    template.Parse("S_ACCOUNT", formSubmitUri);
 
                     template.Parse("U_UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
 

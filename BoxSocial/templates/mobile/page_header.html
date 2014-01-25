@@ -19,6 +19,7 @@
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->
     <script type="text/javascript" src="{U_STATIC}/scripts/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/jquery-ui-1.10.3.boxsocial.min.js"></script>
 	<script type="text/javascript">
 	<!--
 	    var sid = '{SID}';
@@ -57,7 +58,7 @@
         <!-- IF LOGGED_IN -->
     <div id="post-menu" class="side-menu bottom-menu">
         <h2>Post status</h2>
-			<form action="/account" method="post" class="status-form" onsubmit="SendStatus(); hideSideBar(); return false;">
+			<form action="{S_ACCOUNT}" method="post" id="post-form" class="status-form" onsubmit="submitPost(); return false;" enctype="multipart/form-data">
                 <div class="action-bar">
                     <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
                     <input type="submit" id="status-submit" value="Post" style="float: right;" />
@@ -66,8 +67,17 @@
                     <span class="group">Public</span>
                 </div-->
 			    <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
-			    <input type="hidden" name="module" value="profile" />
-			    <input type="hidden" name="sub" value="status" />
+                <div id="post-type">
+                    <label id="fileupload-label" for="fileupload"><span>&nbsp;</span></label><input id="fileupload" type="file" name="photo-files[]" onchange="checkPhotoUpload();" />
+                </div>
+                <div id="upload">
+                </div>
+			    <input type="hidden" id="form-module" name="module" value="profile" />
+			    <input type="hidden" id="form-sub" name="sub" value="status" />
+                <input type="hidden" name="save" value="Upload" />
+                <input type="hidden" name="album" value="create" />
+                <input type="hidden" name="publish-feed" value="checked" />
+                <input type="hidden" name="gallery-id" value="-1" />
 			</form>
     </div>
         <!-- ENDIF -->

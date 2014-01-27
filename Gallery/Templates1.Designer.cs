@@ -198,10 +198,10 @@ namespace BoxSocial.Applications.Gallery {
         ///			&lt;dt&gt;&lt;label for=&quot;title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;photo-file&quot;&gt;Select File&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-file&quot; /&gt;&lt;/dd&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-files[]&quot; multiple=&quot;multiple&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;description&quot;&gt;Description&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;
-        ///				&lt;textarea id=&quot;descr [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_galleries_upload {
             get {
@@ -231,7 +231,44 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to     &lt;li&gt;
+        ///          &lt;div class=&quot;gallery-item&quot; style=&quot;text-align: center;&quot;&gt;
+        ///            &lt;span class=&quot;photo-canvas&quot; style=&quot;display: inline-block; margin: auto; position: relative;&quot;&gt;
+        ///            &lt;span class=&quot;gallery-title&quot;&gt;
+        ///            &lt;h3&gt;
+        ///                &lt;!-- IF photo_list.TITLE --&gt;
+        ///                &lt;a class=&quot;photo-link&quot; href=&quot;{photo_list.PHOTO_URI}&quot; alt=&quot;{photo_list.TITLE}&quot;&gt;{photo_list.TITLE}&lt;/a&gt;
+        ///                &lt;!-- ELSE --&gt;
+        ///                &amp;nbsp;
+        ///                &lt;!-- ENDIF --&gt;
+        ///            &lt;/h3&gt;
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string pane_photo {
+            get {
+                return ResourceManager.GetString("pane_photo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to   &lt;script type=&quot;text/javascript&quot;&gt;
+        ///      $(function () {
+        ///          $(&quot;#album&quot;).buttonset();
+        ///          $(&quot;.album-tab&quot;).hide();
+        ///          $(&quot;#album-tab-0&quot;).show();
+        ///      });
+        ///
+        ///      function switchAlbum(i) {
+        ///          $(&quot;.album-tab&quot;).hide();
+        ///          $(&quot;#album-tab-&quot; + i).show();
+        ///          return false;
+        ///      }
+        ///
+        ///      $(function () {
+        ///          var filesList = [];
+        ///          $(&apos;#fileupload&apos;).hide().fileupload({
+        ///              dropZone: $(&quot;#upload&quot;),
+        ///              disableImageResize: /Android(?!.*C [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string postphoto {
             get {

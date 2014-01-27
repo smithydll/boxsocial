@@ -25,6 +25,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1682,6 +1683,12 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="e"></param>
         public static void Show(object sender, ShowPPageEventArgs e)
         {
+            if (e.Core.IsAjax)
+            {
+                ShowMore(sender, e);
+                return;
+            }
+
             e.Template.SetTemplate("Gallery", "viewgallery");
 
             /*GallerySettings settings;
@@ -1860,6 +1867,10 @@ namespace BoxSocial.Applications.Gallery
                 }
             }
 
+            bool moreContent = false;
+            long lastId = 0;
+            bool first = true;
+
             long galleryComments = 0;
             if (gallery.Items > 0)
             {
@@ -1870,6 +1881,12 @@ namespace BoxSocial.Applications.Gallery
                 int i = 0;
                 foreach (GalleryItem galleryItem in galleryItems)
                 {
+                    if (first)
+                    {
+                        first = false;
+                        e.Template.Parse("NEWEST_ID", galleryItem.Id.ToString());
+                    }
+
                     VariableCollection galleryVariableCollection = e.Template.CreateChild("photo_list");
 
                     galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
@@ -1924,6 +1941,7 @@ namespace BoxSocial.Applications.Gallery
                             break;
                     }
 
+                    lastId = galleryItem.Id;
                     galleryComments += galleryItem.Comments;
                     i++;
                 }
@@ -1934,6 +1952,13 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 e.Core.Display.ParsePagination(Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath), 0, 12, gallery.Items);
+
+                if (e.Core.TopLevelPageNumber * 12 < gallery.Items)
+                {
+                    moreContent = true;
+                }
+
+                e.Template.Parse("U_NEXT_PAGE", Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath) + "?p=" + (e.Core.TopLevelPageNumber + 1) + "&o=" + lastId);
             }
 
             if (gallery.Id > 0)
@@ -1952,6 +1977,117 @@ namespace BoxSocial.Applications.Gallery
             e.Template.Parse("COMMENTS", gallery.Comments.ToString());
             e.Template.Parse("L_COMMENTS", string.Format("{0} Comments in gallery", galleryComments));
             e.Template.Parse("U_COMMENTS", e.Core.Hyperlink.BuildGalleryCommentsUri(e.Page.Owner, galleryPath));
+        }
+
+        public static void ShowMore(object sender, ShowPPageEventArgs e)
+        {
+            char[] trimStartChars = { '.', '/' };
+
+            string galleryPath = e.Slug;
+
+            if (galleryPath != null)
+            {
+                galleryPath = galleryPath.TrimEnd('/').TrimStart(trimStartChars);
+            }
+            else
+            {
+                galleryPath = "";
+            }
+
+            Gallery gallery;
+            if (galleryPath != "")
+            {
+                try
+                {
+                    gallery = new Gallery(e.Core, e.Page.Owner, galleryPath);
+                }
+                catch (InvalidGalleryException)
+                {
+                    return;
+                }
+            }
+            else
+            {
+                gallery = new Gallery(e.Core, e.Page.Owner);
+            }
+
+            Template template = new Template(Assembly.GetExecutingAssembly(), "pane_photo");
+            template.Medium = e.Core.Template.Medium;
+            template.SetProse(e.Core.Prose);
+
+            bool moreContent = false;
+            long lastId = 0;
+
+            List<GalleryItem> galleryItems = gallery.GetItems(e.Core, e.Page.TopLevelPageNumber, 12, e.Page.TopLevelPageOffset);
+
+            int i = 0;
+            foreach (GalleryItem galleryItem in galleryItems)
+            {
+                VariableCollection galleryVariableCollection = template.CreateChild("photo_list");
+
+                galleryVariableCollection.Parse("TITLE", galleryItem.ItemTitle);
+                galleryVariableCollection.Parse("PHOTO_URI", Gallery.BuildPhotoUri(e.Core, e.Page.Owner, galleryItem.ParentPath, galleryItem.Path));
+                galleryVariableCollection.Parse("COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.Comments));
+                galleryVariableCollection.Parse("VIEWS", e.Core.Functions.LargeIntegerToString(galleryItem.ItemViews));
+                galleryVariableCollection.Parse("INDEX", i.ToString());
+                galleryVariableCollection.Parse("ID", galleryItem.Id.ToString());
+                galleryVariableCollection.Parse("TYPE_ID", galleryItem.ItemKey.TypeId.ToString());
+
+                galleryVariableCollection.Parse("ICON", galleryItem.IconUri);
+                galleryVariableCollection.Parse("TILE", galleryItem.TileUri);
+                galleryVariableCollection.Parse("SQUARE", galleryItem.SquareUri);
+
+                galleryVariableCollection.Parse("TINY", galleryItem.TinyUri);
+                galleryVariableCollection.Parse("THUMBNAIL", galleryItem.ThumbnailUri);
+
+                Display.RatingBlock(galleryItem.ItemRating, galleryVariableCollection, galleryItem.ItemKey);
+
+                if (galleryItem.Info.Likes > 0)
+                {
+                    galleryVariableCollection.Parse("LIKES", string.Format(" {0:d}", galleryItem.Info.Likes));
+                    galleryVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", galleryItem.Info.Dislikes));
+                }
+
+                switch (i % 3)
+                {
+                    case 0:
+                        galleryVariableCollection.Parse("ABC", "a");
+                        break;
+                    case 1:
+                        galleryVariableCollection.Parse("ABC", "b");
+                        break;
+                    case 2:
+                        galleryVariableCollection.Parse("ABC", "c");
+                        break;
+                }
+
+                switch (i % 4)
+                {
+                    case 0:
+                        galleryVariableCollection.Parse("ABCD", "a");
+                        break;
+                    case 1:
+                        galleryVariableCollection.Parse("ABCD", "b");
+                        break;
+                    case 2:
+                        galleryVariableCollection.Parse("ABCD", "c");
+                        break;
+                    case 3:
+                        galleryVariableCollection.Parse("ABCD", "d");
+                        break;
+                }
+
+                lastId = galleryItem.Id;
+                i++;
+            }
+
+            if (e.Core.TopLevelPageNumber * 12 < gallery.Items)
+            {
+                moreContent = true;
+            }
+
+            string loadMoreUri = Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath) + "?p=" + (e.Core.TopLevelPageNumber + 1) + "&o=" + lastId;
+            e.Core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
 
         /// <summary>

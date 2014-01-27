@@ -135,6 +135,7 @@
     <Content Include="templates\account_galleries_photo_edit.html" />
     <Content Include="templates\account_galleries_settings.html" />
     <Content Include="templates\account_galleries_upload.html" />
+    <Content Include="templates\pane.photo.html" />
     <Content Include="templates\postphoto.html" />
     <Content Include="templates\viewphoto.mobile.html" />
     <Content Include="templates\viewgallery.mobile.html">

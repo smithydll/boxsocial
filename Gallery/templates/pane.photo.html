@@ -1,0 +1,18 @@
+﻿<!-- BEGIN photo_list -->
+    <li>
+          <div class="gallery-item" style="text-align: center;">
+            <span class="photo-canvas" style="display: inline-block; margin: auto; position: relative;">
+            <span class="gallery-title">
+            <h3>
+                <!-- IF photo_list.TITLE -->
+                <a class="photo-link" href="{photo_list.PHOTO_URI}" alt="{photo_list.TITLE}">{photo_list.TITLE}</a>
+                <!-- ELSE -->
+                &nbsp;
+                <!-- ENDIF -->
+            </h3>
+            <p class="gallery-item-buttons white"><span class="img-button like-item"><a href="#" onclick="return LikeItem({photo_list.ID},{photo_list.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{photo_list.LIKES}</span></a></span></p><p class="white"><span class="post-button item-views static">{photo_list.VIEWS} Views</span></p></span>
+            <p style="font-size: 0; padding: 0;"><a href="{photo_list.PHOTO_URI}"><img src="{photo_list.SQUARE}" alt="{photo_list.TITLE}" width="200" height="200" /></a></p>
+            </span>
+          </div>
+    </li>
+<!-- END photo_list -->

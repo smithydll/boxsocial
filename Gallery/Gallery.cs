@@ -2000,6 +2000,12 @@ namespace BoxSocial.Applications.Gallery
                 try
                 {
                     gallery = new Gallery(e.Core, e.Page.Owner, galleryPath);
+
+                    if (!gallery.Access.Can("VIEW"))
+                    {
+                        e.Core.Functions.Generate403();
+                        return;
+                    }
                 }
                 catch (InvalidGalleryException)
                 {

@@ -1197,13 +1197,22 @@ div.action-bar input {
 }
 
 input#fileupload {
-    display: none;
+    /*display: none;*/
+    width: 10000px;
+    height: 16px;
+    position: absolute;
+    writing-mode: lr-tb;
+    white-space: no-wrap;
+    right: 0;
+    font-size: 1000px;
+    opacity: 0;
+    -webkit-appearance: none;
 }
 
 #fileupload-label {
     border-radius: 4px;
     display: inline-block;
-    margin: 0 12px;
+    margin: 12px;
     width: 16px;
     height: 16px;
     border: 1px solid #eeeeee;
@@ -1218,4 +1227,5 @@ input#fileupload {
     display: inline-block;
     width: 16px;
     height: 16px;
+    position: absolute;
 }

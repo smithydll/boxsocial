@@ -200,6 +200,11 @@ namespace BoxSocial.Internals
         void StatusMessage_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
             core.Search.DeleteFromIndex(this);
+            if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
+            {
+                Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                t.DeleteStatus(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), Info.TweetId);
+            }
         }
 
         public static StatusMessage Create(Core core, User creator, string message)

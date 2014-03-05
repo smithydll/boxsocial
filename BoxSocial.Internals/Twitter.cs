@@ -384,5 +384,50 @@ namespace BoxSocial.Internals
                 }
             }
         }
+
+        public void DeleteStatus(TwitterAccessToken token, long tweetId)
+        {
+            string method = "POST";
+
+            string oAuthSignatureMethod = "HMAC-SHA1";
+
+            string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
+
+            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
+
+            string twitterEndpoint = "https://api.twitter.com/1.1/statuses/statuses/destroy/" + tweetId.ToString() + ".json";
+
+            string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
+
+            String oauthSignature = string.Empty;
+            try
+            {
+                oauthSignature = computeSignature(signature, consumerSecret + "&" + token.Secret);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
+                oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(twitterEndpoint);
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.ContentType = "application/x-www-form-urlencoded";
+            wr.Method = method;
+            wr.Headers["Authorization"] = authorisationHeader;
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+            }
+            else
+            {
+                // ignore response
+            }
+        }
     }
 }

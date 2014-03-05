@@ -2117,7 +2117,7 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            string apiUri = "http://api.instagram.com/oembed?url=" + HttpUtility.UrlEncode(instagramId) + "&maxwidth=550";
+                            string apiUri = "http://api.instagram.com/oembed?url=" + HttpUtility.UrlEncode(instagramId); // +"&maxwidth=550";
                             WebClient wc = new WebClient();
                             string response = wc.DownloadString(apiUri);
 

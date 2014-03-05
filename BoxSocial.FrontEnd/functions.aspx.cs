@@ -69,6 +69,14 @@ namespace BoxSocial.FrontEnd
                     t.SaveTwitterAccess(core, oAuthToken, oAuthVerifier);
 
                     return;
+                case "googleplus":
+                    /*Google g = new Google(core.Settings.GoogleApiKey, core.Settings.GoogleApiSecret);
+
+                    string oAuthCode = core.Http.Query["code"];
+
+                    g.SaveGoogleAccess(core, oAuthToken, oAuthCode);*/
+
+                    return;
             }
         }
 

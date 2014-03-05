@@ -417,6 +417,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool UseFacebookAuthentication
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["oauth-google"] == "true";
+            }
+        }
+
         public string TwitterName
         {
             get
@@ -438,6 +446,38 @@ namespace BoxSocial.Internals
             get
             {
                 return WebConfigurationManager.AppSettings["twitter-api-secret"];
+            }
+        }
+
+        public string GoogleApiKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["google-api-key"];
+            }
+        }
+
+        public string GoogleApiSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["google-api-secret"];
+            }
+        }
+
+        public string FacebookApiKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["facebook-api-key"];
+            }
+        }
+
+        public string FacebookApiSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["facebook-api-secret"];
             }
         }
     }

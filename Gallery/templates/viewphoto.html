@@ -23,7 +23,7 @@
     </ul>
   </div>
 </div>
-<div id="profile">
+<div id="profile" itemscope itemtype="http://schema.org/ImageObject">
   <!-- IF U_UPLOAD_PHOTO -->
   <div id="new-stuff">
     <span id="new-photo" class="post-button">
@@ -133,7 +133,7 @@
           <span id="tag-name-{user_tags.TAG_ID}" style="display: none; float: top; position: relative; left: {user_tags.TAG_X}px; top: {user_tags.TAG_Y}px; width: 100px; background-color: black; color: white; text-align: center; padding: 1px;">{user_tags.DISPLAY_NAME}</span>
           <!-- END user_tags -->
         </span>
-        <img id="photo-640" src="{PHOTO_DISPLAY}" alt="Photo" onclick="toggleHd()" onmousemove="ShowTagNearPointer(event);"
+        <img id="photo-640" itemprop="image" src="{PHOTO_DISPLAY}" alt="Photo" onclick="toggleHd()" onmousemove="ShowTagNearPointer(event);"
 					<!-- IF OWNER -->
         onmousedown="CreateUserTagNearPointer({ID}, event);"
         <!-- ENDIF -->
@@ -154,7 +154,7 @@
       <!-- ENDIF -->
       <!-- IF PHOTO_DESCRIPTION -->
       <dd>
-        <p>{PHOTO_DESCRIPTION}</p>
+        <p itemprop="description">{PHOTO_DESCRIPTION}</p>
       </dd>
       <!-- ENDIF -->
     </dl>

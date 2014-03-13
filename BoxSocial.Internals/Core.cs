@@ -55,6 +55,7 @@ namespace BoxSocial.Internals
         private Settings applicationSettings;
         private Storage storage;
         private Search search;
+        private List<Emoticon> emoticons;
 
         internal TPage page;
 
@@ -311,6 +312,26 @@ namespace BoxSocial.Internals
                     }
                 }
                 return search;
+            }
+        }
+
+        public List<Emoticon> Emoticons
+        {
+            get
+            {
+                if (emoticons == null)
+                {
+                    emoticons = new List<Emoticon>();
+
+                    SelectQuery query = Emoticon.GetSelectQueryStub(typeof(Emoticon));
+                    DataTable emoticonsTable = db.Query(query);
+
+                    foreach (DataRow emoticonRow in emoticonsTable.Rows)
+                    {
+                        emoticons.Add(new Emoticon(this, emoticonRow));
+                    }
+                }
+                return emoticons;
             }
         }
 

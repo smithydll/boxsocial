@@ -1074,16 +1074,12 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public static string ParseSmilies(string input)
+        public static string ParseEmoticons(Core core, string input)
         {
-            /*if (Global.SmiliesDataTable == null)
+            foreach (Emoticon emoticon in core.Emoticons)
             {
-                Global.SmiliesDataTable = Global.db.Query("SELECT * FROM smilies;");
+                input = input.Replace(emoticon.Code, "<img alt=\"" + emoticon.Title + "\" title=\"" + emoticon.Title + "\" src=\"" + emoticon.Uri + "\" />");
             }
-            foreach (DataRow smile in Global.SmiliesDataTable.Rows)
-            {
-                input = input.Replace(smile["SmilieCode"].ToString(), "<img alt=\"" + smile["SmilieDescription"] + "\" title=\"" + smile["SmilieDescription"] + "\" src=\"" + ConfigurationSettings.AppSettings["smilie-path"] + smile["SmilieUri"] + "\" />");
-            }*/
             return input;
         }
 

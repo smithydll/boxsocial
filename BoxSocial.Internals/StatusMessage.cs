@@ -566,7 +566,7 @@ namespace BoxSocial.Internals
         }
     }
 
-    public class InvalidStatusMessageException : Exception
+    public class InvalidStatusMessageException : InvalidItemException
     {
     }
 }

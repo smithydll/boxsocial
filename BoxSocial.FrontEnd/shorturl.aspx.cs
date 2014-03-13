@@ -59,6 +59,10 @@ namespace BoxSocial.FrontEnd
             {
                 core.Functions.Generate404();
             }
+            catch
+            {
+                core.Functions.Generate404();
+            }
         }
     }
 }

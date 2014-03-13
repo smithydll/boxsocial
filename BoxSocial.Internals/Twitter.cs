@@ -34,6 +34,34 @@ using Newtonsoft.Json.Serialization;
 
 namespace BoxSocial.Internals
 {
+    public class Tweet
+    {
+        private long id;
+        private string uri;
+
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+        }
+
+        public string Uri
+        {
+            get
+            {
+                return uri;
+            }
+        }
+
+        public Tweet(long id, string uri)
+        {
+            this.id = id;
+            this.uri = uri;
+        }
+    }
+
     public class TwitterAuthToken
     {
         private string token;
@@ -279,7 +307,7 @@ namespace BoxSocial.Internals
             return null;
         }
 
-        public long StatusesUpdate(TwitterAccessToken token, string tweet)
+        public Tweet StatusesUpdate(TwitterAccessToken token, string tweet)
         {
             tweet = Functions.TrimString(tweet, 140);
             string method = "POST";
@@ -325,6 +353,7 @@ namespace BoxSocial.Internals
             HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
 
             long tweetId = 0;
+            string tweetUri = string.Empty;
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -347,10 +376,21 @@ namespace BoxSocial.Internals
                         if (reader.TokenType == JsonToken.PropertyName)
                         {
                             lastToken = reader.Value.ToString();
+                            if (lastToken == "user")
+                            {
+                                reader.Skip();
+                                lastToken = string.Empty;
+                            }
                         }
-                        if (reader.TokenType == JsonToken.Integer && lastToken == "id_str")
+                        if (reader.TokenType == JsonToken.String && lastToken == "id_str")
                         {
                             long.TryParse(reader.Value.ToString(), out tweetId);
+                            //tweetId = reader.Value.ToString();
+                            lastToken = string.Empty;
+                        }
+                        if (reader.TokenType == JsonToken.String && lastToken == "url")
+                        {
+                            tweetUri = reader.Value.ToString();
                             lastToken = string.Empty;
                             break;
                         }
@@ -358,7 +398,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return tweetId;
+            return new Tweet(tweetId, tweetUri);
         }
 
         public void SaveTwitterAccess(Core core, string oAuthToken, string oAuthVerifier)
@@ -396,7 +436,7 @@ namespace BoxSocial.Internals
 
             string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
 
-            string twitterEndpoint = "https://api.twitter.com/1.1/statuses/statuses/destroy/" + tweetId.ToString() + ".json";
+            string twitterEndpoint = "https://api.twitter.com/1.1/statuses/destroy/" + tweetId.ToString() + ".json";
 
             string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
 

@@ -58,6 +58,8 @@ namespace BoxSocial.Internals
         private long viewedTimes;
         [DataField("info_tweet_id")]
         private long tweetId;
+        [DataField("info_tweet_uri", 31)]
+        private string tweetUri;
         [DataField("info_item_time_ut")]
         private long timeRaw;
 

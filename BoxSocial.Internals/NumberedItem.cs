@@ -243,6 +243,8 @@ namespace BoxSocial.Internals
 
         public new long Delete(bool parentDeleted)
         {
+            ItemInfo info = this.Info;
+
             if (this is IPermissibleItem)
             {
                 IPermissibleItem iThis = (IPermissibleItem)this;

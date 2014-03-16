@@ -23,6 +23,7 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.IO;
 using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
@@ -38,7 +39,7 @@ namespace BoxSocial.Internals
     {
         [DataField("emoticon_id", DataFieldKeys.Primary)]
         private long emoticonId;
-        [DataField("emoticon_title", 31)]
+        [DataField("emoticon_title", 63)]
         private string title;
         [DataField("emoticon_code", 7)]
         private string code;
@@ -113,6 +114,21 @@ namespace BoxSocial.Internals
         {
         }
 
+        private static Emoticon Create(Core core, string title, string code, string file, string category)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item item = Item.Create(core, typeof(Emoticon), new FieldValuePair("emoticon_title", title),
+                new FieldValuePair("emoticon_code", code),
+                new FieldValuePair("emoticon_file", file),
+                new FieldValuePair("emoticon_category", category));
+
+            return (Emoticon)item;
+        }
+
         public static string BuildEmoticonSelectBox(string name)
         {
             return string.Empty;
@@ -120,8 +136,31 @@ namespace BoxSocial.Internals
 
         // Install https://github.com/Genshin/PhantomOpenEmoji
         // The installer process will Download the svg files and convert to png
-        public static void InstallEmoji(string json)
+        public static void InstallEmoji(Core core, string json)
         {
+            List<Dictionary<string, object>> emoji = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
+
+            foreach (Dictionary<string, object> emoticon in emoji)
+            {
+                if (emoticon.ContainsKey("moji"))
+                {
+                    bool flag = true;
+
+                    foreach (Emoticon e in core.Emoticons)
+                    {
+                        if (e.Code == (string)emoticon["moji"])
+                        {
+                            flag = false;
+                            continue;
+                        }
+                    }
+
+                    if (flag)
+                    {
+                        Emoticon.Create(core, (string)emoticon["name"], (string)emoticon["moji"], @"/images/emoticons/" + (string)emoticon["name"] + ".png", (string)emoticon["category"]);
+                    }
+                }
+            }
         }
 
         public override long Id
@@ -136,7 +175,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return string.Empty;
+                return file;
             }
         }
     }

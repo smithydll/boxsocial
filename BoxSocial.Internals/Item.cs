@@ -1381,7 +1381,7 @@ namespace BoxSocial.Internals
 			{
 				iQuery.AddField(field.Field, field.Value);
 			}
-			
+
 			long id = core.Db.Query(iQuery);
 			
 			if (id > 0)

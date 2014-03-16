@@ -32,7 +32,7 @@ namespace BoxSocial.Internals
 		
 		[DataField("type_id", DataFieldKeys.Primary)]
 		long typeId;
-		[DataField("type_namespace", DataFieldKeys.Unique, 255)]
+		[DataField("type_namespace", DataFieldKeys.Unique, 184)]
 		string typeNamespace;
 		[DataField("type_application_id")]
 		long applicationId;

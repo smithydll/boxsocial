@@ -995,6 +995,8 @@ namespace BoxSocial.Internals
                 input = input.Replace("<p>\n</p>", string.Empty);
                 input = input.Replace("<p>\r\n</p>", string.Empty);
             }
+
+            input = ParseEmoticons(core, input);
             
             return input;
         }
@@ -1078,7 +1080,10 @@ namespace BoxSocial.Internals
         {
             foreach (Emoticon emoticon in core.Emoticons)
             {
-                input = input.Replace(emoticon.Code, "<img alt=\"" + emoticon.Title + "\" title=\"" + emoticon.Title + "\" src=\"" + emoticon.Uri + "\" />");
+                if (!string.IsNullOrEmpty(emoticon.Code))
+                {
+                    input = input.Replace(emoticon.Code, "<img alt=\"" + emoticon.Title + "\" title=\"" + emoticon.Title + "\" src=\"" + emoticon.Uri + "\" />");
+                }
             }
             return input;
         }

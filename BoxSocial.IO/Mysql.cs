@@ -924,8 +924,8 @@ namespace BoxSocial.IO
 
                 sb.Append(")");				
             }
-			
-            sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8");
+
+            sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
             UpdateQuery(sb.ToString());
         }

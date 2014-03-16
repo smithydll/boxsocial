@@ -37,6 +37,9 @@ using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using ICSharpCode.SharpZipLib;
+using ICSharpCode.SharpZipLib.Core;
+using ICSharpCode.SharpZipLib.Zip;
 
 namespace BoxSocial.Install
 {
@@ -139,6 +142,13 @@ namespace BoxSocial.Install
                         InstallTemplates();
                         InstallScripts();
                         InstallStyles();
+
+                        Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+                        Template template = new Template(Path.Combine(root, "templates"), "default.html");
+                        Core core = new Core(null, db, template);
+                        UnixTime tz = new UnixTime(core, 0);
+
+                        InstallEmoticons(core);
 
                         Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";
@@ -1597,6 +1607,7 @@ namespace BoxSocial.Install
 
             InstallWww();
             InstallGDK();
+            InstallEmoticons(core);
             InstallTemplates();
             InstallScripts();
             InstallStyles();
@@ -1831,6 +1842,7 @@ namespace BoxSocial.Install
                     p1.Start();
 
                     p1.WaitForExit();
+                    p1.Close();
                 }
 
                 // Retina
@@ -1848,8 +1860,171 @@ namespace BoxSocial.Install
                     p1.Start();
 
                     p1.WaitForExit();
+                    p1.Close();
                 }
             }
+        }
+
+        private static void InstallEmoticons(Core core)
+        {
+            string svgPath = Path.Combine("GDK", "emoticons");
+
+            if (!Directory.Exists(svgPath))
+            {
+                Directory.CreateDirectory(svgPath);
+            }
+
+            string emoticonPackage = @"https://github.com/Genshin/PhantomOpenEmoji/archive/master.zip";
+
+            List<string> images = new List<string>();
+
+            WebClient wc = new WebClient();
+            byte[] data = null;
+            try
+            {
+                data = wc.DownloadData(emoticonPackage);
+            }
+            catch (WebException)
+            {
+                // If can't download the the emoji package, then skip the
+                // installation until an internet connection can be made
+                return;
+            }
+
+            ZipFile zf = new ZipFile(new MemoryStream(data));
+
+            foreach (ZipEntry ze in zf)
+            {
+                if (!ze.IsFile)
+                {
+                    continue;
+                }
+
+                byte[] buffer = new byte[4096];
+                Stream zs = zf.GetInputStream(ze);
+
+                string filename = Path.GetFileName(ze.Name);
+
+                if (filename == "index.json")
+                {
+                    string output = Path.Combine(svgPath, filename);
+                    if (File.Exists(output))
+                    {
+                        File.Delete(output);
+                    }
+                    FileStream fs = File.Create(output);
+                    StreamUtils.Copy(zs, fs, buffer);
+                    fs.Close();
+                }
+
+                if (filename.EndsWith(".svg"))
+                {
+                    string[] parts = Path.GetDirectoryName(ze.Name).Split(new char[] { Path.DirectorySeparatorChar });
+
+                    if (parts[parts.GetUpperBound(0)] == "svg")
+                    {
+                        string output = Path.Combine(svgPath, filename);
+                        if (File.Exists(output))
+                        {
+                            File.Delete(output);
+                        }
+                        FileStream fs = File.Create(output);
+                        StreamUtils.Copy(zs, fs, buffer);
+                        fs.Close();
+
+                        images.Add(Path.GetFileNameWithoutExtension(ze.Name));
+                    }
+
+                    if (parts[parts.GetUpperBound(0) - 1] == "svg" && filename == "0.svg")
+                    {
+                        string output = Path.Combine(svgPath, parts[parts.GetUpperBound(0)] + ".svg");
+                        if (File.Exists(output))
+                        {
+                            File.Delete(output);
+                        }
+                        FileStream fs = File.Create(output);
+                        StreamUtils.Copy(zs, fs, buffer);
+                        fs.Close();
+
+                        images.Add(parts[parts.GetUpperBound(0)]);
+                    }
+                }
+            }
+
+            zf.Close();
+
+            if (!Directory.Exists(Path.Combine(imagesRoot, "emoticons")))
+            {
+                Directory.CreateDirectory(Path.Combine(imagesRoot, "emoticons"));
+            }
+
+            foreach (string image in images)
+            {
+                string input = Path.Combine(svgPath, image + ".svg");
+                string output = Path.Combine(Path.Combine(imagesRoot, "emoticons"), image + ".png");
+                if (File.Exists(input))
+                {
+                    if (File.Exists(output))
+                    {
+                        File.Delete(output);
+                    }
+
+                    Process p1 = new Process();
+                    p1.StartInfo.FileName = "rsvg-convert";
+                    p1.StartInfo.Arguments = input + " -w 20 -h 20 -o " + output;
+                    p1.Start();
+
+                    p1.WaitForExit();
+                    p1.Close();
+                }
+
+                // Retina
+                output = Path.Combine(Path.Combine(imagesRoot, "emoticons"), image + "@2x.png");
+                if (File.Exists(input))
+                {
+                    if (File.Exists(output))
+                    {
+                        File.Delete(output);
+                    }
+
+                    Process p1 = new Process();
+                    p1.StartInfo.FileName = "rsvg-convert";
+                    p1.StartInfo.Arguments = input + " -w 40 -h 40 -o " + output;
+                    p1.Start();
+
+                    p1.WaitForExit();
+                    p1.Close();
+                }
+            }
+
+            if (File.Exists(Path.Combine(svgPath, "index.json")))
+            {
+                Console.WriteLine("Installing emoticons");
+                Emoticon.InstallEmoji(core, OpenTextFile(Path.Combine(svgPath, "index.json")));
+            }
+        }
+
+        /// <summary>
+        /// Open a text file
+        /// </summary>
+        /// <param name="fileName"></param>
+        /// <returns></returns>
+        private static string OpenTextFile(string fileName)
+        {
+            StreamReader myStreamReader;
+            string temp;
+            try
+            {
+                myStreamReader = File.OpenText(fileName);
+                temp = myStreamReader.ReadToEnd();
+                myStreamReader.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+                temp = String.Empty;
+            }
+            return temp;
         }
 
         public static void InstallLanguage(string lang, string repo)

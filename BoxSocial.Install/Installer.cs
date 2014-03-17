@@ -143,12 +143,14 @@ namespace BoxSocial.Install
                         InstallScripts();
                         InstallStyles();
 
-                        Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+                        // This slows down updating; should only need to do it on initial install
+                        // Leaving the code in case the emoji library is updated/changed
+                        /*Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
                         Template template = new Template(Path.Combine(root, "templates"), "default.html");
                         Core core = new Core(null, db, template);
                         UnixTime tz = new UnixTime(core, 0);
 
-                        InstallEmoticons(core);
+                        InstallEmoticons(core);*/
 
                         Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";

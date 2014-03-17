@@ -145,6 +145,9 @@
   <data name="pane_photo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\pane.photo.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
+  <data name="pane_photo_mobile" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\pane.photo.mobile.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
   <data name="postphoto" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\postphoto.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>

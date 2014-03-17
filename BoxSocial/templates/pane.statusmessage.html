@@ -11,10 +11,14 @@
 		<div class="status-body" style="cursor: pointer;" onclick="toggleStatusComments($(this).parent(), {status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));">
         <!-- ENDIF -->
             <p class="posted-by"><a href="{status_messages.U_PROFILE}" class="username-card" bs-uid="{status_messages.USER_ID}">{status_messages.USERNAME}</a> <em>{status_messages.STATUS_UPDATED}</em></p>
+            <!-- IF $_IS_MOBILE -->
+            <div class="feed-text">
+            <!-- ENDIF -->
 			{status_messages.STATUS_MESSAGE}
+            <!-- IF $_IS_MOBILE -->
+            </div>
+            <!-- ENDIF -->
 		</div>
-        <!-- IF $_IS_MOBILE -->
-        <!-- ELSE -->
         <div class="r-stuff light">
             <span class="img-button like-item"><a href="#" onclick="return LikeItem({status_messages.ID},{status_messages.TYPE_ID},$(this).children('.likes'));" title="Like"><span class="sprite like-sprite"></span><span class="likes">{status_messages.LIKES}</span></a></span><!--
             <!-- IF status_messages.SHAREABLE -->
@@ -37,7 +41,6 @@
             <!-- ENDIF -->
             -->
         </div>
-        <!-- ENDIF -->
         <div class="status-body comment-pane" id="status-comments-{status_messages.ID}" style="display: none;"></div>
   </li>
   <!-- END status_messages -->

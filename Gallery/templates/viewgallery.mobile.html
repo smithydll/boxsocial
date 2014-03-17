@@ -39,26 +39,17 @@
   <!-- ENDIF -->
   <!-- IF PHOTOS -->
   <!-- IF PAGINATION -->
-  <p>{PAGINATION}</p>
+  <!--p>{PAGINATION}</p-->
   <!-- ENDIF -->
-  <div class="ui-grid-b">
-    <!-- BEGIN photo_list -->
-    <div class="ui-block-{photo_list.ABC}" style="text-align: center;">
-    <a href="{photo_list.PHOTO_URI}">
-    <img src="{photo_list.TILE}" alt="{photo_list.TITLE}" width="100" height="100" />
-                <!-- IF photo_list.TITLE -->
-                <p>{photo_list.TITLE}</p>
-                <!-- ELSE -->
-                <p>&nbsp;</p>
-                <!-- ENDIF -->
-            </a>
-    </div>
-    <!-- END photo_list -->
+  <div class="infinite">
+  <div class="ui-grid-b" id="photo-list">
+<!-- INCLUDE pane_photo_mobile -->
   </div><!-- /grid-b -->
   <div class="cheat-clear-left"></div>
   <!-- IF PAGINATION -->
-  <p>{PAGINATION}</p>
+  <p><span>{PAGINATION}</span><a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $('#photo-list'));">{L_LOAD_MORE}</a></p>
   <!-- ENDIF -->
+  </div>
   <!-- ENDIF -->
   <!-- IF ALBUM_COMMENTS -->
     <div class="comment-pane" style="margin: 0 auto; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">

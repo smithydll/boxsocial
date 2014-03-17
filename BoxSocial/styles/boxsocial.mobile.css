@@ -829,8 +829,7 @@ ul.feed-list li div.feed-title {
 	position: relative;
 }
 
-ul.feed-list li div.feed-text 
-{
+ul.feed-list li div.feed-text, ul.status-feed li div.feed-text {
     padding: 0;
 	position: relative;
 	clear: left;
@@ -1228,4 +1227,15 @@ input#fileupload {
     width: 16px;
     height: 16px;
     position: absolute;
+}
+
+.status-feed {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.status-body {
+    padding: 0;
+    margin-left: 0 !important;
 }

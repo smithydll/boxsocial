@@ -1776,7 +1776,10 @@ namespace BoxSocial.Applications.Gallery
             }
 
             /* pages */
-            e.Core.Display.ParsePageList(e.Page.Owner, true);
+            if (e.Page.Owner is User)
+            {
+                e.Core.Display.ParsePageList(e.Page.Owner, true);
+            }
 
             if (e.Page.Owner is User)
             {

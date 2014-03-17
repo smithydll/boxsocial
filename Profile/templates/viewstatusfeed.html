@@ -38,6 +38,7 @@
 -->
 </script>
 
+<!-- IF $_IS_DESKTOP -->
 	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
 			<h3>Pages</h3>
@@ -46,8 +47,9 @@
 			</ul>
 		</div>
 	</div>
+<!-- ENDIF -->
 	<div id="profile">
-    <!-- IF OWNER -->
+    <!-- IF $_IS_DESKTOP AND OWNER -->
 	<div id="compose-status">
         <h3>Post Status</h3>
         <div id="status-div">
@@ -71,6 +73,9 @@
 	<p>{PAGINATION}<a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $(this).parent().siblings('.status-feed'));">{L_LOAD_MORE}</a></p>
 	<!-- ENDIF -->
     </div>
+
+    <div id="clear-space">
+	</div>
 
     </div>
     </div>

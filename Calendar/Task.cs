@@ -317,6 +317,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
                 core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
             }
 
             VariableCollection taskDaysVariableCollection = null;
@@ -409,6 +410,7 @@ namespace BoxSocial.Applications.Calendar
                 {
                     core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
                     core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                    core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
                 }
 
                 core.Template.Parse("TOPIC", calendarTask.Topic);

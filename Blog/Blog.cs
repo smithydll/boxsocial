@@ -457,7 +457,10 @@ namespace BoxSocial.Applications.Blog
             if ((currentOffset > 0 && currentPage > 1) || currentOffset == 0)
             {
                 long lastId = 0;
+                long lastPostTime = 0;
                 QueryCondition qc1 = null;
+                QueryCondition qc2 = null;
+
                 if (currentOffset > 0)
                 {
                     qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, currentOffset);
@@ -516,16 +519,19 @@ namespace BoxSocial.Applications.Blog
                             }
                         }
                         lastId = entry.Id;
+                        lastPostTime = ((BlogEntry)entry).PublishedDateRaw;
                     }
 
                     //query.LimitStart += query.LimitCount;
                     if (qc1 == null)
                     {
                         qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, lastId);
+                        qc2 = query.AddCondition("post_time_ut", ConditionEquality.LessThanEqual, lastPostTime);
                     }
                     else
                     {
                         qc1.Value = lastId;
+                        qc2.Value = lastPostTime;
                     }
                     query.LimitCount = (int)(query.LimitCount * pessimism);
 

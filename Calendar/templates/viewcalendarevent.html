@@ -29,6 +29,7 @@
     </div>
 <!-- ENDIF -->
 
+<!-- IF $_IS_DESKTOP -->
     	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
 			<h3>Pages</h3>
@@ -37,6 +38,7 @@
 			</ul>
 		</div>
 	</div>
+<!-- ENDIF -->
 	<div id="profile">
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
@@ -68,6 +70,13 @@
 	<ul id="profile-friends">
 	<!-- BEGIN attendee_list -->
 		<li>
+        <!-- IF $_IS_MOBILE -->
+            <!-- IF attendee_list.ICON -->
+			<img src="{attendee_list.ICON}" alt="{attendee_list.USER_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<img src="/images/no_picture_100.png" alt="{attendee_list.USER_DISPLAY_NAME}" />
+			<!-- ENDIF -->
+        <!-- ELSE -->
 			<dl>
 				<dt><span class="img-wb"><a href="{attendee_list.U_PROFILE}">
 				<!-- IF attendee_list.TILE -->
@@ -78,6 +87,7 @@
 				</a></span></dt>
 				<dd><a href="{attendee_list.U_PROFILE}">{attendee_list.USER_DISPLAY_NAME}</a></dd>
 			</dl>
+        <!-- ENDIF -->
 		</li>
 	<!-- END attendee_list -->
 	</ul>

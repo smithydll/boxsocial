@@ -414,6 +414,7 @@ namespace BoxSocial.Applications.Pages
 
             e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
             e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
 
             e.Template.Parse("LIST_TITLE", string.Format("{0} Lists", e.Page.Owner.DisplayNameOwnership));
             e.Template.Parse("LIST_ABSTRACT", "FALSE");
@@ -458,6 +459,7 @@ namespace BoxSocial.Applications.Pages
 
                 e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
                 e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+                e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
 
                 e.Template.Parse("LIST_TITLE", list.title);
                 e.Template.Parse("LIST_ID", list.ListId.ToString());

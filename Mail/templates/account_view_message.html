@@ -33,10 +33,18 @@
       	<!-- IF post_list.USER_RANK -->
       	<p>{post_list.USER_RANK}</p>
       	<!-- ENDIF -->
+        <!-- IF $_IS_MOBILE -->
+        <!-- IF post_list.USER_ICON -->
+        <div class="comment-disp-pic">
+          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" />
+        </div>
+        <!-- ENDIF -->
+        <!-- ELSE -->
         <!-- IF post_list.USER_TILE -->
         <div class="comment-disp-pic">
           <img src="{post_list.USER_TILE}" alt="{post_list.USER_DISPLAY_NAME}" />
         </div>
+        <!-- ENDIF -->
         <!-- ENDIF -->
       </dt>
       <dd>

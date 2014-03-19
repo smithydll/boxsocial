@@ -21,6 +21,15 @@
 	</div>
     </div>
 <div id="content">
+<!-- IF NOT SELF -->
+<!-- IF LOGGED_IN -->
+<!-- IF SUBSCRIBED -->
+<p><span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button subscribed"><a href="{U_UNSUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ELSE -->
+<p><span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button"><a href="{U_SUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_SUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<!-- ENDIF -->
+<!-- ENDIF -->
+<!-- ENDIF -->
 	<div id="pane-profile">
 		<div id="pane-profile-contact" class="pane">
 			<h3>Contact</h3>

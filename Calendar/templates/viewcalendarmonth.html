@@ -29,6 +29,7 @@
 </div>
 <!-- ENDIF -->
 
+<!-- IF $_IS_DESKTOP -->
 	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
 			<h3>Pages</h3>
@@ -37,6 +38,7 @@
 			</ul>
 		</div>
 	</div>
+<!-- ENDIF -->
 	<div id="profile">
 	<!-- IF U_NEW_EVENT -->
 	<div id="new-stuff">
@@ -52,6 +54,15 @@
 	
 		<div class="month">
 			<div class="week-head">
+            <!-- IF $_IS_MOBILE -->
+				<div class="day">{L_MONDAY_2}</div>
+				<div class="day">{L_TUESDAY_2}</div>
+				<div class="day">{L_WEDNESDAY_2}</div>
+				<div class="day">{L_THURSDAY_2}</div>
+				<div class="day">{L_FRIDAY_2}</div>
+				<div class="day">{L_SATURDAY_2}</div>
+				<div class="day">{L_SUNDAY_2}</div>
+            <!-- ELSE -->
 				<div class="day">{L_MONDAY}</div>
 				<div class="day">{L_TUESDAY}</div>
 				<div class="day">{L_WEDNESDAY}</div>
@@ -59,7 +70,8 @@
 				<div class="day">{L_FRIDAY}</div>
 				<div class="day">{L_SATURDAY}</div>
 				<div class="day">{L_SUNDAY}</div>
-			</div>
+			<!-- ENDIF -->
+            </div>
 			<!-- BEGIN week -->
 			<div class="week">
 				<!-- BEGIN week.day -->
@@ -77,7 +89,6 @@
 			</div>
 			<!-- END week -->
 		</div>
-</div>
 </div>
 </div>
 <!-- INCLUDE page_footer.html -->

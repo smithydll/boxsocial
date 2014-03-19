@@ -292,6 +292,7 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("U_PROFILE", ((User)e.Page.Owner).ProfileUri);
             core.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
 
             PermissionGroupSelectBox permissionSelectBox = new PermissionGroupSelectBox(core, "permissions", e.Page.Owner.ItemKey);
 

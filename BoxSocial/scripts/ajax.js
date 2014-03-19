@@ -725,11 +725,13 @@ function toggleStatusComments(parent, id, type, el) {
 }
 
 $(document).ready(function () {
-    $(".username-card").on('mouseenter', function (e) {
-        if (!$(this).parent().hasClass('contact-card-container')) {
-            PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX - 5);
-        }
-    });
+    if (medium == 'desktop ') {
+        $(".username-card").on('mouseenter', function (e) {
+            if (!$(this).parent().hasClass('contact-card-container')) {
+                PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX - 5);
+            }
+        });
+    }
 });
 
 function LoadedCard(r, e, a) {

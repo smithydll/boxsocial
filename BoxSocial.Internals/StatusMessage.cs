@@ -252,6 +252,7 @@ namespace BoxSocial.Internals
 
             e.Template.Parse("U_PROFILE", e.Page.User.ProfileUri);
             e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
 
             try
             {

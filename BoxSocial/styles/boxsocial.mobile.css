@@ -92,8 +92,7 @@ h1#page-title a span {
 	display: block;
 }
 
-#search-button 
-{
+#search-button {
     float: right;
     height: 32pt;
     width: 32pt;
@@ -104,8 +103,7 @@ h1#page-title a span {
     background-image: url('/images/mobile-symbols-48.png');
 }
 
-#post-button
-{
+#post-button {
     float: right;
     height: 32pt;
     width: 32pt;
@@ -117,8 +115,7 @@ h1#page-title a span {
     background-position: -44px 0;
 }
 
-#pages-button
-{
+#pages-button {
     float: right;
     height: 32pt;
     width: 32pt;
@@ -128,6 +125,22 @@ h1#page-title a span {
     z-index: 2;
     background-image: url('/images/mobile-symbols-48.png');
     background-position: -88px 0;
+}
+
+@media all and (-webkit-min-device-pixel-ratio: 1.5) 
+{
+    h1#page-title {
+	    background: url('/images/boxsocial-logo-mobile@2x.png');
+	    background-repeat: no-repeat;
+	    background-size: auto 32pt;
+	    background-color: #ff9955;
+    }
+    
+    #search-button, #post-button, #pages-button {
+        background-image: url('/images/mobile-symbols-48@2x.png');
+        background-repeat: no-repeat;
+	    background-size: auto 32pt;
+    }
 }
 
 #search-button span, #post-button span, #pages-button span 
@@ -257,13 +270,37 @@ span.post-button, span.img-button, button {
 }
 
 span.subscribe-button {
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 1px solid #eecc22;
 	background: #ffee22;
 	color: #664422;
 	margin: 2px;
-	padding: 6px 16px;
+	padding: 2px 16px;
 	font-size: 110%;
+}
+
+span.subscribe-button a {
+    color: #664422 !important;
+    text-decoration: none;
+}
+
+span.subscribe-button.subscribed {
+	border-color: #888888;
+	background: #dddddd;
+	color: #666666;
+}
+
+span.subscribe-button.subscribed a {
+    color: #333333 !important;
+}
+
+span.subscribers {
+	border-radius: 3px;
+	border: 1px solid #cccccc;
+	background: #ffffff;
+	color: #888888;
+	margin: 2px;
+	padding: 2px 5px;
 }
 
 input[type="submit"] {
@@ -284,32 +321,8 @@ input[type="cancel"], input[type="reset"] {
 	padding: 4px 16px;
 }
 
-input[type="cancel"]:hover, input[type="reset"]:hover {
-    background: #ffffff;
-    color: #333333;
-}
-
-span.post-button:hover, span.img-button:hover, button:hover {
-    background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
-    color: #0044aa;
-}
-
-span.subscribe-button:hover {
-    background: #f7f722;
-    color: #664422;
-}
-
-input[type="submit"]:hover {
-    background: #ffffff;
-    color: #00aa44;
-}
-
 span.post-button a, span.img-button a {
     color: #ffffff;
-}
-
-span.post-button:hover a, span.img-button:hover a {
-    color: #0044aa;
 }
 
 span.subscribe-button a {
@@ -325,18 +338,8 @@ span.subscribe-button a {
 	padding: 5px 5px;
 }
 
-.light span.img-button:hover {
-    border: 1px solid #cccccc;
-    background: #dddddd;
-    padding: 4px 4px;
-}
-
 .light span.img-button a {
     color: #888888;
-}
-
-.light span.img-button:hover a {
-    color: #0044aa;
 }
 
 .white span.img-button, .white span.post-button {
@@ -347,15 +350,7 @@ span.subscribe-button a {
 	padding: 3px 3px;
 }
 
-.white span.img-button:hover, .white span.post-button:hover {
-    background: rgba(221, 221, 221, 0.4);
-}
-
 .white span.img-button a, .white span.post-button a {
-    color: #ffffff;
-}
-
-.white span.img-button:hover a, .white span.post-button:hover a {
     color: #ffffff;
 }
 
@@ -421,26 +416,12 @@ span.img-button img {
     background-image: url(images/like-888888.png);
 }
 
-span.img-button:hover .voteup-sprite.sprite {
-    background-image: url(images/like-007F00.png);
-}
-
 .light .votedown-sprite {
     background-image: url(images/dislike-888888.png);
 }
 
-
-span.img-button:hover .votedown-sprite.sprite {
-    background-image: url(images/dislike-ff0000.png);
-}
-
 .light .permissions-sprite {
     background-image: url(images/permissions-888888.png);
-}
-
-
-span.img-button:hover .permissions-sprite.sprite {
-    background-image: url(images/permissions-red.png);
 }
 
 span.img-button.voteup-item {
@@ -463,14 +444,6 @@ span.img-button .sprite {
     position: relative;
     top: 3px;
     text-align: center;
-}
-
-span.img-button:hover .tag-sprite:hover, span.img-button:hover .sprite {
-    background-image: url(images/ui-icons_0044aa_256x240.png);
-}
-
-.white span.img-button:hover .sprite {
-    background-image: url(images/ui-icons_ffffff_256x240.png);
 }
 
 .upvotes {
@@ -556,14 +529,6 @@ ul.comment-list li {
 	overflow: hidden;
 	border-radius: 5px;
 	background-color: #ffffff;
-}
-
-ul.comment-list li:hover {
-    background-color: #eeeeee;
-    border: 1px solid #dddddd;
-    border-top: none;
-    padding-bottom: 0;
-    margin: 0 0 4px 0;
 }
 
 ul.comment-list li h4 {
@@ -671,11 +636,6 @@ li.droplist-user img {
         border-radius: 3px;
 }
 
-.user-droplist .delete:hover, .permission-group-droplist .delete:hover {
-        color: #2244aa;
-        background-color: #ffffff;
-}
-
 .user-droplist, .permission-group-droplist {
         border: 1px solid #028;
         background-color: #ffffff;
@@ -766,14 +726,6 @@ li.droplist-user img {
 	-webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-}
-
-#tabs li:hover {
-	background: #ffffff url(images/ui-bg_flat_100_ffffff_40x100.png) 50% 50% repeat-x;
-}
-
-#tabs li:hover a span {
-    color: #0044aa;
 }
 
 ul#today-feeds {
@@ -943,11 +895,6 @@ blockquote {
     border-left: none;
     margin-left: 0;
     border-radius: 0;
-}
-
-#search-menu input[type="submit"]:hover {
-    background: #cccccc;
-    color: #666666;
 }
 
 #search-menu #search-text {

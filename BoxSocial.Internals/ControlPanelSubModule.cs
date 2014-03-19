@@ -326,6 +326,7 @@ namespace BoxSocial.Internals
         {
             string formSubmitUri = string.Empty;
             template = new Template(core.Http.TemplatePath, "1301.html");
+            template.Medium = core.Template.Medium;
             if (Owner != null)
             {
                 formSubmitUri = core.Hyperlink.AppendSid(Owner.AccountUriStub, true);

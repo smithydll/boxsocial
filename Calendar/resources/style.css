@@ -188,14 +188,14 @@ ul#day-timeslots li dl {
 
 ul#day-timeslots li dl dt {
 	float: left;
-	width: 45px;
+	width: 50px;
 	font-weight: bold;
 	font-size: 110%;
 	color: #CCCCCC;
 }
 
 ul#day-timeslots li dl dd {
-	margin-left: 50px;
+	margin-left: 55px;
 }
 
 ul.day-events {

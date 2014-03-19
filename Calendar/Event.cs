@@ -588,6 +588,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
                 e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
+                e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
             }
 
             Event calendarEvent = null;

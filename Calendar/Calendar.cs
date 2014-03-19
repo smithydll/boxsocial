@@ -387,6 +387,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
                 core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
             }
 
             core.Template.Parse("CURRENT_YEAR", year.ToString());
@@ -433,6 +434,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
                 core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
             }
 
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
@@ -566,6 +568,7 @@ namespace BoxSocial.Applications.Calendar
             {
                 core.Template.Parse("USER_THUMB", ((User)owner).UserThumbnail);
                 core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
             }
 
             core.Template.Parse("CURRENT_DAY", day.ToString());

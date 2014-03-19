@@ -81,6 +81,7 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
             core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
 
             if (core.Session.IsLoggedIn)
             {

@@ -2388,6 +2388,7 @@ namespace BoxSocial.Internals
 
             e.Template.Parse("USER_THUMB", e.Page.User.UserThumbnail);
             e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);

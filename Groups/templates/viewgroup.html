@@ -80,6 +80,13 @@
 	<ul id="profile-friends">
 	<!-- BEGIN member_list -->
 		<li>
+        <!-- IF $_IS_MOBILE -->
+            <!-- IF member_list.ICON -->
+			<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<img src="/images/no_picture_100.png" alt="{member_list.USER_DISPLAY_NAME}" />
+			<!-- ENDIF -->
+        <!-- ELSE -->
 			<dl>
 				<dt><span class="img-wb"><a href="{member_list.U_PROFILE}">
 				<!-- IF member_list.TILE -->
@@ -90,6 +97,7 @@
 				</a></span></dt>
 				<dd><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></dd>
 			</dl>
+        <!-- ENDIF -->
 		</li>
 	<!-- END member_list -->
 	</ul>

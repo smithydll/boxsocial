@@ -1,4 +1,4 @@
-function showSideBar() {
+function showSideBar(event) {
     if (!$('#boxsocial-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
@@ -7,7 +7,7 @@ function showSideBar() {
     return false;
 }
 
-function showPagesBar() {
+function showPagesBar(event) {
     if (!$('#pages-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
@@ -17,6 +17,7 @@ function showPagesBar() {
 }
 
 function hideSideBar() {
+    $('#main-page').show();
     if ($('#boxsocial-menu').is(":visible")) {
         $('#boxsocial-menu').animate({ left: -200 }, function () { $(this).hide(); });
     }
@@ -24,27 +25,32 @@ function hideSideBar() {
         $('#pages-menu').animate({ right: -250 }, function () { $(this).hide(); });
     }
     if ($('#post-menu').is(":visible")) {
+        $('input:focus').blur();
         $('#post-menu').hide();
         $('#post-form').trigger("reset");
         checkPhotoUpload();
     }
     if ($('#search-menu').is(":visible")) {
+        $('input:focus').blur();
         if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); });
     }
+    $('#post-form').trigger("reset");
+    $('#upload canvas').remove();
     return false;
 }
 
-function showPostBar() {
+function showPostBar(event) {
     if (!$('#post-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
         $('#post-menu').show();
         $('#post-menu').trigger('click');
+        $('#main-page').hide();
     }
     return false;
 }
 
-function showSearchBar() {
+function showSearchBar(event) {
     if (!$('#search-menu').is(":visible")) {
         hideSideBar();
         event.stopPropagation();
@@ -101,14 +107,17 @@ var filesList = [];
 
 function submitPost() {
     var status = false;
+    $('#status-submit').attr('disabled', 'disabled');
     switch ($("#form-module").val()) {
         case 'profile':
-            status = SendStatus();
+            $("#form-module :input").attr("disabled", true);
+            status = SendAction(null, mobileSent);
             break;
         case 'galleries':
             var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
                 var r = ProcessAjaxResult(result);
                 if (r != null) {
+                    hideSideBar();
                     SentAction(r);
                     filesList = [];
                     $('#upload canvas').remove();
@@ -118,8 +127,13 @@ function submitPost() {
             $("#form-module :input").attr("disabled", true);
             break;
     }
-    hideSideBar();
     return status;
+}
+
+function mobileSent(r, e, a) {
+    hideSideBar();
+    $("#form-module :input").attr("disabled", false);
+    SentAction(r, e, a);
 }
 
 $(function () {
@@ -129,9 +143,9 @@ $(function () {
             .test(window.navigator.userAgent),
         imageMaxWidth: 2560,
         imageMaxHeight: 2560,
-        previewMaxWidth: 200,
-        previewMaxHeight: 300,
-        previewCrop: false,
+        previewMaxWidth: 100,
+        previewMaxHeight: 100,
+        previewCrop: true,
         acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
         autoUpload: false
     }).on('fileuploadadd', function (e, data) {

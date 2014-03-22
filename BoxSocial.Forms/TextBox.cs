@@ -26,6 +26,14 @@ using System.Web;
 
 namespace BoxSocial.Forms
 {
+    public enum InputType
+    {
+        Text,
+        Number,
+        Email,
+        Url,
+    }
+
     public class TextBox : FormField
     {
         private string value;
@@ -36,6 +44,7 @@ namespace BoxSocial.Forms
         private int lines;
         private StyleLength width;
         private ScriptProperty script;
+        private InputType type;
 
         public string Value
         {
@@ -70,6 +79,18 @@ namespace BoxSocial.Forms
             set
             {
                 visible = value;
+            }
+        }
+
+        public InputType Type
+        {
+            get
+            {
+                return type;
+            }
+            set
+            {
+                type = value;
             }
         }
 
@@ -163,6 +184,7 @@ namespace BoxSocial.Forms
             lines = 1;
             width = new StyleLength(100F, LengthUnits.Percentage);
             script = new ScriptProperty();
+            type = InputType.Text;
         }
 
         public override string ToString()
@@ -181,20 +203,37 @@ namespace BoxSocial.Forms
             }
             else
             {
-                return string.Format("<input type=\"text\" name=\"{0}\" id=\"{0}\" value=\"{1}\" style=\"width: {5};{4}\"{2}{3}{6}/>",
+                return string.Format("<input type=\"{7}\" name=\"{0}\" id=\"{0}\" value=\"{1}\" style=\"width: {5};{4}\"{2}{3}{6}/>",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),
                     (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
                     (MaxLength > -1) ? " maxlength=\"" + MaxLength.ToString() + "\"" : string.Empty,
                     (!IsVisible) ? " display: none;" : string.Empty,
                     width,
-                    Script.ToString());
+                    Script.ToString(),
+                    InputTypeToString(type));
             }
         }
 
         public override void SetValue(string value)
         {
             this.Value = value;
+        }
+
+        private string InputTypeToString(InputType type)
+        {
+            switch (type)
+            {
+                case  InputType.Text:
+                    return "text";
+                case InputType.Number:
+                    return "number";
+                case InputType.Email:
+                    return "email";
+                case InputType.Url:
+                    return "url";
+            }
+            return "text";
         }
     }
 }

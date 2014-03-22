@@ -90,8 +90,9 @@ function ItemLiked(r, e) {
     }
 }
 
-function SendStatus(u) {
-    return PostToAccount(SentStatus, "profile", "status", -1, { message: $('#message').val(), 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
+function SendStatus(u, f) {
+    f = typeof f !== 'undefined' ? f : SentStatus;
+    return PostToAccount(f, "profile", "status", -1, { message: $('#message').val(), 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
 }
 
 function SentStatus(r, e, a) {
@@ -102,8 +103,9 @@ function SentStatus(r, e, a) {
     }
 }
 
-function SendAction(u) {
-    return PostToAccount(SentAction, "profile", "status", -1, { message: $('#message').val(), action: 'true', 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
+function SendAction(u, f) {
+    f = typeof f !== 'undefined' ? f : SentAction;
+    return PostToAccount(f, "profile", "status", -1, { message: $('#message').val(), action: 'true', 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
 }
 
 function SentAction(r, e, a) {
@@ -662,8 +664,10 @@ $(document).ready(function () {
                 console.log($(window).scrollTop());
                 $(".infinite").each(function () {
                     if ($(window).scrollTop() + $(window).height() > ($(this).offset().top + $(this).height() - trigger)) {
-                        infiniteLoading = true;
-                        $(this).children("p").children(".infinite-more").trigger('click');
+                        if ($(this).children("p").children(".infinite-more").is(":visible")) {
+                            infiniteLoading = true;
+                            $(this).children("p").children(".infinite-more").trigger('click');
+                        }
                     }
                 });
                 lastScrollPosn = $(window).scrollTop();
@@ -725,7 +729,7 @@ function toggleStatusComments(parent, id, type, el) {
 }
 
 $(document).ready(function () {
-    if (medium == 'desktop ') {
+    if (medium == 'desktop') {
         $(".username-card").on('mouseenter', function (e) {
             if (!$(this).parent().hasClass('contact-card-container')) {
                 PostToPage(LoadedCard, "api/card", $(this), { ajax: 'true', uid: $(this).attr('bs-uid') }, e.pageX - 5);

@@ -6,7 +6,7 @@ html, body {
 	margin: 0px;
 	padding: 0px;
 	font-size: 100%;
-	min-height: 1280px;
+	/*min-height: 1280px;*/
 }
 
 body {
@@ -43,7 +43,7 @@ body {
 	background: white;
 }
 
-#content {
+#content, .popup-content {
     padding: 0 5px;
 }
 
@@ -829,7 +829,7 @@ blockquote {
     left: 0;
     right: 0;
     z-index: 100000;
-    overflow: hidden;
+    overflow: auto;
     display: none;
     text-align: left;
     font-size: 200%;
@@ -1150,7 +1150,7 @@ input#fileupload {
     writing-mode: lr-tb;
     white-space: no-wrap;
     right: 0;
-    font-size: 1000px;
+    font-size: 50px; /* was 1000 but layout issue */
     opacity: 0;
     -webkit-appearance: none;
 }
@@ -1185,4 +1185,8 @@ input#fileupload {
 .status-body {
     padding: 0;
     margin-left: 0 !important;
+}
+
+#upload canvas {
+    margin-right: 5px;
 }

@@ -476,6 +476,7 @@ namespace BoxSocial.Applications.Forum
         public Template RenderPreview()
         {
             Template template = new Template(Assembly.GetExecutingAssembly(), "topicpost");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             VariableCollection postVariableCollection = template.CreateChild("post_list");

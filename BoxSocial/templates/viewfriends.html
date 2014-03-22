@@ -29,6 +29,7 @@
 </div>
 <!-- ENDIF -->
 
+<!-- IF $_IS_DESKTOP -->
 <div id="pane-profile">
   <div id="pane-pages" class="pane">
     <h3>Pages</h3>
@@ -37,8 +38,10 @@
     </ul>
   </div>
 </div>
+<!-- ENDIF -->
 
 <div id="profile">
+<!-- IF NOT $_IS_MOBILE -->
   <div id="member-filter-panel">
   <p>
     <a href="{U_FILTER_ALL}">All</a>
@@ -70,6 +73,7 @@
     <a href="{U_FILTER_BEGINS_Z}">Z</a>
   </p>
 </div>
+<!-- ENDIF -->
 	<!-- IF PAGINATION -->
 	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
@@ -79,9 +83,9 @@
 	<li>
         <!-- IF $_IS_MOBILE -->
             <!-- IF friend_list.ICON -->
-			<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
+			<a href="{friend_list.U_PROFILE}"><img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" /></a>
 			<!-- ELSE -->
-			<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
+			<a href="{friend_list.U_PROFILE}"><img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" /></a>
 			<!-- ENDIF -->
         <!-- ELSE -->
 		<dl>

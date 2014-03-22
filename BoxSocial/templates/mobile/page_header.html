@@ -64,21 +64,23 @@
                     <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
                     <input type="submit" id="status-submit" value="Post" style="float: right;" />
                 </div>
-                <!--div class="permission-group-droplist">
-                    <span class="group">Public</span>
-                </div-->
-			    <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
-                <div id="post-type">
-                    <span id="fileupload-label"><span>&nbsp;<input id="fileupload" type="file" name="photo-files[]" onchange="checkPhotoUpload();" /></span></span>
+                <div class="popup-content">
+                    <!--div class="permission-group-droplist">
+                        <span class="group">Public</span>
+                    </div-->
+			        <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
+                    <div id="post-type">
+                        <span id="fileupload-label"><span>&nbsp;<input id="fileupload" type="file" name="photo-files[]" onchange="checkPhotoUpload();" /></span></span>
+                    </div>
+                    <div id="upload">
+                    </div>
+			        <input type="hidden" id="form-module" name="module" value="profile" />
+			        <input type="hidden" id="form-sub" name="sub" value="status" />
+                    <input type="hidden" name="save" value="Upload" />
+                    <input type="hidden" name="album" value="create" />
+                    <input type="hidden" name="publish-feed" value="checked" />
+                    <input type="hidden" name="gallery-id" value="-1" />
                 </div>
-                <div id="upload">
-                </div>
-			    <input type="hidden" id="form-module" name="module" value="profile" />
-			    <input type="hidden" id="form-sub" name="sub" value="status" />
-                <input type="hidden" name="save" value="Upload" />
-                <input type="hidden" name="album" value="create" />
-                <input type="hidden" name="publish-feed" value="checked" />
-                <input type="hidden" name="gallery-id" value="-1" />
 			</form>
     </div>
         <!-- ENDIF -->
@@ -134,16 +136,16 @@
 <div id="main-page" onclick="hideSideBar();">
 	<div id="head">
             <!-- IF PAGE_LIST -->
-            <a href="#" id="pages-button" onclick="return showPagesBar();"><span>Pages</span></a>
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
             <!-- ENDIF -->
             <!-- IF TAB_LIST -->
-            <a href="#" id="pages-button" onclick="return showPagesBar();"><span>Pages</span></a>
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
             <!-- ENDIF -->
             <!-- IF LOGGED_IN -->
-            <a href="#" id="post-button" onclick="return showPostBar();"><span>Post</span></a>
+            <a href="#" id="post-button" onclick="return showPostBar(event);"><span>Post</span></a>
             <!-- ENDIF -->
-            <a href="#" id="search-button" onclick="return showSearchBar();"><span>Search</span></a>
-			<h1 id="page-title"><a href="#" onclick="return showSideBar();"><span>{HEADING}</span></a></h1>
+            <a href="#" id="search-button" onclick="return showSearchBar(event);"><span>Search</span></a>
+			<h1 id="page-title"><a href="#" onclick="return showSideBar(event);"><span>{HEADING}</span></a></h1>
             <!-- IF SITE_SLOGAN -->
 			<h2 id="sub-title">{SITE_SLOGAN}</h2>
             <!-- ENDIF -->

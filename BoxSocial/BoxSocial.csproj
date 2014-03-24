@@ -207,6 +207,7 @@
     <Content Include="templates\mobile\pane.feeditem.html" />
     <Content Include="templates\mobile\today.html" />
     <Content Include="templates\mobile\viewfeed.html" />
+    <Content Include="templates\mobile\viewfriends.html" />
     <Content Include="templates\mobile\viewprofile.html" />
     <Content Include="templates\page_footer.html" />
     <Content Include="templates\page_header.html" />

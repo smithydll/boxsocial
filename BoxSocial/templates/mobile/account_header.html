@@ -1,7 +1,6 @@
 <!-- INCLUDE page_header.html -->
 
-<p>{BREADCRUMBS}</p>
-
+<div id="content">
 <h2>{ACCOUNT_TITLE}
 <!-- IF PRIMITIVE_TITLE -->
 :: <a href="{U_PRIMITIVE}">{PRIMITIVE_TITLE}</a>
@@ -20,27 +19,9 @@
 <p class="no-permissions">{NO_CUSTOM_STYLE}</p>
 <!-- ENDIF -->
 
-<div class="account-pane" data-role="collapsible-set" data-inset="false">
-    <!-- IF ORPHAN -->
-	<div data-role="collapsible" data-collapsed="false">
-        <h3><a href="{ORPHAN_URI}"><span>{ORPHAN_TITLE}</span></a></h3>
+<div class="account-pane">
 
 {MODULE_CONTENT}
 
-    </div>
-    <!-- ENDIF -->
-	<!-- BEGIN account_links -->
-    <!-- IF account_links.CURRENT -->
-	<div data-role="collapsible" data-collapsed="false">
-        <h3><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></h3>
-
-{MODULE_CONTENT}
-
-    </div>
-    <!-- ELSE -->
-    <div data-role="collapsible">
-        <h3 onclick="window.location.href = '{account_links.URI}';"><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></h3>
-    </div>
-    <!-- ENDIF -->
-	<!-- END account_links -->
-
+</div>
+</div>

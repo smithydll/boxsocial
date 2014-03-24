@@ -86,6 +86,8 @@ namespace BoxSocial.Groups
 
                 groupsVariableCollection.Parse("TITLE", group.DisplayName);
                 groupsVariableCollection.Parse("U_GROUP", group.Uri);
+                groupsVariableCollection.Parse("ICON", group.GroupIcon);
+                groupsVariableCollection.Parse("TILE", group.GroupTile);
             }
 
             e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), UserGroup.GROUPS_PER_PAGE, category.Groups);

@@ -1028,7 +1028,7 @@ ul.list
 {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 5px 0;
 }
 
 ul.list li.list-item 
@@ -1056,41 +1056,42 @@ ul.list li.list-item:last-child
     border-bottom-right-radius: 5px;
 }
 
-ul.list li.list-item > a
-{
+ul.list li.list-item > a {
     display: block;
     width: 100%;
     padding-top: 10px;
     padding-bottom: 10px;
 }
 
-ul.list li.list-item.icon 
-{
+ul.list li.list-item.icon {
+    padding-left: 60px;
+    position: relative;
+    height: 45px;
+}
+
+ul.list li.list-item.tile {
     padding-left: 110px;
     position: relative;
     height: 95px;
 }
 
-ul.list li.list-item.icon img
-{
+ul.list li.list-item.icon img, ul.list li.list-item.tile img {
     float: left;
     position: absolute;
     left: 0;
     top: 0;
 }
 
-ul.list li.list-item .count 
-{
+ul.list li.list-item .count {
     float: right;
+    padding-left: 5px;
 }
 
-div.ui-grid-b 
-{
+div.ui-grid-b {
     overflow: auto;
 }
 
-div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui-block-c
-{
+div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui-block-c {
     float: left;
     width: 33%;
     -webkit-box-sizing: border-box;
@@ -1102,7 +1103,7 @@ div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui
 	display: none;
 }
 
-.account-pane fieldset, .account-wide-pane fieldset {
+.account-pane fieldset, .account-wide-pane fieldset, #body fieldset {
 	border: none;
 	padding-top: 0px;
 }
@@ -1189,4 +1190,8 @@ input#fileupload {
 
 #upload canvas {
     margin-right: 5px;
+}
+
+.account-pane select {
+    width: 100%;
 }

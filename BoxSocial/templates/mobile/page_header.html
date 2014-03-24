@@ -48,6 +48,15 @@
         </ul>
     </div>
     <!-- ENDIF -->
+    <!-- IF account_links -->
+    <div id="pages-menu" class="side-menu">
+        <ul class="mobile-list">
+	    <!-- BEGIN account_links -->
+        <li class="page-li"><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></li>
+	    <!-- END account_links -->
+        </ul>
+    </div>
+    <!-- ENDIF -->
     <div id="search-menu" class="side-menu bottom-menu">
         <h2>Search</h2>
 		<form action="{S_SEARCH}" method="get">
@@ -139,6 +148,9 @@
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
             <!-- ENDIF -->
             <!-- IF TAB_LIST -->
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
+            <!-- ENDIF -->
+            <!-- IF account_links -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
             <!-- ENDIF -->
             <!-- IF LOGGED_IN -->

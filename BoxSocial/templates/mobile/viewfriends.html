@@ -1,0 +1,41 @@
+<!-- INCLUDE page_header.html -->
+
+<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{FRIENDS_TITLE}</h2>
+        </div>
+    </div>
+
+<div id="content">
+
+<div id="profile">
+	<!-- IF PAGINATION -->
+	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+<!-- IF FRIENDS -->
+<ul class="list">
+<!-- BEGIN friend_list -->
+	<li class="list-item icon">
+        <a href="{friend_list.U_PROFILE}">
+        <!-- IF friend_list.ICON -->
+		<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
+		<!-- ELSE -->
+		<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
+		<!-- ENDIF -->
+        {friend_list.USER_DISPLAY_NAME}
+        </a>
+	</li>
+<!-- END friend_list -->
+</ul>
+<!-- ENDIF -->
+	<div class="cheat-clear-left"></div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+</div>
+</div>
+<!-- INCLUDE page_footer.html -->

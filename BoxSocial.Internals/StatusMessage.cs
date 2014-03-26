@@ -501,6 +501,7 @@ namespace BoxSocial.Internals
         public Template RenderPreview()
         {
             Template template = new Template("search_result.statusmessage.html");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");

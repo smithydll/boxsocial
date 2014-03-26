@@ -136,6 +136,7 @@
     <Content Include="templates\account_forum_ranks.html" />
     <Content Include="templates\account_forum_rank_edit.html" />
     <Content Include="templates\account_forum_settings.html" />
+    <Content Include="templates\topicpost.mobile.html" />
     <Content Include="templates\topicpost.html" />
     <Content Include="templates\viewtopic.mobile.html" />
     <Content Include="templates\viewforum.mobile.html" />

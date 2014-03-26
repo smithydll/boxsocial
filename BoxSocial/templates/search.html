@@ -1,12 +1,15 @@
 <!-- INCLUDE page_header.html -->
-	<h2>Search for friends</h2>
+
+<div id="content">
+	<h2>Search {SITE_TITLE}</h2>
 	
-			<div id="search">
+			<div id="search-main">
 				<form action="./search" method="get">
 					<fieldset>
-						<input type="text" id="search-text" name="q" value="" maxlength="127" />
-						<input type="submit" value="Search" />
+						<input type="text" id="search-main-text" name="q" value="{SEARCH_QUERY}" maxlength="127" /><input type="submit" value="{L_SEARCH}" />
 					</fieldset>
 				</form>
 			</div>
+</div>
+
 <!-- INCLUDE page_footer.html -->

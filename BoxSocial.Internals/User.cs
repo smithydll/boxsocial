@@ -2861,6 +2861,7 @@ namespace BoxSocial.Internals
         public Template RenderPreview()
         {
             Template template = new Template("search_result.user.html");
+            template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
             template.Parse("USER_DISPLAY_NAME", DisplayName);

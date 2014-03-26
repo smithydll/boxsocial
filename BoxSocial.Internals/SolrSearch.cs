@@ -399,6 +399,7 @@ namespace BoxSocial.Internals
             wc.Headers[HttpRequestHeader.ContentType] = "type:application/json";
             string response = wc.UploadString("http://" + server + "/update/json", sb.ToString());
             //HttpContext.Current.Response.Write(sb.ToString() + "<br />\r\n\r\n" + response + "<br />");
+            wc.DownloadString("http://" + server + "/update?commit=true");
 
             return true;
         }
@@ -438,6 +439,7 @@ namespace BoxSocial.Internals
                 WebClient wc = new WebClient();
                 wc.Headers[HttpRequestHeader.ContentType] = "type:application/json";
                 wc.UploadString("http://" + server + "/update/json", sb.ToString());
+                wc.DownloadString("http://" + server + "/update?commit=true");
             }
             catch
             {

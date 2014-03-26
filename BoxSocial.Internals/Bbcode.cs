@@ -994,9 +994,9 @@ namespace BoxSocial.Internals
                 input = input.Replace("<p> </p>", string.Empty);
                 input = input.Replace("<p>\n</p>", string.Empty);
                 input = input.Replace("<p>\r\n</p>", string.Empty);
-            }
 
-            input = ParseEmoticons(core, input);
+                input = ParseEmoticons(core, input);
+            }
             
             return input;
         }

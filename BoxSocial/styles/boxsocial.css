@@ -119,14 +119,22 @@ p {
 	float: right;
 }
 
-#head #search fieldset {
+#head #search fieldset, #search-main fieldset {
 	border: none;
 	padding: 0;
 	margin: 0;
 }
 
+#search-main fieldset {
+    text-align: center;
+}
+
 #head #search #search-text {
 	width: 250px;
+}
+
+#search-main #search-main-text {
+	width: 80%;
 }
 
 #head #head-nav {
@@ -976,7 +984,7 @@ input[type="cancel"]:hover, input[type="reset"]:hover {
     color: #333333;
 }
 
-#search input[type="submit"] {
+#search input[type="submit"], #search-main input[type="submit"] {
     border: 1px solid #aaaaaa;
 	background: #eeeeee;
 	color: #888888;
@@ -991,7 +999,7 @@ input[type="cancel"]:hover, input[type="reset"]:hover {
     color: #666666;
 }
 
-#search #search-text {
+#search #search-text, #search-main #search-main-text {
     border: 1px solid #aaaaaa;
     border-right: none;
     outline: none;

@@ -77,6 +77,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             StringBuilder checkBoxArray = new StringBuilder();
             checkBoxArray.AppendLine(string.Format("<ul id=\"cl-" + name + "\">",
                 name));

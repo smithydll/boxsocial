@@ -91,6 +91,7 @@ namespace BoxSocial.Internals
         public void ParseACL(Template template, Primitive owner, string variable)
         {
             Template aclTemplate = new Template("std.acl.html");
+            aclTemplate.Medium = core.Template.Medium;
             aclTemplate.SetProse(core.Prose);
             
             if (itemPermissions == null)
@@ -187,7 +188,7 @@ namespace BoxSocial.Internals
                                         case AccessControlGrants.Allow:
                                             PrimitivePermissionGroup ppg = null;
 
-                                            ppg = new PrimitivePermissionGroup(itemGrant.PrimitiveKey, string.Empty);
+                                            ppg = new PrimitivePermissionGroup(itemGrant.PrimitiveKey, string.Empty, string.Empty);
                                             foreach (PrimitivePermissionGroup p in ownerGroups)
                                             {
                                                 if (ppg.ItemKey.Equals(p.ItemKey))

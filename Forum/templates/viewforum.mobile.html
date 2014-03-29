@@ -19,19 +19,19 @@
     <a href="{U_MARK_FORUMS_READ}">{L_MARK_FORUMS_READ}</a>
     <!-- ENDIF -->
   </p>
-  <ul data-role="listview" data-inset="true" data-count-theme="b">
+  <ul class="list">
   <!-- BEGIN forum_list -->
   <!-- IF forum_list.IS_CATEGORY -->
-			<li data-role="list-divider"><a href="{forum_list.URI}">{forum_list.TITLE}</a></li>
+			<li class="list-item divider"><a href="{forum_list.URI}">{forum_list.TITLE}</a></li>
   <!-- ENDIF -->
   <!-- IF forum_list.IS_FIRST -->
   <!-- ENDIF -->
     <!-- IF forum_list.IS_FORUM -->
-				<li><a href="{forum_list.URI}">
+				<li class="list-item icon"><a href="{forum_list.URI}">
 	      <!-- IF forum_list.IS_READ -->
-	      <img src="/images/posticon_read_med.png" class="ui-li-icon ui-corner-none" />
+	      <img src="/images/posticon_read_med.png" />
 	      <!-- ELSE -->
-	      <img src="/images/posticon_unread_med.png" class="ui-li-icon ui-corner-none" />
+	      <img src="/images/posticon_unread_med.png" />
 	      <!-- ENDIF -->
           <p><strong>{forum_list.TITLE}</strong></p>
           <p>{forum_list.DESCRIPTION}</p>
@@ -42,7 +42,7 @@
           <!-- END forum_list.sub_forum_list -->
           </p>
           <!-- ENDIF -->
-						<span class="ui-li-count">{forum_list.TOPICS} topics</span>
+						<span class="count">{forum_list.TOPICS} topics</span>
                         </a>
                         <!-- IF forum_list.LAST_POST_URI -->
 						<a href="{forum_list.LAST_POST_URI}">{forum_list.LAST_POST_TITLE}</a>
@@ -62,16 +62,16 @@
     <!-- ENDIF -->
     {PAGINATION}
   </p>
-			<ul data-role="listview" data-inset="true" data-count-theme="b">
-    <li data-role="list-divider">Topics</li>
+			  <ul class="list">
+    <li class="list-item divider">Topics</li>
     <!-- BEGIN topic_list -->
-    <li>
+    <li class="list-item icon">
 		<a href="{topic_list.URI}">
     <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
-    <img src="/images/posticon_read_med.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_read_med.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
-    <img src="/images/posticon_unread_med.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_unread_med.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
     <img src="" class="ui-li-icon ui-corner-none" />
@@ -80,10 +80,10 @@
     <img src="" class="ui-li-icon ui-corner-none" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
-    <img src="/images/posticon_read_med_sticky.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_read_med_sticky.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
-    <img src="/images/posticon_unread_med_sticky.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_unread_med_sticky.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
     <img src="" class="ui-li-icon ui-corner-none" />
@@ -92,10 +92,10 @@
     <img src="" class="ui-li-icon ui-corner-none" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
-    <img src="/images/posticon_read_med_announce.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_read_med_announce.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
-    <img src="/images/posticon_unread_med_announce.png" class="ui-li-icon ui-corner-none" />
+    <img src="/images/posticon_unread_med_announce.png" />
     <!-- ENDIF -->
     <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
     <img src="" class="ui-li-icon ui-corner-none" />
@@ -106,7 +106,7 @@
 
           <p><strong>{topic_list.TITLE}</strong></p>
           <p>by {topic_list.USERNAME}<br />on  {topic_list.DATE}</p>
-          <span class="ui-li-count">{topic_list.REPLIES} replies</span></a>
+          <span class="count">{topic_list.REPLIES} replies</span></a>
           <!-- IF topic_list.LAST_POST_URI -->
         <a href="{topic_list.LAST_POST_URI}">{topic_list.LAST_POST_TITLE}</a>
           <!-- ENDIF -->

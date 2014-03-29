@@ -32,13 +32,6 @@ using BoxSocial.Forms;
 
 namespace BoxSocial.IO
 {
-    public enum DisplayMedium
-    {
-        Desktop,
-        Mobile,
-        Tablet,
-    }
-
     public struct TemplateVariable
     {
         public string Name;
@@ -53,18 +46,33 @@ namespace BoxSocial.IO
 
     public class VariableCollection
     {
+        private DisplayMedium medium;
         private string loopName;
         private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(4, StringComparer.Ordinal);
         private Dictionary<string, string> variables = new Dictionary<string, string>(128, StringComparer.Ordinal);
         private VariableCollection parentCollection = null;
 
-        internal VariableCollection()
+        public DisplayMedium Medium
         {
+            get
+            {
+                return medium;
+            }
+            set
+            {
+                medium = value;
+            }
+        }
+
+        internal VariableCollection(DisplayMedium medium)
+        {
+            this.medium = medium;
             loopName = String.Empty;
         }
 
-        public VariableCollection(string name)
+        public VariableCollection(DisplayMedium medium, string name)
         {
+            this.medium = medium;
             loopName = name;
         }
 
@@ -72,7 +80,7 @@ namespace BoxSocial.IO
         {
             string fullName = (string.IsNullOrEmpty(loopName)) ? name : loopName + "." + name;
 
-            VariableCollection vc = new VariableCollection(fullName);
+            VariableCollection vc = new VariableCollection(medium, fullName);
             vc.parentCollection = this;
 
             if (!ContainsLoop(fullName))
@@ -128,7 +136,7 @@ namespace BoxSocial.IO
             {
                 if (!variables.ContainsKey(key))
                 {
-                    variables.Add(key, formField.ToString());
+                    variables.Add(key, formField.ToString(medium));
                 }
             }
         }
@@ -276,7 +284,7 @@ namespace BoxSocial.IO
     public class Template
     {
         private IProse prose;
-        protected VariableCollection variables = new VariableCollection();
+        protected VariableCollection variables;
         private Dictionary<string, Assembly> pageAssembly = new Dictionary<string, Assembly>(8, StringComparer.Ordinal);
 
         private string template;
@@ -320,6 +328,7 @@ namespace BoxSocial.IO
             set
             {
                 medium = value;
+                variables.Medium = medium;
             }
         }
 
@@ -333,11 +342,13 @@ namespace BoxSocial.IO
 
         public Template()
         {
+            this.variables = new VariableCollection(medium);
             this.path = Path;
         }
 
         public Template(Assembly assembly, string templateName)
         {
+            this.variables = new VariableCollection(medium);
             this.path = Path;
 
             AddPageAssembly(assembly);
@@ -348,12 +359,14 @@ namespace BoxSocial.IO
 
         public Template(string fileName)
         {
+            this.variables = new VariableCollection(medium);
             this.path = Path;
             templateName = fileName;
         }
 
         public Template(string path, string fileName)
         {
+            this.variables = new VariableCollection(medium);
             this.path = path;
             templateName = fileName;
         }

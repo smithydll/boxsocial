@@ -330,6 +330,7 @@ namespace BoxSocial.Internals
         private long itemId;
         private string languageKey;
         private string displayName;
+        private string tile;
 
         public ItemKey ItemKey
         {
@@ -371,29 +372,39 @@ namespace BoxSocial.Internals
             }
         }
 
-        public PrimitivePermissionGroup(long typeId, long id, string displayName)
+        public string Tile
+        {
+            get
+            {
+                return tile;
+            }
+        }
+
+        public PrimitivePermissionGroup(long typeId, long id, string displayName, string tile)
         {
             this.typeId = typeId;
             this.itemId = id;
             this.languageKey = null;
             this.displayName = displayName;
+            this.tile = tile;
         }
 
-        public PrimitivePermissionGroup(ItemKey item, string displayName)
-            : this(item.TypeId, item.Id, displayName)
+        public PrimitivePermissionGroup(ItemKey item, string displayName, string tile)
+            : this(item.TypeId, item.Id, displayName, tile)
         {
         }
         
-        public PrimitivePermissionGroup(long typeId, long id, string languageKey, string displayName)
+        public PrimitivePermissionGroup(long typeId, long id, string languageKey, string displayName, string tile)
         {
             this.typeId = typeId;
             this.itemId = id;
             this.languageKey = languageKey;
             this.displayName = displayName;
+            this.tile = tile;
         }
 
-        public PrimitivePermissionGroup(ItemKey item, string languageKey, string displayName)
-            : this(item.TypeId, item.Id, languageKey, displayName)
+        public PrimitivePermissionGroup(ItemKey item, string languageKey, string displayName, string tile)
+            : this(item.TypeId, item.Id, languageKey, displayName, tile)
         {
         }
 

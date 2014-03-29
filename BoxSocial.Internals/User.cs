@@ -2575,12 +2575,12 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null));
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null));
-            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.FriendsGroupKey, "FRIENDS", null));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.FamilyGroupKey, "FAMILY_MEMBERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.BlockedGroupKey, "BLOCKED_USERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.FriendsGroupKey, "FRIENDS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.FamilyGroupKey, "FAMILY_MEMBERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.BlockedGroupKey, "BLOCKED_USERS", null, string.Empty));
 
             return ppgs;
         }

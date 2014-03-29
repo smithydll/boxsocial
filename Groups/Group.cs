@@ -1881,11 +1881,11 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null));
-            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOperatorsGroupKey, "OPERATORS", null));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOfficersGroupKey, "OFFICERS", null));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupMembersGroupKey, "MEMBERS", null));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOperatorsGroupKey, "OPERATORS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOfficersGroupKey, "OFFICERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupMembersGroupKey, "MEMBERS", null, string.Empty));
 
             return ppgs;
         }
@@ -1928,7 +1928,7 @@ namespace BoxSocial.Groups
 
                 foreach (UserGroup group in groups)
                 {
-                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName));
+                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName, group.GroupTile));
                 }
             }
 

@@ -168,11 +168,16 @@ namespace BoxSocial.Forms
             this.selectable = selectable;
         }
 
+        public override string ToString()
+        {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
         /// <summary>
         /// Creates a string representing the XHTML syntax for the item.
         /// </summary>
         /// <returns>Returns XHTML</returns>
-        public override string ToString()
+        public override string ToString(DisplayMedium medium)
         {
             if (selected && (!selectable))
             {

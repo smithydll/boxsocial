@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
             width = new StyleLength(100F, LengthUnits.Percentage);
         }
 
-        public override string ToString()
+        public override string ToString(Forms.DisplayMedium medium)
         {
             // This will be a complicated mishmash of javascript
 

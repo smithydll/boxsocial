@@ -65,6 +65,8 @@
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
     <Content Include="captcha%402x.aspx" />
+    <Content Include="scripts\ajax.common.js" />
+    <Content Include="scripts\ajax.desktop.js" />
     <Content Include="scripts\canvas-to-blob.min.js" />
     <Content Include="scripts\jquery-1.10.2.min.js" />
     <Content Include="scripts\jquery-ui-1.10.3.boxsocial.min.js" />

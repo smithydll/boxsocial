@@ -189,6 +189,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             if (isFormatted)
             {
                 return string.Format("<textarea id=\"{0}\" name=\"{0}\" style=\"margin: 0px; width: {6}; height: {3}px;{5}\" cols=\"70\" rows=\"{2}\"{4}{7}>{1}</textarea><div class=\"bbcode-enabled\"></div>",

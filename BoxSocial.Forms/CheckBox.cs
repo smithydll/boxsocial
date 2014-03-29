@@ -78,6 +78,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"width: 100%;\" {1}{2}/>",
                 HttpUtility.HtmlEncode(name), (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
         }

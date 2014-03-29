@@ -93,6 +93,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             return string.Format("<button name=\"{0}\" value=\"{1}\" style=\"{4}\"{3}>{2}</button>",
                 HttpUtility.HtmlEncode(name),
                 HttpUtility.HtmlEncode(value),

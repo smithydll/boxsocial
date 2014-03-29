@@ -909,10 +909,10 @@ namespace BoxSocial.Applications.Calendar
         {
             List<PrimitivePermissionGroup> itemGroups = new List<PrimitivePermissionGroup>();
 
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.InviteesGroupKey, "Event Invitees"));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.AttendingGroupKey, "Event Attending"));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.MaybeAttendingGroupKey, "Event Maybe Attending"));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.NotAttendingGroupKey, "Event Not Attending"));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.InviteesGroupKey, "Event Invitees", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.AttendingGroupKey, "Event Attending", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.MaybeAttendingGroupKey, "Event Maybe Attending", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.NotAttendingGroupKey, "Event Not Attending", string.Empty));
 
             return itemGroups;
         }

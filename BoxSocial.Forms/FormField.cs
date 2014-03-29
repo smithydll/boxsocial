@@ -25,6 +25,12 @@ using System.Text;
 
 namespace BoxSocial.Forms
 {
+    public enum DisplayMedium
+    {
+        Desktop,
+        Mobile,
+        Tablet,
+    }
 
     /// <summary>
     /// Represents a form field on an XHTML form.
@@ -49,5 +55,6 @@ namespace BoxSocial.Forms
         }
 
         public abstract void SetValue(string value);
+        public abstract string ToString(DisplayMedium medium);
     }
 }

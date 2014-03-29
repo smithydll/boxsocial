@@ -32,6 +32,7 @@ using System.Web;
 using System.Web.Configuration;
 using System.Drawing;
 using BoxSocial.IO;
+using BoxSocial.Forms;
 
 namespace BoxSocial.Internals
 {
@@ -346,6 +347,18 @@ namespace BoxSocial.Internals
             else
             {
                 offset = new long[] { 0 };
+            }
+
+           if (session != null && session.SignedIn && core.IsMobile)
+           {
+                List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, core.Session.LoggedInMember);
+
+                foreach (ApplicationEntry ae in applications)
+                {
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Member, ae);
+                }
+
+                core.InvokePostHooks(new HookEventArgs(core, AppPrimitives.Member, core.Session.LoggedInMember));
             }
 
             loadTime = (initTimer.ElapsedTicks - loadStart);

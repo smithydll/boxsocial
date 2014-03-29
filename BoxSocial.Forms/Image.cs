@@ -57,6 +57,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             string style = string.Empty;
             if (Width.Length > 0 || Width.Length < 0)
             {

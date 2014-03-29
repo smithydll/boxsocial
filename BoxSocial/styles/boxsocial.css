@@ -1658,11 +1658,11 @@ li.droplist-user, li.droplist-group {
 }
 
 li.droplist-user a {
-        min-height: 38px;
+        min-height: 38px !important;
 }
 
 li.droplist-group a {
-        min-height: 22px;
+        min-height: 22px !important;
 }
 
 li.droplist-user img {

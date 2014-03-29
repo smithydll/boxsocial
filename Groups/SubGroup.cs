@@ -930,7 +930,7 @@ namespace BoxSocial.Groups
 
                 foreach (SubUserGroup group in groups)
                 {
-                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName));
+                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName, string.Empty));
                 }
             }
 

@@ -146,11 +146,16 @@ namespace BoxSocial.Forms
             return itemKeys.ContainsKey(key);
         }
 
+        public override string ToString()
+        {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
         /// <summary>
         /// Creates a string representing the XHTML syntax for the radio list.
         /// </summary>
         /// <returns>Returns XHTML</returns>
-        public override string ToString()
+        public override string ToString(DisplayMedium medium)
         {
             StringBuilder selectBox = new StringBuilder();
             selectBox.AppendLine(string.Format("<ul id=\"rl-" + HttpUtility.HtmlEncode(name) + "\">",

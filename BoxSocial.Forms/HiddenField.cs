@@ -62,6 +62,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             return string.Format("<input type=\"hidden\" name=\"{0}\" id=\"{0}\"{2} value=\"{1}\" />",
                     HttpUtility.HtmlEncode(name),
                     HttpUtility.HtmlEncode(Value),

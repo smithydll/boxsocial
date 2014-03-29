@@ -36,8 +36,8 @@
 	<!-- BEGIN javascript_list -->
 	<script type="text/javascript" src="{javascript_list.URI}"></script>
 	<!-- END javascript_list -->
-    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.js"></script>
-    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.mobile.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.common.min.js"></script>
+    <script type="text/javascript" src="{U_STATIC}/scripts/ajax.mobile.min.js"></script>
 </head>
 <body>
     <!-- IF PAGE_LIST -->
@@ -61,7 +61,13 @@
         <h2>Search</h2>
 		<form action="{S_SEARCH}" method="get">
 			<fieldset>
-				<input type="text" id="search-text" name="q" value="" maxlength="127" /><input type="submit" value="Search" />
+                <div class="action-bar">
+                    <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
+                    <input type="submit" value="{L_SEARCH}" style="float: right;" />
+                </div>
+                <div class="popup-content">
+				    <input type="text" id="search-text" name="q" value="" maxlength="127" />
+                </div>
 			</fieldset>
 		</form>
     </div>
@@ -74,8 +80,13 @@
                     <input type="submit" id="status-submit" value="Post" style="float: right;" />
                 </div>
                 <div class="popup-content">
+                    <!-- The name of this field clashes with other forms -->
                     <!--div class="permission-group-droplist">
                         <span class="group">Public</span>
+                    </div>
+                    <p><strong>Permissions</strong>:</p>
+                    <div id="permissions" class="permission-group-droplist" onclick="showUsersBar(event, 'permissions', 'permissions');" style="width: 100%;">
+                        <span class="item-3--2 group">Everyone</span><input type="text" name="permissions-text" id="permissions-text" value="" class="textbox" style="display: none;"><input type="hidden" name="permissions-ids" id="permissions-ids" class="ids" value="3--2"><input type="hidden" name="permissions-id" id="permissions-id" class="item-id" value="2"><input type="hidden" name="permissions-type-id" id="permissions-type-id" class="item-type-id" value="85">
                     </div-->
 			        <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
                     <div id="post-type">

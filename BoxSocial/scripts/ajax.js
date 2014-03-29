@@ -556,40 +556,6 @@ function DeletedStatus(r, e, a) {
     $("#status-" + a).remove();
 }
 
-function ShowPages() {
-    $(".page-tiles").dialog({
-        modal: true,
-        closeText: "back",
-        draggable: false,
-        resizable: false
-    });
-    return false;
-}
-
-function ShowSearch() {
-    $("#search").dialog({
-        modal: true,
-        closeText: "back",
-        draggable: false,
-        resizable: false
-    });
-    return false;
-}
-
-function ShowMobileMenu() {
-    return false;
-}
-
-function ShowPoststatus() {
-    $("#post-status-div").dialog({
-        modal: true,
-        closeText: "back",
-        draggable: false,
-        resizable: false
-    });
-    return false;
-}
-
 function ShareItem(itemId, itemType) {
     return PostToPage(ShowShareContent, "api/share?ajax=true&mode=post&item=" + itemId + "&type=" + itemType, null, { ajax: "true" }, { item: itemId, type: itemType });
 }

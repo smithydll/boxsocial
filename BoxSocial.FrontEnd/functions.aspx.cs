@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.FrontEnd
 {
@@ -84,7 +85,7 @@ namespace BoxSocial.FrontEnd
         {
             string namePart = core.Http.Form["name-field"];
 
-            if (core.Session.IsLoggedIn)
+            if (core.Session.SignedIn)
             {
                 List<Friend> friends = core.Session.LoggedInMember.GetFriends(namePart);
 
@@ -139,6 +140,15 @@ namespace BoxSocial.FrontEnd
             long itemId = core.Functions.FormLong("item", 0);
             long itemTypeId = core.Functions.FormLong("type", 0);
 
+            if (!(itemId > 0 && itemTypeId > 0))
+            {
+                if (core.Session.SignedIn)
+                {
+                    itemId = core.Session.LoggedInMember.Id;
+                    itemTypeId = core.Session.LoggedInMember.TypeId;
+                }
+            }
+
             if (itemId > 0 && itemTypeId > 0)
             {
                 ItemKey ik = new ItemKey(itemId, itemTypeId);
@@ -173,11 +183,11 @@ namespace BoxSocial.FrontEnd
                 {
                     if (!string.IsNullOrEmpty(group.LanguageKey))
                     {
-                        permissiveNames.Add(group.ItemKey, new string[] { core.Prose.GetString(group.LanguageKey), string.Empty });
+                        permissiveNames.Add(group.ItemKey, new string[] { core.Prose.GetString(group.LanguageKey), group.Tile });
                     }
                     else
                     {
-                        permissiveNames.Add(group.ItemKey, new string[] { group.DisplayName, string.Empty });
+                        permissiveNames.Add(group.ItemKey, new string[] { group.DisplayName, group.Tile });
                     }
                 }
 

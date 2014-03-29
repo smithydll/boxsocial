@@ -1130,9 +1130,9 @@ namespace BoxSocial.Musician
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MusicianMember)), -1, "GROUP_MEMBERS"));
-            ppgs.Add(new PrimitivePermissionGroup(Fan.FanGroupKey, "FANS"));
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE"));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MusicianMember)), -1, "GROUP_MEMBERS", string.Empty, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Fan.FanGroupKey, "FANS", string.Empty, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", string.Empty, string.Empty));
 
             return ppgs;
         }

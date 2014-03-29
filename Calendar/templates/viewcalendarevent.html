@@ -103,6 +103,13 @@
 	<ul id="profile-friends">
 	<!-- BEGIN maybe_attending_list -->
 		<li>
+        <!-- IF $_IS_MOBILE -->
+            <!-- IF maybe_attending_list.ICON -->
+			<img src="{maybe_attending_list.ICON}" alt="{maybe_attending_list.USER_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<img src="/images/no_picture_100.png" alt="{maybe_attending_list.USER_DISPLAY_NAME}" />
+			<!-- ENDIF -->
+        <!-- ELSE -->
 			<dl>
 				<dt><span class="img-wb"><a href="{maybe_attending_list.U_PROFILE}">
 				<!-- IF maybe_attending_list.TILE -->
@@ -113,6 +120,7 @@
 				</a></span></dt>
 				<dd><a href="{maybe_attending_list.U_PROFILE}">{maybe_attending_list.USER_DISPLAY_NAME}</a></dd>
 			</dl>
+        <!-- ENDIF -->
 		</li>
 	<!-- END maybe_attending_list -->
 	</ul>
@@ -124,6 +132,13 @@
 	<ul id="profile-friends">
 	<!-- BEGIN not_attending_list -->
 		<li>
+        <!-- IF $_IS_MOBILE -->
+            <!-- IF not_attending_list.ICON -->
+			<img src="{not_attending_list.ICON}" alt="{not_attending_list.USER_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<img src="/images/no_picture_100.png" alt="{not_attending_list.USER_DISPLAY_NAME}" />
+			<!-- ENDIF -->
+        <!-- ELSE -->
 			<dl>
 				<dt><span class="img-wb"><a href="{not_attending_list.U_PROFILE}">
 				<!-- IF not_attending_list.TILE -->
@@ -134,6 +149,7 @@
 				</a></span></dt>
 				<dd><a href="{not_attending_list.U_PROFILE}">{not_attending_list.USER_DISPLAY_NAME}</a></dd>
 			</dl>
+		<!-- ENDIF -->
 		</li>
 	<!-- END not_attending_list -->
 	</ul>
@@ -145,6 +161,13 @@
 	<ul id="profile-friends">
 	<!-- BEGIN unresponded_list -->
 		<li>
+        <!-- IF $_IS_MOBILE -->
+            <!-- IF unresponded_list.ICON -->
+			<img src="{unresponded_list.ICON}" alt="{unresponded_list.USER_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<img src="/images/no_picture_100.png" alt="{unresponded_list.USER_DISPLAY_NAME}" />
+			<!-- ENDIF -->
+        <!-- ELSE -->
 			<dl>
 				<dt><span class="img-wb"><a href="{unresponded_list.U_PROFILE}">
 				<!-- IF unresponded_list.TILE -->
@@ -155,6 +178,7 @@
 				</a></span></dt>
 				<dd><a href="{unresponded_list.U_PROFILE}">{unresponded_list.USER_DISPLAY_NAME}</a></dd>
 			</dl>
+        <!-- ENDIF -->
 		</li>
 	<!-- END unresponded_list -->
 	</ul>

@@ -9,6 +9,11 @@ html, body {
 	/*min-height: 1280px;*/
 }
 
+html {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
 body {
 	background: #ff9955;
 	font-size: 9pt;
@@ -44,7 +49,7 @@ body {
 }
 
 #content, .popup-content {
-    padding: 0 5px;
+    padding: 1px 5px;
 }
 
 .cheat-clear {
@@ -602,14 +607,18 @@ ul.comment-list li p.extra a {
 
 li.droplist-user, li.droplist-group {
     text-align: left;
+    margin: 0;
+    padding: 0;
 }
 
 li.droplist-user a {
-        min-height: 32pt;
+        min-height: 32px !important;
+        display: block;
 }
 
 li.droplist-group a {
-        min-height: 32pt;
+        min-height: 32px !important;
+        display: block;
 }
 
 li.droplist-user img {
@@ -640,15 +649,7 @@ li.droplist-user img {
         border: 1px solid #028;
         background-color: #ffffff;
         position: relative;
-}
-
-.user-droplist input, .permission-group-droplist input {
-        border: none;
-        outline: none;
-        background-color: #ffffff;
-        margin: 0;
         min-height: 19pt;
-        width: 100%;
 }
 
 .user-droplist .username, .permission-group-droplist .username {
@@ -832,7 +833,6 @@ blockquote {
     overflow: auto;
     display: none;
     text-align: left;
-    font-size: 200%;
     top: 0px;
     bottom: 0px;
     background-color: #ffffff;
@@ -847,7 +847,7 @@ blockquote {
 }
 
 #message {
-    font-size: 80%;
+    font-size: 150%;
     margin: 2px 0 2px 0;
     outline: none;
 }
@@ -865,16 +865,18 @@ blockquote {
 }
 
 #search-menu {
-    position: fixed;
-    height: 32pt;
+    position: absolute;
     left: 0;
     right: 0;
-    bottom: -100px;
-    z-index: 1000;
-    overflow: hidden;
+    z-index: 100000;
+    overflow: auto;
     display: none;
     text-align: left;
     font-size: 200%;
+    top: 0px;
+    bottom: 0px;
+    background-color: #ffffff;
+    color: #000000;
 }
 
 #search-menu h2  
@@ -886,21 +888,6 @@ blockquote {
 	border: none;
 	padding: 0;
 	margin: 0;
-}
-
-#search-menu input[type="submit"] {
-    border: 1px solid #aaaaaa;
-	background: #eeeeee;
-	color: #888888;
-    border-left: none;
-    margin-left: 0;
-    border-radius: 0;
-}
-
-#search-menu #search-text {
-    border: 1px solid #aaaaaa;
-    border-right: none;
-    outline: none;
 }
 
 .side-menu {
@@ -1194,4 +1181,90 @@ input#fileupload {
 
 .account-pane select {
     width: 100%;
+}
+
+#users-menu {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 101000;
+    overflow: auto;
+    display: none;
+    text-align: left;
+    top: 0px;
+    bottom: 0px;
+    background-color: #ffffff;
+    color: #000000;
+}
+
+#users-menu h2  {
+    display: none;
+}
+
+#users-list {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0;
+}
+
+#users-list li {
+    list-style: none;
+    padding: 3px;
+    margin: 0;
+    border: 1px solid #dddddd;
+    border-top: 1px solid #ffffff;
+    background-color: #eeeeee;
+    overflow: auto;
+}
+
+#users-list li:first-child
+{
+    border-top: 1px solid #dddddd;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+#users-list li:last-child
+{
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+#users-list li > a {
+    display: block;
+    width: 100%;
+}
+
+#users-list li {
+    padding-left: 60px;
+    position: relative;
+}
+
+#users-list li img {
+    float: left;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+#users-list li .check {
+    float: right;
+    padding-left: 5px;
+    display: inline-block;
+    width: 32pt;
+    text-align: center;
+}
+
+#users-selected {
+    text-align: left;
+}
+
+#users-selected input {
+        border: none;
+        outline: none;
+        background-color: #ffffff;
+        margin: 0;
+        min-height: 19pt;
+        width: 100%;
 }

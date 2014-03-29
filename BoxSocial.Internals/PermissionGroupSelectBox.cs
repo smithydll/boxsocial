@@ -143,6 +143,11 @@ namespace BoxSocial.Internals
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(Forms.DisplayMedium medium)
+        {
             try
             {
                 List<ItemKey> primitiveItemKeys = new List<ItemKey>();
@@ -177,49 +182,120 @@ namespace BoxSocial.Internals
                     {
                         if (ppg.ItemKey.Id > 0 && ppg.ItemKey.Type == typeof(User))
                         {
-                            users.Append(string.Format("<span class=\"username\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"username\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} username\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    break;
+                            }
                         }
                         else if (ppg.ItemKey.Id > 0)
                         {
-                            //HttpContext.Current.Response.Write(ppg.ItemKey.TypeString.ToString() + " " + ppg.ItemKey.TypeId.ToString() + ", " + ppg.ItemKey.Id.ToString() + "<br />");
-                            users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} group\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    break;
+                            }
                         }
                         else if (!string.IsNullOrEmpty(ppg.LanguageKey))
                         {
-                            users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} group\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    break;
+                            }
                         }
                         else
                         {
-                            users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} group\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    break;
+                            }
                         }
                     }
                     else
                     {
                         if (!string.IsNullOrEmpty(ppg.LanguageKey))
                         {
-                            users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} group\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    break;
+                            }
                         }
                         else
                         {
-                            users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                            switch (medium)
+                            {
+                                case Forms.DisplayMedium.Desktop:
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    break;
+                                case DisplayMedium.Mobile:
+                                case DisplayMedium.Tablet:
+                                    users.Append(string.Format("<span class=\"item-{1}-{0} group\">{2}<input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    break;
+                            }
                         }
                     }
                 }
 
-
-                return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\"><span class=\"empty\" style=\"{10}\">Type names to set permissions, or leave blank to inherit.</span>{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" {11}value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
-                        HttpUtility.HtmlEncode(name),
-                        HttpUtility.HtmlEncode(string.Empty),
-                        (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
-                        (!IsVisible) ? " display: none;" : string.Empty,
-                        width,
-                        Script.ToString(),
-                        users.ToString(),
-                        (permissibleItem != null) ? permissibleItem.Id.ToString() : "0",
-                        (permissibleItem != null) ? permissibleItem.TypeId.ToString() : "0",
-                        idList.ToString(),
-                        (idList.Length > 0) ? "display: none" : string.Empty,
-                        (core.IsMobile) ? "data-role=\"none\" " : "");
+                switch (medium)
+                {
+                    case Forms.DisplayMedium.Desktop:
+                        return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\"><span class=\"empty\" style=\"{10}\">Type names to set permissions, or leave blank to inherit.</span>{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
+                                HttpUtility.HtmlEncode(name),
+                                HttpUtility.HtmlEncode(string.Empty),
+                                (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
+                                (!IsVisible) ? " display: none;" : string.Empty,
+                                width,
+                                Script.ToString(),
+                                users.ToString(),
+                                (permissibleItem != null) ? permissibleItem.Id.ToString() : "0",
+                                (permissibleItem != null) ? permissibleItem.TypeId.ToString() : "0",
+                                idList.ToString(),
+                                (idList.Length > 0) ? "display: none" : string.Empty);
+                    case Forms.DisplayMedium.Mobile:
+                    case Forms.DisplayMedium.Tablet:
+                        return string.Format("<div id=\"{0}\" class=\"permission-group-droplist\" onclick=\"showUsersBar(event, '{0}', 'permissions');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{9}\"/><input type=\"hidden\" name=\"{0}-id\" id=\"{0}-id\" class=\"item-id\" value=\"{7}\" /><input type=\"hidden\" name=\"{0}-type-id\" id=\"{0}-type-id\" class=\"item-type-id\" value=\"{8}\" /></div>",
+                                HttpUtility.HtmlEncode(name),
+                                HttpUtility.HtmlEncode(string.Empty),
+                                (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
+                                (!IsVisible) ? " display: none;" : string.Empty,
+                                width,
+                                Script.ToString(),
+                                users.ToString(),
+                                (permissibleItem != null) ? permissibleItem.Id.ToString() : "0",
+                                (permissibleItem != null) ? permissibleItem.TypeId.ToString() : "0",
+                                idList.ToString(),
+                                (idList.Length > 0) ? "display: none" : string.Empty);
+                    default:
+                        return string.Empty;
+                }
             }
             catch (Exception ex)
             {
@@ -251,7 +327,7 @@ namespace BoxSocial.Internals
 
                     if (id != 0 && typeId > 0)
                     {
-                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, typeId), string.Empty));
+                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, typeId), string.Empty, string.Empty));
                     }
                 }
             }
@@ -268,7 +344,7 @@ namespace BoxSocial.Internals
                     if (limit > 0)
                     {
                         long id = core.PrimitiveCache.LoadUserProfile(username);
-                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, typeof(User)), string.Empty));
+                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, typeof(User)), string.Empty, string.Empty));
                         limit--;
                     }
                     else

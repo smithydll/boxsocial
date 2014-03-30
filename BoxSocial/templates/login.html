@@ -3,18 +3,18 @@
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
 <div id="login-box">
-<h2>Sign In</h2>
-				<form action="/sign-in/" method="post" id="form-login">
+<h2>{L_SIGNIN}</h2>
+				<form action="{S_POST}" method="post" id="form-login">
 				<fieldset>
 						<dl>
-							<dt><label for="username">Username:</label></dt>
+							<dt><label for="username">{L_USERNAME}:</label></dt>
 							<dd><input type="text" id="username" name="username" /></dd>
-							<dt><label for="password">Password:</label></dt>
+							<dt><label for="password">{L_PASSWORD}:</label></dt>
 							<dd><input type="password" id="password" name="password" /></dd>
-							<dt><label for="remember">Remember me:</label></dt>
+							<dt><label for="remember">{REMEMBER_ME}:</label></dt>
 							<dd><input type="checkbox" value="true" id="remember" name="remember" checked="checked" /></dd>
 							<dt></dt>
-							<dd><input type="submit" value="Sign In" name="submit" /></dd>
+							<dd><input type="submit" value="{L_SIGNIN}" name="submit" /></dd>
 						</dl>
 						<input type="hidden" name="redirect" value="{REDIRECT}" />
 						<!-- IF DOMAIN -->
@@ -22,6 +22,6 @@
 						<!-- ENDIF -->
 					</fieldset>
 				</form>
-				<p><a href="{U_FORGOT_PASSWORD}">I have forgotten my password</a></p>
+				<p><a href="{U_FORGOT_PASSWORD}">{L_FORGOT_PASSWORD}</a></p>
 			</div>
 <!-- INCLUDE page_footer.html -->

@@ -175,10 +175,10 @@ namespace BoxSocial.FrontEnd
 
             loggedInMember.LoadProfileInfo();
 
-            template.Parse("ACCOUNT_TITLE", "My Account");
+            template.Parse("ACCOUNT_TITLE", core.Prose.GetString("MY_ACCOUNT"));
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "account", "My Account" });
+            breadCrumbParts.Add(new string[] { "account", core.Prose.GetString("MY_ACCOUNT") });
 
             ParseCoreBreadCrumbs(breadCrumbParts);
             //core.Display.ParseBreadCrumbs(breadCrumbParts);

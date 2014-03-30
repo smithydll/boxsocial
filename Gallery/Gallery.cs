@@ -2453,7 +2453,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return "uploaded a photo to " + GalleryTitle;
+                return string.Format(core.Prose.GetString("_UPLOADED_A_PHOTO_TO"), GalleryTitle);
             }
         }
 
@@ -2512,7 +2512,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return "photo gallery";
+                return core.Prose.GetString("_PHOTO_GALLERY");
             }
         }
     }

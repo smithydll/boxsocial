@@ -8,10 +8,10 @@
 		<!-- ENDIF -->
 		<div class="comment-head">
 		<!-- IF comment-list.OWNER -->
-		<h4 class="owner">Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
+		<h4 class="owner">{L_POSTED_BY}: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
 		<!-- ENDIF -->
 		<!-- IF comment-list.IS_SPAM -->
-		<h4>This Comment has been marked as spam (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">show comment</a>)</h4>
+		<h4>{L_THIS_COMMENT_HAS_BEEN_MARKED_AS_SPAM} (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">{L__SHOW_COMMENT}</a>)</h4>
 		<!-- ENDIF -->
 		<!-- IF comment-list.NORMAL -->
 		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
@@ -19,9 +19,9 @@
 		<!-- IF comment-list.IS_SPAM -->
 		<div id ="comment-{comment-list.ID}" style="display: none;">
 		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
-		<p class="time">Posted: {comment-list.TIME}</p>
+		<p class="time">{L_POSTED}: {comment-list.TIME}</p>
 		<!-- ELSE -->
-		<p class="time">Posted: {comment-list.TIME}</p>
+		<p class="time">{L_POSTED}: {comment-list.TIME}</p>
 		<div>
 		<!-- ENDIF -->
         </div>
@@ -39,15 +39,15 @@
 		<!-- ENDIF -->
         <!-- IF CAN_COMMENT -->
 		<!-- IF U_REPLY -->
-        --><span class="img-button reply-item"><a href="{comment-list.U_REPLY}" title="Reply to Post">Reply</a></span><!--
+        --><span class="img-button reply-item"><a href="{comment-list.U_REPLY}" title="{L_REPLY_TO_POST}">{L_REPLY}</a></span><!--
 		<!-- ENDIF -->
 		<!-- ENDIF -->
-        --><span class="img-button quote-item"><a href="#" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});" title="Quote Comment">Quote</a></span><!--
+        --><span class="img-button quote-item"><a href="#" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});" title="{L_QUOTE_COMMENT}">{L_QUOTE}</a></span><!--
 		<!-- ENDIF -->
 		<!-- IF comment-list.MODERATE -->
-        --><span class="img-button delete-item"><a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="Delete Comment"><span class="sprite delete-sprite"></span></a></span><!--
+        --><span class="img-button delete-item"><a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="{L_DELETE_COMMENT}"><span class="sprite delete-sprite"></span></a></span><!--
 		<!-- ENDIF -->
-        --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="Report as SPAM"><span class="sprite report-sprite"></span></a></span><!--
+        --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="{L_REPORT_AS_SPAM}"><span class="sprite report-sprite"></span></a></span><!--
         <!-- ENDIF -->
         -->
         </div>

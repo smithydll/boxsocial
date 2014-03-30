@@ -786,6 +786,8 @@ ul.feed-list li div.feed-text, ul.status-feed li div.feed-text {
     padding: 0;
 	position: relative;
 	clear: left;
+	overflow-x: hidden;
+	text-overflow: clip;
 }
 
 blockquote {
@@ -1267,4 +1269,61 @@ input#fileupload {
         margin: 0;
         min-height: 19pt;
         width: 100%;
+}
+
+ul#permission-list {
+	list-style: none;
+    padding: 0px;
+	margin: 0px;
+}
+
+li.permission-titles {
+	list-style: none;
+    padding: 5px;
+	margin: 5px;
+    background-color: #DDDDDD;
+}
+
+li dl.permission-titles {
+	width: 100%;
+	padding: 0px;
+	margin: 0px;    
+}
+
+li dl.permission-titles dt, li dl.permission-titles dd {
+	float: left;
+	font-weight: bold;
+
+	width: 20%;
+	margin: 0px;
+}
+
+li.permission-grant dt {
+	display: block;
+	width: 20%;
+	float: left;
+	margin: 0px;
+	border-bottom: 1px solid #AAAAAA;
+	height: 1em;
+	padding: 1em 0;
+}
+
+li.permission-grant dd {
+	float: left;
+	display: block;
+	width: 20%;
+	margin: 0px;
+	border-bottom: 1px solid #AAAAAA;
+	height: 3em;
+}
+
+li.permission-grant dd input[type="radio"] 
+{
+    margin-top: 0.5em;
+}
+
+ul.permission-grant-list {
+	list-style: none;
+	padding: 0px;
+	margin: 0px;
 }

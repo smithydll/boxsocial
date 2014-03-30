@@ -119,15 +119,23 @@ namespace BoxSocial.Internals
 
             TextBox dateExpressionTextBox = new TextBox(name + "--expression");
             //dateExpressionTextBox.IsVisible = false;
-            dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "--expression" + "')";
+            dateExpressionTextBox.Script.OnChange = "ParseDatePicker('" + name + "--expression" + "', " + (int)medium + ")";
             dateExpressionTextBox.Width.Length = Width.Length * 0.4F;
             dateExpressionTextBox.Width.Unit = Width.Unit;
+            if (medium == DisplayMedium.Mobile)
+            {
+                dateExpressionTextBox.Type = InputType.Date;
+            }
 
             TextBox timeExpressionTextBox = new TextBox(name + "--time");
             //timeExpressionTextBox.IsVisible = false;
             timeExpressionTextBox.Script.OnChange = "ParseTimePicker('" + name + "--time" + "')";
             timeExpressionTextBox.Width.Length = Width.Length * 0.4F;
             timeExpressionTextBox.Width.Unit = Width.Unit;
+            if (medium == DisplayMedium.Mobile)
+            {
+                timeExpressionTextBox.Type = InputType.Time;
+            }
 
             SelectBox dateYearsSelectBox = new SelectBox(name + "--date-year");
             SelectBox dateMonthsSelectBox = new SelectBox(name + "--date-month");
@@ -172,53 +180,80 @@ namespace BoxSocial.Internals
             dateMonthsSelectBox.SelectedKey = value.Month.ToString();
             dateDaysSelectBox.SelectedKey = value.Day.ToString();
 
-            dateExpressionTextBox.Value = value.ToString("dd/MM/yyyy");
+            if (medium == DisplayMedium.Mobile)
+            {
+                dateExpressionTextBox.Value = value.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                dateExpressionTextBox.Value = value.ToString("dd/MM/yyyy");
+            }
             timeExpressionTextBox.Value = value.ToString("HH:mm:ss");
 
             /* Build display */
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine("<div class=\"date-field\">");
-            sb.AppendLine(modeHiddenField.ToString());
-
-            sb.AppendLine("<p id=\"" + name + "[date-drop]\" class=\"date-drop\">");
-            sb.Append("Year: ");
-            sb.AppendLine(dateYearsSelectBox.ToString());
-            sb.AppendLine(" Month: ");
-            sb.AppendLine(dateMonthsSelectBox.ToString());
-            sb.AppendLine(" Day: ");
-            sb.AppendLine(dateDaysSelectBox.ToString());
-
-            if (showTime)
+            if (medium == DisplayMedium.Mobile)
             {
-                sb.AppendLine(" Hour: ");
-                sb.AppendLine(dateHoursSelectBox.ToString());
-                sb.AppendLine(" Minute: ");
-                sb.AppendLine(dateMinutesSelectBox.ToString());
-                if (showSeconds)
+                sb.AppendLine("<div class=\"date-field\">");
+                sb.AppendLine(modeHiddenField.ToString());
+
+                sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\" style=\"display: none;\">");
+                sb.Append(core.Prose.GetString("DATE") + ": ");
+                sb.Append(dateExpressionTextBox.ToString());
+                if (ShowTime)
                 {
-                    sb.AppendLine(" Second: ");
-                    sb.AppendLine(dateSecondsSelectBox.ToString());
+                    sb.Append(" " + core.Prose.GetString("TIME") + ": ");
+                    sb.Append(timeExpressionTextBox.ToString());
                 }
-            }
-            sb.Append("</p>");
+                sb.Append("</p>");
 
-            sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\" style=\"display: none;\">");
-            sb.Append("Date: ");
-            sb.Append(dateExpressionTextBox.ToString());
-            if (ShowTime)
+                sb.AppendLine("</div>");
+            }
+            else
             {
-                sb.Append(" Time: ");
-                sb.Append(timeExpressionTextBox.ToString());
+                sb.AppendLine("<div class=\"date-field\">");
+                sb.AppendLine(modeHiddenField.ToString());
+
+                sb.AppendLine("<p id=\"" + name + "[date-drop]\" class=\"date-drop\">");
+                sb.Append(core.Prose.GetString("YEAR") + ": ");
+                sb.AppendLine(dateYearsSelectBox.ToString());
+                sb.AppendLine(" " + core.Prose.GetString("MONTH") + ": ");
+                sb.AppendLine(dateMonthsSelectBox.ToString());
+                sb.AppendLine(" " + core.Prose.GetString("DAY") + ": ");
+                sb.AppendLine(dateDaysSelectBox.ToString());
+
+                if (showTime)
+                {
+                    sb.AppendLine(" " + core.Prose.GetString("HOUR") + ": ");
+                    sb.AppendLine(dateHoursSelectBox.ToString());
+                    sb.AppendLine(" " + core.Prose.GetString("MINUTE") + ": ");
+                    sb.AppendLine(dateMinutesSelectBox.ToString());
+                    if (showSeconds)
+                    {
+                        sb.AppendLine(" " + core.Prose.GetString("SECOND") + ": ");
+                        sb.AppendLine(dateSecondsSelectBox.ToString());
+                    }
+                }
+                sb.Append("</p>");
+
+                sb.AppendLine("<p id=\"" + name + "[date-field]\" class=\"date-exp\" style=\"display: none;\">");
+                sb.Append(core.Prose.GetString("DATE") + ": ");
+                sb.Append(dateExpressionTextBox.ToString());
+                if (ShowTime)
+                {
+                    sb.Append(" " + core.Prose.GetString("TIME") + ": ");
+                    sb.Append(timeExpressionTextBox.ToString());
+                }
+                sb.Append("</p>");
+
+                sb.AppendLine("</div>");
+
+                sb.AppendLine("<script type=\"text/javascript\">//<![CDATA[");
+                sb.AppendLine("dtp.push(Array(\"" + name + "[date-drop]\",\"" + name + "[date-field]\"));");
+                sb.AppendLine("EnableDateTimePickers();");
+                sb.AppendLine("//]]></script>");
             }
-            sb.Append("</p>");
-
-            sb.AppendLine("</div>");
-
-            sb.AppendLine("<script type=\"text/javascript\">//<![CDATA[");
-            sb.AppendLine("dtp.push(Array(\"" + name + "[date-drop]\",\"" + name + "[date-field]\"));");
-            sb.AppendLine("EnableDateTimePickers();");
-            sb.AppendLine("//]]></script>");
 
             return sb.ToString();
         }
@@ -249,14 +284,13 @@ namespace BoxSocial.Internals
 
             if (dateMode == "ajax" && (!string.IsNullOrEmpty(dateExpression)))
             {
-                dateExpression = core.Functions.InterpretDate(dateExpression);
+                dateExpression = core.Functions.InterpretDate(dateExpression, DisplayMedium.Desktop);
                 timeExpression = core.Functions.InterpretTime(timeExpression);
 
                 string expression = dateExpression + " " + timeExpression;
 
                 if (!DateTime.TryParse(expression, out dt))
                 {
-                    HttpContext.Current.Response.Write("Line 221 FAIL " + expression + "<br />");
                     int year = core.Functions.FormInt(name + "--date-year", dt.Year);
                     int month = core.Functions.FormInt(name + "--date-month", dt.Month);
                     int day = core.Functions.FormInt(name + "--date-day", dt.Day);

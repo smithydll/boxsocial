@@ -29,6 +29,7 @@ using System.Text.RegularExpressions;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -99,6 +100,7 @@ namespace BoxSocial.Internals
             BbcodeHooks += new BbcodeHookHandler(BbcodeSoundcloud);
             BbcodeHooks += new BbcodeHookHandler(BbcodeInstagram);
             BbcodeHooks += new BbcodeHookHandler(BbcodeMap);
+            BbcodeHooks += new BbcodeHookHandler(BbcodeGplus);
             // TODO: flash
             //BbcodeHooks += new BbcodeHookHandler(BbcodeFlash);
             // TODO: silverlight
@@ -536,6 +538,12 @@ namespace BoxSocial.Internals
                 if (domain.ToLower().EndsWith("instagram.com") && path.ToLower().Contains("/p/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[instagram]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 12, "[/instagram]");
+                    offset += 16;
+                }
+
+                if (domain.ToLower().EndsWith("plus.google.com") && path.ToLower().Contains("/posts/"))
+                {
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[gplus]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/gplus]");
                     offset += 16;
                 }
             }
@@ -1942,6 +1950,48 @@ namespace BoxSocial.Internals
                     else
                     {
                         e.PrefixText = "<a href=\"" + e.Contents + "\"><strong>IMG</strong>: ";
+                        e.SuffixText = "</a>";
+                    }
+                    break;
+            }
+        }
+
+        private static void BbcodeGplus(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "gplus") return;
+
+            e.SetHandled();
+
+            switch (e.Mode)
+            {
+                case BbcodeParseMode.Tldr:
+                    // Preserve
+                    e.AbortParse();
+                    break;
+                case BbcodeParseMode.StripTags:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    e.RemoveContents();
+                    break;
+                case BbcodeParseMode.Flatten:
+                    e.PrefixText = string.Empty;
+                    e.PrefixText = string.Empty;
+                    break;
+                case BbcodeParseMode.Normal:
+                    if (!Regex.IsMatch(e.Contents, "^((http|https)://)plus\\.google\\.com/(\\d+)/posts/([a-zA-Z0-9]+)$", RegexOptions.IgnoreCase)) e.AbortParse();
+                    // Until Google resolves the rendering of the embed code on mobile devices, we will simply link to the post
+                    /*if (TagAllowed(e.Tag.Tag, e.Options))
+                    {
+                        VariableCollection javaScriptVariableCollection = e.Core.Template.CreateChild("javascript_list");
+
+                        javaScriptVariableCollection.Parse("URI", @"https://apis.google.com/js/plusone.js");
+
+                        e.PrefixText = "<div class=\"g-post\" style=\"max-width: 100%;\" data-href=\"";
+                        e.SuffixText = "\"< </div>";
+                    }
+                    else*/
+                    {
+                        e.PrefixText = "<a href=\"" + e.Contents + "\"><strong>G+</strong>: ";
                         e.SuffixText = "</a>";
                     }
                     break;

@@ -596,7 +596,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "commented on " + CommentedItem.Owner.DisplayNameOwnership + " " + CommentedItem.Noun;
+                return string.Format(core.Prose.GetString("_COMMENTED_ON"), CommentedItem.Owner.DisplayNameOwnership, CommentedItem.Noun);
             }
         }
 

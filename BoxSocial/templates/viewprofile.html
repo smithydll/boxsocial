@@ -10,7 +10,7 @@
 			<!-- IF $_IS_DESKTOP AND USER_THUMB -->
 			<img src="{USER_THUMB}" data-at2x="{USER_MOBILE}" alt="{USER_DISPLAY_NAME} Display Picture" />
 			<!-- ELSE -->
-			<div class="no-disp-pic">No Picture</div>
+			<div class="no-disp-pic">{L_NO_PICTURE}</div>
             <!-- ENDIF -->
 		</div>
         <!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO -->
@@ -44,80 +44,80 @@
 	<div id="pane-profile">
 		<div id="pane-pages" class="pane">
             <!-- IF $_IS_MOBILE -->
-            <h3 onclick="ShowPages()">Pages</h3>
+            <h3 onclick="ShowPages()">{L_PAGES}</h3>
             <!-- ELSE -->
-			<h3>Pages</h3>
+			<h3>{L_PAGES}</h3>
             <!-- ENDIF -->
 			<ul class="page-tiles">
 				{PAGE_LIST}
 			</ul>
 		</div>
 		<div id="pane-profile-contact" class="pane">
-			<h3>Contact {USER_DISPLAY_NAME}</h3>
+			<h3>{L_CONTACT}</h3>
 			<dl>
 				<!-- IF LOGGED_IN -->
                 <!-- IF NOT OWNER -->
                 <!-- IF U_SEND_MESSAGE -->
 				<dt><a href="{U_SEND_MESSAGE}" id="u-send-message"></a></dt>
-				<dd><a href="{U_SEND_MESSAGE}">Send Message</a></dd>
+				<dd><a href="{U_SEND_MESSAGE}">{L_SEND_MESSAGE}</a></dd>
                 <!-- ENDIF -->
 				<!--dt><a href=""></a></dt>
 				<dd>Add to Favourites</dd-->
 				<dt><a href="{U_ADD_FRIEND}" id="u-add-friend"></a></dt>
-				<dd><a href="{U_ADD_FRIEND}">Add to Friends</a></dd>
+				<dd><a href="{U_ADD_FRIEND}">{L_ADD_TO_FRIENDS}</a></dd>
 				<!--dt><a href=""></a></dt>
 				<dd>Leave a Message</dd-->
 				<dt><a href="{U_BLOCK_USER}" id="u-block-user"></a></dt>
-				<dd><a href="{U_BLOCK_USER}">Block User</a></dd>
+				<dd><a href="{U_BLOCK_USER}">{L_BLOCK_USER}</a></dd>
                 <!-- ENDIF -->
 				<!-- ELSE -->
 				<dt><a href="{U_REGISTER}"></a></dt>
-				<dd>Register to Contact</dd>
+				<dd>{L_REGISTER_TO_CONTACT}</dd>
 				<!-- ENDIF -->
                 <!-- BEGIN email_list -->
-                <dt>Email</dt>
+                <dt>{L_EMAIL}</dt>
 				<dd><a href="{email_list.U_MAILTO}">{email_list.EMAIL}</a></dd>
                 <!-- END email_list -->
                 <!-- BEGIN phone_list -->
-                <dt>Phone</dt>
+                <dt>{L_PHONE}</dt>
 				<dd>{phone_list.PHONE_NUMBER}</dd>
                 <!-- END phone_list -->
 			</dl>
 		</div>
 		<!-- IF HAS_PROFILE_INFO -->
 		<div id="pane-profile-info" class="pane">
-			<h3>About {USER_DISPLAY_NAME}</h3>
+			<h3>{L_ABOUT}</h3>
 			<dl>
-		    <dt>Joined:</dt>
+		    <dt>{L_JOINED}:</dt>
 		    <dd>{USER_JOINED}</dd>
-		    <dt>Last Seen:</dt>
+		    <dt>{L_LAST_SEEN}:</dt>
 		    <dd>{USER_LAST_SEEN}</dd>
-		    <dt>Profile views:</dt>
+		    <dt>{L_PROFILE_VIEWS}:</dt>
 		    <dd>{USER_PROFILE_VIEWS}</dd>
-		    <dt>Subscriptions:</dt>
+		    <dt>{L_SUBSCRIPTIONS}:</dt>
 		    <dd>{USER_SUBSCRIPTIONS}</dd>
 			<!-- IF USER_AGE -->
-			<dt>Age:</dt>
+			<dt>{L_AGE}:</dt>
 			<dd>{USER_AGE}</dd>
 			<!-- ENDIF -->
 			<!-- IF USER_GENDER -->
-			<dt>Gender:</dt>
+			<dt>{L_GENDER}:</dt>
 			<dd>{USER_GENDER}</dd>
 			<!-- ENDIF -->
 			<!-- IF USER_COUNTRY -->
-			<dt>Country:</dt>
+			<dt>{L_COUNTRY}:</dt>
 			<dd>{USER_COUNTRY}</dd>
 			<!-- ENDIF -->
 			<!-- IF USER_MARITIAL_STATUS -->
-			<dt>Maritial Status:</dt>
+			<dt>{L_MARITIAL_STATUS}:</dt>
 			<dd>{USER_MARITIAL_STATUS}</dd>
 			<!-- ENDIF -->
 			<!-- IF USER_SEXUALITY -->
-			<dt>Sexuality:</dt>
+			<dt>{L_SEXUALITY}:</dt>
 			<dd>{USER_SEXUALITY}</dd>
 			<!-- ENDIF -->
 			<!-- IF USER_RELIGION -->
-			<dt>Religion:</dt>
+			<dt>{L_RELIGION}:</dt>
 			<dd>{USER_RELIGION}</dd>
 			<!-- ENDIF -->
 			</dl>
@@ -136,7 +136,7 @@
     <!-- ENDIF -->
     <!-- IF SHOW_FRIENDS -->
 	<div id="profile-friends-pane" class="pane">
-	<h3>{USER_DISPLAY_NAME_OWNERSHIP} Friends ({FRIENDS})</h3>
+	<h3>{USER_DISPLAY_NAME_OWNERSHIP} {L_FRIENDS} ({FRIENDS})</h3>
 	<!-- IF FRIENDS -->
 	<ul id="profile-friends">
 	<!-- BEGIN friend_list -->
@@ -157,7 +157,7 @@
 	<div class="cheat-clear-left"></div>
 	<p>{USER_DISPLAY_NAME} has {FRIENDS} {L_FRIENDS}.</p>
 	<!-- ELSE -->
-	<p>No Friends</p>
+	<p>{L_NO_FRIENDS}</p>
 	<!-- ENDIF -->
 	</div>
     <!-- ENDIF -->

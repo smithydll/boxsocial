@@ -51,6 +51,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Prose : IProse
     {
+        private const string MARKER = "¶";
 
         private Core core;
         private string language;
@@ -131,7 +132,7 @@ namespace BoxSocial.Internals
                         {
                             if (stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
                             {
-                                return value;
+                                return MARKER + value;
                             }
                         }
 
@@ -140,7 +141,7 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                return value;
+                return MARKER + value;
             }
             catch
             {
@@ -154,7 +155,7 @@ namespace BoxSocial.Internals
                         {
                             value = languageResources[akey].GetString(key, culture);
                             stringCache.Add(akey + "-" + culture + "." + key, value);
-                            return value;
+                            return MARKER + value;
                         }
                         catch
                         {
@@ -196,7 +197,7 @@ namespace BoxSocial.Internals
                         stringCache.Add(applicationKey + "-" + culture + "." + languageKey, value);
                     }
                 }
-                return value;
+                return MARKER + value;
             }
             catch
             {
@@ -213,7 +214,7 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public string GetString(string applicationKey, string languageKey, params object[] param)
         {
-            return string.Format(GetString(applicationKey, languageKey), param);
+            return string.Format(MARKER + GetString(applicationKey, languageKey), param);
         }
 
         /// <summary>
@@ -266,7 +267,7 @@ namespace BoxSocial.Internals
         {
             try
             {
-                value = languageResources["Internals"].GetString(key);
+                value = MARKER + languageResources["Internals"].GetString(key);
                 if (string.IsNullOrEmpty(value))
                 {
                     return false;

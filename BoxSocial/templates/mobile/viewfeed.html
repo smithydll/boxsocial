@@ -1,5 +1,5 @@
 	<div id="today-feed" class="infinite">
-		<h4 class="feed-title"><!--a href="/{USERNAME}/feed"-->Feed<!--/a--></h4>
+		<h4 class="feed-title"><!--a href="/{USERNAME}/feed"-->{L_FEED}<!--/a--></h4>
 		<!-- IF HAS_FEED_ITEMS -->
 		<ul id="today-feeds">
 			<!-- BEGIN feed_days_list -->
@@ -14,6 +14,6 @@
 	        <p>{PAGINATION}<a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $(this).parent().siblings('#today-feeds').children('.today-feed').last());">{L_LOAD_MORE}</a></p>
 	        <!-- ENDIF -->
 		<!-- ELSE -->
-		<p>There are no recent items in your friend's feeds.</p>
+		<p>{L_NO_RECENT_ITEMS_IN_FRIENDS_FEED}</p>
 		<!-- ENDIF -->
 	</div>

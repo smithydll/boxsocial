@@ -64,6 +64,7 @@ namespace BoxSocial.FrontEnd
             }
 
             template.Parse("IS_CONTENT", "FALSE");
+            template.Parse("S_POST", core.Hyperlink.AppendSid("/register/", true));
             
             string mode = Request.QueryString["mode"];
 

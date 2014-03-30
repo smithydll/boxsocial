@@ -24,6 +24,7 @@
 	<!--
 	    var sid = '{SID}';
 	    var medium = 'mobile';
+	    var lang = { 'BACK': '{L_BACK}' };
 
 	    $(document).ready(function () {
 	        if (navigator.userAgent.match(/Android/i)) {
@@ -43,7 +44,7 @@
     <!-- IF PAGE_LIST -->
     <div id="pages-menu" class="side-menu">
         <ul class="mobile-list">
-            <li class="list-divider">Pages</li>
+            <li class="list-divider">{L_PAGES}</li>
             {PAGE_LIST}
         </ul>
     </div>
@@ -58,11 +59,11 @@
     </div>
     <!-- ENDIF -->
     <div id="search-menu" class="side-menu bottom-menu">
-        <h2>Search</h2>
+        <h2>{L_SEARCH}</h2>
 		<form action="{S_SEARCH}" method="get">
 			<fieldset>
                 <div class="action-bar">
-                    <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
+                    <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
                     <input type="submit" value="{L_SEARCH}" style="float: right;" />
                 </div>
                 <div class="popup-content">
@@ -73,11 +74,11 @@
     </div>
         <!-- IF LOGGED_IN -->
     <div id="post-menu" class="side-menu bottom-menu">
-        <h2>Post status</h2>
+        <h2>{L_POST_STATUS}</h2>
 			<form action="{S_ACCOUNT}" method="post" id="post-form" class="status-form" onsubmit="submitPost(); return false;" enctype="multipart/form-data">
                 <div class="action-bar">
-                    <button onclick="return hideSideBar();" style="float: left;">Cancel</button>
-                    <input type="submit" id="status-submit" value="Post" style="float: right;" />
+                    <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
+                    <input type="submit" id="status-submit" value="{L_POST}" style="float: right;" />
                 </div>
                 <div class="popup-content">
                     <!-- The name of this field clashes with other forms -->
@@ -106,31 +107,31 @@
         <!-- ENDIF -->
     <div id="boxsocial-menu" class="side-menu">
         <ul class="mobile-list">
-            <li><a href="{U_HOME}" data-theme="" data-icon="home">Home</a></li>
+            <li><a href="{U_HOME}" data-theme="" data-icon="home">{L_HOME}</a></li>
 <!-- IF LOGGED_IN -->
-    		<li><a href="{U_USER_PROFILE}">Me</a></li>
+    		<li><a href="{U_USER_PROFILE}">{L_ME}</a></li>
             <!-- IF module_list -->
-            <li><a href="{U_ACCOUNT}" onclick="$('#account-modules').toggle(); return false;">My Account</a>
+            <li><a href="{U_ACCOUNT}" onclick="$('#account-modules').toggle(); return false;">{L_MY_ACCOUNT}</a>
                 <ul id="account-modules" style="display: block;">
                     <!-- BEGIN module_list -->
                     <li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
                     <!-- END module_list -->
                 </ul>
             <!-- ELSE -->
-            <li><a href="{U_ACCOUNT}#boxsocial-menu">My Account</a>
+            <li><a href="{U_ACCOUNT}#boxsocial-menu">{L_MY_ACCOUNT}</a>
             <!-- ENDIF -->
             </li>
-            <li><a href="{U_SIGNOUT}">Sign out</a></li>
+            <li><a href="{U_SIGNOUT}">{L_SIGNOUT}</a></li>
 <!-- ELSE -->
-            <li><a href="{U_REGISTER}">Register</a></li>
-            <li><a href="{U_SIGNIN}">Sign in</a></li>
+            <li><a href="{U_REGISTER}">{L_REGISTER}</a></li>
+            <li><a href="{U_SIGNIN}">{L_SIGNIN}</a></li>
 <!-- ENDIF -->
-            <li><a href="{U_HELP}">Help</a></li>
+            <li><a href="{U_HELP}">{L_HELP}</a></li>
         </ul>
 
         <ul class="mobile-list">
-            <li><a href="{U_FOOT_GROUPS}">Groups</a></li>
-            <li><a href="{U_FOOT_NETWORKS}">Networks</a></li>
+            <li><a href="{U_FOOT_GROUPS}">{L_GROUPS}</a></li>
+            <li><a href="{U_FOOT_NETWORKS}">{L_NETWORKS}</a></li>
             <!--li>Music
                 <ul>
 						<li><a href="{U_FOOT_MUSIC}">Music Home</a></li>
@@ -140,34 +141,34 @@
                 </ul></li-->
             <li><a href="#"onclick="$(this).siblings().toggle(); return false;">{SITE_TITLE}</a>
                 <ul>
-                        <li><a href="{U_ABOUT}">About</a></li>
-						<li><a href="{U_PRIVACY}">Privacy</a></li>
-						<li><a href="{U_TOS}">Terms of Service</a></li>
-						<li><a href="{U_SITEMAP}">Site Map</a></li>
+                        <li><a href="{U_ABOUT}">{L_ABOUT}</a></li>
+						<li><a href="{U_PRIVACY}">{L_PRIVACY}</a></li>
+						<li><a href="{U_TOS}">{L_TERMS_OF_SERVICE}</a></li>
+						<li><a href="{U_SITEMAP}">{L_SITE_MAP}</a></li>
                 </ul></li>
-            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">Help</a>
+            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">{L_HELP}</a>
                 <ul>
-						<li><a href="{U_SAFETY}">Safety</a></li>
-						<li><a href="{U_HELP}">Help</a></li>
+						<li><a href="{U_SAFETY}">{L_SAFETY}</a></li>
+						<li><a href="{U_HELP}">{L_HELP}</a></li>
                 </ul></li>
         </ul>
-        <p><a href="{U_COPYRIGHT}">Copyright</a> &copy; {YEAR} {SITE_TITLE}, Powered By <a href="http://boxsocial.net/">Box Social</a></p>
+        <p><a href="{U_COPYRIGHT}">{L_COPYRIGHT}</a> &copy; {YEAR} {SITE_TITLE}, {L_POWERED_BY} <a href="http://boxsocial.net/">Box Social</a></p>
     </div>
 <div id="main-page" onclick="hideSideBar();">
 	<div id="head">
             <!-- IF PAGE_LIST -->
-            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF TAB_LIST -->
-            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF account_links -->
-            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>Pages</span></a>
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF LOGGED_IN -->
-            <a href="#" id="post-button" onclick="return showPostBar(event);"><span>Post</span></a>
+            <a href="#" id="post-button" onclick="return showPostBar(event);"><span>{L_POST}</span></a>
             <!-- ENDIF -->
-            <a href="#" id="search-button" onclick="return showSearchBar(event);"><span>Search</span></a>
+            <a href="#" id="search-button" onclick="return showSearchBar(event);"><span>{L_SEARCH}</span></a>
 			<h1 id="page-title"><a href="#" onclick="return showSideBar(event);"><span>{HEADING}</span></a></h1>
             <!-- IF SITE_SLOGAN -->
 			<h2 id="sub-title">{SITE_SLOGAN}</h2>

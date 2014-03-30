@@ -32,6 +32,11 @@ namespace BoxSocial.Forms
         Number,
         Email,
         Url,
+        Date,
+        Time,
+        DateTime,
+        Month,
+        Telephone,
     }
 
     public class TextBox : FormField
@@ -237,6 +242,16 @@ namespace BoxSocial.Forms
                     return "email";
                 case InputType.Url:
                     return "url";
+                case InputType.Date:
+                    return "date";
+                case InputType.Time:
+                    return "time";
+                case InputType.DateTime:
+                    return "datetime";
+                case InputType.Month:
+                    return "month";
+                case InputType.Telephone:
+                    return "tel";
             }
             return "text";
         }

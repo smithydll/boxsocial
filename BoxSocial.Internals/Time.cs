@@ -478,24 +478,42 @@ namespace BoxSocial.Internals
                 // Present
                 if (ts.TotalDays < 1)
                 {
-                    return "Today";
+                    return core.Prose.GetString("TODAY");
                 }
                 // Future
                 else if (ts.TotalDays < 2)
                 {
-                    return "Tomorrow";
+                    return core.Prose.GetString("TOMORROW");
                 }
                 else if (ts.TotalDays < 7)
                 {
-                    return time.DayOfWeek.ToString();
+                    switch (time.DayOfWeek)
+                    {
+                        case DayOfWeek.Monday:
+                            return core.Prose.GetString("MONDAY");
+                        case DayOfWeek.Tuesday:
+                            return core.Prose.GetString("TUESDAY");
+                        case DayOfWeek.Wednesday:
+                            return core.Prose.GetString("WEDNESDAY");
+                        case DayOfWeek.Thursday:
+                            return core.Prose.GetString("THURSDAY");
+                        case DayOfWeek.Friday:
+                            return core.Prose.GetString("FRIDAY");
+                        case DayOfWeek.Saturday:
+                            return core.Prose.GetString("SATURDAY");
+                        case DayOfWeek.Sunday:
+                            return core.Prose.GetString("SUNDAY");
+                        default:
+                            return time.DayOfWeek.ToString();
+                    }
                 }
                 else if (ts.TotalDays < 14)
                 {
-                    return "Next Week";
+                    return core.Prose.GetString("NEXT_WEEK");
                 }
                 else
                 {
-                    return "Newer";
+                    return core.Prose.GetString("NEWER");
                 }
             }
             else
@@ -503,31 +521,31 @@ namespace BoxSocial.Internals
                 // Past
                 if (ts.TotalDays > -1)
                 {
-                    return "Yesterday";
+                    return core.Prose.GetString("YESTERDAY");
                 }
                 else if (ts.TotalDays > -14)
                 {
-                    return "Last Week";
+                    return core.Prose.GetString("LAST_WEEK");
                 }
                 else if (now.Month - 1 == then.Month && now.Year == then.Year && now.Month != 1)
                 {
-                    return "Last Month";
+                    return core.Prose.GetString("LAST_MONTH");
                 }
                 else if (now.Month == 1 && then.Month == 12 && now.Year == then.Year - 1)
                 {
-                    return "Last Month";
+                    return core.Prose.GetString("LAST_MONTH");
                 }
                 else if (ts.TotalDays > -21)
                 {
-                    return "Two Weeks Ago";
+                    return core.Prose.GetString("TWO_WEEKS_AGO");
                 }
                 else if (now.Month == then.Month && now.Year == then.Year)
                 {
-                    return "Earlier in the Month";
+                    return core.Prose.GetString("EARLIER_IN_THE_MONTH");
                 }
                 else
                 {
-                    return "Older";
+                    return core.Prose.GetString("OLDER");
                 }
             }
         }

@@ -24,6 +24,7 @@ using System.Reflection;
 using System.Text;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Forms;
 using BoxSocial.Groups;
 
 namespace BoxSocial.FrontEnd
@@ -43,7 +44,7 @@ namespace BoxSocial.FrontEnd
             switch (function)
             {
                 case "date":
-                    string date = core.Functions.InterpretDate(core.Http.Form["date"]);
+                    string date = core.Functions.InterpretDate(core.Http.Form["date"], (DisplayMedium)int.Parse(core.Http.Form["Medium"]));
                     core.Ajax.SendRawText("date", date);
                     return;
                 case "time":

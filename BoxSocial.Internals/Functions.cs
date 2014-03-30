@@ -719,7 +719,7 @@ namespace BoxSocial.Internals
             return (page - 1) * perPage;
         }
 
-        public string InterpretDate(string date)
+        public string InterpretDate(string date, DisplayMedium medium)
         {
             switch (date.ToLower())
             {
@@ -783,10 +783,24 @@ namespace BoxSocial.Internals
             DateTime result = DateTime.Now;
             if (DateTime.TryParse(date, out result))
             {
-                return result.ToString("dd/MM/yyyy"); ;
+                if (medium == DisplayMedium.Mobile)
+                {
+                    return result.ToString("yyyy-MM-dd");
+                }
+                else
+                {
+                    return result.ToString("dd/MM/yyyy");
+                }
             }
 
-            return core.Tz.Now.ToString("dd/MM/yyyy");
+            if (medium == DisplayMedium.Mobile)
+            {
+                return core.Tz.Now.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                return core.Tz.Now.ToString("dd/MM/yyyy");
+            }
         }
 
         public string InterpretTime(string time)

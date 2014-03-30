@@ -550,7 +550,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "posted";
+                return core.Prose.GetString("_POSTED");
             }
         }
 
@@ -563,7 +563,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "status";
+                return core.Prose.GetString("_STATUS");
             }
         }
     }

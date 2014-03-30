@@ -184,7 +184,7 @@ function showUsersBar(event, id, mode) {
     if (!$('#users-menu').is(":visible")) {
         event.stopPropagation();
         $('#post-menu').after('<div id="users-menu" class="side-menu bottom-menu">');
-        $('#users-menu').show().append('<div class="action-bar"><button onclick="return hideUsersBar();" style="float: left;">Back</button></div><div class="popup-content"><div id="users-selected" class="' + listClass + '"><input type="text" id="' + id + '-search" /></div><ul id="users-list"></ul></div>');
+        $('#users-menu').show().append('<div class="action-bar"><button onclick="return hideUsersBar();" style="float: left;">' + lang['BACK'] + '</button></div><div class="popup-content"><div id="users-selected" class="' + listClass + '"><input type="text" id="' + id + '-search" /></div><ul id="users-list"></ul></div>');
         $('#' + id + '-search').before($('#' + id).children('span.group, span.username').clone());
         PostToPage(namesRequested, uri, $('#users-list'), { ajax: "true", "name-field": '' }, { 'mode': mode, 'id': id });
 

@@ -46,6 +46,7 @@ namespace BoxSocial.FrontEnd
             DnsRecord record = null;
 
             template.Parse("IS_CONTENT", "FALSE");
+            template.Parse("S_POST", core.Hyperlink.AppendSid("/sign-in/", true));
 
             if (!string.IsNullOrEmpty(domain))
             {

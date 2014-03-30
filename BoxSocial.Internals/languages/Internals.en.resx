@@ -117,11 +117,20 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ABOUT" xml:space="preserve">
+    <value>About</value>
+  </data>
   <data name="ADD_FRIEND" xml:space="preserve">
     <value>Add friend</value>
   </data>
   <data name="ADD_PERMISSION" xml:space="preserve">
     <value>Add Permission</value>
+  </data>
+  <data name="ADD_TO_FRIENDS" xml:space="preserve">
+    <value>Add to Friends</value>
+  </data>
+  <data name="AGE" xml:space="preserve">
+    <value>Age</value>
   </data>
   <data name="ALLOW" xml:space="preserve">
     <value>Allow</value>
@@ -135,6 +144,9 @@
   <data name="AUTOBIOGRAPHY" xml:space="preserve">
     <value>Autobiography</value>
   </data>
+  <data name="BACK" xml:space="preserve">
+    <value>Back</value>
+  </data>
   <data name="BISEXUAL" xml:space="preserve">
     <value>Bisexual</value>
   </data>
@@ -144,11 +156,23 @@
   <data name="BLOCKED_USERS" xml:space="preserve">
     <value>Blocked users</value>
   </data>
+  <data name="BLOCK_USER" xml:space="preserve">
+    <value>Block User</value>
+  </data>
+  <data name="CANCEL" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="CATEGORIES" xml:space="preserve">
     <value>Categories</value>
   </data>
   <data name="COMMENTS" xml:space="preserve">
     <value>Comments</value>
+  </data>
+  <data name="CONTACT" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="COPYRIGHT" xml:space="preserve">
+    <value>Copyright</value>
   </data>
   <data name="COUNTRY" xml:space="preserve">
     <value>Country</value>
@@ -348,6 +372,9 @@
   <data name="DELETE" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="DELETE_COMMENT" xml:space="preserve">
+    <value>Delete Comment</value>
+  </data>
   <data name="DENY" xml:space="preserve">
     <value>Deny</value>
   </data>
@@ -357,11 +384,17 @@
   <data name="DISPLAY_NAME" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="EARLIER_IN_THE_MONTH" xml:space="preserve">
+    <value>Earlier in the Month</value>
+  </data>
   <data name="EDIT" xml:space="preserve">
     <value>Edit</value>
   </data>
   <data name="EDIT_PERMISSIONS" xml:space="preserve">
     <value>Edit Permissions</value>
+  </data>
+  <data name="EMAIL" xml:space="preserve">
+    <value>E-mail</value>
   </data>
   <data name="EVERYONE" xml:space="preserve">
     <value>Everyone</value>
@@ -378,6 +411,9 @@
   <data name="FEBURARY" xml:space="preserve">
     <value>Feburary</value>
   </data>
+  <data name="FEED" xml:space="preserve">
+    <value>Feed</value>
+  </data>
   <data name="FEMALE" xml:space="preserve">
     <value>Female</value>
   </data>
@@ -386,6 +422,9 @@
   </data>
   <data name="FIVE_STAR" xml:space="preserve">
     <value>Five stars</value>
+  </data>
+  <data name="FORGOT_PASSWORD" xml:space="preserve">
+    <value>I have forgotten my password</value>
   </data>
   <data name="FOUR_STAR" xml:space="preserve">
     <value>Four stars</value>
@@ -411,6 +450,9 @@
   <data name="GO_TO_PAGE" xml:space="preserve">
     <value>Go to page:</value>
   </data>
+  <data name="GROUPS" xml:space="preserve">
+    <value>Groups</value>
+  </data>
   <data name="HEIGHT" xml:space="preserve">
     <value>Height</value>
   </data>
@@ -422,6 +464,9 @@
   </data>
   <data name="HIS" xml:space="preserve">
     <value>his</value>
+  </data>
+  <data name="HOME" xml:space="preserve">
+    <value>Home</value>
   </data>
   <data name="HOMOSEXUAL" xml:space="preserve">
     <value>Homosexual</value>
@@ -446,6 +491,15 @@
   </data>
   <data name="JUNE" xml:space="preserve">
     <value>June</value>
+  </data>
+  <data name="LAST_MONTH" xml:space="preserve">
+    <value>Last Month</value>
+  </data>
+  <data name="LAST_SEEN" xml:space="preserve">
+    <value>Last Seen</value>
+  </data>
+  <data name="LAST_WEEK" xml:space="preserve">
+    <value>Last Week</value>
   </data>
   <data name="LEARN_MORE" xml:space="preserve">
     <value>Learn More...</value>
@@ -474,8 +528,14 @@
   <data name="MARCH" xml:space="preserve">
     <value>March</value>
   </data>
+  <data name="MARITIAL_STATUS" xml:space="preserve">
+    <value>Maritial Status</value>
+  </data>
   <data name="MAY" xml:space="preserve">
     <value>May</value>
+  </data>
+  <data name="ME" xml:space="preserve">
+    <value>Me</value>
   </data>
   <data name="MEMBER" xml:space="preserve">
     <value>Member</value>
@@ -504,6 +564,9 @@
   <data name="MOVE_UP" xml:space="preserve">
     <value>Move Up</value>
   </data>
+  <data name="MUSIC" xml:space="preserve">
+    <value>Music</value>
+  </data>
   <data name="MY_ACCOUNT" xml:space="preserve">
     <value>My Account</value>
   </data>
@@ -524,14 +587,23 @@
     <value>Title</value>
     <comment>A title as in Mr. Sir. etc...</comment>
   </data>
+  <data name="NETWORKS" xml:space="preserve">
+    <value>Networks</value>
+  </data>
   <data name="NEW" xml:space="preserve">
     <value>New</value>
+  </data>
+  <data name="NEWER" xml:space="preserve">
+    <value>Newer</value>
   </data>
   <data name="NEW_MESSAGES" xml:space="preserve">
     <value>New Messages</value>
   </data>
   <data name="NEXT" xml:space="preserve">
     <value>Next</value>
+  </data>
+  <data name="NEXT_WEEK" xml:space="preserve">
+    <value>Next Week</value>
   </data>
   <data name="NO" xml:space="preserve">
     <value>No</value>
@@ -548,8 +620,17 @@
   <data name="NO_COMMENTS" xml:space="preserve">
     <value>No Comments</value>
   </data>
+  <data name="NO_FRIENDS" xml:space="preserve">
+    <value>No Friends</value>
+  </data>
+  <data name="NO_PICTURE" xml:space="preserve">
+    <value>No Picture</value>
+  </data>
   <data name="OCTOBER" xml:space="preserve">
     <value>October</value>
+  </data>
+  <data name="OLDER" xml:space="preserve">
+    <value>Older</value>
   </data>
   <data name="ONE_STAR" xml:space="preserve">
     <value>One star</value>
@@ -566,8 +647,26 @@
   <data name="PERMISSIONS" xml:space="preserve">
     <value>Permissions</value>
   </data>
+  <data name="PHONE" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="POST" xml:space="preserve">
+    <value>Post</value>
+  </data>
   <data name="POSTED" xml:space="preserve">
     <value>Posted</value>
+  </data>
+  <data name="POSTED_BY" xml:space="preserve">
+    <value>Posted By</value>
+  </data>
+  <data name="POST_COMMENT" xml:space="preserve">
+    <value>Post Comment</value>
+  </data>
+  <data name="POST_STATUS" xml:space="preserve">
+    <value>Post Status</value>
+  </data>
+  <data name="POWERED_BY" xml:space="preserve">
+    <value>Powered By</value>
   </data>
   <data name="PREFERENCES" xml:space="preserve">
     <value>Preferences</value>
@@ -575,14 +674,26 @@
   <data name="PREV" xml:space="preserve">
     <value>Prev</value>
   </data>
+  <data name="PRIVACY" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
   <data name="PRIVATE" xml:space="preserve">
     <value>Private</value>
+  </data>
+  <data name="PROFILE_VIEWS" xml:space="preserve">
+    <value>Profile Views</value>
   </data>
   <data name="PUBLIC" xml:space="preserve">
     <value>Public</value>
   </data>
   <data name="PUBLISH" xml:space="preserve">
     <value>Publish</value>
+  </data>
+  <data name="QUOTE" xml:space="preserve">
+    <value>Quote</value>
+  </data>
+  <data name="QUOTE_COMMENT" xml:space="preserve">
+    <value>Quote Comment</value>
   </data>
   <data name="RATING" xml:space="preserve">
     <value>Rating</value>
@@ -592,6 +703,27 @@
   </data>
   <data name="REGISTERED_USERS" xml:space="preserve">
     <value>Registered users</value>
+  </data>
+  <data name="REGISTER_TO_CONTACT" xml:space="preserve">
+    <value>Register to Contact</value>
+  </data>
+  <data name="RELIGION" xml:space="preserve">
+    <value>Religion</value>
+  </data>
+  <data name="REMEMBER_ME" xml:space="preserve">
+    <value>Remember me</value>
+  </data>
+  <data name="REPLY" xml:space="preserve">
+    <value>Reply</value>
+  </data>
+  <data name="REPLY_TO_POST" xml:space="preserve">
+    <value>Reply to Post</value>
+  </data>
+  <data name="REPORT_AS_SPAM" xml:space="preserve">
+    <value>Report as SPAM</value>
+  </data>
+  <data name="SAFETY" xml:space="preserve">
+    <value>Safety</value>
   </data>
   <data name="SATURDAY" xml:space="preserve">
     <value>Saturday</value>
@@ -611,14 +743,26 @@
   <data name="SECOND" xml:space="preserve">
     <value>Second</value>
   </data>
+  <data name="SEND_MESSAGE" xml:space="preserve">
+    <value>Send Message</value>
+  </data>
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
+  </data>
+  <data name="SEXUALITY" xml:space="preserve">
+    <value>Sexuality</value>
+  </data>
+  <data name="SHARE" xml:space="preserve">
+    <value>Share</value>
   </data>
   <data name="SIGNIN" xml:space="preserve">
     <value>Sign in</value>
   </data>
   <data name="SIGNOUT" xml:space="preserve">
     <value>Sign out</value>
+  </data>
+  <data name="SITE_MAP" xml:space="preserve">
+    <value>Site Map</value>
   </data>
   <data name="STRAIGHT" xml:space="preserve">
     <value>Straight</value>
@@ -632,6 +776,9 @@
   <data name="SUBSCRIBE" xml:space="preserve">
     <value>Subscribe</value>
   </data>
+  <data name="SUBSCRIPTIONS" xml:space="preserve">
+    <value>Subscriptions</value>
+  </data>
   <data name="SUNDAY" xml:space="preserve">
     <value>Sunday</value>
   </data>
@@ -644,8 +791,14 @@
   <data name="TAGS" xml:space="preserve">
     <value>Tags</value>
   </data>
+  <data name="TERMS_OF_SERVICE" xml:space="preserve">
+    <value>Terms of Service</value>
+  </data>
   <data name="THEIR" xml:space="preserve">
     <value>their</value>
+  </data>
+  <data name="THIS_COMMENT_HAS_BEEN_MARKED_AS_SPAM" xml:space="preserve">
+    <value>This Comment has been marked as spam</value>
   </data>
   <data name="THREE_STAR" xml:space="preserve">
     <value>Three stars</value>
@@ -665,6 +818,12 @@
   <data name="TITLE" xml:space="preserve">
     <value>Title</value>
   </data>
+  <data name="TODAY" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="TOMORROW" xml:space="preserve">
+    <value>Tomorrow</value>
+  </data>
   <data name="TRANSEXUAL" xml:space="preserve">
     <value>Transexual</value>
   </data>
@@ -676,6 +835,9 @@
   </data>
   <data name="TWO_STAR" xml:space="preserve">
     <value>Two stars</value>
+  </data>
+  <data name="TWO_WEEKS_AGO" xml:space="preserve">
+    <value>Two Weeks Ago</value>
   </data>
   <data name="UNRATED" xml:space="preserve">
     <value>Unrated</value>
@@ -712,5 +874,14 @@
   </data>
   <data name="YES" xml:space="preserve">
     <value>Yes</value>
+  </data>
+  <data name="YESTERDAY" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="_COMMENTED_ON" xml:space="preserve">
+    <value>commented on {0} {1}</value>
+  </data>
+  <data name="_SHOW_COMMENT" xml:space="preserve">
+    <value>show comment</value>
   </data>
 </root>

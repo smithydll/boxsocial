@@ -129,9 +129,6 @@
   <data name="CONTACT_DETAILS_INFO" xml:space="preserve">
     <value>List your contact details for your friends to access in their address book.</value>
   </data>
-  <data name="FEED" xml:space="preserve">
-    <value>Feed</value>
-  </data>
   <data name="HEIGHT" xml:space="preserve">
     <value>Height</value>
   </data>
@@ -152,6 +149,9 @@
   </data>
   <data name="NAME" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="NO_RECENT_ITEMS_IN_FRIENDS_FEED" xml:space="preserve">
+    <value>There are no recent items in your friend's feeds.</value>
   </data>
   <data name="ORDER" xml:space="preserve">
     <value>Order</value>
@@ -185,5 +185,11 @@
   </data>
   <data name="XMPP" xml:space="preserve">
     <value>XMPP (Jabber)</value>
+  </data>
+  <data name="_POSTED" xml:space="preserve">
+    <value>posted</value>
+  </data>
+  <data name="_STATUS" xml:space="preserve">
+    <value>status</value>
   </data>
 </root>

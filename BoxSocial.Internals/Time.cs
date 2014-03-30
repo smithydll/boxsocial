@@ -665,15 +665,15 @@ namespace BoxSocial.Internals
             {
                 if (ts.TotalMinutes <= 5)
                 {
-                    return "Now";
+                    return core.Prose.GetString("NOW");
                 }
                 else if (ts.TotalHours <= 24)
                 {
-                    return "Today";
+                    return core.Prose.GetString("TODAY");
                 }
                 else if (dt.Year == 1000)
                 {
-                    return "Never";
+                    return core.Prose.GetString("NEVER");
                 }
                 else
                 {
@@ -684,7 +684,7 @@ namespace BoxSocial.Internals
             {
                 if (ts.TotalSeconds < 1)
                 {
-                    return "Now";
+                    return core.Prose.GetString("NOW");
                 }
                 if (ts.TotalSeconds < 60 && (int)ts.TotalSeconds != 1)
                 {
@@ -704,7 +704,7 @@ namespace BoxSocial.Internals
                 }
                 else if (ts.TotalDays > 1 && ts.TotalDays <= 2)
                 {
-                    return "Yesterday";
+                    return core.Prose.GetString("YESTERDAY");
                 }
                 else if (ts.TotalHours < 12 && (ts.TotalHours >= 2 || ts.TotalHours < 1))
                 {
@@ -716,11 +716,11 @@ namespace BoxSocial.Internals
                 }
                 else if (ts.TotalHours <= 24)
                 {
-                    return "Today";
+                    return core.Prose.GetString("TODAY");
                 }
                 else if (dt.Year == 1000)
                 {
-                    return "Never";
+                    return core.Prose.GetString("NEVER");
                 }
                 else
                 {

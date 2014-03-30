@@ -99,7 +99,6 @@
     <Content Include="register.aspx" />
     <Content Include="robots.txt" />
     <Content Include="safety.aspx" />
-    <Content Include="scripts\ajax.js" />
     <Content Include="scripts\ajax.mobile.js" />
     <Content Include="scripts\colorwheel.js" />
     <Content Include="scripts\jgestures.min.js" />

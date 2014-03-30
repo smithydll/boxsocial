@@ -120,9 +120,9 @@ namespace BoxSocial.Internals
                 switch (gender)
                 {
                     case "MALE":
-                        return "Male";
+                        return core.Prose.GetString("MALE");
                     case "FEMALE":
-                        return "Female";
+                        return core.Prose.GetString("FEMALE");
                     default:
                         return "FALSE";
                 }
@@ -148,22 +148,22 @@ namespace BoxSocial.Internals
                 switch (sexuality)
                 {
                     case "UNSURE":
-                        return "Not Sure";
+                        return core.Prose.GetString("NOT_SURE");
                     case "STRAIGHT":
-                        return "Straight";
+                        return core.Prose.GetString("STRAIGHT");
                     case "HOMOSEXUAL":
                         if (gender == "FEMALE")
                         {
-                            return "Lesbian";
+                            return core.Prose.GetString("LESBIAN");
                         }
                         else
                         {
-                            return "Gay";
+                            return core.Prose.GetString("GAY");
                         }
                     case "BISEXUAL":
-                        return "Bisexual";
+                        return core.Prose.GetString("BISEXUAL");
                     case "TRANSEXUAL":
-                        return "Transexual";
+                        return core.Prose.GetString("TRANSEXUAL");
                     default:
                         return "FALSE";
                 }
@@ -189,24 +189,24 @@ namespace BoxSocial.Internals
                 switch (maritialStatus)
                 {
                     case "SINGLE":
-                        return "Single";
+                        return core.Prose.GetString("SINGLE");
                     case "RELATIONSHIP":
                         if (MaritialWithConfirmed && MaritialWithId > 0)
                         {
-                            return "In a Relationship with [user]" + MaritialWithId.ToString() + "[/user]";
+                            return string.Format(core.Prose.GetString("IN_A_RELATIONSHIP"), MaritialWithId.ToString());
                         }
                         else
                         {
-                            return "In a Relationship";
+                            return core.Prose.GetString("IN_A_RELATIONSHIP");
                         }
                     case "MARRIED":
-                        return "Married";
+                        return core.Prose.GetString("MARRIED");
                     case "SWINGER":
-                        return "Swinger";
+                        return core.Prose.GetString("SWINGER");
                     case "DIVORCED":
-                        return "Divorced";
+                        return core.Prose.GetString("DIVORCED");
                     case "WIDOWED":
-                        return "Widowed";
+                        return core.Prose.GetString("WIDOWED");
                     default:
                         return "FALSE";
                 }

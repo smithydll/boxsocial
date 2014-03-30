@@ -384,6 +384,9 @@
   <data name="DISPLAY_NAME" xml:space="preserve">
     <value>Display Name</value>
   </data>
+  <data name="DIVORCED" xml:space="preserve">
+    <value>Divorced</value>
+  </data>
   <data name="EARLIER_IN_THE_MONTH" xml:space="preserve">
     <value>Earlier in the Month</value>
   </data>
@@ -480,6 +483,12 @@
   <data name="INVALID" xml:space="preserve">
     <value>Invalid</value>
   </data>
+  <data name="IN_A_RELATIONSHIP" xml:space="preserve">
+    <value>In a Relationship</value>
+  </data>
+  <data name="IN_A_RELATIONSHIP_WITH" xml:space="preserve">
+    <value>In a Relationship with [user]{0}[/user]</value>
+  </data>
   <data name="JANUARY" xml:space="preserve">
     <value>January</value>
   </data>
@@ -507,6 +516,9 @@
   <data name="LEAVE" xml:space="preserve">
     <value>Leave</value>
   </data>
+  <data name="LESBIAN" xml:space="preserve">
+    <value>Lesbian</value>
+  </data>
   <data name="LIKE" xml:space="preserve">
     <value>Like</value>
   </data>
@@ -530,6 +542,9 @@
   </data>
   <data name="MARITIAL_STATUS" xml:space="preserve">
     <value>Maritial Status</value>
+  </data>
+  <data name="MARRIED" xml:space="preserve">
+    <value>Married</value>
   </data>
   <data name="MAY" xml:space="preserve">
     <value>May</value>
@@ -590,6 +605,9 @@
   <data name="NETWORKS" xml:space="preserve">
     <value>Networks</value>
   </data>
+  <data name="NEVER" xml:space="preserve">
+    <value>Never</value>
+  </data>
   <data name="NEW" xml:space="preserve">
     <value>New</value>
   </data>
@@ -611,8 +629,14 @@
   <data name="NONE_SPECIFIED" xml:space="preserve">
     <value>None Specified</value>
   </data>
+  <data name="NOT_SURE" xml:space="preserve">
+    <value>Not Sure</value>
+  </data>
   <data name="NOVEMBER" xml:space="preserve">
     <value>November</value>
+  </data>
+  <data name="NOW" xml:space="preserve">
+    <value>Now</value>
   </data>
   <data name="NO_ANSWER" xml:space="preserve">
     <value>No Answer</value>
@@ -761,6 +785,9 @@
   <data name="SIGNOUT" xml:space="preserve">
     <value>Sign out</value>
   </data>
+  <data name="SINGLE" xml:space="preserve">
+    <value>Single</value>
+  </data>
   <data name="SITE_MAP" xml:space="preserve">
     <value>Site Map</value>
   </data>
@@ -787,6 +814,9 @@
   </data>
   <data name="SURNAME" xml:space="preserve">
     <value>Surname</value>
+  </data>
+  <data name="SWINGER" xml:space="preserve">
+    <value>Swinger</value>
   </data>
   <data name="TAGS" xml:space="preserve">
     <value>Tags</value>
@@ -868,6 +898,9 @@
   </data>
   <data name="WEIGHT" xml:space="preserve">
     <value>Weight</value>
+  </data>
+  <data name="WIDOWED" xml:space="preserve">
+    <value>Widowed</value>
   </data>
   <data name="YEAR" xml:space="preserve">
     <value>Year</value>

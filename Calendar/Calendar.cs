@@ -670,7 +670,7 @@ namespace BoxSocial.Applications.Calendar
                 {
                     BirthdayEvent birthdayEvent = (BirthdayEvent)calendarEvent;
 
-                    eventVariableCollection.Parse("BIRTH_DATE", birthdayEvent.User.Profile.DateOfBirth.ToString("d MMMM"));
+                    eventVariableCollection.Parse("BIRTH_DATE", birthdayEvent.User.Profile.DateOfBirth.Day + " " + core.Tz.MonthToString(birthdayEvent.User.Profile.DateOfBirth.Month));
                 }
 
                 hasEvents = true;

@@ -308,3 +308,18 @@ div.topic-icon, div.forum-icon {
     height: 20px;
     margin: 5px 10px 0 0;
 }
+
+ul.list li.list-item.topic > a, ul.list li.list-item.forum > a {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+ul.list li.list-item.topic, ul.list li.list-item.forum {
+    padding-left: 30px;
+}
+
+ul.list li.list-item.topic img, ul.list li.list-item.forum img {
+    position: absolute;
+    left: 5px;
+    top: 10px;
+}

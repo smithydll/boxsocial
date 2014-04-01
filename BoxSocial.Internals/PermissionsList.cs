@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
 
         public override string ToString()
         {
-            string returnValue = "<ul>";
+            string returnValue = "<ul class=\"permissions-block\">";
 
             foreach (string permission in permissions)
             {

@@ -1,15 +1,7 @@
 ﻿<!-- INCLUDE page_header.html -->
+<div id="content">
 <!-- INCLUDE forum_header -->
 	<h2>{TOPIC_TITLE}</h2>
-
-  <div data-role="controlgroup" data-type="horizontal">
-  <!-- IF U_NEW_TOPIC -->
-    <a href="{U_NEW_TOPIC}" data-role="button" data-theme="a" data-inline="true">{L_NEW_TOPIC}</a>
-  <!-- ENDIF -->
-  <!-- IF U_NEW_REPLY -->
-	<a href="{U_NEW_REPLY}" data-role="button" data-theme="a" data-inline="true">{L_POST_REPLY}</a>
-  <!-- ENDIF -->
-  </div>
 
 <p>{PAGINATION}</p>
 <!-- IF POSTS -->
@@ -57,17 +49,8 @@
 <!-- ENDIF -->
 <p>{PAGINATION}</p>
 
-  <div data-role="controlgroup" data-type="horizontal">
-  <!-- IF U_NEW_TOPIC -->
-    <a href="{U_NEW_TOPIC}" data-role="button" data-theme="a" data-inline="true">{L_NEW_TOPIC}</a>
-  <!-- ENDIF -->
-  <!-- IF U_NEW_REPLY -->
-	<a href="{U_NEW_REPLY}" data-role="button" data-theme="a" data-inline="true">{L_POST_REPLY}</a>
-  <!-- ENDIF -->
-  </div>
-
 <!-- IF PERMISSION_BLOCK -->
 {PERMISSION_BLOCK}
 <!-- ENDIF -->
-
+</div>
 <!-- INCLUDE page_footer.html -->

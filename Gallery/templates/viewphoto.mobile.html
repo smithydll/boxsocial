@@ -12,11 +12,27 @@
     </div>
 
 <div id="content">
-	<div id="new-stuff">
-  <!-- IF U_UPLOAD_PHOTO -->
-        <span class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
-  <!-- ENDIF -->
-    </div>
+    <p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+    <ul id="actions-menu" class="popup-menu">
+        <!-- IF U_UPLOAD_PHOTO -->
+      <li><a href="{U_UPLOAD_PHOTO}">{L_UPLOAD_PHOTO}</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_EDIT -->
+            <li><a href="{U_EDIT}">{L_EDIT}</a></li>
+        <!-- ENDIF -->
+        <!-- IF OWNER -->
+            <li><a href="{U_MARK_DISPLAY_PIC}">Set as My Picture</a></li>
+            <li><a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_EDIT -->
+            <li><a href="{U_ROTATE_LEFT}" title="{L_ROTATE_LEFT}">{L_ROTATE_LEFT}</a></li>
+            <li><a href="{U_ROTATE_RIGHT}" title="{L_ROTATE_RIGHT}">{L_ROTATE_RIGHT}</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_DELETE -->
+            <li><a href="{U_DELETE}" title="Delete Photo">{L_DELETE}</a></li>
+            <!--li><a href="{U_TAG}" title="Tag Photo">Tag</a></li-->
+        <!-- ENDIF -->
+    </ul>
 
   <div id="mobile-photo">
     <script type="text/javascript">
@@ -155,19 +171,6 @@
       </dd>
       <!-- ENDIF -->
     </dl>
-    <!-- IF OWNER -->
-    <div id="photo-menu">
-        <ul data-role="listview">
-            <li><a href="{U_EDIT}">Edit</a></li>
-            <li><a href="{U_MARK_DISPLAY_PIC}">Set as My Picture</a></li>
-            <li><a href="{U_MARK_GALLERY_COVER}">Set as Album Cover</a></li>
-            <li data-icon="back"><a href="{U_ROTATE_LEFT}" title="Rotate Left">Rotate left</a></li>
-            <li data-icon="forward"><a href="{U_ROTATE_RIGHT}" title="Rotate Right">Rotate Right</a></li>
-            <li data-icon="delete"><a href="{U_DELETE}" title="Delete Photo">Delete</a></li>
-            <!--li><a href="{U_TAG}" title="Tag Photo">Tag</a></li-->
-        </ul>
-    </div>
-    <!-- ENDIF -->
     <div class="comment-pane" style="margin: 0 auto; width: 100%; -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;">
       <!-- INCLUDE pane.comments.html -->
     </div>

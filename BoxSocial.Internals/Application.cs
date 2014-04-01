@@ -634,61 +634,64 @@ namespace BoxSocial.Internals
             load.Start();
             foreach (ApplicationEntry ae in applicationsList)
             {
-                if (ae.SlugMatch(uri))
+                if (!core.LoadedApplication(ae))
                 {
-                    try
+                    if (ae.SlugMatch(uri))
                     {
-                        string assemblyPath;
-                        if (ae.IsPrimitive)
+                        try
                         {
-                            assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
-                        }
-                        else
-                        {
-                            assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
-                        }
-                        Assembly assembly = Assembly.LoadFrom(assemblyPath);
-
-                        Type[] types = assembly.GetTypes();
-                        foreach (Type type in types)
-                        {
-                            if (type.IsSubclassOf(typeof(Application)))
+                            string assemblyPath;
+                            if (ae.IsPrimitive)
                             {
-                                Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
+                                assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
+                            }
+                            else
+                            {
+                                assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
+                            }
+                            Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
-                                if (newApplication != null)
+                            Type[] types = assembly.GetTypes();
+                            foreach (Type type in types)
+                            {
+                                if (type.IsSubclassOf(typeof(Application)))
                                 {
-                                    if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
-                                        || primitive == AppPrimitives.Any)
+                                    Application newApplication = System.Activator.CreateInstance(type, new object[] { core }) as Application;
+
+                                    if (newApplication != null)
                                     {
-                                        newApplication.Initialise(core);
-                                        core.Template.AddPageAssembly(assembly);
-
-                                        if (ae.HasStyleSheet)
+                                        if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
+                                            || primitive == AppPrimitives.Any)
                                         {
-                                            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                                            newApplication.Initialise(core);
+                                            core.Template.AddPageAssembly(assembly);
 
-                                            styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                                            if (ae.HasStyleSheet)
+                                            {
+                                                VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+
+                                                styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                                            }
+
+                                            if (ae.HasJavascript)
+                                            {
+                                                VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+
+                                                javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                                            }
+
+                                            /* Initialise prose class for the application */
+                                            core.Prose.AddApplication(ae.Key);
                                         }
-
-                                        if (ae.HasJavascript)
-                                        {
-                                            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
-
-                                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
-                                        }
-
-                                        /* Initialise prose class for the application */
-                                        core.Prose.AddApplication(ae.Key);
                                     }
                                 }
                             }
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        //core.Http.Write(ex.ToString() + "<hr />");
-                        // -- DEBUG HERE FOR APPLICATION LOADER --
+                        catch (Exception ex)
+                        {
+                            //core.Http.Write(ex.ToString() + "<hr />");
+                            // -- DEBUG HERE FOR APPLICATION LOADER --
+                        }
                     }
                 }
             }
@@ -761,31 +764,35 @@ namespace BoxSocial.Internals
 
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {
-            Application newApplication = GetApplication(core, primitive, ae);
-
-            if (newApplication != null)
+            if (!core.LoadedApplication(ae))
             {
-                if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
-                    || primitive == AppPrimitives.Any)
+                Application newApplication = GetApplication(core, primitive, ae);
+
+                if (newApplication != null)
                 {
-                    newApplication.Initialise(core);
-
-                    if (ae.HasStyleSheet)
+                    if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
+                        || primitive == AppPrimitives.Any)
                     {
-                        VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                        newApplication.Initialise(core);
+                        core.Template.AddPageAssembly(ae.Assembly);
 
-                        styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                        if (ae.HasStyleSheet)
+                        {
+                            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+
+                            styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                        }
+
+                        if (ae.HasJavascript)
+                        {
+                            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+
+                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                        }
+
+                        /* Initialise prose class for the application */
+                        core.Prose.AddApplication(ae.Key);
                     }
-
-                    if (ae.HasJavascript)
-                    {
-                        VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
-
-                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
-                    }
-
-                    /* Initialise prose class for the application */
-                    core.Prose.AddApplication(ae.Key);
                 }
             }
         }

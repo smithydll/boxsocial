@@ -630,6 +630,38 @@ namespace BoxSocial.Internals
             return DateTimeToDateString(dt, false);
         }
 
+        public string MonthToString(int month)
+        {
+            switch (month)
+            {
+                case 1:
+                    return core.Prose.GetString("JANUARY");
+                case 2:
+                    return core.Prose.GetString("FEBURARY");
+                case 3:
+                    return core.Prose.GetString("MARCH");
+                case 4:
+                    return core.Prose.GetString("APRIL");
+                case 5:
+                    return core.Prose.GetString("MAY");
+                case 6:
+                    return core.Prose.GetString("JUNE");
+                case 7:
+                    return core.Prose.GetString("JULY");
+                case 8:
+                    return core.Prose.GetString("AUGUST");
+                case 9:
+                    return core.Prose.GetString("SEPTEMBER");
+                case 10:
+                    return core.Prose.GetString("OCTOBER");
+                case 11:
+                    return core.Prose.GetString("NOVEMBER");
+                case 12:
+                    return core.Prose.GetString("DECEMBER");
+            }
+            return string.Empty;
+        }
+
         public string DateTimeToDateString(DateTime dt, bool today)
         {
             if (today)
@@ -642,12 +674,12 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return dt.ToString("MMMM dd, yyyy");
+                    return MonthToString(dt.Month) + dt.ToString(" dd, yyyy");
                 }
             }
             else
             {
-                return dt.ToString("MMMM dd, yyyy");
+                return MonthToString(dt.Month) + dt.ToString(" dd, yyyy");
             }
         }
 
@@ -677,7 +709,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return dt.ToString("MMMM dd, yyyy");
+                    return MonthToString(dt.Month) + dt.ToString(" dd, yyyy");
                 }
             }
             else
@@ -724,7 +756,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    return dt.ToString("MMMM dd, yyyy");
+                    return MonthToString(dt.Month) + dt.ToString(" dd, yyyy");
                 }
             }
         }

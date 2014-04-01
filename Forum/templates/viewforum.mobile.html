@@ -1,4 +1,5 @@
 ﻿<!-- INCLUDE page_header.html -->
+<div id="content">
 <!-- INCLUDE forum_header -->
 	<h2>{FORUM_TITLE}</h2>
 	
@@ -9,16 +10,7 @@
 	</div>
 	<!-- ENDIF -->
 	
-	<!-- IF U_NEW_TOPIC -->
-	<a href="{U_NEW_TOPIC}" data-role="button" data-theme="a" data-inline="true">{L_NEW_TOPIC}</a>
-	<!-- ENDIF -->
-
   <!-- IF FORUMS -->
-  <p>
-    <!-- IF IS_FORUM_MEMBER -->
-    <a href="{U_MARK_FORUMS_READ}">{L_MARK_FORUMS_READ}</a>
-    <!-- ENDIF -->
-  </p>
   <ul class="list">
   <!-- BEGIN forum_list -->
   <!-- IF forum_list.IS_CATEGORY -->
@@ -27,7 +19,7 @@
   <!-- IF forum_list.IS_FIRST -->
   <!-- ENDIF -->
     <!-- IF forum_list.IS_FORUM -->
-				<li class="list-item icon"><a href="{forum_list.URI}">
+				<li class="list-item icon forum"><a href="{forum_list.URI}">
 	      <!-- IF forum_list.IS_READ -->
 	      <img src="/images/posticon_read_med.png" />
 	      <!-- ELSE -->
@@ -44,9 +36,6 @@
           <!-- ENDIF -->
 						<span class="count">{forum_list.TOPICS} topics</span>
                         </a>
-                        <!-- IF forum_list.LAST_POST_URI -->
-						<a href="{forum_list.LAST_POST_URI}">{forum_list.LAST_POST_TITLE}</a>
-                        <!-- END IF -->
     </li>
     <!-- ENDIF -->
   <!-- IF forum_list.IS_LAST -->
@@ -56,16 +45,11 @@
 </ul>
 	
 	<!-- IF TOPICS -->
-  <p>
-    <!-- IF IS_FORUM_MEMBER -->
-    <a href="{U_MARK_TOPICS_READ}">{L_MARK_TOPICS_READ}</a>
-    <!-- ENDIF -->
-    {PAGINATION}
-  </p>
+  <p>{PAGINATION}</p>
 			  <ul class="list">
     <li class="list-item divider">Topics</li>
     <!-- BEGIN topic_list -->
-    <li class="list-item icon">
+    <li class="list-item icon topic">
 		<a href="{topic_list.URI}">
     <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
     <img src="/images/posticon_read_med.png" />
@@ -107,9 +91,6 @@
           <p><strong>{topic_list.TITLE}</strong></p>
           <p>by {topic_list.USERNAME}<br />on  {topic_list.DATE}</p>
           <span class="count">{topic_list.REPLIES} replies</span></a>
-          <!-- IF topic_list.LAST_POST_URI -->
-        <a href="{topic_list.LAST_POST_URI}">{topic_list.LAST_POST_TITLE}</a>
-          <!-- ENDIF -->
       </dl>
     </li>
     <!-- END topic_list -->
@@ -117,10 +98,6 @@
   <p>{PAGINATION}</p>
   <!-- ELSE -->
   <p>{L_NO_TOPICS_FORUM}</p>
-	<!-- ENDIF -->
-
-	<!-- IF U_NEW_TOPIC -->
-	<a href="{U_NEW_TOPIC}" data-role="button" data-theme="a" data-inline="true">{L_NEW_TOPIC}</a>
 	<!-- ENDIF -->
 
 <!-- IF INDEX_STATISTICS -->
@@ -132,5 +109,5 @@
 <!-- IF PERMISSION_BLOCK -->
 {PERMISSION_BLOCK}
 <!-- ENDIF -->
-
+</div>
 <!-- INCLUDE page_footer.html -->

@@ -11,14 +11,15 @@
     </div>
 
 <div id="content">
-	<div id="new-stuff">
-    <!-- IF U_UPLOAD_PHOTO -->
-      <span class="post-button"><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></span>
-    <!-- ENDIF -->
-    <!-- IF U_NEW_GALLERY -->
-      <span class="post-button"><a href="{U_NEW_GALLERY}">New Gallery</a></span>
-    <!-- ENDIF -->
-    </div>
+    <p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+    <ul id="actions-menu" class="popup-menu">
+        <!-- IF U_UPLOAD_PHOTO -->
+      <li><a href="{U_UPLOAD_PHOTO}">Upload Photo</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_NEW_GALLERY -->
+      <li><a href="{U_NEW_GALLERY}">New Gallery</a></li>
+        <!-- ENDIF -->
+    </ul>
 
   <!-- IF GALLERIES -->
   <ul class="list">

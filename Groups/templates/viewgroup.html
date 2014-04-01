@@ -6,7 +6,28 @@
 
 <div id="content">
 	<h2><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h2>
+    <!-- IF $_IS_MOBILE -->
+    <p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+    <ul id="actions-menu" class="popup-menu">
+        <!-- IF U_JOIN -->
+        <li><a href="{U_JOIN}">Join This Group</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_LEAVE -->
+        <li><a href="{U_LEAVE}">Leave This Group</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_CANCEL -->
+        <li><a href="{U_CANCEL}">Cancel Membership Request</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_INVITE -->
+        <li><a href="{U_INVITE}">Invite to This Group</a></li>
+        <!-- ENDIF -->
+        <!-- IF U_GROUP_ACCOUNT -->
+        <li><a href="{U_GROUP_ACCOUNT}">Group Account Panel</a></li>
+        <!-- ENDIF -->
+    </ul>
+    <!-- ENDIF -->
 	<div id="pane-profile">
+    <!-- IF NOT $_IS_MOBILE -->
 		<div id="pane-profile-overview" class="pane">
 			<h3><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h3>
 			<dl>
@@ -25,10 +46,11 @@
 			<!-- IF U_INVITE -->
 			<p><span id="invite-group" class="post-button"><a href="{U_INVITE}">Invite to This Group</a></span></p>
 			<!-- ENDIF -->
-      <!-- IF U_GROUP_ACCOUNT -->
+            <!-- IF U_GROUP_ACCOUNT -->
 			<p><span id="account-group" class="post-button"><a href="{U_GROUP_ACCOUNT}">Group Account Panel</a></span></p>
 			<!-- ENDIF -->
 		</div>
+        <!-- ENDIF -->
 		<!-- IF OPERATORS -->
 		<div class="pane">
 			<h3>Group Operators ({OPERATORS})</h3>

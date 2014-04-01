@@ -1168,6 +1168,20 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
         }
+
+        private List<long> loadedApplicationIds = new List<long>();
+        internal bool LoadedApplication(ApplicationEntry ae)
+        {
+            if (loadedApplicationIds.Contains(ae.Id))
+            {
+                return true;
+            }
+            else
+            {
+                loadedApplicationIds.Add(ae.Id);
+                return false;
+            }
+        }
     }
 
     public class NullCoreException : Exception

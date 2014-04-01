@@ -644,6 +644,9 @@
   <data name="NO_COMMENTS" xml:space="preserve">
     <value>No Comments</value>
   </data>
+  <data name="NO_COMMENTS_POSTED" xml:space="preserve">
+    <value>No comments have been posted</value>
+  </data>
   <data name="NO_FRIENDS" xml:space="preserve">
     <value>No Friends</value>
   </data>
@@ -889,6 +892,9 @@
   </data>
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
+  </data>
+  <data name="VIEW_ALL" xml:space="preserve">
+    <value>View All</value>
   </data>
   <data name="WEDNESDAY" xml:space="preserve">
     <value>Wednesday</value>

@@ -44,6 +44,7 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            core.Http.StatusCode = 404;
             EndResponse();
         }
     }

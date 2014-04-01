@@ -7,29 +7,29 @@
 <!-- ENDIF -->
 <!-- ELSE -->
 <!-- IF U_VIEW_ALL -->
-<h3>Comments <a href="{U_VIEW_ALL}">(<span class="comment-count">{COMMENTS}</span>)</a></h3>
+<h3>{L_COMMENTS} <a href="{U_VIEW_ALL}">(<span class="comment-count">{COMMENTS}</span>)</a></h3>
 <!-- ELSE -->
-<h3>Comments (<span class="comment-count">{COMMENTS}</span>)</h3>
+<h3>{L_COMMENTS} (<span class="comment-count">{COMMENTS}</span>)</h3>
 <!-- ENDIF -->
 <!-- ENDIF -->
 <!-- IF COMMENTS_DESC -->
 <!-- INCLUDE pane.comment.post.html -->
 <!-- ENDIF -->
 <!-- IF COMMENT_PAGINATION -->
-<p><strong>Go to page:</strong> {COMMENT_PAGINATION}</p>
+<p><strong>{L_GOTO_PAGE}</strong> {COMMENT_PAGINATION}</p>
 <!-- ENDIF -->
 <!-- IF U_VIEW_ALL -->
-<p><a href="{U_VIEW_ALL}">View All</a></p>
+<p><a href="{U_VIEW_ALL}">{L_VIEW_ALL}</a></p>
 <!-- ENDIF -->
 <ul class="comment-list">
 	<!-- INCLUDE pane.comment.html -->
 	<!-- IF COMMENTS -->
 	<!-- ELSE -->
-	<li class="no-comments"><p>No comments have been posted.</p></li>
+	<li class="no-comments"><p>{L_NO_COMMENTS_POSTED}</p></li>
 	<!-- ENDIF -->
 </ul>
 	<!-- IF COMMENT_PAGINATION -->
-	<p><strong>Go to page:</strong> {COMMENT_PAGINATION}</p>
+	<p><strong>{L_GOTO_PAGE}</strong> {COMMENT_PAGINATION}</p>
 	<!-- ENDIF -->
 <!-- IF COMMENTS_ASC -->
 <!-- INCLUDE pane.comment.post.html -->

@@ -21,48 +21,35 @@
 	</div>
     </div>
 <div id="content">
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span>
 <!-- IF NOT SELF -->
 <!-- IF LOGGED_IN -->
 <!-- IF SUBSCRIBED -->
-<p><span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button subscribed"><a href="{U_UNSUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button subscribed"><a href="{U_UNSUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span>
 <!-- ELSE -->
-<p><span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button"><a href="{U_SUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_SUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span></p>
+<span id="subscribe" class="subscribe-{USER_TYPE_ID}-{USER_ID} subscribe-button"><a href="{U_SUBSCRIBE}" onclick="return SubscribeItem({USER_ID}, {USER_TYPE_ID}, $(this).parent().hasClass('subscribed'));">{L_SUBSCRIBE}</a></span><span class="subscribers">{SUBSCRIBERS}</span>
 <!-- ENDIF -->
 <!-- ENDIF -->
 <!-- ENDIF -->
-	<div id="pane-profile">
-		<div id="pane-profile-contact" class="pane">
-			<h3>{L_CONTACT}</h3>
-			<dl>
+</p>
+<ul id="actions-menu" class="popup-menu">
 				<!-- IF LOGGED_IN -->
                 <!-- IF NOT OWNER -->
                 <!-- IF U_SEND_MESSAGE -->
-				<dt><a href="{U_SEND_MESSAGE}" id="u-send-message"></a></dt>
-				<dd><a href="{U_SEND_MESSAGE}">{L_SEND_MESSAGE}</a></dd>
+    <li><a href="{U_SEND_MESSAGE}">{L_SEND_MESSAGE}</a></li>
                 <!-- ENDIF -->
-				<!--dt><a href=""></a></dt>
-				<dd>Add to Favourites</dd-->
-				<dt><a href="{U_ADD_FRIEND}" id="u-add-friend"></a></dt>
-				<dd><a href="{U_ADD_FRIEND}">{L_ADD_TO_FRIENDS}</a></dd>
-				<!--dt><a href=""></a></dt>
-				<dd>Leave a Message</dd-->
-				<dt><a href="{U_BLOCK_USER}" id="u-block-user"></a></dt>
-				<dd><a href="{U_BLOCK_USER}">{L_BLOCK_USER}</a></dd>
+    <li><a href="{U_ADD_FRIEND}">{L_ADD_TO_FRIENDS}</a></li>
                 <!-- ENDIF -->
 				<!-- ELSE -->
-				<dt><a href="{U_REGISTER}"></a></dt>
-				<dd>{L_REGISTER_TO_CONTACT}</dd>
 				<!-- ENDIF -->
                 <!-- BEGIN email_list -->
-                <dt>{L_EMAIL}</dt>
-				<dd><a href="{email_list.U_MAILTO}">{email_list.EMAIL}</a></dd>
+    <li><a href="{email_list.U_MAILTO}">{email_list.EMAIL}</a></li>
                 <!-- END email_list -->
                 <!-- BEGIN phone_list -->
-                <dt>{L_PHONE}</dt>
-				<dd>{phone_list.PHONE_NUMBER}</dd>
+    <li><a href="tel://{phone_list.PHONE_NUMBER}">{phone_list.PHONE_NUMBER}</a></li>
                 <!-- END phone_list -->
-			</dl>
-		</div>
+</ul>
+	<div id="pane-profile">
 		<!-- IF HAS_PROFILE_INFO -->
 		<div id="pane-profile-info" class="pane">
 			<h3>{L_ABOUT}</h3>

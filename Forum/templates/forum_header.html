@@ -1,4 +1,34 @@
-﻿<div id="forum-head">
+﻿<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+    <ul id="actions-menu" class="popup-menu">
+    <!-- IF U_NEW_TOPIC -->
+        <li><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></li>
+    <!-- ENDIF -->
+    <!-- IF U_NEW_REPLY -->
+        <li><a href="{U_NEW_REPLY}">{L_POST_REPLY}</a></li>
+    <!-- ENDIF -->
+    <!-- IF IS_FORUM_MEMBER AND U_MARK_FORUMS_READ -->
+        <li><a href="{U_MARK_FORUMS_READ}">{L_MARK_FORUMS_READ}</a></li>
+    <!-- ENDIF -->
+    <!-- IF TOPICS AND IS_FORUM_MEMBER AND U_MARK_TOPICS_READ -->
+        <li><a href="{U_MARK_TOPICS_READ}">{L_MARK_TOPICS_READ}</a></li>
+    <!-- ENDIF -->
+        <li><a href="{U_FORUM_INDEX}">{L_FORUM_INDEX}</a></li>
+        <li><a href="{U_FAQ}">{L_FORUM_HELP}</a></li>
+    <!-- IF LOGGED_IN -->
+    <!-- IF U_JOIN -->
+        <li><a href="{U_JOIN}">{L_JOIN_GROUP}</a></li>
+    <!-- ELSE -->
+        <li><a href="{U_UCP}">{L_FORUM_PROFILE}</a></li>
+        <li><a href="{U_MEMBERS}">{L_GROUP_MEMBERS}</a></li>
+    <!-- ENDIF -->
+    <!-- ELSE -->
+        <li><a href="{U_REGISTER}">{L_REGISTER}</a></li>
+    <!-- ENDIF -->
+    </ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
+<div id="forum-head">
   <a href="{U_FORUM_INDEX}" id="forum-index"><span></span>{L_FORUM_INDEX}</a>
   <a href="{U_FAQ}" id="forum-help"><span></span>{L_FORUM_HELP}</a>
 <!-- IF LOGGED_IN -->
@@ -12,3 +42,4 @@
   <a href="{U_REGISTER}" id="forum-join"><span></span>{L_REGISTER}</a>
 <!-- ENDIF -->
 </div>
+<!-- ENDIF -->

@@ -1,3 +1,16 @@
+function showPopupMenu(event, id) {
+    if (!$('#' + id).is(":visible")) {
+        hideSideBar();
+        event.stopPropagation();
+        $("#fade").show();
+        $('#main-page').css('overflow', 'hidden').css('top', '0').css('bottom', '0').css('position', 'absolute');
+        $('#' + id).show();
+        $('#' + id + ' li').addClass('main');
+        $('#' + id).append('<li class="cancel"><a onclick="return hideSideBar();">' + lang['CANCEL'] + '</a></li>');
+    }
+    return false;
+}
+
 function showSideBar(event) {
     if (!$('#boxsocial-menu').is(":visible")) {
         hideSideBar();
@@ -17,7 +30,8 @@ function showPagesBar(event) {
 }
 
 function hideSideBar() {
-    $('#main-page').show();
+    $('#main-page').show().css('overflow', 'auto').css('top', 'auto').css('bottom', 'auto').css('position', 'relative');
+    $("#fade").hide();
     if ($('#boxsocial-menu').is(":visible")) {
         $('#boxsocial-menu').animate({ left: -200 }, function () { $(this).hide(); });
     }
@@ -32,8 +46,16 @@ function hideSideBar() {
     }
     if ($('#search-menu').is(":visible")) {
         $('input:focus').blur();
-        if ($('#search-menu').is(':visible')) $('#search-menu').animate({ bottom: '-32pt' }, function () { $(this).hide(); });
+        $('#search-menu').hide();
+        $('#search-form').trigger("reset");
     }
+    $('.popup-menu').each(function (i) {
+        if ($(this).is(":visible")) {
+            $(this).hide();
+            $(this).children('li.cancel').remove();
+        }
+    });
+    $("ul.popup-menu").hide();
     $('#post-form').trigger("reset");
     $('#upload canvas').remove();
     return false;
@@ -78,6 +100,9 @@ $(function () {
     if (parent.location.hash == '#boxsocial-menu') {
         $('#boxsocial-menu').show().css('left', 0);
     }
+    $("#fade").bind('click', function () {
+        hideSideBar();
+    });
 });
 
 /*$(document).ready(function () {
@@ -184,7 +209,7 @@ function showUsersBar(event, id, mode) {
     if (!$('#users-menu').is(":visible")) {
         event.stopPropagation();
         $('#post-menu').after('<div id="users-menu" class="side-menu bottom-menu">');
-        $('#users-menu').show().append('<div class="action-bar"><button onclick="return hideUsersBar();" style="float: left;">' + lang['BACK'] + '</button></div><div class="popup-content"><div id="users-selected" class="' + listClass + '"><input type="text" id="' + id + '-search" /></div><ul id="users-list"></ul></div>');
+        $('#users-menu').show().append('<div class="action-bar"><button onclick="return hideUsersBar();" style="float: right;">' + lang['BACK'] + '</button></div><div class="popup-content"><div id="users-selected" class="' + listClass + '"><input type="text" id="' + id + '-search" /></div><ul id="users-list"></ul></div>');
         $('#' + id + '-search').before($('#' + id).children('span.group, span.username').clone());
         PostToPage(namesRequested, uri, $('#users-list'), { ajax: "true", "name-field": '' }, { 'mode': mode, 'id': id });
 

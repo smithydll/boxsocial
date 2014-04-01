@@ -1004,6 +1004,7 @@ namespace BoxSocial.Internals
 
         public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment, Page current)
         {
+            //template.Parse("PAGE_LIST_HOW", Environment.StackTrace);
             template.ParseRaw(templateVar, GeneratePageList(owner, core.Session.LoggedInMember, fragment, current));
         }
 

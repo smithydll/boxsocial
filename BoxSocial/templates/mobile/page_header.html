@@ -12,9 +12,9 @@
 	<!-- IF CANONICAL_URI -->
 	<link rel="canonical" href="{CANONICAL_URI}" />
 	<!-- ENDIF -->
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi, minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 	<!-- IF REDIRECT_URI -->
 	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
 	<!-- ENDIF -->
@@ -24,7 +24,10 @@
 	<!--
 	    var sid = '{SID}';
 	    var medium = 'mobile';
-	    var lang = { 'BACK': '{L_BACK}' };
+	    var lang = {
+            'BACK': '{L_BACK}',
+	        'CANCEL': '{L_CANCEL}'
+	    };
 
 	    $(document).ready(function () {
 	        if (navigator.userAgent.match(/Android/i)) {
@@ -41,6 +44,7 @@
     <script type="text/javascript" src="{U_STATIC}/scripts/ajax.mobile.min.js"></script>
 </head>
 <body>
+    <div id="fade"></div>
     <!-- IF PAGE_LIST -->
     <div id="pages-menu" class="side-menu">
         <ul class="mobile-list">
@@ -60,7 +64,7 @@
     <!-- ENDIF -->
     <div id="search-menu" class="side-menu bottom-menu">
         <h2>{L_SEARCH}</h2>
-		<form action="{S_SEARCH}" method="get">
+		<form action="{S_SEARCH}" id="search-form" method="get">
 			<fieldset>
                 <div class="action-bar">
                     <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
@@ -157,12 +161,15 @@
 <div id="main-page" onclick="hideSideBar();">
 	<div id="head">
             <!-- IF PAGE_LIST -->
+            <!-- PAGE_LIST {PAGE_LIST_HOW} -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF TAB_LIST -->
+            <!-- TAB_LIST {TAB_LIST_HOW} -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF account_links -->
+            <!-- account_links -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ENDIF -->
             <!-- IF LOGGED_IN -->

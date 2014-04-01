@@ -1436,7 +1436,10 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 /* pages */
-                e.Core.Display.ParsePageList(e.Page.Owner, true);
+                if (e.Page.Owner is User)
+                {
+                    e.Core.Display.ParsePageList(e.Page.Owner, true);
+                }
 
                 if (e.Page.Owner is User)
                 {
@@ -1490,18 +1493,26 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("HD_WIDTH", hdSize.Width);
                 e.Template.Parse("HD_HEIGHT", hdSize.Height);
                 e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.Comments));
-                e.Template.Parse("U_EDIT", galleryItem.EditUri);
                 e.Template.Parse("U_MARK_DISPLAY_PIC", galleryItem.MakeDisplayPicUri);
                 e.Template.Parse("U_MARK_GALLERY_COVER", galleryItem.SetGalleryCoverUri);
                 e.Template.Parse("U_ROTATE_LEFT", galleryItem.RotateLeftUri);
                 e.Template.Parse("U_ROTATE_RIGHT", galleryItem.RotateRightUri);
-                e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
                 e.Template.Parse("U_TAG", galleryItem.TagUri);
 
                 e.Template.Parse("PHOTO_MOBILE", galleryItem.MobileUri);
                 e.Template.Parse("PHOTO_DISPLAY", galleryItem.DisplayUri);
                 e.Template.Parse("PHOTO_FULL", galleryItem.FullUri);
                 e.Template.Parse("PHOTO_ULTRA", galleryItem.UltraUri);
+
+                if (gallery.Access.Can("EDIT_ITEMS"))
+                {
+                    e.Template.Parse("U_EDIT", galleryItem.EditUri);
+                }
+
+                if (gallery.Access.Can("DELETE_ITEMS"))
+                {
+                    e.Template.Parse("U_DELETE", galleryItem.DeleteUri);
+                }
 
                 if (gallery.Access.Can("CREATE_ITEMS"))
                 {

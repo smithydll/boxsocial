@@ -1,9 +1,31 @@
 ﻿<h3>{L_EDIT_BLOG_ROLL}</h3>
 
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_NEW_BLOG_ROLL}">{L_NEW_BLOG_ROLL}</a></li>
+</ul>
+<!-- ELSE -->
 <div id="new-stuff">
 	<span id="new-blog-roll" class="post-button"><a href="{U_NEW_BLOG_ROLL}">{L_NEW_BLOG_ROLL}</a></span>
 </div>
+<!-- ENDIF -->
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN blog_roll_list -->
+<li class="list-item">
+    <p>
+        {blog_roll_list.TITLE}<br />
+        <a href="{blog_roll_list.URI}">{blog_roll_list.URI}</a>
+    </p>
+    <span class="action delete"><a href="{blog_roll_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{blog_roll_list.U_EDIT}">{L_EDIT}</a></span>
+</li>
+<!-- END blog_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
   <tr>
     <th>#</th>
@@ -32,3 +54,4 @@
     </tr>
     <!-- END blog_roll_list -->
   </table>
+  <!-- ENDIF -->

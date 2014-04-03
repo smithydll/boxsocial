@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("U_VIEW", core.Hyperlink.BuildBlogPostUri(LoggedInMember, postedTime.Year, postedTime.Month, be.Id));
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
-                blogVariableCollection.Parse("U_EDIT_PERMISSION", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", be.Id, ItemType.GetTypeId(typeof(BlogEntry))), true));
+                blogVariableCollection.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", be.Id, ItemType.GetTypeId(typeof(BlogEntry))), true));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 

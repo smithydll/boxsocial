@@ -150,6 +150,9 @@
   <data name="BISEXUAL" xml:space="preserve">
     <value>Bisexual</value>
   </data>
+  <data name="BLOCK" xml:space="preserve">
+    <value>Block</value>
+  </data>
   <data name="BLOCKED" xml:space="preserve">
     <value>Blocked</value>
   </data>
@@ -572,6 +575,9 @@
   </data>
   <data name="MONTH" xml:space="preserve">
     <value>Month</value>
+  </data>
+  <data name="MORE" xml:space="preserve">
+    <value>More</value>
   </data>
   <data name="MOVE_DOWN" xml:space="preserve">
     <value>Move Down</value>

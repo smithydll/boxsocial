@@ -1849,6 +1849,8 @@ namespace BoxSocial.Applications.Gallery
                     galleryVariableCollection.Parse("TINY", galleryGallery.TinyUri);
                     galleryVariableCollection.Parse("THUMBNAIL", galleryGallery.ThumbnailUri);
 
+                    //galleryVariableCollection.Parse("U_EDIT", );
+
                     e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                     if (galleryGallery.Info.Likes > 0)

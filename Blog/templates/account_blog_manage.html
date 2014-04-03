@@ -1,5 +1,12 @@
 <h3>{L_MANAGE_BLOG}</h3>
 
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_WRITE_NEW_POST}">Write New Post</a></li>
+    <li><a href="{U_PERMISSIONS}">{L_EDIT_PERMISSIONS</a></li>
+</ul>
+<!-- ELSE -->
 <div id="new-stuff">
 	<!-- IF U_WRITE_NEW_POST -->
 	<span id="new-post" class="post-button"><a href="{U_WRITE_NEW_POST}">Write New Post</a></span>
@@ -8,9 +15,25 @@
     <span id="blog-permissions" class="post-button"><a href="{U_PERMISSIONS}">{L_EDIT_PERMISSIONS}</a></span>
     <!-- ENDIF -->
 </div>
+<!-- ENDIF -->
 
 <p>{PAGINATION}</p>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN blog_list -->
+<li class="list-item">
+    <p>
+        <a href="{blog_list.U_VIEW}">{blog_list.TITLE}</a>
+    </p>
+    <span class="action delete"><a href="{blog_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{blog_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{blog_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END blog_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>{L_POSTED}</th>
@@ -32,11 +55,12 @@
 	<td><a href="{blog_list.U_VIEW}">{L_VIEW}</a></td>
 	<td><a href="{blog_list.U_EDIT}">{L_EDIT}</a></td>
       <td>
-        <a href="{blog_list.U_EDIT_PERMISSION}"><img src="/images/permissions.png" alt="{L_EDIT_PERMISSIONS}" title="{L_EDIT_PERMISSIONS}"/></a>
+        <a href="{blog_list.U_EDIT_PERMISSIONS}"><img src="/images/permissions.png" alt="{L_EDIT_PERMISSIONS}" title="{L_EDIT_PERMISSIONS}"/></a>
       </td>
 	<td><a href="{blog_list.U_DELETE}">{L_DELETE}</a></td>
 </tr>
 <!-- END blog_list -->
 </table>
+<!-- ENDIF -->
 
 <p>{PAGINATION}</p>

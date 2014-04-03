@@ -79,6 +79,7 @@ namespace BoxSocial.Applications.Profile
 
                 int order = friend.RelationOrder;
 
+                friendsVariableCollection.Parse("ID", friend.Id);
                 friendsVariableCollection.Parse("NAME", friend.DisplayName);
 
                 if (order > 0)
@@ -87,6 +88,8 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 friendsVariableCollection.Parse("U_PROFILE", friend.Uri);
+                friendsVariableCollection.Parse("ICON", friend.UserIcon);
+                friendsVariableCollection.Parse("TILE", friend.UserTile);
                 friendsVariableCollection.Parse("U_BLOCK", core.Hyperlink.BuildBlockUserUri(friend.Id));
                 friendsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildDeleteFriendUri(friend.Id));
                 friendsVariableCollection.Parse("U_PROMOTE", core.Hyperlink.BuildPromoteFriendUri(friend.Id));

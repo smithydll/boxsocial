@@ -1,14 +1,37 @@
 ﻿<h3>{L_MY_CONTACT_DETAILS}</h3>
 <p>{L_CONTACT_DETAILS_INFO}</p>
 
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_ADD_LINK}">Add Link</a></li>
+    <li><a href="{U_ADD_EMAIL}">Add E-mail Address</a></li>
+    <li><a href="{U_ADD_PHONE}">Add Phone Number</a></li>
+</ul>
+<!-- ELSE -->
 <div id="new-stuff">
 	<span id="new-link" class="post-button"><a href="{U_ADD_LINK}">Add Link</a></span>
     <span id="new-email" class="post-button"><a href="{U_ADD_EMAIL}">Add E-mail Address</a></span>
     <span id="new-phone" class="post-button"><a href="{U_ADD_PHONE}">Add Phone Number</a></span>
 </div>
+<!-- ENDIF -->
 
 <h4>Links</h4>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN link_list -->
+<li class="list-item small">
+    <p>
+        {link_list.S_FAVICON}{link_list.LINK}
+    </p>
+    <span class="action delete"><a href="{link_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{link_list.U_EDIT}">{L_EDIT}</a></span>
+</li>
+<!-- END link_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Link</th>
@@ -27,9 +50,25 @@
 </tr>
 <!-- END link_list -->
 </table>
+<!-- ENDIF -->
 
 <h4>E-mail Addresses</h4>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN email_list -->
+<li class="list-item">
+    <p>
+        {email_list.EMAIL_ADDRESS}
+    </p>
+    <span class="action delete"><a href="{email_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{email_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{email_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END email_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Address</th>
@@ -46,13 +85,29 @@
 	<td>{email_list.EMAIL_ADDRESS}</td>
 	<td><a href="{email_list.U_EDIT}">{L_EDIT}</a></td>
 	<td><a href="{email_list.U_DELETE}">{L_DELETE}</a></td>
-	<td><a href="{email_list.U_EDIT_PERMISSIONS}">Privacy</a></td>
+	<td><a href="{email_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></td>
 </tr>
 <!-- END email_list -->
 </table>
+<!-- ENDIF -->
 
 <h4>Phone Numbers</h4>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN phone_list -->
+<li class="list-item">
+    <p>
+        {phone_list.PHONE_NUMBER}
+    </p>
+    <span class="action delete"><a href="{phone_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{phone_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{phone_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END phone_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Number</th>
@@ -73,6 +128,7 @@
 </tr>
 <!-- END phone_list -->
 </table>
+<!-- ENDIF -->
 
 <!-- IF ADDRESS -->
 <!-- ENDIF -->

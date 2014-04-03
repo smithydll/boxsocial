@@ -1,5 +1,32 @@
 <h3>{L_MANAGE_FRIENDS}</h3>
 
+<!-- IF $_IS_MOBILE -->
+<!-- BEGIN friend_list -->
+    <ul id="friends-more-{friend_list.ID}" class="popup-menu">
+        <li><a href="{friend_list.U_PROMOTE}">{L_MOVE_UP}</a></li>
+        <li><a href="{friend_list.U_DEMOTE}">{L_MOVE_DOWN}</a></li>
+        <li><a href="{friend_list.U_BLOCK}">{L_BLOCK_USER}</a></li>
+    </ul>
+<!-- END friend_list -->
+
+<ul class="list">
+<!-- BEGIN friend_list -->
+<li class="list-item icon">
+    <p>
+        <!-- IF friend_list.ICON -->
+		<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
+		<!-- ELSE -->
+		<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
+		<!-- ENDIF -->
+        <a href="{friend_list.U_PROFILE}">{friend_list.NAME}</a>
+    </p>
+    <span class="action delete"><a href="{friend_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a onclick="return showPopupMenu(event, 'friends-more-{friend_list.ID}');">{L_MORE}</a></span>
+</li>
+<!-- END friend_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>{L_NAME}</th>
@@ -17,13 +44,14 @@
 <!-- ENDIF -->
 	<td><a href="{friend_list.U_PROFILE}">{friend_list.NAME}</a></td>
 	<td>{friend_list.ORDER}</td>
-	<td><a href="{friend_list.U_PROMOTE}">U</a></td>
-	<td><a href="{friend_list.U_DEMOTE}">D</a></td>
-	<td><a href="{friend_list.U_DELETE}">Remove</a></td>
-	<td><a href="{friend_list.U_BLOCK}">Block</a></td>
+	<td><a href="{friend_list.U_PROMOTE}" title="{L_MOVE_UP}">U</a></td>
+	<td><a href="{friend_list.U_DEMOTE}" title="{L_MOVE_DOWN}">D</a></td>
+	<td><a href="{friend_list.U_DELETE}">{L_DELETE}</a></td>
+	<td><a href="{friend_list.U_BLOCK}" title="{L_BLOCK_USER}">{L_BLOCK}</a></td>
 </tr>
 <!-- END friend_list -->
 </table>
+<!-- ENDIF -->
 
 {PAGINATION}
 

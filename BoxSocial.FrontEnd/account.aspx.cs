@@ -200,6 +200,8 @@ namespace BoxSocial.FrontEnd
             accountObject.RegisterAllModules();
 
             accountModules.Sort();
+
+            VariableCollection parentModulesVariableCollection = null;
  
             ApplicationEntry ae = null;
             foreach (AccountModule accountModule in accountModules)
@@ -246,6 +248,7 @@ namespace BoxSocial.FrontEnd
                     }
 
                     modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    parentModulesVariableCollection = modulesVariableCollection;
                     if (ae != null && ae.HasJavascript)
                     {
                         VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
@@ -264,6 +267,10 @@ namespace BoxSocial.FrontEnd
                 if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+                    if (parentModulesVariableCollection != null)
+                    {
+                        parentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
+                    }
 
                     asm.SetOwner = loggedInMember;
 
@@ -299,7 +306,7 @@ namespace BoxSocial.FrontEnd
                             javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                         }
                     }
-                    asm.ModuleVector(core);
+                    asm.ModuleVector(core, parentModulesVariableCollection);
                     /*catch (Exception ex)
                     {
                         throw new Exception(ex.ToString() + "\n\n\n" + db.ErrorList + "\n\n" + db.QueryList);

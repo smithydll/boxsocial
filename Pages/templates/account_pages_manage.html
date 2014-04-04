@@ -1,5 +1,27 @@
 <h3>Manage Pages</h3>
 
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_NEW_PAGE}">Write New Page</a></li>
+</ul>
+<!-- ENDIF -->
+
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN page_list -->
+<li class="list-item">
+    <p>
+        <a href="{page_list.U_VIEW}">{page_list.TITLE}</a>
+    </p>
+    <span class="action delete"><a href="{page_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{page_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{page_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END page_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Page Title</th>
@@ -24,3 +46,4 @@
 </tr>
 <!-- END page_list -->
 </table>
+<!-- ENDIF -->

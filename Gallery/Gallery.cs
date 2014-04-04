@@ -1863,11 +1863,11 @@ namespace BoxSocial.Applications.Gallery
 
                     if (items == 1)
                     {
-                        galleryVariableCollection.Parse("ITEMS", "1 item.");
+                        galleryVariableCollection.Parse("ITEMS", string.Format(e.Core.Prose.GetString("_ITEM"), e.Core.Functions.LargeIntegerToString(items)));
                     }
                     else
                     {
-                        galleryVariableCollection.Parse("ITEMS", string.Format("{0} items.", e.Core.Functions.LargeIntegerToString(items)));
+                        galleryVariableCollection.Parse("ITEMS", string.Format(e.Core.Prose.GetString("_ITEMS"), e.Core.Functions.LargeIntegerToString(items)));
                     }
                 }
             }

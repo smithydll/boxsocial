@@ -172,6 +172,8 @@ namespace BoxSocial.FrontEnd
 
             accountModules.Sort();
 
+            VariableCollection parentModulesVariableCollection = null;
+
             foreach (AccountModule accountModule in accountModules)
             {
                 VariableCollection modulesVariableCollection = template.CreateChild("module_list");
@@ -188,6 +190,12 @@ namespace BoxSocial.FrontEnd
 
                 if (module == accountModule.Key)
                 {
+                    ApplicationEntry ae = null;
+                    if (accountModule.assembly.GetName().Name != "BoxSocial.Internals")
+                    {
+                        ae = core.GetApplication(accountModule.assembly.GetName().Name);
+                    }
+
                     accountModule.SetOwner = loggedInMember;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
@@ -207,10 +215,17 @@ namespace BoxSocial.FrontEnd
                         ///Response.Write("<hr />" + ex.ToString() + "<hr />");
                         accountModule.DisplayError("");
 
-                        ApplicationEntry ae = core.GetApplication(accountModule.assembly.GetName().Name);
-
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
+                    }
+
+                    modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    parentModulesVariableCollection = modulesVariableCollection;
+                    if (ae != null && ae.HasJavascript)
+                    {
+                        VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+
+                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
                 }
             }
@@ -222,6 +237,10 @@ namespace BoxSocial.FrontEnd
                 if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+                    if (parentModulesVariableCollection != null)
+                    {
+                        parentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
+                    }
 
                     asm.SetOwner = AnApplication;
 
@@ -233,7 +252,7 @@ namespace BoxSocial.FrontEnd
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core, AnApplication);
+                    asm.ModuleVector(core, AnApplication, parentModulesVariableCollection);
                 }
             }
 

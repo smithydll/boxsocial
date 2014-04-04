@@ -319,6 +319,17 @@ namespace BoxSocial.Applications.Mail
 
         public void RemoveRecipient(User user, RecipientType type)
         {
+            if (core.Session.SignedIn && (SenderId == core.Session.LoggedInMember.Id || user.Id == core.Session.LoggedInMember.Id))
+            {
+                DeleteQuery dQuery = new DeleteQuery(typeof(MessageRecipient));
+                dQuery.AddCondition("message_id", Id);
+                dQuery.AddCondition("user_id", user.Id);
+                if (type != RecipientType.Any)
+                {
+                    dQuery.AddCondition("recipient_type", (byte)type);
+                }
+                db.Query(dQuery);
+            }
         }
 
         public void MarkRead()
@@ -388,7 +399,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("mail", "read", messageId);
+                return core.Hyperlink.BuildAccountSubModuleUri("mail", "message", messageId);
             }
         }
     }

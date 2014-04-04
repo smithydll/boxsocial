@@ -46,6 +46,14 @@ body {
 	text-align: left;
 	margin: 32pt 0 0 0;
 	background: white;
+	
+	/*bottom: 0;
+    overflow: auto;
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    -webkit-overflow-scrolling: touch;*/
 }
 
 #content, .popup-content {
@@ -813,6 +821,7 @@ blockquote {
     overflow-x: hidden;
     bottom: 0;
     display: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 #pages-menu {
@@ -825,6 +834,7 @@ blockquote {
     overflow-y: scroll;
     overflow-x: hidden;
     display: none;
+    -webkit-overflow-scrolling: touch;
 }
 
 #post-menu {
@@ -922,6 +932,9 @@ ul.mobile-list li a {
     padding: 11pt;
     width: 100%;
     height: 100%;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 ul.mobile-list ul {
@@ -1099,7 +1112,15 @@ ul.list li.list-item .count {
     padding: 0 5px;
     float: right;
     top: 0px;
-    line-height: 45px;
+    line-height: 25px;
+}
+
+ul.list li.list-item.small .count {
+    line-height: 30px;
+}
+
+ul.list li.list-item.tile .count {
+    line-height: 75px;
 }
 
 ul.list li.list-item .action {
@@ -1161,7 +1182,8 @@ div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui
 
 .account-pane fieldset, .account-wide-pane fieldset, #body fieldset {
 	border: none;
-	padding-top: 0px;
+	padding: 0px;
+	margin: 0;
 }
 
 .account-pane dt, .account-wide-pane dt {
@@ -1364,23 +1386,27 @@ li dl.permission-titles dt, li dl.permission-titles dd {
 	margin: 0px;
 }
 
+li.permission-grant dl {
+    clear: left; /* Fixes a layout issue on mobile */
+}
+
 li.permission-grant dt {
 	display: block;
-	width: 20%;
+	width: 40%;
 	float: left;
 	margin: 0px;
 	border-bottom: 1px solid #AAAAAA;
-	height: 1em;
+	height: 2em;
 	padding: 1em 0;
 }
 
 li.permission-grant dd {
 	float: left;
 	display: block;
-	width: 20%;
+	width: 30%;
 	margin: 0px;
 	border-bottom: 1px solid #AAAAAA;
-	height: 3em;
+	height: 4em;
 }
 
 li.permission-grant dd input[type="radio"] 

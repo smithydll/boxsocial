@@ -54,6 +54,7 @@ namespace BoxSocial.Internals
         //protected HttpServerUtility Server;
         private Dictionary<string, ModuleModeHandler> modes = new Dictionary<string, ModuleModeHandler>();
         private Dictionary<string, EventHandler> saveHandlers = new Dictionary<string, EventHandler>();
+        private VariableCollection parentModulesVariableCollection;
 
         protected Form Form;
 
@@ -62,6 +63,14 @@ namespace BoxSocial.Internals
             set
             {
                 Owner = value;
+            }
+        }
+
+        protected VariableCollection ParentModulesVariableCollection
+        {
+            get
+            {
+                return parentModulesVariableCollection;
             }
         }
 
@@ -85,9 +94,9 @@ namespace BoxSocial.Internals
         /// constructor
         /// </summary>
         /// <param name="core">Core token</param>
-        public void ModuleVector(Core core)
+        public void ModuleVector(Core core, VariableCollection vc)
         {
-            ModuleVector(core, core.Session.LoggedInMember);
+            ModuleVector(core, core.Session.LoggedInMember, vc);
         }
 
         /// <summary>
@@ -96,7 +105,7 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="owner">Owner</param>
-        public void ModuleVector(Core core, Primitive owner)
+        public void ModuleVector(Core core, Primitive owner, VariableCollection vc)
         {
             if (core == null)
             {
@@ -109,6 +118,7 @@ namespace BoxSocial.Internals
             this.tz = core.Tz;
             this.Owner = owner;
             this.LoggedInMember = session.LoggedInMember;
+            this.parentModulesVariableCollection = vc;
 
             CreateTemplate();
 

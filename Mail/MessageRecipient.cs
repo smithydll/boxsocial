@@ -31,6 +31,7 @@ namespace BoxSocial.Applications.Mail
 {
 	public enum RecipientType : byte
 	{
+        Any = 0x00,
 		Sender = 0x01,
 		To = 0x02,
 		Cc = 0x04,

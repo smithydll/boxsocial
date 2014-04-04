@@ -53,12 +53,23 @@
         </ul>
     </div>
     <!-- ENDIF -->
-    <!-- IF account_links -->
+    <!-- IF module_list -->
     <div id="pages-menu" class="side-menu">
         <ul class="mobile-list">
-	    <!-- BEGIN account_links -->
-        <li class="page-li"><a href="{account_links.URI}"><span>{account_links.TITLE}</span></a></li>
-	    <!-- END account_links -->
+            <!-- BEGIN module_list -->
+            <!-- IF module_list.CURRENT -->
+            <li class="page-li"><a href="{module_list.URI}" onclick="$('#account-modules').toggle(); return false;">{module_list.NAME}</a>
+                <ul id="account-modules" style="display: block;">
+	                <!-- BEGIN module_list.account_links -->
+                    <li class="page-li"><a href="{module_list.account_links.URI}"><span>{module_list.account_links.TITLE}</span></a></li>
+	                <!-- END module_list.account_links -->
+                </ul>
+            </li>
+            <!-- ELSE -->
+            <li class="page-li"><a href="{module_list.URI}">{module_list.NAME}</a></li>
+            <!-- ENDIF -->
+            <!-- END module_list -->
+            <!-- ENDIF -->
         </ul>
     </div>
     <!-- ENDIF -->
@@ -114,16 +125,7 @@
             <li><a href="{U_HOME}" data-theme="" data-icon="home">{L_HOME}</a></li>
 <!-- IF LOGGED_IN -->
     		<li><a href="{U_USER_PROFILE}">{L_ME}</a></li>
-            <!-- IF module_list -->
-            <li><a href="{U_ACCOUNT}" onclick="$('#account-modules').toggle(); return false;">{L_MY_ACCOUNT}</a>
-                <ul id="account-modules" style="display: block;">
-                    <!-- BEGIN module_list -->
-                    <li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
-                    <!-- END module_list -->
-                </ul>
-            <!-- ELSE -->
-            <li><a href="{U_ACCOUNT}#boxsocial-menu">{L_MY_ACCOUNT}</a>
-            <!-- ENDIF -->
+            <li><a href="{U_ACCOUNT}#pages-menu">{L_MY_ACCOUNT}</a>
             </li>
             <li><a href="{U_SIGNOUT}">{L_SIGNOUT}</a></li>
 <!-- ELSE -->

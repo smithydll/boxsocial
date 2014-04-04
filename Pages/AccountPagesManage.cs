@@ -67,6 +67,8 @@ namespace BoxSocial.Applications.Pages
         {
             SetTemplate("account_pages_manage");
 
+            template.Parse("U_NEW_PAGE", BuildUri("write"));
+
             Pages myPages = new Pages(core, Owner);
 
             List<Page> pages = myPages.GetPages(false);

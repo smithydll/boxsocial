@@ -1,6 +1,21 @@
 <h3>Manage Lists</h3>
 <p>Lists let you stored structured data such as your favourite bands, books, and movies.</p>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN list_list -->
+<li class="list-item">
+    <p>
+        <a href="{list_list.U_VIEW}">{list_list.TITLE}</a>
+    </p>
+    <span class="action delete"><a href="{list_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{list_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{list_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END list_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>List Title</th>
@@ -8,7 +23,7 @@
 	<th>List Items</th>
 	<th></th>
 	<th></th>
-  <th></th>
+    <th></th>
 	<th></th>
 </tr>
 <!-- BEGIN list_list -->
@@ -27,6 +42,7 @@
 </tr>
 <!-- END list_list -->
 </table>
+<!-- ENDIF -->
 
 <h4>Add List</h4>
 <p>Add a new list, you can store lists of all kinds of information such as favourite bands, tracks, CDs you own, or your collection of postage stamps.</p>

@@ -1,8 +1,32 @@
 <h3>Manage Groups</h3>
 <p>Manage groups you have operator status over. You can change the title, description, type, and category the group is in.</p>
+
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_CREATE_GROUP}">Create a New Group</a></li>
+</ul>
+<!-- ELSE -->
 <div id="new-stuff">
     <span id="create-group" class="post-button"><a href="{U_CREATE_GROUP}">Create a New Group</a></span>
 </div>
+<!-- ENDIF -->
+
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN group_list -->
+<li class="list-item">
+    <p>
+        <a href="{group_list.U_VIEW}">{group_list.GROUP_DISPLAY_NAME} ({group_list.GROUP_TYPE})</a>
+    </p>
+    <span class="action delete"><a href="{group_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{group_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action"><a href="{group_list.U_MEMBERLIST}">{L_MEMBERS}</a></span>
+</li>
+<!-- END group_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Title</th>
@@ -27,3 +51,4 @@
 </tr>
 <!-- END group_list -->
 </table>
+<!-- ENDIF -->

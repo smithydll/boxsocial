@@ -19,23 +19,24 @@
   <!-- IF forum_list.IS_FIRST -->
   <!-- ENDIF -->
     <!-- IF forum_list.IS_FORUM -->
-				<li class="list-item icon forum"><a href="{forum_list.URI}">
-	      <!-- IF forum_list.IS_READ -->
-	      <img src="/images/posticon_read_med.png" />
-	      <!-- ELSE -->
-	      <img src="/images/posticon_unread_med.png" />
-	      <!-- ENDIF -->
-          <p><strong>{forum_list.TITLE}</strong></p>
-          <p>{forum_list.DESCRIPTION}</p>
-          <!-- IF forum_list.sub_forum_list -->
-          <p>
-          <!-- BEGIN forum_list.sub_forum_list -->
-          {forum_list.sub_forum_list.TITLE}
-          <!-- END forum_list.sub_forum_list -->
-          </p>
-          <!-- ENDIF -->
-						<span class="count">{forum_list.TOPICS} topics</span>
-                        </a>
+	<li class="list-item icon forum">
+        <a href="{forum_list.URI}">
+            <span class="count">{forum_list.TOPICS} topics</span>
+	        <!-- IF forum_list.IS_READ -->
+	        <img src="/images/posticon_read_med.png" />
+	        <!-- ELSE -->
+	        <img src="/images/posticon_unread_med.png" />
+	        <!-- ENDIF -->
+            <p><strong>{forum_list.TITLE}</strong></p>
+            <p>{forum_list.DESCRIPTION}</p>
+            <!-- IF forum_list.sub_forum_list -->
+            <p>
+            <!-- BEGIN forum_list.sub_forum_list -->
+            {forum_list.sub_forum_list.TITLE}
+            <!-- END forum_list.sub_forum_list -->
+            </p>
+            <!-- ENDIF -->
+        </a>
     </li>
     <!-- ENDIF -->
   <!-- IF forum_list.IS_LAST -->

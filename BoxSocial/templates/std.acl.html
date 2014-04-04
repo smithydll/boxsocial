@@ -2,11 +2,11 @@
 <div id="tabs">
 <ul>
     <!-- IF IS_SIMPLE -->
-    <li class="current"><span>Simple Permissions</span></li>
-    <li><a href="{U_DETAILED}"><span>Detailed Permissions</span></a></li>
+    <li class="current"><span>Simple</span></li>
+    <li><a href="{U_DETAILED}"><span>Detailed</span></a></li>
     <!-- ELSE -->
-    <li><a href="{U_SIMPLE}"><span>Simple Permissions</span></a></li>
-    <li class="current"><span>Detailed Permissions</span></li>
+    <li><a href="{U_SIMPLE}"><span>Simple</span></a></li>
+    <li class="current"><span>Detailed</span></li>
     <!-- ENDIF -->
 </ul>
 </div>
@@ -44,6 +44,11 @@
       <!-- XXIF grant -->
       <dl class="permission-titles">
         <dt>&nbsp;</dt>
+        <!-- IF $_IS_MOBILE -->
+        <dd>
+          {L_GRANT}
+        </dd>
+        <!-- ELSE -->
         <dd>
           {L_ALLOW}
         </dd>
@@ -53,6 +58,7 @@
         <dd>
           {L_INHERIT}
         </dd>
+        <!-- ENDIF -->
         <dd>
           &nbsp;
         </dd>
@@ -67,6 +73,11 @@
               <input type="hidden" name="new-grant[{permision_types.permission.grant.PERMISSION_ID},{permision_types.permission.grant.ID}]" value="true" />
 		<!-- ENDIF -->
             </dt>
+            <!-- IF $_IS_MOBILE -->
+            <dd>
+              {permision_types.permission.grant.S_GRANT}
+            </dd>
+            <!-- ELSE -->
             <dd>
               {permision_types.permission.grant.S_ALLOW}
             </dd>
@@ -76,6 +87,7 @@
             <dd>
               {permision_types.permission.grant.S_INHERIT}
             </dd>
+            <!-- ENDIF -->
             <dd>
               {permision_types.permission.grant.S_DELETE}
             </dd>

@@ -926,6 +926,12 @@
   <data name="_COMMENTED_ON" xml:space="preserve">
     <value>commented on {0} {1}</value>
   </data>
+  <data name="_ITEM" xml:space="preserve">
+    <value>{0} item</value>
+  </data>
+  <data name="_ITEMS" xml:space="preserve">
+    <value>{0} items</value>
+  </data>
   <data name="_SHOW_COMMENT" xml:space="preserve">
     <value>show comment</value>
   </data>

@@ -85,6 +85,7 @@ namespace BoxSocial.Applications.Mail
                 if (f.FolderType == FolderTypes.Inbox) continue;
 
                 VariableCollection modulesVariableCollection = core.Template.CreateChild("account_links");
+                ParentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
 
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("folder", f.FolderName);
@@ -173,6 +174,8 @@ namespace BoxSocial.Applications.Mail
 
                 messageVariableCollection.Parse("SUBJECT", message.Subject);
                 messageVariableCollection.Parse("URI", message.Uri);
+                messageVariableCollection.Parse("U_DELETE", BuildUri("message", "delete", message.Id));
+
                 switch (mailFolder.FolderType)
                 {
                     case FolderTypes.Inbox:

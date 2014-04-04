@@ -3,6 +3,27 @@
 <!-- IF mail_item -->
 <p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN mail_item -->
+<li class="list-item icon mail">
+    <a href="{mail_item.URI}">
+        <span class="count">{mail_item.DATE}</span>
+        <!-- IF mail_item.IS_NORMAL_READ -->
+        <img src="/images/posticon_read_med.png" />
+        <!-- ENDIF -->
+        <!-- IF mail_item.IS_NORMAL_UNREAD -->
+        <img src="/images/posticon_unread_med.png" />
+        <!-- ENDIF -->
+        <p>{mail_item.SUBJECT}</p>
+        <p><em>{mail_item.SENDER}</em></p>
+    </a>
+    <span class="action delete"><a href="{mail_item.U_DELETE}">{L_DELETE}</a></span>
+</li>
+<!-- END mail_item -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 			<ul id="inbox-messages" class="pane">
     <li id="inbox-head">
 					<dl class="title-row">
@@ -34,7 +55,7 @@
     </li>
 <!-- END mail_item -->
 </ul>
-
+<!-- ENDIF -->
 <p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 <!-- ELSE -->
     <p>{L_NO_MAIL_MESSAGES}</p>

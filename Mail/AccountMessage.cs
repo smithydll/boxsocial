@@ -29,8 +29,8 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Mail
 {
-    [AccountSubModule(AppPrimitives.Member, "mail", "read")]
-    public class AccountViewMessage : AccountSubModule
+    [AccountSubModule(AppPrimitives.Member, "mail", "message")]
+    public class AccountMessage : AccountSubModule
     {
         public override string Title
         {
@@ -48,19 +48,19 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
-        public AccountViewMessage(Core core)
+        public AccountMessage(Core core)
             : base(core)
         {
-            this.Load += new EventHandler(AccountViewMessage_Load);
-            this.Show += new EventHandler(AccountViewMessage_Show);
+            this.Load += new EventHandler(AccountMessage_Load);
+            this.Show += new EventHandler(AccountMessage_Show);
         }
 
-        void AccountViewMessage_Load(object sender, EventArgs e)
+        void AccountMessage_Load(object sender, EventArgs e)
         {
-            
+            AddModeHandler("delete", new ModuleModeHandler(AccountMessage_Delete));
         }
 
-        void AccountViewMessage_Show(object sender, EventArgs e)
+        void AccountMessage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_view_message");
 
@@ -71,6 +71,7 @@ namespace BoxSocial.Applications.Mail
                 if (f.FolderType == FolderTypes.Inbox) continue;
 
                 VariableCollection modulesVariableCollection = core.Template.CreateChild("account_links");
+                ParentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
 
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("folder", f.FolderName);
@@ -130,6 +131,40 @@ namespace BoxSocial.Applications.Mail
             {
                 // Security, if not a recipeint, cannot see the message.
                 core.Functions.Generate404();
+            }
+        }
+
+        void AccountMessage_Delete(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long messageId = core.Functions.RequestLong("id", 0);
+
+            if (messageId == 0)
+            {
+                core.Display.ShowMessage("Cannot Delete Message", "No message specified to delete. Please go back and try again.");
+                return;
+            }
+
+            try
+            {
+                Message message = new Message(core, messageId);
+                if (message.SenderId == core.Session.LoggedInMember.Id)
+                {
+                    message.Delete();
+                }
+                else
+                {
+                    message.RemoveRecipient(core.Session.LoggedInMember, RecipientType.Any);
+                }
+
+                SetRedirectUri(BuildUri("galleries", "galleries"));
+                core.Display.ShowMessage("Message Deleted", "You have successfully deleted the message.");
+            }
+            catch
+            {
+                core.Display.ShowMessage("Cannot Delete Message", "An Error occured while trying to delete the message.");
+                return;
             }
         }
     }

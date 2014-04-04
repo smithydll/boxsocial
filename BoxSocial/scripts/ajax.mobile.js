@@ -120,6 +120,9 @@ $(function () {
     if (parent.location.hash == '#boxsocial-menu') {
         $('#boxsocial-menu').show().css('left', 0);
     }
+    if (parent.location.hash == '#pages-menu') {
+        $('#pages-menu').show().css('right', 0);
+    }
     $("#fade").bind('click', function () {
         hideSideBar();
     });
@@ -182,30 +185,33 @@ function submitPost() {
     $('#status-submit').attr('disabled', 'disabled');
     switch ($("#form-module").val()) {
         case 'profile':
-            $("#form-module :input").attr("disabled", true);
+            $("#post-form :input").attr("disabled", true);
             status = SendAction(null, mobileSent);
             break;
         case 'galleries':
             var xhr = $('#fileupload').fileupload('send', { files: filesList }).done(function (result) {
                 var r = ProcessAjaxResult(result);
                 if (r != null) {
-                    hideSideBar();
                     SentAction(r);
                     filesList = [];
                     $('#upload canvas').remove();
                 }
-                $("#form-module :input").attr("disabled", false);
+                $("#post-form :input").attr("disabled", false);
+                hideSideBar();
+            }).error(function (result) {
+                $("#post-form :input").attr("disabled", false);
             });
-            $("#form-module :input").attr("disabled", true);
+            $("#post-form :input").attr("disabled", true);
+            $('input:focus').blur();
             break;
     }
     return status;
 }
 
 function mobileSent(r, e, a) {
-    hideSideBar();
-    $("#form-module :input").attr("disabled", false);
+    $("#post-form :input").attr("disabled", false);
     SentAction(r, e, a);
+    hideSideBar();
 }
 
 $(function () {

@@ -126,6 +126,8 @@ namespace BoxSocial.Applications.Forum
 
             accountModules.Sort();
 
+            VariableCollection parentModulesVariableCollection = null;
+
             foreach (ModeratorControlPanelModule accountModule in accountModules)
             {
                 VariableCollection modulesVariableCollection = template.CreateChild("module_list");
@@ -165,6 +167,9 @@ namespace BoxSocial.Applications.Forum
                         core.LoadUserProfile(ae.CreatorId);
                         core.Email.SendEmail(core.PrimitiveCache[ae.CreatorId].UserInfo.PrimaryEmail, "An Error occured in your application `" + ae.Title + "` at " + Hyperlink.Domain, ex.ToString());
                     }
+
+                    modulesVariableCollection.Parse("CURRENT", "TRUE");
+                    parentModulesVariableCollection = modulesVariableCollection;
                 }
             }
 
@@ -175,6 +180,10 @@ namespace BoxSocial.Applications.Forum
                 if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
                 {
                     VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+                    if (parentModulesVariableCollection != null)
+                    {
+                        parentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
+                    }
 
                     asm.SetOwner = this.page.Owner;
 
@@ -186,7 +195,7 @@ namespace BoxSocial.Applications.Forum
 
                 if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                 {
-                    asm.ModuleVector(core, this.page.Owner);
+                    asm.ModuleVector(core, this.page.Owner, parentModulesVariableCollection);
                 }
             }
         }

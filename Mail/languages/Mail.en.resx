@@ -126,6 +126,9 @@
   <data name="FORWARD" xml:space="preserve">
     <value>Forward</value>
   </data>
+  <data name="MAIL" xml:space="preserve">
+    <value>Mail</value>
+  </data>
   <data name="MESSAGE" xml:space="preserve">
     <value>Message</value>
   </data>

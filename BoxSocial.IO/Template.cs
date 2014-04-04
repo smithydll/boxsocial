@@ -78,6 +78,17 @@ namespace BoxSocial.IO
 
         public VariableCollection CreateChild(string name)
         {
+            return CreateChild(name, null);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="vc1">Variable Collection to duplicate, passed by reference</param>
+        /// <returns></returns>
+        public VariableCollection CreateChild(string name, VariableCollection vc1)
+        {
             string fullName = (string.IsNullOrEmpty(loopName)) ? name : loopName + "." + name;
 
             VariableCollection vc = new VariableCollection(medium, fullName);
@@ -93,6 +104,11 @@ namespace BoxSocial.IO
             if (!variables.ContainsKey(name))
             {
                 variables.Add(name, "IS_DEF");
+            }
+
+            if (vc1 != null)
+            {
+                vc.variables = vc1.variables;
             }
 
             return vc;
@@ -444,6 +460,11 @@ namespace BoxSocial.IO
         public VariableCollection CreateChild(string name)
         {
             return variables.CreateChild(name);
+        }
+
+        public VariableCollection CreateChild(string name, VariableCollection vc)
+        {
+            return variables.CreateChild(name, vc);
         }
 
         // We want to cache the template file as accessing resources can be slow

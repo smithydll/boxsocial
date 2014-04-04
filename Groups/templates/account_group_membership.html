@@ -1,9 +1,37 @@
 <h3>Manage Group Memberships</h3>
 <p>Manage the memberships to groups you are a member of.</p>
+
+<!-- IF $_IS_MOBILE -->
+<p><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="/groups">Join a Group</a></li>
+</ul>
+<!-- ELSE -->
 <div id="new-stuff">
 <span id="join-group" class="post-button"><a href="/groups">Join a Group</a></span>
 </div>
+<!-- ENDIF -->
+
 <!-- IF GROUP_MEMBERSHIPS -->
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN group_list -->
+<li class="list-item">
+    <p>
+        <a href="{group_list.U_VIEW}">{group_list.GROUP_DISPLAY_NAME} ({group_list.GROUP_TYPE})</a>
+    </p>
+    <span class="action delete"><a href="{group_list.U_DELETE}">{L_DELETE}</a></span>
+    <!-- IF group_list.U_LEAVE -->
+    <span class="action"><a href="{group_list.U_LEAVE}">{L_LEAVE}</a></span>
+    <!-- ENDIF -->
+    <!-- IF group_list.U_INVITE -->
+    <span class="action"><a href="{group_list.U_INVITE}">{L_INVITE}</a></span>
+    <!-- ENDIF -->
+</li>
+<!-- END group_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
 <table style="width: 100%">
 <tr>
 	<th>Title</th>
@@ -39,6 +67,7 @@
 	</td>
 </tr>
 <!-- END group_list -->
+<!-- ENDIF -->
 </table>
 <!-- ELSE -->
 <p>Not a member of any groups <a href="/groups">join a group now</a>.</p>

@@ -256,22 +256,30 @@ namespace BoxSocial.Internals
                                     }
 
                                     RadioList allowrl = new RadioList("allow[" + itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() + "]");
+                                    SelectBox allowsb = new SelectBox("allow[" + itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() + "]");
                                     Button deleteButton = new Button("delete", "Delete", itemGrant.PermissionId.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString());
 
                                     allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                                     allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
                                     allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
 
+                                    allowsb.Add(new SelectBoxItem("allow", "Allow"));
+                                    allowsb.Add(new SelectBoxItem("deny", "Deny"));
+                                    allowsb.Add(new SelectBoxItem("inherit", "Inherit"));
+
                                     switch (itemGrant.Allow)
                                     {
                                         case AccessControlGrants.Allow:
                                             allowrl.SelectedKey = "allow";
+                                            allowsb.SelectedKey = "allow";
                                             break;
                                         case AccessControlGrants.Deny:
                                             allowrl.SelectedKey = "deny";
+                                            allowsb.SelectedKey = "deny";
                                             break;
                                         case AccessControlGrants.Inherit:
                                             allowrl.SelectedKey = "inherit";
+                                            allowsb.SelectedKey = "inherit";
                                             break;
                                     }
 
@@ -279,6 +287,8 @@ namespace BoxSocial.Internals
                                     {
                                         allowrl.SelectedKey = core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + itemGrant.PrimitiveKey.TypeId.ToString() + "," + itemGrant.PrimitiveKey.Id.ToString() + "]"];
                                     }
+
+                                    grantVariableCollection.Parse("S_GRANT", allowsb);
 
                                     grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
                                     grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
@@ -314,10 +324,15 @@ namespace BoxSocial.Internals
                                     grantVariableCollection.Parse("DISPLAY_NAME", gsbi.Text);
 
                                     RadioList allowrl = new RadioList("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]");
+                                    SelectBox allowsb = new SelectBox("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]");
 
                                     allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                                     allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
                                     allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
+
+                                    allowsb.Add(new SelectBoxItem("allow", "Allow"));
+                                    allowsb.Add(new SelectBoxItem("deny", "Deny"));
+                                    allowsb.Add(new SelectBoxItem("inherit", "Inherit"));
 
                                     if (core.Http.Form["allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]"] != null)
                                     {
@@ -329,15 +344,20 @@ namespace BoxSocial.Internals
                                         {
                                             case AccessControlGrants.Allow:
                                                 allowrl.SelectedKey = "allow";
+                                                allowsb.SelectedKey = "allow";
                                                 break;
                                             case AccessControlGrants.Deny:
                                                 allowrl.SelectedKey = "deny";
+                                                allowsb.SelectedKey = "deny";
                                                 break;
                                             case AccessControlGrants.Inherit:
                                                 allowrl.SelectedKey = "inherit";
+                                                allowsb.SelectedKey = "inherit";
                                                 break;
                                         }
                                     }
+
+                                    grantVariableCollection.Parse("S_GRANT", allowsb);
 
                                     grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
                                     grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
@@ -365,23 +385,33 @@ namespace BoxSocial.Internals
                             grantVariableCollection.Parse("DISPLAY_NAME", groupsSelectBox[groupSelectBoxId].Text);
 
                             RadioList allowrl = new RadioList("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]");
+                            SelectBox allowsb = new SelectBox("allow[" + itemPermission.Id.ToString() + "," + ik.TypeId.ToString() + "," + ik.Id.ToString() + "]");
 
                             allowrl.Add(new RadioListItem(allowrl.Name, "allow", "Allow"));
                             allowrl.Add(new RadioListItem(allowrl.Name, "deny", "Deny"));
                             allowrl.Add(new RadioListItem(allowrl.Name, "inherit", "Inherit"));
 
+                            allowsb.Add(new SelectBoxItem("allow", "Allow"));
+                            allowsb.Add(new SelectBoxItem("deny", "Deny"));
+                            allowsb.Add(new SelectBoxItem("inherit", "Inherit"));
+
                             switch (uacg.Allow)
                             {
                                 case AccessControlGrants.Allow:
                                     allowrl.SelectedKey = "allow";
+                                    allowsb.SelectedKey = "allow";
                                     break;
                                 case AccessControlGrants.Deny:
                                     allowrl.SelectedKey = "deny";
+                                    allowsb.SelectedKey = "deny";
                                     break;
                                 case AccessControlGrants.Inherit:
                                     allowrl.SelectedKey = "inherit";
+                                    allowsb.SelectedKey = "inherit";
                                     break;
                             }
+
+                            grantVariableCollection.Parse("S_GRANT", allowsb);
 
                             grantVariableCollection.Parse("S_ALLOW", allowrl["allow"]);
                             grantVariableCollection.Parse("S_DENY", allowrl["deny"]);
@@ -396,14 +426,21 @@ namespace BoxSocial.Internals
 
                         permissionVariableCollection.Parse("S_PERMISSION_GROUPS", groupsSelectBox);
 
-
                         RadioList allowNewrl = new RadioList("new-permission-group-allow");
+                        SelectBox allowNewsb = new SelectBox("new-permission-group-allow");
 
                         allowNewrl.Add(new RadioListItem(allowNewrl.Name, "allow", "Allow"));
                         allowNewrl.Add(new RadioListItem(allowNewrl.Name, "deny", "Deny"));
                         allowNewrl.Add(new RadioListItem(allowNewrl.Name, "inherit", "Inherit"));
 
+                        allowNewsb.Add(new SelectBoxItem("allow", "Allow"));
+                        allowNewsb.Add(new SelectBoxItem("deny", "Deny"));
+                        allowNewsb.Add(new SelectBoxItem("inherit", "Inherit"));
+
                         allowNewrl.SelectedKey = "inherit";
+                        allowNewsb.SelectedKey = "inherit";
+
+                        permissionVariableCollection.Parse("S_GRANT", allowNewsb);
 
                         permissionVariableCollection.Parse("S_ALLOW", allowNewrl["allow"].ToString());
                         permissionVariableCollection.Parse("S_DENY", allowNewrl["deny"].ToString());

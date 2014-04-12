@@ -171,27 +171,27 @@ h2#sub-title {
 }
 
 #body h2 {
-	font-size: 160%;
+	font-size: 125%;
 	margin: 6px 0;
 }
 
 #body h3 {
-	font-size: 140%;
+	font-size: 120%;
 	margin: 4px 0;
 }
 
 #body h4 {
-	font-size: 130%;
+	font-size: 115%;
 	margin: 3px 0;
 }
 
 #body h5 {
-	font-size: 120%;
+	font-size: 110%;
 	margin: 3px 0;
 }
 
 #body h6 {
-	font-size: 110%;
+	font-size: 105%;
 	margin: 3px 0;
 }
 
@@ -283,28 +283,29 @@ span.post-button, span.img-button, button {
 }
 
 span.subscribe-button {
-	border-radius: 3px;
-	border: 1px solid #eecc22;
-	background: #ffee22;
-	color: #664422;
-	margin: 2px;
-	padding: 2px 16px;
-	font-size: 110%;
+	border-radius: 4px;
+	border: 1px solid #ff9955;
+	background: #ffffff;
+	color: #ff9955;
+	margin: 0px 5px;
+	padding: 4px 0;
+	display: inline-block;
 }
 
 span.subscribe-button a {
-    color: #664422 !important;
+    color: #ff9955 !important;
     text-decoration: none;
+    padding: 4px 12px;
 }
 
 span.subscribe-button.subscribed {
-	border-color: #888888;
-	background: #dddddd;
-	color: #666666;
+	border-color: #ff9955;
+	background: #ff9955;
+	color: #ffffff;
 }
 
 span.subscribe-button.subscribed a {
-    color: #333333 !important;
+    color: #ffffff !important;
 }
 
 span.subscribers {
@@ -1240,9 +1241,9 @@ input#fileupload {
     margin: 12px 5px;
     width: 16px;
     height: 16px;
-    border: 1px solid #eeeeee;
-    background-color: #f7f7f7;
-    padding: 8px 8px;
+    border: 1px solid #ff9955;
+    background-color: #ffffff;
+    padding: 4px 12px;
 }
 
 #fileupload-label span {
@@ -1472,19 +1473,20 @@ ul.permission-grant-list {
     font-weight: bold;
 }
 
+p.action-buttons {
+    margin: 8px 0;
+}
+
 .actions-menu {
     border-radius: 4px;
-    display: inline-block;
-    margin: 12px 5px;
-    border: 1px solid #eeeeee;
-    background-color: #f7f7f7;
+    margin: 8px 5px;
+    border: 1px solid #ff9955;
+    background-color: #ffffff;
+    padding: 4px 0;
 }
 
 .actions-menu a {
-    display: inline-block;
-    padding: 8px 8px;
-    width: 16px;
-    height: 16px;
+    padding: 4px 12px;
 }
 
 .actions-menu span {
@@ -1494,7 +1496,9 @@ ul.permission-grant-list {
     display: inline-block;
     width: 16px;
     height: 16px;
-    position: absolute;
+    position: relative;
+    text-align: center;
+    top: 3px;
 }
 
 #fade {

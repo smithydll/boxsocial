@@ -302,7 +302,7 @@ namespace BoxSocial.Musician
             return tz.DateTimeFromMysql(featuredDate);
         }
 
-        public string Icon
+        public override string Icon
         {
             get
             {
@@ -318,7 +318,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        public string Thumbnail
+        public override string Thumbnail
         {
             get
             {
@@ -334,7 +334,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        public string Tile
+        public override string Tile
         {
             get
             {
@@ -1409,7 +1409,7 @@ namespace BoxSocial.Musician
 
                     memberVariableCollection.Parse("STAGE_NAME", member.StageName);
                     memberVariableCollection.Parse("U_MEMBER", member.Uri);
-                    memberVariableCollection.Parse("I_MEMBER", member.UserTile);
+                    memberVariableCollection.Parse("I_MEMBER", member.Tile);
                 }
             }
 
@@ -1454,6 +1454,22 @@ namespace BoxSocial.Musician
             get
             {
                 return "guest book";
+            }
+        }
+
+        public override string CoverPhoto
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string MobileCoverPhoto
+        {
+            get
+            {
+                return string.Empty;
             }
         }
     }

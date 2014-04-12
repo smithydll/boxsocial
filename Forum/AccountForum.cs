@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return "Forum";
+                return core.Prose.GetString("FORUM");
             }
         }
 

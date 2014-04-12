@@ -51,7 +51,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return 4;
+                return 5;
             }
         }
 

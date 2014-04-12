@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.Blog
         public override string Name
         {
             get {
-                return "Blog";
+                return core.Prose.GetString("BLOG");
             }
         }
 

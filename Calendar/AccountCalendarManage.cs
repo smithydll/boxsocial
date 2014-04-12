@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "Manage Calendar";
+                return core.Prose.GetString("MANAGE_CALENDAR");
             }
         }
 
@@ -66,6 +66,32 @@ namespace BoxSocial.Applications.Calendar
         void AccountCalendarManage_Show(object sender, EventArgs e)
         {
             SetTemplate("account_calendar_manage");
+
+            template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true));
+            template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true));
+
+            Calendar calendar = new Calendar(core);
+            List<Event> events = calendar.GetEvents(core, Owner, UnixTime.UnixTimeStamp() - 24 * 60 * 60, UnixTime.UnixTimeStamp() + 30 * 24 * 60 * 60);
+
+            foreach (Event ev in events)
+            {
+                VariableCollection blogVariableCollection = template.CreateChild("blog_list");
+
+                DateTime startTime = ev.GetStartTime(tz);
+
+                blogVariableCollection.Parse("SUBJECT", ev.Subject);
+                blogVariableCollection.Parse("START_TIME", tz.DateTimeToString(startTime));
+
+                blogVariableCollection.Parse("U_VIEW", ev.Uri);
+
+                blogVariableCollection.Parse("U_EDIT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", "edit", ev.Id, true));
+                blogVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, ev));
+                blogVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildAccountSubModuleUri("calendar", "delete-event", "edit", ev.Id, true));
+            }
+
+            List<Task> tasks = calendar.GetTasks(core, Owner, UnixTime.UnixTimeStamp() - 24 * 60 * 60, UnixTime.UnixTimeStamp() + 30 * 24 * 60 * 60, true);
+
+
         }
     }
 }

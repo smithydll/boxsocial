@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return "Galleries";
+                return core.Prose.GetString("GALLERIES");
             }
         }
 

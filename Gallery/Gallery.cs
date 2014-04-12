@@ -1776,17 +1776,11 @@ namespace BoxSocial.Applications.Gallery
             }
 
             /* pages */
-            if (e.Page.Owner is User)
-            {
-                e.Core.Display.ParsePageList(e.Page.Owner, true);
-            }
+            e.Core.Display.ParsePageList(e.Page.Owner, true);
 
-            if (e.Page.Owner is User)
-            {
-                e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
-                e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
-                e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
-            }
+            e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
 
             if (gallery.Id == 0)
             {

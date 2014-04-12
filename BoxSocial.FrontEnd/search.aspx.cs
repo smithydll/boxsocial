@@ -145,7 +145,7 @@ namespace BoxSocial.FrontEnd
 
                     friendVariableCollection.Parse("NAME", friend.DisplayName);
                     friendVariableCollection.Parse("URI", friend.Uri);
-                    friendVariableCollection.Parse("DISPLAY_PIC", friend.UserIcon);
+                    friendVariableCollection.Parse("DISPLAY_PIC", friend.Icon);
                 }
             }
         }

@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Compose";
+                return core.Prose.GetString("COMPOSE");
             }
         }
 
@@ -67,6 +67,38 @@ namespace BoxSocial.Applications.Mail
         void AccountCompose_Show(object sender, EventArgs e)
         {
             SetTemplate("account_compose");
+
+            List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
+
+            foreach (MailFolder f in folders)
+            {
+                if (f.FolderType == FolderTypes.Inbox) continue;
+
+                VariableCollection modulesVariableCollection = core.Template.CreateChild("account_links");
+                ParentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
+
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("folder", f.FolderName);
+
+                switch (f.FolderType)
+                {
+                    case FolderTypes.Draft:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("DRAFTS"));
+                        break;
+                    case FolderTypes.Outbox:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("OUTBOX"));
+                        break;
+                    case FolderTypes.SentItems:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("SENT_ITEMS"));
+                        break;
+                    default:
+                        modulesVariableCollection.Parse("TITLE", f.FolderName);
+                        break;
+                }
+                modulesVariableCollection.Parse("SUB", Key);
+                modulesVariableCollection.Parse("MODULE", ModuleKey);
+                modulesVariableCollection.Parse("URI", BuildUri(args));
+            }
 
             long messageId = core.Functions.FormLong("id", 0);
             bool edit = false;

@@ -493,8 +493,8 @@ namespace BoxSocial.FrontEnd
                 {
                     ct.Parse("LOGGED_IN", "TRUE");
                     ct.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
-                    ct.Parse("USER_TILE", core.Session.LoggedInMember.UserTile);
-                    ct.Parse("USER_ICON", core.Session.LoggedInMember.UserIcon);
+                    ct.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
+                    ct.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
                 }
 
                 VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
@@ -510,8 +510,8 @@ namespace BoxSocial.FrontEnd
                 commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(commentId));
                 commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(commentId));
                 commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
-                commentsVariableCollection.Parse("USER_TILE", loggedInMember.UserTile);
-                commentsVariableCollection.Parse("USER_ICON", loggedInMember.UserIcon);
+                commentsVariableCollection.Parse("USER_TILE", loggedInMember.Tile);
+                commentsVariableCollection.Parse("USER_ICON", loggedInMember.Icon);
 
                 try
                 {

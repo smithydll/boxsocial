@@ -821,9 +821,9 @@ namespace BoxSocial.Applications.Blog
                 core.Template.Parse("U_PROFILE", page.User.Uri);
                 core.Template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
 
-                core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
+                core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
+                core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+                core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
 
                 core.Template.Parse("BLOG_TITLE", myBlog.Title);
 

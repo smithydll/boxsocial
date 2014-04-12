@@ -77,11 +77,11 @@ namespace BoxSocial.Applications.GuestBook
             }
 
             /* pages */
-            core.Display.ParsePageList(page.User, true);
+            core.Display.ParsePageList(page.Owner, true);
 
-            core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
+            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
 
             if (core.Session.IsLoggedIn)
             {
@@ -117,10 +117,10 @@ namespace BoxSocial.Applications.GuestBook
             }
 
             /* pages */
-            core.Display.ParsePageList(page.User, true);
+            core.Display.ParsePageList(page.Owner, true);
 
-            core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
+            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
 
             if (core.Session.IsLoggedIn)
             {
@@ -197,6 +197,13 @@ namespace BoxSocial.Applications.GuestBook
                     core.Template.Parse("CAN_COMMENT", "TRUE");
                 }
             }
+
+            /* Pages */
+            core.Display.ParsePageList(page.Owner, true);
+
+            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
 
             core.Display.DisplayComments(core.Template, page.Group, page.Group);
             core.Template.Parse("L_GUESTBOOK", page.Group.DisplayNameOwnership + " Guest Book");

@@ -383,12 +383,9 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            if (owner is User)
-            {
-                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
-            }
+            core.Template.Parse("USER_ICON", owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
 
             core.Template.Parse("CURRENT_YEAR", year.ToString());
 
@@ -430,12 +427,9 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            if (owner is User)
-            {
-                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
-            }
+            core.Template.Parse("USER_ICON", owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
 
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
             core.Template.Parse("CURRENT_YEAR", year.ToString());
@@ -564,12 +558,9 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            if (owner is User)
-            {
-                core.Template.Parse("USER_THUMB", ((User)owner).UserThumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
-            }
+            core.Template.Parse("USER_THUMB", owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
 
             core.Template.Parse("CURRENT_DAY", day.ToString());
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));

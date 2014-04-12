@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Inbox";
+                return core.Prose.GetString("INBOX");
             }
         }
 
@@ -90,7 +90,21 @@ namespace BoxSocial.Applications.Mail
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("folder", f.FolderName);
 
-                modulesVariableCollection.Parse("TITLE", f.FolderName);
+                switch (f.FolderType)
+                {
+                    case FolderTypes.Draft:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("DRAFTS"));
+                        break;
+                    case FolderTypes.Outbox:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("OUTBOX"));
+                        break;
+                    case FolderTypes.SentItems:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("SENT_ITEMS"));
+                        break;
+                    default:
+                        modulesVariableCollection.Parse("TITLE", f.FolderName);
+                        break;
+                }
                 modulesVariableCollection.Parse("SUB", Key);
                 modulesVariableCollection.Parse("MODULE", ModuleKey);
                 modulesVariableCollection.Parse("URI", BuildUri(args));
@@ -113,9 +127,9 @@ namespace BoxSocial.Applications.Mail
                 if (folder == "Inbox")
                 {
                     mailFolder = MailFolder.Create(core, FolderTypes.Inbox, folder);
-                    MailFolder.Create(core, FolderTypes.Draft, "Drafts");
-                    MailFolder.Create(core, FolderTypes.Outbox, "Outbox");
-                    MailFolder.Create(core, FolderTypes.SentItems, "Sent Items");
+                    MailFolder.Create(core, FolderTypes.Draft, core.Prose.GetString("DRAFTS"));
+                    MailFolder.Create(core, FolderTypes.Outbox, core.Prose.GetString("OUTBOX"));
+                    MailFolder.Create(core, FolderTypes.SentItems, core.Prose.GetString("SENT_ITEMS"));
                 }
                 else
                 {

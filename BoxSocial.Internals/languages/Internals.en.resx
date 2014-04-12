@@ -360,6 +360,9 @@
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
+  <data name="DASHBOARD" xml:space="preserve">
+    <value>Dashboard</value>
+  </data>
   <data name="DATE" xml:space="preserve">
     <value>Date</value>
   </data>
@@ -455,6 +458,9 @@
   </data>
   <data name="GO_TO_PAGE" xml:space="preserve">
     <value>Go to page:</value>
+  </data>
+  <data name="GREETING" xml:space="preserve">
+    <value>G'day</value>
   </data>
   <data name="GROUPS" xml:space="preserve">
     <value>Groups</value>

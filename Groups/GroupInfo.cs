@@ -65,6 +65,8 @@ namespace BoxSocial.Groups
         private string groupStyle;
         [DataField("group_icon")]
         private long groupIcon;
+        [DataField("group_cover")]
+        private long coverPhotoId;
         [DataField("group_bytes")]
         private ulong groupBytes;
         [DataField("group_views")]
@@ -157,7 +159,7 @@ namespace BoxSocial.Groups
         }
 
         /// <summary>
-        /// Gets the user's display picture Id
+        /// Gets the group's display picture Id
         /// </summary>
         public long DisplayPictureId
         {
@@ -168,6 +170,21 @@ namespace BoxSocial.Groups
             set
             {
                 SetPropertyByRef(new { groupIcon }, value);
+            }
+        }
+
+        /// <summary>
+        /// Gets the group's display picture Id
+        /// </summary>
+        public long CoverPhotoId
+        {
+            get
+            {
+                return coverPhotoId;
+            }
+            set
+            {
+                SetPropertyByRef(new { coverPhotoId }, value);
             }
         }
 

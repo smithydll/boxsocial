@@ -77,9 +77,9 @@ namespace BoxSocial.Applications.Profile
 
             UserGroup thisGroup = (UserGroup)Owner;
 
-            if (!string.IsNullOrEmpty(thisGroup.GroupThumbnail))
+            if (!string.IsNullOrEmpty(thisGroup.Thumbnail))
             {
-                template.Parse("I_DISPLAY_PICTURE", thisGroup.GroupThumbnail);
+                template.Parse("I_DISPLAY_PICTURE", thisGroup.Thumbnail);
             }
 
             Save(new EventHandler(AccountGroupDisplayPic_Save));

@@ -934,7 +934,7 @@ namespace BoxSocial.Networks
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 membersVariableCollection.Parse("U_PROFILE", member.Uri);
-                membersVariableCollection.Parse("ICON", member.UserIcon);
+                membersVariableCollection.Parse("ICON", member.Icon);
 
             }
 
@@ -971,7 +971,7 @@ namespace BoxSocial.Networks
                 memberVariableCollection.Parse("USER_CAPTION", "");
 
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
-                memberVariableCollection.Parse("ICON", member.UserIcon);
+                memberVariableCollection.Parse("ICON", member.Icon);
             }
 
             string pageUri = page.Network.MemberlistUri;
@@ -1170,6 +1170,46 @@ namespace BoxSocial.Networks
             get
             {
                 return "guest book";
+            }
+        }
+
+        public override string Thumbnail
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string Icon
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string Tile
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string CoverPhoto
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string MobileCoverPhoto
+        {
+            get
+            {
+                return string.Empty;
             }
         }
     }

@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
         {
             get
             {
-                return "Enterprise Resource Planning";
+                return core.Prose.GetString("ENTERPRISE_RESOURCE_PLANNING");
             }
         }
 

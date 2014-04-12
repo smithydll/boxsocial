@@ -1,1 +1,36 @@
 ﻿<h3>Manage Calendar</h3>
+
+<!-- IF $_IS_MOBILE -->
+<p class="action-buttons"><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+<ul id="actions-menu" class="popup-menu">
+    <li><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></li>
+    <li><a href="{U_NEW_TASK}">{L_NEW_TASK}</a></li>
+</ul>
+<!-- ELSE -->
+<div id="new-stuff">
+	<!-- IF U_NEW_EVENT -->
+	<span id="new-event" class="post-button"><a href="{U_NEW_EVENT}">{L_NEW_EVENT}</a></span>
+	<!-- ENDIF -->
+    <!-- IF U_NEW_TASK -->
+	<span id="new-task" class="post-button"><a href="{U_NEW_TASK}">{L_NEW_TASK}</a></span>
+	<!-- ENDIF -->
+</div>
+<!-- ENDIF -->
+
+<!-- IF $_IS_MOBILE -->
+<ul class="list">
+<!-- BEGIN event_list -->
+<li class="list-item">
+    <p>
+        <a href="{event_list.U_VIEW}">{event_list.SUBJECT}</a>
+        <span class="count">{event_list.START_TIME}</span>
+    </p>
+    <span class="action delete"><a href="{event_list.U_DELETE}">{L_DELETE}</a></span>
+    <span class="action edit"><a href="{event_list.U_EDIT}">{L_EDIT}</a></span>
+    <span class="action permissions"><a href="{event_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
+</li>
+<!-- END event_list -->
+</ul>
+<!-- ENDIF -->
+<!-- IF NOT $_IS_MOBILE -->
+<!-- ENDIF -->

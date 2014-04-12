@@ -305,7 +305,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string UserThumbnail
+        public override string Thumbnail
         {
             get
             {
@@ -342,7 +342,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 50x50 display tile
         /// </summary>
-        public string UserIcon
+        public override string Icon
         {
             get
             {
@@ -362,7 +362,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 100x100 display tile
         /// </summary>
-        public string UserTile
+        public override string Tile
         {
             get
             {
@@ -402,7 +402,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Cover photo
         /// </summary>
-        public string CoverPhoto
+        public override string CoverPhoto
         {
             get
             {
@@ -445,7 +445,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Cover photo
         /// </summary>
-        public string MobileCoverPhoto
+        public override string MobileCoverPhoto
         {
             get
             {
@@ -997,7 +997,7 @@ namespace BoxSocial.Internals
             {
                 query.AddCondition(new DataField(typeof(User), "user_name_first"), filter);
             }
-            query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
+            query.AddSort(SortOrder.Ascending, "relation_order");
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
@@ -2204,7 +2204,7 @@ namespace BoxSocial.Internals
             core.Template.Parse("USER_COUNTRY", page.User.Profile.Country);
             core.Template.Parse("USER_RELIGION", page.User.Profile.Religion);
             core.Template.Parse("USER_TINY", page.User.UserTiny);
-            core.Template.Parse("USER_THUMB", page.User.UserThumbnail);
+            core.Template.Parse("USER_THUMB", page.User.Thumbnail);
             core.Template.Parse("USER_MOBILE", page.User.UserMobile);
             core.Template.Parse("USER_COVER_PHOTO", page.User.CoverPhoto);
             core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.User.MobileCoverPhoto);
@@ -2253,8 +2253,8 @@ namespace BoxSocial.Internals
 
                     friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                     friendVariableCollection.Parse("U_PROFILE", friend.Uri);
-                    friendVariableCollection.Parse("ICON", friend.UserIcon);
-                    friendVariableCollection.Parse("TILE", friend.UserTile);
+                    friendVariableCollection.Parse("ICON", friend.Icon);
+                    friendVariableCollection.Parse("TILE", friend.Tile);
                     friendVariableCollection.Parse("SQUARE", friend.UserSquare);
                 }
             }
@@ -2386,7 +2386,7 @@ namespace BoxSocial.Internals
 
             string filter = e.Core.Http["filter"];
 
-            e.Template.Parse("USER_THUMB", e.Page.User.UserThumbnail);
+            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
             e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
             e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
 
@@ -2435,8 +2435,8 @@ namespace BoxSocial.Internals
 
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendVariableCollection.Parse("ICON", friend.UserIcon);
-                friendVariableCollection.Parse("TILE", friend.UserTile);
+                friendVariableCollection.Parse("ICON", friend.Icon);
+                friendVariableCollection.Parse("TILE", friend.Tile);
             }
 
             string pageUri = e.Core.Hyperlink.BuildFriendsUri(e.Page.User);
@@ -2865,8 +2865,8 @@ namespace BoxSocial.Internals
             template.SetProse(core.Prose);
 
             template.Parse("USER_DISPLAY_NAME", DisplayName);
-            template.Parse("ICON", UserIcon);
-            template.Parse("TILE", UserTile);
+            template.Parse("ICON", Icon);
+            template.Parse("TILE", Tile);
             template.Parse("U_PROFILE", Uri);
             template.Parse("JOIN_DATE", core.Tz.DateTimeToString(UserInfo.GetRegistrationDate(core.Tz)));
             template.Parse("USER_AGE", Profile.AgeString);

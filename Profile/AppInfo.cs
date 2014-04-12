@@ -294,8 +294,8 @@ namespace BoxSocial.Applications.Profile
 
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendVariableCollection.Parse("ICON", friend.UserIcon);
-                friendVariableCollection.Parse("TILE", friend.UserTile);
+                friendVariableCollection.Parse("ICON", friend.Icon);
+                friendVariableCollection.Parse("TILE", friend.Tile);
                 friendVariableCollection.Parse("SQUARE", friend.UserSquare);
             }
 

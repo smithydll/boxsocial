@@ -319,40 +319,40 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string Icon
+        public override string Icon
         {
             get
             {
                 return applicationIcon;
             }
-            set
+            /*set
             {
                 SetProperty("applicationIcon", value);
-            }
+            }*/
         }
 
-        public string Thumbnail
+        public override string Thumbnail
         {
             get
             {
                 return applicationThumb;
             }
-            set
+            /*set
             {
                 SetProperty("applicationThumb", value);
-            }
+            }*/
         }
 
-        public string Tile
+        public override string Tile
         {
             get
             {
                 return applicationTile;
             }
-            set
+            /*set
             {
                 SetProperty("applicationTile", value);
-            }
+            }*/
         }
 
         public bool HasIcon
@@ -1494,6 +1494,22 @@ namespace BoxSocial.Internals
             get
             {
                 return "guest book";
+            }
+        }
+
+        public override string CoverPhoto
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string MobileCoverPhoto
+        {
+            get
+            {
+                return string.Empty;
             }
         }
     }

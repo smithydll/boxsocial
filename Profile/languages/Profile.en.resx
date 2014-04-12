@@ -162,6 +162,9 @@
   <data name="POST_CODE" xml:space="preserve">
     <value>Post Code</value>
   </data>
+  <data name="PROFILE" xml:space="preserve">
+    <value>Profile</value>
+  </data>
   <data name="SIMPLE" xml:space="preserve">
     <value>Simple</value>
   </data>

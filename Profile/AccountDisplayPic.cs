@@ -72,9 +72,9 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.LoadProfileInfo();
 
-            if (!string.IsNullOrEmpty(LoggedInMember.UserThumbnail))
+            if (!string.IsNullOrEmpty(LoggedInMember.Thumbnail))
             {
-                template.Parse("I_DISPLAY_PICTURE", LoggedInMember.UserThumbnail);
+                template.Parse("I_DISPLAY_PICTURE", LoggedInMember.Thumbnail);
             }
 
             Save(new EventHandler(AccountDisplayPic_Save));

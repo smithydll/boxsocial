@@ -54,7 +54,7 @@ namespace BoxSocial.Networks
         {
             get
             {
-                return "Networks";
+                return core.Prose.GetString("NETWORKS");
             }
         }
 

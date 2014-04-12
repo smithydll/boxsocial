@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return "Pages";
+                return core.Prose.GetString("PAGES");
             }
         }
 

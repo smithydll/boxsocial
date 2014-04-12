@@ -94,7 +94,7 @@ namespace BoxSocial.FrontEnd
 
                 foreach (Friend friend in friends)
                 {
-                    friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.UserTile });
+                    friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.Tile });
                 }
 
                 core.Ajax.SendUserDictionary("friendSelect", friendNames);
@@ -115,7 +115,7 @@ namespace BoxSocial.FrontEnd
 
                 userInfo.Add("cover-photo", user.MobileCoverPhoto);
                 userInfo.Add("display-name", user.DisplayName);
-                userInfo.Add("display-picture", user.UserIcon);
+                userInfo.Add("display-picture", user.Icon);
                 userInfo.Add("uri", user.Uri);
                 userInfo.Add("profile", user.ProfileUri);
                 userInfo.Add("abstract", core.Bbcode.Parse(user.Profile.Autobiography));
@@ -196,7 +196,7 @@ namespace BoxSocial.FrontEnd
 
                 foreach (User friend in friends)
                 {
-                    permissiveNames.Add(friend.ItemKey, new string[] { friend.DisplayName, friend.UserTile });
+                    permissiveNames.Add(friend.ItemKey, new string[] { friend.DisplayName, friend.Tile });
                 }
 
                 core.Ajax.SendPermissionGroupDictionary("permissionSelect", permissiveNames);

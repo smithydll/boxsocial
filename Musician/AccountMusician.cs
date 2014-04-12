@@ -52,7 +52,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                return "Music";
+                return core.Prose.GetString("MUSIC");
             }
         }
 

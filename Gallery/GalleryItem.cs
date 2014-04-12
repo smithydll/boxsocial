@@ -1436,17 +1436,11 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 /* pages */
-                if (e.Page.Owner is User)
-                {
-                    e.Core.Display.ParsePageList(e.Page.Owner, true);
-                }
+                e.Core.Display.ParsePageList(e.Page.Owner, true);
 
-                if (e.Page.Owner is User)
-                {
-                    e.Template.Parse("USER_THUMB", ((User)e.Page.Owner).UserThumbnail);
-                    e.Template.Parse("USER_COVER_PHOTO", ((User)e.Page.Owner).CoverPhoto);
-                    e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
-                }
+                e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
+                e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+                e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
 
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
 
@@ -1704,6 +1698,10 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="e">Event arguments</param>
         public static void ShowImage(object sender, ShowPPageEventArgs e)
         {
+            Stopwatch timer;
+            timer = new Stopwatch();
+            timer.Start();
+
             string photoName = e.Slug;
             string cdnDomain = e.Core.Settings.CdnStorageBucketDomain;
 
@@ -2035,11 +2033,64 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!scaleExists)
                     {
+                        if (scale == PictureScale.MobileCover && e.Core.Storage.IsCloudStorage && !e.Core.Settings.UseCdn)
+                        {
+                            //HttpContext.Current.Response.Write("Checking for scale: " + timer.ElapsedMilliseconds.ToString() + "\n");
+                        }
                         scaleExists = e.Core.Storage.FileExists(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.StoragePath);
+
+                        if (scaleExists)
+                        {
+                            switch (scale)
+                            {
+                                case PictureScale.Icon:
+                                    galleryItem.IconExists = true;
+                                    break;
+                                case PictureScale.Tile:
+                                    galleryItem.TileExists = true;
+                                    break;
+                                case PictureScale.Square:
+                                    galleryItem.SquareExists = true;
+                                    break;
+                                case PictureScale.High:
+                                    galleryItem.HighExists = true;
+                                    break;
+                                case PictureScale.Tiny:
+                                    galleryItem.TinyExists = true;
+                                    break;
+                                case PictureScale.Thumbnail:
+                                    galleryItem.ThumbnailExists = true;
+                                    break;
+                                case PictureScale.Mobile:
+                                    galleryItem.MobileExists = true;
+                                    break;
+                                case PictureScale.Display:
+                                    galleryItem.DisplayExists = true;
+                                    break;
+                                case PictureScale.Full:
+                                    galleryItem.FullExists = true;
+                                    break;
+                                case PictureScale.Ultra:
+                                    galleryItem.UltraExists = true;
+                                    break;
+                                case PictureScale.Cover:
+                                    galleryItem.CoverExists = true;
+                                    break;
+                                case PictureScale.MobileCover:
+                                    galleryItem.MobileCoverExists = true;
+                                    break;
+                            }
+
+                            galleryItem.Update();
+                        }
                     }
 
                     if (!scaleExists)
                     {
+                        if (scale == PictureScale.MobileCover && e.Core.Storage.IsCloudStorage && !e.Core.Settings.UseCdn)
+                        {
+                            //HttpContext.Current.Response.Write("Scale not found: " + timer.ElapsedMilliseconds.ToString() + "\n");
+                        }
                         switch (scale)
                         {
                             case PictureScale.Icon:
@@ -2099,8 +2150,12 @@ namespace BoxSocial.Applications.Gallery
                                 galleryItem.CoverExists = true;
                                 break;
                             case PictureScale.MobileCover:
+                                if (e.Core.Storage.IsCloudStorage && !e.Core.Settings.UseCdn)
+                                {
+                                    //HttpContext.Current.Response.Write("About to create cover photo: " + timer.ElapsedMilliseconds.ToString() + "\n");
+                                }
                                 CreateCoverPhoto(e.Core, galleryItem, galleryItem.StoragePath, true);
-                                galleryItem.CoverExists = true;
+                                galleryItem.MobileCoverExists = true;
                                 break;
                         }
 
@@ -2116,8 +2171,21 @@ namespace BoxSocial.Applications.Gallery
                         }
                         else
                         {
+                            if (scale == PictureScale.MobileCover)
+                            {
+                                //HttpContext.Current.Response.Write("About to get file uri: " + timer.ElapsedMilliseconds.ToString() + "\n");
+                            }
                             string imageUri = e.Core.Storage.RetrieveFileUri(e.Core.Storage.PathCombine(e.Core.Settings.StorageBinUserFilesPrefix, storagePrefix), galleryItem.storagePath, galleryItem.ContentType, "picture" + GetFileExtension(galleryItem.ContentType));
-                            e.Core.Http.Redirect(imageUri);
+                            //if (scale != PictureScale.MobileCover)
+                            {
+                                e.Core.Http.Redirect(imageUri);
+                            }
+                            /*else
+                            {
+                                HttpContext.Current.Response.ContentType = "text/plain";
+                                HttpContext.Current.Response.Write("End: " + timer.ElapsedMilliseconds.ToString() + "\n");
+                                HttpContext.Current.Response.Write("I made it here\n");
+                            }*/
                         }
                     }
                     else

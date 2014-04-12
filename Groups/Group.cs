@@ -63,6 +63,9 @@ namespace BoxSocial.Groups
         [DataField("group_simple_permissions")]
         private bool simplePermissions;
 
+        private string groupIconUri;
+        private string groupCoverPhotoUri;
+
         private UserGroupInfo groupInfo;
         private Access access;
 
@@ -1462,8 +1465,8 @@ namespace BoxSocial.Groups
 
                 membersVariableCollection.Parse("USER_DISPLAY_NAME", member.DisplayName);
                 membersVariableCollection.Parse("U_PROFILE", member.Uri);
-                membersVariableCollection.Parse("ICON", member.UserIcon);
-                membersVariableCollection.Parse("TILE", member.UserTile);
+                membersVariableCollection.Parse("ICON", member.Icon);
+                membersVariableCollection.Parse("TILE", member.Tile);
             }
 
             List<GroupMember> operators = page.Group.GetOperators();
@@ -1594,8 +1597,8 @@ namespace BoxSocial.Groups
                         memberVariableCollection.Parse("U_MAKE_OFFICER", member.MakeOfficerUri);
                     }
                 }
-                memberVariableCollection.Parse("ICON", member.UserIcon);
-                memberVariableCollection.Parse("TILE", member.UserTile);
+                memberVariableCollection.Parse("ICON", member.Icon);
+                memberVariableCollection.Parse("TILE", member.Tile);
             }
 
             string pageUri = page.Group.MemberlistUri;
@@ -1928,7 +1931,7 @@ namespace BoxSocial.Groups
 
                 foreach (UserGroup group in groups)
                 {
-                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName, group.GroupTile));
+                    ppgs.Add(new PrimitivePermissionGroup(group.TypeId, group.Id, group.DisplayName, group.Tile));
                 }
             }
 
@@ -2092,7 +2095,7 @@ namespace BoxSocial.Groups
             }
         }
 
-        public string GroupThumbnail
+        public override string Thumbnail
         {
             get
             {
@@ -2128,7 +2131,7 @@ namespace BoxSocial.Groups
         /// <summary>
         /// 50x50 display tile
         /// </summary>
-        public string GroupIcon
+        public override string Icon
         {
             get
             {
@@ -2148,7 +2151,7 @@ namespace BoxSocial.Groups
         /// <summary>
         /// 100x100 display tile
         /// </summary>
-        public string GroupTile
+        public override string Tile
         {
             get
             {
@@ -2185,6 +2188,86 @@ namespace BoxSocial.Groups
             }
         }
 
+
+        public override string CoverPhoto
+        {
+            get
+            {
+                if (groupCoverPhotoUri == "FALSE")
+                {
+                    return "FALSE";
+                }
+                else if (groupCoverPhotoUri != null)
+                {
+                    return string.Format("{0}images/_cover{1}",
+                        UriStub, groupCoverPhotoUri);
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    query.AddCondition("gallery_item_id", GroupInfo.CoverPhotoId);
+
+                    DataTable coverTable = db.Query(query);
+
+                    if (coverTable.Rows.Count == 1)
+                    {
+                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        {
+                            groupCoverPhotoUri = string.Format("/{0}/{1}",
+                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+
+                            return string.Format("{0}images/_cover{1}",
+                                UriStub, groupCoverPhotoUri);
+                        }
+                    }
+
+                    groupCoverPhotoUri = "FALSE";
+                    return "FALSE";
+                }
+            }
+        }
+
+        public override string MobileCoverPhoto
+        {
+            get
+            {
+                if (groupCoverPhotoUri == "FALSE")
+                {
+                    return "FALSE";
+                }
+                else if (groupCoverPhotoUri != null)
+                {
+                    return string.Format("{0}images/_mcover{1}",
+                        UriStub, groupCoverPhotoUri);
+                }
+                else
+                {
+                    SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+                    query.AddCondition("gallery_item_id", GroupInfo.CoverPhotoId);
+
+                    DataTable coverTable = db.Query(query);
+
+                    if (coverTable.Rows.Count == 1)
+                    {
+                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        {
+                            groupCoverPhotoUri = string.Format("/{0}/{1}",
+                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+
+                            return string.Format("{0}images/_mcover{1}",
+                                UriStub, groupCoverPhotoUri);
+                        }
+                    }
+
+                    groupCoverPhotoUri = "FALSE";
+                    return "FALSE";
+                }
+            }
+        }
     }
 
     public class InvalidGroupException : Exception

@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "New Task";
+                return core.Prose.GetString("NEW_TASK");
             }
         }
 

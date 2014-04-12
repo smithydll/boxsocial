@@ -140,8 +140,8 @@ namespace BoxSocial.Applications.Profile
 
                 if (newMessage.Owner is User)
                 {
-                    feedItemVariableCollection.Parse("USER_TILE", ((User)newMessage.Owner).UserTile);
-                    feedItemVariableCollection.Parse("USER_ICON", ((User)newMessage.Owner).UserIcon);
+                    feedItemVariableCollection.Parse("USER_TILE", ((User)newMessage.Owner).Tile);
+                    feedItemVariableCollection.Parse("USER_ICON", ((User)newMessage.Owner).Icon);
                 }
             }
             else
@@ -161,8 +161,8 @@ namespace BoxSocial.Applications.Profile
                 statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(newMessage.Id)*/);
                 statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*core.Hyperlink.BuildCommentDeleteUri(newMessage.Id)*/);
                 statusMessageVariableCollection.Parse("U_PERMISSIONS", newMessage.Access.AclUri);
-                statusMessageVariableCollection.Parse("USER_TILE", newMessage.Poster.UserTile);
-                statusMessageVariableCollection.Parse("USER_ICON", newMessage.Poster.UserIcon);
+                statusMessageVariableCollection.Parse("USER_TILE", newMessage.Poster.Tile);
+                statusMessageVariableCollection.Parse("USER_ICON", newMessage.Poster.Icon);
                 statusMessageVariableCollection.Parse("URI", newMessage.Uri);
 
                 statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");

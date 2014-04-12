@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Mail";
+                return core.Prose.GetString("MAIL");
             }
         }
 

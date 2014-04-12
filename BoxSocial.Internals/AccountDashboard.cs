@@ -54,7 +54,7 @@ namespace BoxSocial
         {
             get
             {
-                return "Dashboard";
+                return core.Prose.GetString("DASHBOARD");
             }
         }
 

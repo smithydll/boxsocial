@@ -493,8 +493,8 @@ namespace BoxSocial.Applications.Forum
             {
                 postVariableCollection.Parse("U_USER", postersList[UserId].Uri);
                 postVariableCollection.Parse("USER_DISPLAY_NAME", postersList[UserId].UserInfo.DisplayName);
-                postVariableCollection.Parse("USER_TILE", postersList[UserId].UserTile);
-                postVariableCollection.Parse("USER_ICON", postersList[UserId].UserIcon);
+                postVariableCollection.Parse("USER_TILE", postersList[UserId].Tile);
+                postVariableCollection.Parse("USER_ICON", postersList[UserId].Icon);
                 postVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(postersList[UserId].UserInfo.GetRegistrationDate(core.Tz)));
                 postVariableCollection.Parse("USER_COUNTRY", postersList[UserId].Profile.Country);
                 postVariableCollection.Parse("USER_POSTS", postersList[UserId].ForumPosts.ToString());

@@ -634,8 +634,8 @@ namespace BoxSocial.Internals
             {
                 template.Parse("LOGGED_IN", "TRUE");
                 template.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
-                template.Parse("USER_ICON", core.Session.LoggedInMember.UserIcon);
-                template.Parse("USER_TILE", core.Session.LoggedInMember.UserTile);
+                template.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
+                template.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
                 template.Parse("USER_SQUARE", core.Session.LoggedInMember.UserSquare);
             }
 
@@ -707,8 +707,8 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(comment.Id));
                     commentsVariableCollection.Parse("U_LIKE", core.Hyperlink.BuildLikeItemUri(comment.ItemTypeId, comment.Id));
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
-                    commentsVariableCollection.Parse("USER_ICON", commentPoster.UserIcon);
-                    commentsVariableCollection.Parse("USER_TILE", commentPoster.UserTile);
+                    commentsVariableCollection.Parse("USER_ICON", commentPoster.Icon);
+                    commentsVariableCollection.Parse("USER_TILE", commentPoster.Tile);
                     commentsVariableCollection.Parse("USER_SQUARE", commentPoster.UserSquare);
 
                     if (comment.Info.Likes > 0)
@@ -938,12 +938,11 @@ namespace BoxSocial.Internals
                 if (session.IsLoggedIn && session.LoggedInMember != null)
                 {
                     template.Parse("LOGGED_IN", "TRUE");
-                    template.Parse("L_GREETING", "G'day");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
                     template.Parse("USER_ID", session.LoggedInMember.Id.ToString());
                     template.Parse("USER_DISPLAY_NAME", session.LoggedInMember.DisplayName);
-                    template.Parse("USER_TILE", session.LoggedInMember.UserTile);
-                    template.Parse("USER_ICON", session.LoggedInMember.UserIcon);
+                    template.Parse("USER_TILE", session.LoggedInMember.Tile);
+                    template.Parse("USER_ICON", session.LoggedInMember.Icon);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                     template.Parse("U_ACCOUNT", core.Hyperlink.BuildAccountUri());
 

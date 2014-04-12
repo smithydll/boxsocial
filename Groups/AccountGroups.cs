@@ -51,7 +51,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return "Groups";
+                return core.Prose.GetString("GROUPS");
             }
         }
 

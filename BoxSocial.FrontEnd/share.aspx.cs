@@ -149,8 +149,8 @@ namespace BoxSocial.FrontEnd
                 statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(newStatus.Id)*/);
                 statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*core.Hyperlink.BuildCommentDeleteUri(newStatus.Id)*/);
                 statusMessageVariableCollection.Parse("U_PERMISSIONS", newStatus.Access.AclUri);
-                statusMessageVariableCollection.Parse("USER_TILE", newStatus.Poster.UserTile);
-                statusMessageVariableCollection.Parse("USER_ICON", newStatus.Poster.UserIcon);
+                statusMessageVariableCollection.Parse("USER_TILE", newStatus.Poster.Tile);
+                statusMessageVariableCollection.Parse("USER_ICON", newStatus.Poster.Icon);
                 statusMessageVariableCollection.Parse("URI", newStatus.Uri);
 
                 statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");

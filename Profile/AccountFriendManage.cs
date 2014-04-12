@@ -88,8 +88,8 @@ namespace BoxSocial.Applications.Profile
                 }
 
                 friendsVariableCollection.Parse("U_PROFILE", friend.Uri);
-                friendsVariableCollection.Parse("ICON", friend.UserIcon);
-                friendsVariableCollection.Parse("TILE", friend.UserTile);
+                friendsVariableCollection.Parse("ICON", friend.Icon);
+                friendsVariableCollection.Parse("TILE", friend.Tile);
                 friendsVariableCollection.Parse("U_BLOCK", core.Hyperlink.BuildBlockUserUri(friend.Id));
                 friendsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildDeleteFriendUri(friend.Id));
                 friendsVariableCollection.Parse("U_PROMOTE", core.Hyperlink.BuildPromoteFriendUri(friend.Id));
@@ -233,7 +233,7 @@ namespace BoxSocial.Applications.Profile
 
             if (friendTable.Rows.Count == 1)
             {
-                int relationOrder = (byte)friendTable.Rows[0]["relation_order"];
+                int relationOrder = (int)friendTable.Rows[0]["relation_order"];
 
                 if (relationOrder == 1)
                 {
@@ -258,7 +258,7 @@ namespace BoxSocial.Applications.Profile
                     // unordered friend
 
                     // select the maximum order
-                    int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
+                    int maxOrder = (int)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
                         LoggedInMember.UserId)).Rows[0]["max_order"];
 
                     // switch places
@@ -321,7 +321,7 @@ namespace BoxSocial.Applications.Profile
 
             if (friendTable.Rows.Count == 1)
             {
-                int relationOrder = (byte)friendTable.Rows[0]["relation_order"];
+                int relationOrder = (int)friendTable.Rows[0]["relation_order"];
 
                 if (relationOrder == 0)
                 {
@@ -334,7 +334,7 @@ namespace BoxSocial.Applications.Profile
                 }
                 else if (relationOrder < 255)
                 {
-                    int maxOrder = (int)(byte)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
+                    int maxOrder = (int)db.Query(string.Format("SELECT MAX(relation_order) as max_order FROM user_relations WHERE relation_me = {0} AND relation_type = 'FRIEND'",
                         LoggedInMember.UserId)).Rows[0]["max_order"];
 
                     if (relationOrder == maxOrder)

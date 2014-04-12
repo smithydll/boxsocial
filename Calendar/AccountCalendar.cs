@@ -45,7 +45,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "Calendar";
+                return core.Prose.GetString("CALENDAR");
             }
         }
 

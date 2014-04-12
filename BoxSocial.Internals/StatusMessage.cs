@@ -272,8 +272,8 @@ namespace BoxSocial.Internals
                 statusMessageVariableCollection.Parse("U_QUOTE", string.Empty /*e.Core.Hyperlink.BuildCommentQuoteUri(item.Id)*/);
                 statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*e.Core.Hyperlink.BuildCommentReportUri(item.Id)*/);
                 statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*e.Core.Hyperlink.BuildCommentDeleteUri(item.Id)*/);
-                statusMessageVariableCollection.Parse("USER_TILE", item.Poster.UserTile);
-                statusMessageVariableCollection.Parse("USER_ICON", item.Poster.UserIcon);
+                statusMessageVariableCollection.Parse("USER_TILE", item.Poster.Tile);
+                statusMessageVariableCollection.Parse("USER_ICON", item.Poster.Icon);
 
                 if (e.Core.Session.IsLoggedIn)
                 {
@@ -519,8 +519,8 @@ namespace BoxSocial.Internals
             statusMessageVariableCollection.Parse("U_REPORT", string.Empty /*core.Hyperlink.BuildCommentReportUri(Id)*/);
             statusMessageVariableCollection.Parse("U_DELETE", string.Empty /*core.Hyperlink.BuildCommentDeleteUri(Id)*/);
             statusMessageVariableCollection.Parse("U_PERMISSIONS", Access.AclUri);
-            statusMessageVariableCollection.Parse("USER_TILE", Poster.UserTile);
-            statusMessageVariableCollection.Parse("USER_ICON", Poster.UserIcon);
+            statusMessageVariableCollection.Parse("USER_TILE", Poster.Tile);
+            statusMessageVariableCollection.Parse("USER_ICON", Poster.Icon);
             statusMessageVariableCollection.Parse("URI", Uri);
 
             if (core.Session.IsLoggedIn)

@@ -53,7 +53,7 @@ namespace BoxSocial
         {
             get
             {
-                return "Profile";
+                return core.Prose.GetString("PROFILE");
             }
         }
 

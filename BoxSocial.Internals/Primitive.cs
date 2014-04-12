@@ -181,6 +181,31 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string Thumbnail
+        {
+            get;
+        }
+
+        public abstract string Icon
+        {
+            get;
+        }
+
+        public abstract string Tile
+        {
+            get;
+        }
+
+        public abstract string CoverPhoto
+        {
+            get;
+        }
+
+        public abstract string MobileCoverPhoto
+        {
+            get;
+        }
+
         public abstract string UriStub
         {
             get;

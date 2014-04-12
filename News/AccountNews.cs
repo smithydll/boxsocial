@@ -52,7 +52,7 @@ namespace BoxSocial.Applications.News
         {
             get
             {
-                return "News";
+                return core.Prose.GetString("NEWS");
             }
         }
 

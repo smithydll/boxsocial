@@ -55,7 +55,7 @@ namespace BoxSocial
         {
             get
             {
-                return "Friends";
+                return core.Prose.GetString("FRIENDS");
             }
         }
 

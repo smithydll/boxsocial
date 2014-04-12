@@ -76,7 +76,21 @@ namespace BoxSocial.Applications.Mail
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("folder", f.FolderName);
 
-                modulesVariableCollection.Parse("TITLE", f.FolderName);
+                switch (f.FolderType)
+                {
+                    case FolderTypes.Draft:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("DRAFTS"));
+                        break;
+                    case FolderTypes.Outbox:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("OUTBOX"));
+                        break;
+                    case FolderTypes.SentItems:
+                        modulesVariableCollection.Parse("TITLE", core.Prose.GetString("SENT_ITEMS"));
+                        break;
+                    default:
+                        modulesVariableCollection.Parse("TITLE", f.FolderName);
+                        break;
+                }
                 modulesVariableCollection.Parse("SUB", Key);
                 modulesVariableCollection.Parse("MODULE", ModuleKey);
                 modulesVariableCollection.Parse("URI", BuildUri("inbox", args));
@@ -103,8 +117,8 @@ namespace BoxSocial.Applications.Mail
                     {
                         messageVariableCollection.Parse("U_USER", message.Sender.Uri);
                         messageVariableCollection.Parse("USER_DISPLAY_NAME", message.Sender.UserInfo.DisplayName);
-                        messageVariableCollection.Parse("USER_TILE", message.Sender.UserTile);
-                        messageVariableCollection.Parse("USER_ICON", message.Sender.UserIcon);
+                        messageVariableCollection.Parse("USER_TILE", message.Sender.Tile);
+                        messageVariableCollection.Parse("USER_ICON", message.Sender.Icon);
                         messageVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(message.Sender.UserInfo.GetRegistrationDate(core.Tz)));
                         messageVariableCollection.Parse("USER_COUNTRY", message.Sender.Profile.Country);
                         //core.Display.ParseBbcode(messageVariableCollection, "SIGNATURE", postersList[post.UserId].ForumSignature);

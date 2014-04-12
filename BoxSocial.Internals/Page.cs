@@ -1239,14 +1239,9 @@ namespace BoxSocial.Internals
         {
             core.Template.SetTemplate("Pages", "viewpage");
 
-            if (owner is User)
-            {
-                ((User)owner).LoadProfileInfo();
-
-                core.Template.Parse("USER_ICON", ((User)owner).UserThumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", ((User)owner).CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)owner).MobileCoverPhoto);
-            }
+            core.Template.Parse("USER_ICON", owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
 
             core.Display.ParsePageList(owner, true, thePage);
 

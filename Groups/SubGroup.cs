@@ -936,6 +936,46 @@ namespace BoxSocial.Groups
 
             return ppgs;
         }
+
+        public override string Thumbnail
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string Icon
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string Tile
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string CoverPhoto
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public override string MobileCoverPhoto
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
     }
 
     public class InvalidSubGroupException : Exception

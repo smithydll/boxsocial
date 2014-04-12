@@ -234,8 +234,8 @@ namespace BoxSocial.Groups
                 groupVariableCollection.Parse("TITLE", group.DisplayName);
                 groupVariableCollection.Parse("MEMBERS", core.Functions.LargeIntegerToString(group.Members));
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
-                groupVariableCollection.Parse("ICON", group.GroupIcon);
-                groupVariableCollection.Parse("TILE", group.GroupTile);
+                groupVariableCollection.Parse("ICON", group.Icon);
+                groupVariableCollection.Parse("TILE", group.Tile);
                 groupVariableCollection.Parse("SQUARE", group.GroupSquare);
             }
 
@@ -261,8 +261,8 @@ namespace BoxSocial.Groups
 
                 groupVariableCollection.Parse("TITLE", group.DisplayName);
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
-                groupVariableCollection.Parse("ICON", group.GroupIcon);
-                groupVariableCollection.Parse("TILE", group.GroupTile);
+                groupVariableCollection.Parse("ICON", group.Icon);
+                groupVariableCollection.Parse("TILE", group.Tile);
                 groupVariableCollection.Parse("SQUARE", group.GroupSquare);
             }
 

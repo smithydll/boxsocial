@@ -129,11 +129,11 @@ namespace BoxSocial.Applications.Profile
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
                 return slugs;
             }
         }
@@ -148,7 +148,7 @@ namespace BoxSocial.Applications.Profile
             return AppPrimitives.Member | AppPrimitives.Application | AppPrimitives.Group;
         }
 
-        [PageSlug("Profile")]
+        [PageSlug("Profile", AppPrimitives.Member | AppPrimitives.Application)]
         [Show("profile", AppPrimitives.Member | AppPrimitives.Application)]
         private void showProfile(Core core, object sender)
         {
@@ -180,7 +180,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        [PageSlug("Friends")]
+        [PageSlug("Friends", AppPrimitives.Member)]
         [Show("contacts/friends", AppPrimitives.Member)]
         private void showFriends(Core core, object sender)
         {
@@ -190,7 +190,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        [PageSlug("Subscribers")]
+        [PageSlug("Subscribers", AppPrimitives.Member)]
         [Show("subscribers", AppPrimitives.Member)]
         private void showSubscribers(Core core, object sender)
         {
@@ -209,7 +209,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        [PageSlug("Status Feed")]
+        [PageSlug("Status Feed", AppPrimitives.Member | AppPrimitives.Application)]
         [Show("status-feed", AppPrimitives.Member | AppPrimitives.Application)]
         private void showStatusFeed(Core core, object sender)
         {
@@ -220,7 +220,7 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
-        [PageSlug("Feed")]
+        [PageSlug("Feed", AppPrimitives.Member | AppPrimitives.Application)]
         [Show("feed", AppPrimitives.Member | AppPrimitives.Application)]
         private void showFeed(Core core, object sender)
         {

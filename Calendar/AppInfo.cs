@@ -130,12 +130,12 @@ namespace BoxSocial.Applications.Calendar
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("calendar", "Calendar");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("calendar", new PageSlugAttribute("Calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network));
                 return slugs;
             }
         }

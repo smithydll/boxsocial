@@ -128,11 +128,11 @@ namespace BoxSocial.Groups
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
                 return slugs;
             }
         }

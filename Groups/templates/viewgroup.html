@@ -1,13 +1,51 @@
 <!-- INCLUDE page_header.html -->
 
-<!-- IF BREADCRUMBS -->
+<!-- IF $_IS_DESKTOP AND BREADCRUMBS -->
 <div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
 <!-- ENDIF -->
 
-<div id="content">
-	<h2><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h2>
     <!-- IF $_IS_MOBILE -->
-    <p class="action-buttons"><span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{GROUP_DISPLAY_NAME}</h2>
+        </div>
+    </div>
+    <!-- ENDIF -->
+
+<div id="content">
+    <!-- IF NOT $_IS_MOBILE -->
+	<div id="overview-profile" class="pane">
+		<div class="img-wb img-fl">
+			<!-- IF PRIMITIVE_THUMB -->
+			<img src="{PRIMITIVE_THUMB}" data-at2x="{USER_MOBILE}" alt="{USER_DISPLAY_NAME} Display Picture" />
+            <!-- ENDIF -->
+		</div>
+        <!-- IF USER_COVER_PHOTO -->
+		<div class="info" style="height: 190px; background-image: url('{USER_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+            
+            <ul id="profile-links">
+            <!-- BEGIN link_list -->
+                <li><a href="{link_list.U_LINK}">{link_list.S_FAVICON}
+                <!-- IF link_list.TITLE -->
+                <span>{link_list.TITLE}</span>
+                <!-- ENDIF -->
+                </a></li>
+            <!-- END link_list -->
+            </ul>
+			<h2><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h2>
+		<div class="cheat-clear"></div>
+	</div>
+    </div>
+    <!-- ENDIF -->
+    <!-- IF $_IS_MOBILE -->
+    <p class="action-buttons">{BREADCRUMBS}<span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
     <ul id="actions-menu" class="popup-menu">
         <!-- IF U_JOIN -->
         <li><a href="{U_JOIN}">Join This Group</a></li>

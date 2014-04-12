@@ -183,12 +183,12 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Builds a list of page slugs stubs the application handles.
         /// </summary>
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("blog", "Blog");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("blog", new PageSlugAttribute("Blog", AppPrimitives.Member));
                 return slugs;
             }
         }

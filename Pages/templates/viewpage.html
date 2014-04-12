@@ -1,6 +1,6 @@
 <!-- INCLUDE page_header.html -->
 
-<!-- IF BREADCRUMBS -->
+<!-- IF $_IS_DESKTOP AND BREADCRUMBS -->
 <div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
 <!-- ENDIF -->
 
@@ -40,6 +40,19 @@
 </div>
 <!-- ENDIF -->
 
+<!-- IF $_IS_MOBILE -->
+<p class="action-buttons">{BREADCRUMBS}
+<!-- IF U_EDIT -->
+<span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span>
+<!-- ENDIF -->
+</p>
+    <ul id="actions-menu" class="popup-menu">
+    <!-- IF U_EDIT -->
+        <li><a href="{U_EDIT}">Edit Page</a></li>
+    <!-- ENDIF -->
+    </ul>
+<!-- ENDIF -->
+
 <div id="profile">
 <div id="pane-page" class="pane">
 	<div id="page-body" class="normal-writing">
@@ -60,7 +73,7 @@
 	<!-- ENDIF -->
 	</p>
 	<!-- ENDIF -->
-	<!-- IF U_EDIT -->
+	<!-- IF $_IS_DESKTOP AND U_EDIT -->
 	<div id="new-stuff">
 		<span id="edit-page" class="post-button"><a href="{U_EDIT}">Edit Page</a></span>
 	</div>

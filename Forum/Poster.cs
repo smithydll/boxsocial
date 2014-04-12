@@ -34,9 +34,9 @@ namespace BoxSocial.Applications.Forum
     public class Poster
     {
         private Core core;
-        private TPage page;
+        private PPage page;
 
-        public Poster(Core core, TPage page)
+        public Poster(Core core, PPage page)
         {
             this.core = core;
             this.page = page;
@@ -48,6 +48,10 @@ namespace BoxSocial.Applications.Forum
 
             e.Template.SetTemplate("Forum", "post");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
+
+            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
 
             if (e.Core.Http.Form["save"] != null) // DRAFT
             {
@@ -76,6 +80,9 @@ namespace BoxSocial.Applications.Forum
             string text = core.Http.Form["post"];
             string mode = core.Http.Query["mode"];
             string topicState = core.Http.Form["topic-state"];
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "forum", "Forum" });
 
             if (string.IsNullOrEmpty(mode))
             {
@@ -153,6 +160,23 @@ namespace BoxSocial.Applications.Forum
                 {
                     sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
                 }
+
+                if (thisTopic.Forum.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in thisTopic.Forum.Parents.Nodes)
+                    {
+                        breadCrumbParts.Add(new string[] { "*" + ptn.ParentId.ToString(), ptn.ParentTitle });
+                    }
+                }
+
+                if (thisTopic.Forum.Id > 0)
+                {
+                    breadCrumbParts.Add(new string[] { thisTopic.Forum.Id.ToString(), thisTopic.Forum.Title });
+                }
+
+                breadCrumbParts.Add(new string[] { "topic-" + thisTopic.Id.ToString(), thisTopic.Title });
+
+                breadCrumbParts.Add(new string[] { "*forum/post/?t=" + thisTopic.Id.ToString() + "&mode=reply", "Post Reply" });
             }
             else if (forumId > 0)
             {
@@ -171,6 +195,21 @@ namespace BoxSocial.Applications.Forum
                 {
                     sbis.Add(new SelectBoxItem(((byte)TopicStates.Announcement).ToString(), "Announcement"));
                 }
+
+                if (forum.Parents != null)
+                {
+                    foreach (ParentTreeNode ptn in forum.Parents.Nodes)
+                    {
+                        breadCrumbParts.Add(new string[] { "*" + ptn.ParentId.ToString(), ptn.ParentTitle });
+                    }
+                }
+
+                if (forum.Id > 0)
+                {
+                    breadCrumbParts.Add(new string[] { forum.Id.ToString(), forum.Title });
+                }
+
+                breadCrumbParts.Add(new string[] { "*forum/post/?f=" + forum.Id.ToString() + "&mode=post", "New Topic" });
             }
 
             core.Template.Parse("S_MODE", mode);
@@ -237,6 +276,8 @@ namespace BoxSocial.Applications.Forum
             {
                 SavePost(mode, subject, text);
             }
+
+            page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private void SavePost(string mode, string subject, string text)

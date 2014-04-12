@@ -1498,11 +1498,17 @@ namespace BoxSocial.Applications.Forum
             core.Template.SetTemplate("Forum", "viewforum");
             ForumSettings.ShowForumHeader(core, page);
 
+            core.Template.Parse("USER_ICON", page.Owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
+
             try
             {
                 if (forumId > 0)
                 {
                     thisForum = new Forum(page.Core, settings, forumId);
+
+                    core.Template.Parse("FORUM_TITLE", thisForum.Title);
                 }
                 else
                 {

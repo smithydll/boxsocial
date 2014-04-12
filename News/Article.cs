@@ -269,6 +269,10 @@ namespace BoxSocial.Applications.News
                 e.Core.Functions.Generate404();
 			}
 
+            //e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
             e.Core.Display.ParseBbcode(e.Template, "ARTICLE_BODY", article.ArticleBody);
             e.Template.Parse("ARTICLE_TITLE", article.ArticleSubject);
             e.Template.Parse("ARTICLE_U_ARTICLE", article.Uri);

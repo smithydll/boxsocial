@@ -29,6 +29,7 @@ namespace BoxSocial.Internals
     public sealed class PageSlugAttribute : Attribute
     {
         private string pageTitle;
+        private AppPrimitives primitive;
 
         public string PageTitle
         {
@@ -38,8 +39,17 @@ namespace BoxSocial.Internals
             }
         }
 
-        public PageSlugAttribute(string pageTitle)
+        public AppPrimitives Primitive
         {
+            get
+            {
+                return primitive;
+            }
+        }
+
+        public PageSlugAttribute(string pageTitle, AppPrimitives primitive)
+        {
+            this.primitive = primitive;
             this.pageTitle = pageTitle;
         }
     }

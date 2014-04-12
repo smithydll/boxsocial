@@ -126,11 +126,11 @@ namespace BoxSocial.Musician
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
                 return slugs;
             }
         }
@@ -255,7 +255,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Profile")]
+        [PageSlug("Profile", AppPrimitives.Musician)]
         [Show(@"^/profile(|/)$", AppPrimitives.Musician)]
         private void showProfile(Core core, object sender)
         {
@@ -265,7 +265,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Members")]
+        [PageSlug("Members", AppPrimitives.Musician)]
         [Show(@"^/profile/members(|/)$", AppPrimitives.Musician)]
         private void showMembers(Core core, object sender)
         {
@@ -284,7 +284,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Tours")]
+        [PageSlug("Tours", AppPrimitives.Musician)]
         [Show(@"^/tours(|/)$", AppPrimitives.Musician)]
         private void showTours(Core core, object sender)
         {
@@ -303,7 +303,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Gigs")]
+        [PageSlug("Gigs", AppPrimitives.Musician)]
         [Show(@"^/gigs(|/)$", AppPrimitives.Musician)]
         private void showGigs(Core core, object sender)
         {
@@ -327,7 +327,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Fans")]
+        [PageSlug("Fans", AppPrimitives.Musician)]
         [Show(@"^/fans(|/)$", AppPrimitives.Musician)]
         private void showFans(Core core, object sender)
         {
@@ -337,7 +337,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Discography")]
+        [PageSlug("Discography", AppPrimitives.Musician)]
         [Show(@"^/discography(|/)$", AppPrimitives.Musician)]
         private void showDiscography(Core core, object sender)
         {
@@ -347,7 +347,7 @@ namespace BoxSocial.Musician
             }
         }
 
-        [PageSlug("Songs")]
+        [PageSlug("Songs", AppPrimitives.Musician)]
         [Show(@"^/songs(|/)$", AppPrimitives.Musician)]
         private void showSongs(Core core, object sender)
         {

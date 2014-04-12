@@ -443,18 +443,35 @@ namespace BoxSocial.Internals
         {
             string output = "";
             string path = "/";
-            output = string.Format("<a href=\"{1}\">{0}</a>",
-                    Hyperlink.Domain, path);
 
-            for (int i = 0; i < parts.Count; i++)
+            if (core.IsMobile)
             {
-                if (parts[i][0] != "")
+                if (parts.Count > 1)
                 {
-                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
-                    if (!parts[i][0].StartsWith("*"))
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        parts[parts.Count - 2][1], path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' }));
+                }
+                if (parts.Count == 1)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        Hyperlink.Domain, path);
+                }
+            }
+            else
+            {
+                output = string.Format("<a href=\"{1}\">{0}</a>",
+                        Hyperlink.Domain, path);
+
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    if (parts[i][0] != "")
                     {
-                        path += parts[i][0] + "/";
+                        output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                            parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
+                        if (!parts[i][0].StartsWith("*"))
+                        {
+                            path += parts[i][0] + "/";
+                        }
                     }
                 }
             }

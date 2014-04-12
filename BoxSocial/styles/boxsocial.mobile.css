@@ -955,10 +955,6 @@ ul.mobile-list ul li {
     padding-left: 16pt;
 }
 
-.breadcrumbs {
-    display: none;
-}
-
 div.img-fl {
 	float: left;
 	display: inline;
@@ -1475,6 +1471,8 @@ ul.permission-grant-list {
 
 p.action-buttons {
     margin: 8px 0;
+    text-align: right;
+    height: 12pt;
 }
 
 .actions-menu {
@@ -1523,4 +1521,26 @@ p.action-buttons {
 
 .advanced-field {
     display: none;
+}
+
+span.breadcrumbs {
+    font-size: 12pt;
+    color: #5599ff;
+    float: left;
+    top: -1pt;
+    position: relative;
+}
+
+span.breadcrumbs strong {
+    position: relative;
+    font-size: 24pt;
+    line-height: 8pt;
+    top: 3pt;
+    font-weight: normal;
+    margin-right: -4pt;
+}
+
+span.breadcrumbs a {
+    color: #5599ff;
+    font-size: 12pt;
 }

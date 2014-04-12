@@ -129,12 +129,12 @@ namespace BoxSocial.Applications.Pages
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("lists", "Lists");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("lists", new PageSlugAttribute("Lists", AppPrimitives.Member));
                 return slugs;
             }
         }

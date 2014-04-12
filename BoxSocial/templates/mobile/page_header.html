@@ -162,13 +162,14 @@
     </div>
 <div id="main-page" onclick="hideSideBar();">
 	<div id="head">
-            <!-- IF PAGE_LIST -->
-            <!-- PAGE_LIST {PAGE_LIST_HOW} -->
-            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
-            <!-- ENDIF -->
             <!-- IF TAB_LIST -->
             <!-- TAB_LIST {TAB_LIST_HOW} -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
+            <!-- ELSE -->
+                <!-- IF PAGE_LIST -->
+                <!-- PAGE_LIST {PAGE_LIST_HOW} -->
+                <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
+                <!-- ENDIF -->
             <!-- ENDIF -->
             <!-- IF account_links -->
             <!-- account_links -->

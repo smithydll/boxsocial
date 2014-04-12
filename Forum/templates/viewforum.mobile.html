@@ -1,4 +1,15 @@
 ﻿<!-- INCLUDE page_header.html -->
+
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{GROUP_DISPLAY_NAME}</h2>
+        </div>
+    </div>
+
 <div id="content">
 <!-- INCLUDE forum_header -->
 	<h2>{FORUM_TITLE}</h2>

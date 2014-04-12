@@ -347,14 +347,14 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public abstract Dictionary<string, string> PageSlugs
+        public abstract Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get;
         }
 
-        public Dictionary<string, string> GetPageSlugs(AppPrimitives primitive)
+        public Dictionary<string, PageSlugAttribute> GetPageSlugs(AppPrimitives primitive)
         {
-            Dictionary<string, string> slugs = null;
+            Dictionary<string, PageSlugAttribute> slugs = null;
 
             if (PageSlugs != null)
             {
@@ -362,7 +362,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                slugs = new Dictionary<string, string>(StringComparer.Ordinal);
+                slugs = new Dictionary<string, PageSlugAttribute>(StringComparer.Ordinal);
             }
 
 
@@ -377,7 +377,7 @@ namespace BoxSocial.Internals
                     {
                         foreach (Attribute psAttr in Attribute.GetCustomAttributes(mi, typeof(PageSlugAttribute)))
                         {
-                            slugs.Add(((ShowAttribute)attr).CleanSlug, ((PageSlugAttribute)psAttr).PageTitle);
+                            slugs.Add(((ShowAttribute)attr).CleanSlug, ((PageSlugAttribute)psAttr));
                         }
                     }
                 }

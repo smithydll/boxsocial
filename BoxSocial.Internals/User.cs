@@ -2047,18 +2047,47 @@ namespace BoxSocial.Internals
         {
             string output = "";
             string path = this.UriStub;
-            output = string.Format("<a href=\"{1}\">{0}</a>",
-                    DisplayName, core.Hyperlink.AppendSid(path));
 
-            for (int i = 0; i < parts.Count; i++)
+            if (core.IsMobile)
             {
-                if (parts[i][0] != "")
+                if (parts.Count > 1)
                 {
-                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], core.Hyperlink.AppendSid(path + parts[i][0].TrimStart(new char[] { '*' })));
-                    if (!parts[i][0].StartsWith("*"))
+                    for (int i = 0; i < parts.Count - 2; i++)
                     {
-                        path += parts[i][0] + "/";
+                        if (!parts[i][0].StartsWith("*"))
+                        {
+                            path += parts[i][0] + "/";
+                        }
+                    }
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        parts[parts.Count - 2][1], core.Hyperlink.AppendSid(path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' })));
+                }
+                if (parts.Count == 1)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        DisplayName, core.Hyperlink.AppendSid(path));
+                }
+                if (parts.Count == 0)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        core.Prose.GetString("HOME"), core.Hyperlink.AppendCoreSid("/"));
+                }
+            }
+            else
+            {
+                output = string.Format("<a href=\"{1}\">{0}</a>",
+                        DisplayName, core.Hyperlink.AppendSid(path));
+
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    if (parts[i][0] != "")
+                    {
+                        output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                            parts[i][1], core.Hyperlink.AppendSid(path + parts[i][0].TrimStart(new char[] { '*' })));
+                        if (!parts[i][0].StartsWith("*"))
+                        {
+                            path += parts[i][0] + "/";
+                        }
                     }
                 }
             }
@@ -2355,9 +2384,12 @@ namespace BoxSocial.Internals
             page.User.ProfileViewed(core.Session.LoggedInMember);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "profile", "Profile" });
+            if (!core.IsMobile)
+            {
+                breadCrumbParts.Add(new string[] { "profile", "Profile" });
+            }
 
-            page.User.ParseBreadCrumbs(breadCrumbParts);
+            page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
             if (Subscription.IsSubscribed(core, page.User.ItemKey))
             {

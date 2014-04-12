@@ -131,12 +131,12 @@ namespace BoxSocial.Applications.Forum
 
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("forum", "Forum");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("forum", new PageSlugAttribute("Forum", AppPrimitives.Group | AppPrimitives.Network));
                 return slugs;
             }
         }

@@ -1,6 +1,17 @@
 ﻿<!-- INCLUDE page_header.html -->
+<div id="content">
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}'); background-position: 0 -50px;">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+        <h2>{FORUM_TITLE}</h2>
+    </div>
+    </div>
+
+<div id="page-body">
 <!-- INCLUDE forum_header -->
-	<h2>{FORUM_TITLE}</h2>
 	<p>{BREADCRUMBS}</p>
 	
 	<!-- IF RULES -->
@@ -158,5 +169,6 @@
 <!-- IF PERMISSION_BLOCK -->
 {PERMISSION_BLOCK}
 <!-- ENDIF -->
-
+</div>
+</div>
 <!-- INCLUDE page_footer.html -->

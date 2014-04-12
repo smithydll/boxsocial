@@ -735,34 +735,37 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
 
-                Dictionary<string, string> slugs = newApplication.GetPageSlugs(owner.AppPrimitive);
+                Dictionary<string, PageSlugAttribute> slugs = newApplication.GetPageSlugs(owner.AppPrimitive);
 
                 if (slugs != null)
                 {
                     foreach (string slug in slugs.Keys)
                     {
-                        string tSlug = slug;
-                        Page myPage = Page.Create(core, false, owner, slugs[slug], ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
-
-                        if (myPage != null)
+                        if ((slugs[slug].Primitive & owner.AppPrimitive) == owner.AppPrimitive)
                         {
-                            if (viewer is User)
-                            {
-                                myPage.Access.Viewer = (User)viewer;
-                            }
+                            string tSlug = slug;
+                            Page myPage = Page.Create(core, false, owner, slugs[slug].PageTitle, ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
 
-                            if (myPage.ListOnly)
+                            if (myPage != null)
                             {
-                                if (HasIcon)
+                                if (viewer is User)
                                 {
-                                    myPage.Icon = Icon;
-                                    try
+                                    myPage.Access.Viewer = (User)viewer;
+                                }
+
+                                if (myPage.ListOnly)
+                                {
+                                    if (HasIcon)
                                     {
-                                        myPage.Update();
-                                    }
-                                    catch (UnauthorisedToUpdateItemException)
-                                    {
-                                        Console.WriteLine("Unauthorised");
+                                        myPage.Icon = Icon;
+                                        try
+                                        {
+                                            myPage.Update();
+                                        }
+                                        catch (UnauthorisedToUpdateItemException)
+                                        {
+                                            Console.WriteLine("Unauthorised");
+                                        }
                                     }
                                 }
                             }
@@ -803,53 +806,73 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
-                Dictionary<string, string> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
+                Dictionary<string, PageSlugAttribute> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
 
                 foreach (string slug in slugs.Keys)
                 {
-                    SelectQuery query = new SelectQuery("user_pages");
-                    query.AddFields("page_id");
-                    query.AddCondition("page_item_id", viewer.Id);
-                    query.AddCondition("page_item_type_id", viewer.TypeId);
-                    query.AddCondition("page_title", slugs[slug]);
-                    query.AddCondition("page_slug", slug);
-                    query.AddCondition("page_parent_path", string.Empty);
-
-                    if (core.Db.Query(query).Rows.Count == 0)
+                    if ((slugs[slug].Primitive & viewer.AppPrimitive) == viewer.AppPrimitive)
                     {
-                        string tSlug = slug;
-                        Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                        SelectQuery query = new SelectQuery("user_pages");
+                        query.AddFields("page_id");
+                        query.AddCondition("page_item_id", viewer.Id);
+                        query.AddCondition("page_item_type_id", viewer.TypeId);
+                        query.AddCondition("page_title", slugs[slug]);
+                        query.AddCondition("page_slug", slug);
+                        query.AddCondition("page_parent_path", string.Empty);
+
+                        if (core.Db.Query(query).Rows.Count == 0)
+                        {
+                            string tSlug = slug;
+                            Page.Create(core, false, viewer, slugs[slug].PageTitle, ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                Page myPage = new Page(core, viewer, slug, string.Empty);
+
+                                if (myPage.ListOnly)
+                                {
+                                    myPage.Title = slugs[slug].PageTitle;
+                                    if (!string.IsNullOrEmpty(Icon))
+                                    {
+                                        myPage.Icon = Icon;
+                                    }
+
+                                    myPage.Update();
+                                }
+                            }
+                            catch (PageNotFoundException)
+                            {
+                                string tSlug = slug;
+                                Page myPage = Page.Create(core, false, viewer, slugs[slug].PageTitle, ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
+
+                                if (myPage.ListOnly)
+                                {
+                                    if (!string.IsNullOrEmpty(Icon))
+                                    {
+                                        myPage.Icon = Icon;
+                                    }
+
+                                    myPage.Update();
+                                }
+                            }
+                        }
                     }
                     else
                     {
+                        // Delete any hanging
                         try
                         {
                             Page myPage = new Page(core, viewer, slug, string.Empty);
 
                             if (myPage.ListOnly)
                             {
-                                if (!string.IsNullOrEmpty(Icon))
-                                {
-                                    myPage.Icon = Icon;
-                                }
-
-                                myPage.Update();
+                                myPage.Delete();
                             }
                         }
                         catch (PageNotFoundException)
                         {
-                            string tSlug = slug;
-                            Page myPage = Page.Create(core, false, viewer, slugs[slug], ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
-							
-							if (myPage.ListOnly)
-                            {
-                                if (!string.IsNullOrEmpty(Icon))
-                                {
-                                    myPage.Icon = Icon;
-                                }
-
-                                myPage.Update();
-                            }
                         }
                     }
                 }
@@ -889,7 +912,7 @@ namespace BoxSocial.Internals
             {
                 Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
 
-                Dictionary<string, string> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
+                Dictionary<string, PageSlugAttribute> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
 
                 foreach (string slug in slugs.Keys)
                 {
@@ -914,16 +937,33 @@ namespace BoxSocial.Internals
         {
             string output = string.Empty;
             string path = string.Format("/application/{0}", assemblyName);
-            output = string.Format("<a href=\"{1}\">{0}</a>",
-                    title, core.Hyperlink.AppendSid(path));
 
-            for (int i = 0; i < parts.Count; i++)
+            if (core.IsMobile)
             {
-                if (parts[i][0] != string.Empty)
+                if (parts.Count > 1)
                 {
-                    path += "/" + parts[i][0];
-                    output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                        parts[i][1], core.Hyperlink.AppendSid(path));
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        parts[parts.Count - 2][1], path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' }));
+                }
+                if (parts.Count == 1)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        Hyperlink.Domain, core.Hyperlink.AppendSid(path));
+                }
+            }
+            else
+            {
+                output = string.Format("<a href=\"{1}\">{0}</a>",
+                        title, core.Hyperlink.AppendSid(path));
+
+                for (int i = 0; i < parts.Count; i++)
+                {
+                    if (parts[i][0] != string.Empty)
+                    {
+                        path += "/" + parts[i][0];
+                        output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
+                            parts[i][1], core.Hyperlink.AppendSid(path));
+                    }
                 }
             }
 

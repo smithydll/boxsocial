@@ -178,12 +178,12 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Builds a list of page slugs stubs the application handles.
         /// </summary>
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("gallery", "Photo Gallery");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("gallery", new PageSlugAttribute("Photo Gallery", AppPrimitives.Member | AppPrimitives.Musician | AppPrimitives.Group | AppPrimitives.Network));
                 return slugs;
             }
         }

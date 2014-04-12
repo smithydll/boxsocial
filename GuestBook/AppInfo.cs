@@ -136,11 +136,11 @@ namespace BoxSocial.Applications.GuestBook
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
                 return slugs;
             }
         }
@@ -150,7 +150,7 @@ namespace BoxSocial.Applications.GuestBook
             this.core = core;
         }
 
-        [PageSlug("Guest Book")]
+        [PageSlug("Guest Book", AppPrimitives.Member)]
         [Show(@"profile/comments", AppPrimitives.Member)]
         private void showProfileGuestBook(Core core, object sender)
         {
@@ -170,7 +170,7 @@ namespace BoxSocial.Applications.GuestBook
             }
         }
 
-        [PageSlug("Guest Book")]
+        [PageSlug("Guest Book", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician)]
         [Show(@"comments", AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Application | AppPrimitives.Musician)]
         private void showGuestBook(Core core, object sender)
         {

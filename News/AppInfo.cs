@@ -127,12 +127,12 @@ namespace BoxSocial.Applications.News
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("news", "News");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("news", new PageSlugAttribute("News", AppPrimitives.Group | AppPrimitives.Network));
                 return slugs;
             }
         }

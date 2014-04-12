@@ -195,6 +195,10 @@ namespace BoxSocial.Applications.News
                 news = News.Create(e.Core, e.Page.Owner, e.Page.Owner.TitleNameOwnership + " News", 10);
             }
 
+            //e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
             List<Article> articles = news.GetArticles(e.Page.TopLevelPageNumber, 10);
 			
 			e.Template.Parse("NEWS_COUNT", articles.Count.ToString());

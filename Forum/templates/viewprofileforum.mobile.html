@@ -1,0 +1,54 @@
+﻿	<div id="profile-forum-pane" class="pane">
+		<h3><a href="{U_FORUM}">{L_FORUM}</a></h3>
+    <!-- IF topic_list -->
+			  <ul class="list">
+    <li class="list-item divider">Topics</li>
+    <!-- BEGIN topic_list -->
+    <li class="list-item icon topic">
+		<a href="{topic_list.URI}">
+    <!-- IF topic_list.IS_NORMAL_READ_UNLOCKED -->
+    <img src="/images/posticon_read_med.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_UNLOCKED -->
+    <img src="/images/posticon_unread_med.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_READ_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_NORMAL_UNREAD_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_UNLOCKED -->
+    <img src="/images/posticon_read_med_sticky.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_UNLOCKED -->
+    <img src="/images/posticon_unread_med_sticky.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_READ_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_STICKY_UNREAD_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_UNLOCKED -->
+    <img src="/images/posticon_read_med_announce.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_UNLOCKED -->
+    <img src="/images/posticon_unread_med_announce.png" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_READ_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+    <!-- IF topic_list.IS_ANNOUNCEMENT_UNREAD_LOCKED -->
+    <img src="" class="ui-li-icon ui-corner-none" />
+    <!-- ENDIF -->
+
+          <p><strong>{topic_list.TITLE}</strong></p>
+          <p>by {topic_list.USERNAME}<br />on  {topic_list.DATE}</p>
+          <span class="count">{topic_list.REPLIES} replies</span></a>
+      </dl>
+    </li>
+    <!-- END topic_list -->
+	</ul>
+        <!-- ENDIF -->
+	</div>

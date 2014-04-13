@@ -157,7 +157,7 @@ div#rc-bottom {
 	/*clear: both;*/
 	background-color: #e0e0e0;
 	/*background-image: url('/images/footer-gradient.png');*/
-	height: 11em;
+	height: 13em;
 }
 
 #footer {
@@ -357,6 +357,8 @@ li.empty {
 
 #content {
     background-color: #FFFFFF;
+    padding-bottom: 1em;
+    overflow: auto;
 }
 
 #profile div.pane {
@@ -1295,6 +1297,10 @@ ul#group-members li.member div.frame ul.actions li, div.listing div.frame ul.act
 #overview-profile h2, #overview-profile p {
 	margin-top: 5px;
 	margin-bottom: 3px;
+}
+
+#overview-profile h2, #overview-profile h3, #overview-profile p {
+	text-shadow: 0 1px 1px rgba(0,0,0,.5);
 }
 
 #overview-profile p#status-message {

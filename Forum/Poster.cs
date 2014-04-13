@@ -270,6 +270,17 @@ namespace BoxSocial.Applications.Forum
             if (submitMode == "preview")
             {
                 core.Display.ParseBbcode("PREVIEW", text);
+                core.Display.ParseBbcode("SUBJECT", subject);
+
+                try
+                {
+                    ForumMember member = new ForumMember(core, page.Owner, page.loggedInMember);
+
+                    core.Display.ParseBbcode("SIGNATURE", member.ForumSignature);
+                }
+                catch (InvalidForumMemberException)
+                {
+                }
             }
 
             if (submitMode == "draft" || submitMode == "post")

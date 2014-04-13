@@ -65,7 +65,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, IShareableItem, IActionableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, ISearchableItem, IShareableItem, IActionableItem
     {
         // Square
         public static string IconPrefix = "_icon"; // 50
@@ -1200,7 +1200,11 @@ namespace BoxSocial.Applications.Gallery
                     throw new Exception("Transaction failed, panic!");
                 }
 
-                return new GalleryItem(core, owner, itemId);
+                GalleryItem newGalleryItem = new GalleryItem(core, owner, itemId);
+
+                core.Search.Index(newGalleryItem);
+
+                return newGalleryItem;
                 //return itemId;
             }
 
@@ -3384,6 +3388,75 @@ namespace BoxSocial.Applications.Gallery
                         Uri, FullPath, StoragePath, ItemWidth, ItemHeight);
 
             return returnValue;
+        }
+
+
+        public string IndexingString
+        {
+            get
+            {
+                return ItemAbstract;
+            }
+        }
+
+        public string IndexingTitle
+        {
+            get
+            {
+                return ItemTitle;
+            }
+        }
+
+        public string IndexingTags
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
+        public Template RenderPreview()
+        {
+            Template template = new Template("search_result.galleryitem.html");
+            template.Medium = core.Template.Medium;
+            template.SetProse(core.Prose);
+
+            VariableCollection statusMessageVariableCollection = template.CreateChild("status_messages");
+
+            //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
+            core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", core.Bbcode.FromStatusCode(GetActionBody(new List<ItemKey>())), owner, true, string.Empty, string.Empty);
+            statusMessageVariableCollection.Parse("STATUS_UPDATED", core.Tz.DateTimeToString(GetCreatedDate(core.Tz)));
+
+            statusMessageVariableCollection.Parse("ID", Id.ToString());
+            statusMessageVariableCollection.Parse("TYPE_ID", ItemKey.TypeId.ToString());
+            statusMessageVariableCollection.Parse("USERNAME", Owner.DisplayName);
+            statusMessageVariableCollection.Parse("USER_ID", Owner.Id);
+            statusMessageVariableCollection.Parse("U_PROFILE", Owner.Uri); // TODO: ProfileUri for primitive
+            statusMessageVariableCollection.Parse("U_PERMISSIONS", Parent.Access.AclUri);
+            statusMessageVariableCollection.Parse("USER_TILE", Owner.Tile);
+            statusMessageVariableCollection.Parse("USER_ICON", Owner.Icon);
+            statusMessageVariableCollection.Parse("URI", Uri);
+
+            if (core.Session.IsLoggedIn)
+            {
+                if (Owner is User && Owner.Id == core.Session.LoggedInMember.Id)
+                {
+                    statusMessageVariableCollection.Parse("IS_OWNER", "TRUE");
+                }
+            }
+
+            if (Info.Likes > 0)
+            {
+                statusMessageVariableCollection.Parse("LIKES", string.Format(" {0:d}", Info.Likes));
+                statusMessageVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", Info.Dislikes));
+            }
+
+            if (Info.Comments > 0)
+            {
+                statusMessageVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", Info.Comments));
+            }
+
+            return template;
         }
     }
 

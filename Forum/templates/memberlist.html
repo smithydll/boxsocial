@@ -1,8 +1,36 @@
 ﻿<!-- INCLUDE page_header.html -->
-<!-- INCLUDE forum_header -->
-<h2>Memberlist</h2>
 
-<p>{BREADCRUMBS}</p>
+<!-- IF $_IS_DESKTOP AND BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<!-- IF $_IS_MOBILE -->
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>Memberlist</h2>
+        </div>
+    </div>
+<!-- ENDIF -->
+
+<div id="content">
+<!-- IF $_IS_DESKTOP -->
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}'); background-position: 0 -50px;">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+        <h2>Memberlist</h2>
+    </div>
+    </div>
+<!-- ENDIF -->
+
+<div id="page-body">
+<!-- INCLUDE forum_header -->
 
 <!-- IF PAGINATION -->
 <p>
@@ -10,7 +38,7 @@
 </p>
 <!-- ENDIF -->
 
-<!-- IF MEMBERS -->
+<!-- IF member_list -->
 <dl id="group-members">
   <!-- BEGIN member_list -->
   <dt class="member"><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></dt>
@@ -31,5 +59,7 @@
   <strong>Go to page:</strong> {PAGINATION}
 </p>
 <!-- ENDIF -->
+</div>
+</div>
 
 <!-- INCLUDE page_footer.html -->

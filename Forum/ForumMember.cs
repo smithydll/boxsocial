@@ -358,6 +358,10 @@ namespace BoxSocial.Applications.Forum
             e.Template.SetTemplate("Forum", "ucp");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
+            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
             if (e.Core.Session.IsLoggedIn && e.Core.Session.LoggedInMember != null)
             {
                 e.Template.Parse("S_POST", e.Core.Hyperlink.AppendSid(string.Format("{0}forum/ucp",
@@ -380,6 +384,12 @@ namespace BoxSocial.Applications.Forum
                 return;
             }
 
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+            breadCrumbParts.Add(new string[] { "ucp", "User Control Panel" });
+
+            e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
+
             if (!string.IsNullOrEmpty(e.Core.Http.Form["submit"]))
             {
                 Save(e.Core, e.Page);
@@ -390,6 +400,10 @@ namespace BoxSocial.Applications.Forum
         {
             core.Template.SetTemplate("Forum", "memberlist");
             ForumSettings.ShowForumHeader(core, page);
+
+            core.Template.Parse("USER_ICON", page.Owner.Thumbnail);
+            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
 
             core.Template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
             core.Template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.Owner, "a"));
@@ -433,6 +447,12 @@ namespace BoxSocial.Applications.Forum
 
                 memberVariableCollection.Parse("POSTS", member.ForumPosts.ToString());
             }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+            breadCrumbParts.Add(new string[] { "memberlist", "Memberlist" });
+
+            page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private static void Save(Core core, PPage page)

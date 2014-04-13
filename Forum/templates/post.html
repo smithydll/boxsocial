@@ -1,5 +1,9 @@
 ﻿<!-- INCLUDE page_header.html -->
 
+<!-- IF $_IS_DESKTOP -->
+<p>{BREADCRUMBS}</p>
+<!-- ENDIF -->
+
 <!-- IF $_IS_MOBILE -->
 	<div id="overview-profile" class="pane">
         <!-- IF USER_MOBILE_COVER_PHOTO -->
@@ -27,19 +31,31 @@
 
 <div id="page-body">
 <!-- INCLUDE forum_header -->
-<!-- IF $_IS_DESKTOP -->
-<p>{BREADCRUMBS}</p>
-<!-- ENDIF -->
 
 <!-- IF ERROR -->
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
 
 <!-- IF PREVIEW -->
-<p>{PREVIEW}</p>
+<ul id="posts">
+  <li>
+  	<div class="post">
+      <div class="postbody">
+        <h3 id="p-preview">Preview: {SUBJECT}</h3>
+          <div class="inner">
+      	    <p>{PREVIEW}</p>
+      	    <!-- IF SIGNATURE -->
+      	    <p>____________________<br/>{SIGNATURE}</p>
+      	    <!-- ENDIF -->
+          </div>
+        </div>
+        <div class="top"></div>
+      </div>
+  </li>
+</ul>
 <!-- ENDIF -->
 
-<form id="forum-post-form" action="{S_POST}" method="post">
+<form id="forum-post-form" class="account-pane" action="{S_POST}" method="post">
   <fieldset>
     <legend>{L_POST}</legend>
     <dl>
@@ -90,6 +106,8 @@
 <ul id="posts">
   <!-- BEGIN post_list -->
   <li>
+    <div class="post">
+      <div class="postbody">
     <h3 id="p{post_list.ID}">
       <a href="{post_list.URI}">{post_list.SUBJECT}</a>
     </h3>
@@ -103,11 +121,11 @@
         <a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a>
       </strong> on {post_list.POST_TIME}
     </p>
-    <div class="postbody">
+    <div class="inner">
       <p>{post_list.TEXT}</p>
     </div>
-    <div class="top">
-      <a href="#posts">{L_TOP}</a>
+    </div>
+    <div class="top"><a href="#posts">{L_TOP}</a></div>
     </div>
   </li>
   <!-- END post_list -->

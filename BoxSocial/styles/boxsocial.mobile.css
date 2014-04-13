@@ -992,6 +992,10 @@ div.img-wb {
 	margin-bottom: 3px;
 }
 
+#overview-profile h2, #overview-profile h3, #overview-profile p {
+	text-shadow: 0 1px 1px rgba(0,0,0,.5);
+}
+
 #overview-profile div.img-wb {
 	margin: 5px;
 	z-index: 2;

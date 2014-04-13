@@ -45,6 +45,10 @@ namespace BoxSocial.Applications.Forum
             e.Template.SetTemplate("Forum", "help");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
+            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", "Forum" });
             breadCrumbParts.Add(new string[] { "help", "Help" });

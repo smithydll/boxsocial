@@ -138,6 +138,7 @@
     <Content Include="templates\pane.photo.html" />
     <Content Include="templates\pane.photo.mobile.html" />
     <Content Include="templates\postphoto.html" />
+    <Content Include="templates\search_result.galleryitem.html" />
     <Content Include="templates\viewphoto.mobile.html" />
     <Content Include="templates\viewgallery.mobile.html">
       <SubType>Designer</SubType>

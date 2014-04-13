@@ -323,25 +323,3 @@ ul.list li.list-item.topic img, ul.list li.list-item.forum img {
     left: 5px;
     top: 10px;
 }
-
-#forum-post-form fieldset {
-    border: none;
-	padding: 0;
-	margin: 0;
-}
-
-#forum-post-form legend {
-	display: none;
-}
-
-#forum-post-form dt {
-	font-weight: bold;
-	float: left;
-	width: 150px;
-	text-align: right;
-}
-
-#forum-post-form dd {
-	margin: 0 0 5px 160px;
-	position: relative;
-}

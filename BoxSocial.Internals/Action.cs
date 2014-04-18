@@ -211,6 +211,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public static string GetTitle(string ownerDisplayName, string title)
+        {
+            return string.Format("{0} {1}", ownerDisplayName, title);
+        }
+
         public string Body
         {
             get

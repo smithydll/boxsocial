@@ -1050,6 +1050,30 @@ namespace BoxSocial.Applications.Blog
                     }
                     core.Display.DisplayComments(core.Template, page.User, blogEntries[0]);
                     core.Template.Parse("SINGLE", "TRUE");
+
+                    page.Core.Meta.Add("twitter:card", "summary");
+                    if (!string.IsNullOrEmpty(page.Core.Settings.TwitterName))
+                    {
+                        page.Core.Meta.Add("twitter:site", page.Core.Settings.TwitterName);
+                    }
+                    if (blogEntries[0].Owner is User && !string.IsNullOrEmpty(((User)blogEntries[0].Owner).UserInfo.TwitterUserName))
+                    {
+                        page.Core.Meta.Add("twitter:creator", ((User)blogEntries[0].Owner).UserInfo.TwitterUserName);
+                    }
+                    page.Core.Meta.Add("twitter:title", blogEntries[0].Title);
+                    page.Core.Meta.Add("og:title", blogEntries[0].Title);
+                    page.Core.Meta.Add("twitter:description", Functions.TrimStringToWord(HttpUtility.HtmlDecode(page.Core.Bbcode.StripTags(HttpUtility.HtmlEncode(blogEntries[0].Body))).Trim(), 200, true));
+                    page.Core.Meta.Add("og:type", "article");
+                    page.Core.Meta.Add("og:url", page.Core.Hyperlink.StripSid(page.Core.Hyperlink.AppendCurrentSid(blogEntries[0].Uri)));
+                    page.Core.Meta.Add("og:description", Functions.TrimStringToWord(HttpUtility.HtmlDecode(page.Core.Bbcode.StripTags(HttpUtility.HtmlEncode(blogEntries[0].Body))).Trim(), 200, true));
+
+                    List<string> images = core.Bbcode.ExtractImages(blogEntries[0].Body, blogEntries[0].Owner, false, true);
+
+                    if (images.Count > 0)
+                    {
+                        page.Core.Meta.Add("twitter:image", images[0]);
+                        page.Core.Meta.Add("og:image", images[0]);
+                    }
                 }
 
                 core.Template.Parse("BLOGPOSTS", postsOnPage.ToString());

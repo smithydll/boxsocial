@@ -3381,7 +3381,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (!string.IsNullOrEmpty(ItemAbstract))
             {
-                returnValue += ItemAbstract + "\r\n";
+                returnValue += ItemAbstract + "\r\n\r\n";
             }
 
             returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",

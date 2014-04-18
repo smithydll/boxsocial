@@ -43,6 +43,8 @@ namespace BoxSocial.Internals
         private string title;
         [DataField("content_body", MYSQL_TEXT)]
         private string body;
+        [DataField("content_image", 255)]
+        private string image;
         [DataField("content_cached_time")]
         private long cachedTimeRaw;
 
@@ -62,6 +64,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string Image
+        {
+            get
+            {
+                return image;
+            }
+        }
+
         public ContentPreviewCache(Core core, DataRow cacheRow)
             : base(core)
         {
@@ -78,6 +88,11 @@ namespace BoxSocial.Internals
 
         public static void Create(Core core, string domain, string unique, string title, string body, string language)
         {
+            Create(core, domain, unique, title, body, language, string.Empty);
+        }
+
+        public static void Create(Core core, string domain, string unique, string title, string body, string language, string image)
+        {
             if (core == null)
             {
                 throw new NullCoreException();
@@ -87,6 +102,7 @@ namespace BoxSocial.Internals
                 new FieldValuePair("content_unique", unique),
                 new FieldValuePair("content_title", title),
                 new FieldValuePair("content_body", body),
+                new FieldValuePair("content_image", image),
                 new FieldValuePair("content_language", language),
                 new FieldValuePair("content_cached_time", UnixTime.UnixTimeStamp()));
         }

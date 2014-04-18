@@ -2483,7 +2483,7 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!string.IsNullOrEmpty(item.ItemAbstract))
                     {
-                        returnValue += item.ItemAbstract + "\r\n";
+                        returnValue += item.ItemAbstract + "\r\n\r\n";
                     }
 
                     returnValue += string.Format("[iurl=\"{0}#hd\"][inline cdn-object=\"{2}\" width=\"{3}\" height=\"{4}\"]{1}[/inline][/iurl]",

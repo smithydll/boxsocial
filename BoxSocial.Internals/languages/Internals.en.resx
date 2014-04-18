@@ -683,6 +683,9 @@
   <data name="PAGES" xml:space="preserve">
     <value>Pages</value>
   </data>
+  <data name="PASSWORD" xml:space="preserve">
+    <value>Password</value>
+  </data>
   <data name="PERMISSIONS" xml:space="preserve">
     <value>Permissions</value>
   </data>

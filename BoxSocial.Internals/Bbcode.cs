@@ -499,6 +499,57 @@ namespace BoxSocial.Internals
                         return imageUris;
                     }
                 }
+
+                matches = Regex.Matches(input, "\\[instagram\\]((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)\\[/instagram\\]", RegexOptions.IgnoreCase);
+
+                foreach (Match match in matches)
+                {
+                    string domain = match.Groups[4].Value;
+                    string path = match.Groups[5].Value;
+                    string imageUri = string.Empty;
+
+                    if (domain.ToLower().EndsWith("instagram.com") && path.ToLower().Contains("/p/"))
+                    {
+                        string instagramUrl = match.Groups[1].Value;
+                        string instagramId = instagramUrl;
+
+                        ContentPreviewCache preview = ContentPreviewCache.GetPreview(core, "instagram.com", instagramId, core.Prose.Language);
+                        string instagram = string.Empty;
+
+                        if (preview != null)
+                        {
+                            imageUri = preview.Image;
+                        }
+                        else
+                        {
+                            string apiUri = "http://api.instagram.com/oembed?url=" + HttpUtility.UrlEncode(instagramId); // +"&maxwidth=550";
+                            WebClient wc = new WebClient();
+                            string response = wc.DownloadString(apiUri);
+
+                            Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
+
+                            if (strings.ContainsKey("url") && strings.ContainsKey("type") && strings.ContainsKey("title"))
+                            {
+                                if (strings["type"] == "photo")
+                                {
+                                    imageUri = strings["url"];
+                                    instagram = "<a href=\"" + instagramUrl + "\"><img src=\"" + strings["url"] + "\" alt=\"" + HttpUtility.HtmlEncode(strings["title"]) + "\" style=\"max-width: 100%;\" /></a>";
+                                }
+                            }
+                            ContentPreviewCache.Create(core, "instagram.com", instagramId, string.Empty, instagram, core.Prose.Language, imageUri);
+                        }
+                    }
+
+                    if (imageUri != string.Empty)
+                    {
+                        imageUris.Add(imageUri);
+
+                        if (firstOnly)
+                        {
+                            return imageUris;
+                        }
+                    }
+                }
             }
 
             return imageUris;
@@ -2181,7 +2232,7 @@ namespace BoxSocial.Internals
                                     instagram = "<a href=\"" + instagramUrl + "\"><img src=\"" + strings["url"] + "\" alt=\"" + HttpUtility.HtmlEncode(strings["title"]) + "\" style=\"max-width: 100%;\" /></a>";
                                 }
                             }
-                            ContentPreviewCache.Create(e.Core, "instagram.com", instagramId, string.Empty, instagram, e.Core.Prose.Language);
+                            ContentPreviewCache.Create(e.Core, "instagram.com", instagramId, string.Empty, instagram, e.Core.Prose.Language, strings["url"]);
                         }
 
 

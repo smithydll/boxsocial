@@ -1513,6 +1513,8 @@ namespace BoxSocial.Applications.Forum
                 else
                 {
                     thisForum = new Forum(page.Core, settings);
+
+                    core.Template.Parse("FORUM_TITLE", core.Prose.GetString("FORUM"));
                 }
             }
             catch (InvalidForumException)

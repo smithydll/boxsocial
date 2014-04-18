@@ -249,6 +249,7 @@ h2#sub-title {
 
 .r-stuff {
     text-align: right;
+    clear: left;
 }
 
 /* Fixes button height rendering in gecko to same as trident and webkit */
@@ -348,7 +349,7 @@ span.subscribe-button a {
 	border: none;
 	background: none;
 	color: #888888;
-	margin: 2px;
+	margin: 2px 8px;
 	padding: 5px 5px;
 }
 
@@ -764,16 +765,17 @@ ul.feed-list li.feed-item {
 ul.feed-list li.feed-item h5 {
 	font-size: 115%;
 	padding: 2px;
-	margin: 0px;
+	margin: 0 0 0 60px !important;
 	font-weight: normal;
-	font-size: 120% !important;
-	margin-left: 60px;
+	text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 ul.feed-list li div.feed-disp-pic {
 	float:left;
-	width: 60px;
-	height: 60px;
+	width: 55px;
+	height: 50px;
 	padding: 0 5px;
 	margin-top: 2px;
 }
@@ -782,7 +784,8 @@ ul.feed-list li div.feed-disp-pic img
 {
 	padding: 2px;
 	background-color: White;
-	border: solid 1px #999999;
+	border: solid 1px #cccccc;
+    border-radius: 5px;
 }
 
 ul.feed-list li div.feed-title {
@@ -794,7 +797,7 @@ ul.feed-list li div.feed-title {
 ul.feed-list li div.feed-text, ul.status-feed li div.feed-text {
     padding: 0;
 	position: relative;
-	clear: left;
+	/*clear: left;*/
 	overflow-x: hidden;
 	text-overflow: clip;
 }
@@ -808,6 +811,10 @@ blockquote {
 
 .bbcode-thumb {
     margin-right: 1px;
+}
+
+.feed-text .bbcode-thumb {
+    width: 80px;
 }
 
 /* Menu System */
@@ -1547,4 +1554,12 @@ span.breadcrumbs strong {
 span.breadcrumbs a {
     color: #5599ff;
     font-size: 12pt;
+}
+
+#pane-profile-info dl dt {
+    float: left;
+}
+
+#pane-profile-info dl dd {
+    margin-left: 13em;
 }

@@ -153,6 +153,7 @@ namespace BoxSocial.FrontEnd
                                 emailTemplate.Parse("TO_NAME", userEmail.Owner.DisplayName);
                                 emailTemplate.Parse("U_ACTIVATE", activateUri);
                                 emailTemplate.Parse("USERNAME", userEmail.Owner.UserName);
+                                // TODO: do not send a new password in plain text
                                 emailTemplate.Parse("PASSWORD", newPassword);
 
                                 core.Email.SendEmail(userEmail.Email, core.Settings.SiteTitle + " Password Reset", emailTemplate);

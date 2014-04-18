@@ -260,6 +260,24 @@ namespace BoxSocial.Internals
 
                 VariableCollection statusMessageVariableCollection = e.Core.Template.CreateChild("status_messages");
 
+                e.Core.Meta.Add("twitter:card", "summary");
+                if (!string.IsNullOrEmpty(e.Core.Settings.TwitterName))
+                {
+                    e.Core.Meta.Add("twitter:site", e.Core.Settings.TwitterName);
+                }
+                if (item.Owner is User && !string.IsNullOrEmpty(((User)item.Owner).UserInfo.TwitterUserName))
+                {
+                    e.Core.Meta.Add("twitter:creator", ((User)item.Owner).UserInfo.TwitterUserName);
+                }
+                e.Core.Meta.Add("twitter:title", BoxSocial.Internals.Action.GetTitle(item.Owner.DisplayName, item.Action));
+                e.Core.Meta.Add("og:title", BoxSocial.Internals.Action.GetTitle(item.Owner.DisplayName, item.Action));
+                e.Core.Meta.Add("twitter:description", Functions.TrimStringToWord(HttpUtility.HtmlDecode(e.Core.Bbcode.StripTags(HttpUtility.HtmlEncode(item.Message))).Trim(), 256, true));
+                e.Core.Meta.Add("og:type", "article");
+                e.Core.Meta.Add("og:url", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(item.Uri)));
+                e.Core.Meta.Add("og:description", Functions.TrimStringToWord(HttpUtility.HtmlDecode(e.Core.Bbcode.StripTags(HttpUtility.HtmlEncode(item.Message))).Trim(), 256, true));
+
+                e.Page.CanonicalUri = item.Uri;
+
                 //statusMessageVariableCollection.Parse("STATUS_MESSAGE", item.Message);
                 e.Core.Display.ParseBbcode(statusMessageVariableCollection, "STATUS_MESSAGE", e.Core.Bbcode.FromStatusCode(item.Message), e.Page.Owner, true, string.Empty, string.Empty);
                 statusMessageVariableCollection.Parse("STATUS_UPDATED", e.Core.Tz.DateTimeToString(item.GetTime(e.Core.Tz)));

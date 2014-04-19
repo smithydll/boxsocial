@@ -128,6 +128,7 @@
     <Content Include="templates\account_group_subgroup_members.html">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="templates\viewgroupmemberlist.mobile.html" />
     <Content Include="templates\groups_default.html" />
     <Content Include="templates\group_footer.html" />
     <Content Include="templates\todaygrouppanel.html" />

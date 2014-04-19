@@ -1974,3 +1974,11 @@ div#upload canvas {
     font-weight: bold;
     text-shadow: 1px 1px 0 #ffffff;
 }
+
+.username-card {
+    font-weight: bold;
+}
+
+username-card * {
+    font-weight: normal;
+}

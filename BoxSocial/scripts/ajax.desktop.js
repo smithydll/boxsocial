@@ -130,6 +130,36 @@ function preparePermissionsList(id) {
     };
 }
 
+function ShareItem(itemId, itemType) {
+    return PostToPage(ShowShareContent, "api/share?ajax=true&mode=post&item=" + itemId + "&type=" + itemType, null, { ajax: "true" }, { item: itemId, type: itemType });
+}
+
+function ShowShareContent(r, e, a) {
+    $("#share-form").html(r['message']);
+    preparePermissionsList('#share-permissions');
+    $("#share-form").dialog({
+        modal: true,
+        width: 640,
+        resizable: false,
+        buttons: {
+            Cancel: function () {
+                $(this).dialog("close");
+            },
+            Share: function () {
+                PostToPage(SharedContent, "api/share", null, { ajax: 'true', 'share-message': $('#share-message').val(), item: a['item'], type: a['type'], 'share-permissions-ids': $('#share-permissions-ids').val(), 'share-permissions-text': $('#share-permissions-text').val() }, '');
+                $(this).dialog("close");
+                $("#share-form").html("Post shared");
+                var successDialog = $("#share-form").dialog({ buttons: { OK: function () { $(this).dialog("close"); } } });
+                setTimeout(function () { successDialog.dialog("close") }, 2000);
+            }
+        }
+    });
+}
+
+function SharedContent(r, e, a) {
+    SentStatus(r, e, a);
+}
+
 /* http://stackoverflow.com/questions/13442897/jquery-animate-backgroundposition-not-working */
 $.cssHooks["backgroundPositionY"] = {
     get: function (elem, computed, extra) {

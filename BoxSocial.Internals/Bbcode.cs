@@ -1041,6 +1041,8 @@ namespace BoxSocial.Internals
             {
                 input = input.Replace("\r\n", "\n");
                 input = input.Replace("\n", "<br />");
+                //input = input.Replace("<br /><br />", "</p><p>"); // Maybe? Need parser to break span tags at new lines
+                input = input.Replace("<br /><br /><a ", "</p><p><a "); // But if the next tag is an anchor then it's a pretty decent chance that there is no formatting
                 input = input.Replace("<p></p>", string.Empty);
                 input = input.Replace("<p><br /><br />", "<p>");
                 input = input.Replace("<p><br />", "<p>");

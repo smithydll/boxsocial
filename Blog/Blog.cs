@@ -526,13 +526,21 @@ namespace BoxSocial.Applications.Blog
                     if (qc1 == null)
                     {
                         qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, lastId);
-                        qc2 = query.AddCondition("post_time_ut", ConditionEquality.LessThanEqual, lastPostTime);
                     }
                     else
                     {
                         qc1.Value = lastId;
+                    }
+
+                    if (qc2 == null)
+                    {
+                        qc2 = query.AddCondition("post_time_ut", ConditionEquality.LessThanEqual, lastPostTime);
+                    }
+                    else
+                    {
                         qc2.Value = lastPostTime;
                     }
+
                     query.LimitCount = (int)(query.LimitCount * pessimism);
 
                     if (moreContent || post > 0)

@@ -1641,6 +1641,28 @@ namespace BoxSocial.Groups
                 }
                 memberVariableCollection.Parse("ICON", member.Icon);
                 memberVariableCollection.Parse("TILE", member.Tile);
+                memberVariableCollection.Parse("MOBILE_COVER", member.MobileCoverPhoto);
+
+                memberVariableCollection.Parse("ID", member.Id);
+                memberVariableCollection.Parse("TYPE", member.TypeId);
+                memberVariableCollection.Parse("LOCATION", member.Profile.Country);
+                memberVariableCollection.Parse("ABSTRACT", page.Core.Bbcode.Parse(member.Profile.Autobiography));
+                memberVariableCollection.Parse("SUBSCRIBERS", member.Info.Subscribers);
+
+                if (Subscription.IsSubscribed(page.Core, member.ItemKey))
+                {
+                    memberVariableCollection.Parse("SUBSCRIBERD", "TRUE");
+                    memberVariableCollection.Parse("U_SUBSCRIBE", page.Core.Hyperlink.BuildUnsubscribeUri(member.ItemKey));
+                }
+                else
+                {
+                    memberVariableCollection.Parse("U_SUBSCRIBE", page.Core.Hyperlink.BuildSubscribeUri(member.ItemKey));
+                }
+
+                if (page.Core.Session.SignedIn && member.Id == page.Core.LoggedInMemberId)
+                {
+                    memberVariableCollection.Parse("ME", "TRUE");
+                }
             }
 
             string pageUri = page.Group.MemberlistUri;

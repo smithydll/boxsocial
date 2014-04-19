@@ -1,0 +1,67 @@
+<!-- INCLUDE page_header.html -->
+
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{MEMBERS_TITLE}</h2>
+        </div>
+    </div>
+
+<div id="content">
+
+    <p class="action-buttons">{BREADCRUMBS}</p>
+
+<div id="pane-profile">
+</div>
+<div id="profile">
+<!-- IF IS_WAITING_APPROVAL -->
+<h3>Pending Memberships</h3>
+<table style="width: 100%">
+<tr>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN approval_list -->
+<!-- IF approval_list.$_INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{approval_list.U_PROFILE}">{approval_list.USER_DISPLAY_NAME}</a></td>
+	<td><a href="{approval_list.U_APPROVE}">Approve Membership</a></td>
+</tr>
+<!-- END approval_list -->
+</table>
+<!-- ENDIF -->
+
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+	
+<!-- IF MEMBERS -->
+<ul class="list">
+<!-- BEGIN member_list -->
+	<li class="list-item icon">
+        <a href="{member_list.U_PROFILE}">
+        <!-- IF member_list.ICON -->
+		<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+		<!-- ELSE -->
+		<img src="/images/no_picture_100.png" alt="{member_list.USER_DISPLAY_NAME}" />
+		<!-- ENDIF -->
+        {member_list.USER_DISPLAY_NAME}
+        </a>
+	</li>
+<!-- END member_list -->
+</ul>
+
+<!-- ENDIF -->
+	<div class="cheat-clear-left"></div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
+    </div>
+    </div>
+<!-- INCLUDE page_footer.html -->

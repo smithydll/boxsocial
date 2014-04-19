@@ -2469,6 +2469,28 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.Icon);
                 friendVariableCollection.Parse("TILE", friend.Tile);
+                friendVariableCollection.Parse("MOBILE_COVER", friend.MobileCoverPhoto);
+
+                friendVariableCollection.Parse("ID", friend.Id);
+                friendVariableCollection.Parse("TYPE", friend.TypeId);
+                friendVariableCollection.Parse("LOCATION", friend.Profile.Country);
+                friendVariableCollection.Parse("ABSTRACT", e.Core.Bbcode.Parse(friend.Profile.Autobiography));
+                friendVariableCollection.Parse("SUBSCRIBERS", friend.Info.Subscribers);
+
+                if (Subscription.IsSubscribed(e.Core, friend.ItemKey))
+                {
+                    friendVariableCollection.Parse("SUBSCRIBERD", "TRUE");
+                    friendVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildUnsubscribeUri(friend.ItemKey));
+                }
+                else
+                {
+                    friendVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildSubscribeUri(friend.ItemKey));
+                }
+
+                if (e.Core.Session.SignedIn && friend.Id == e.Core.LoggedInMemberId)
+                {
+                    friendVariableCollection.Parse("ME", "TRUE");
+                }
             }
 
             string pageUri = e.Core.Hyperlink.BuildFriendsUri(e.Page.User);
@@ -2478,7 +2500,7 @@ namespace BoxSocial.Internals
             e.Core.Display.ParsePageList(e.Page.User, true);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "friends", "Friends" });
+            breadCrumbParts.Add(new string[] { "contacts/friends", "Friends" });
 
             e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }

@@ -166,6 +166,16 @@ namespace BoxSocial.Install
                         InstallLanguage("en", args[1]);
                     }
                     break;
+                case "upgrade":
+                    if (args[1] == "pages")
+                    {
+                        EnterUpgradePages();
+                    }
+                    else if (args[1] == "permissions")
+                    {
+                        EnterUpgradePermissions();
+                    }
+                    break;
                 case "sync":
                     break;
             }
@@ -342,6 +352,7 @@ namespace BoxSocial.Install
             menuItems.Add(new MenuOption("Install Box Social", EnterInstallBoxSocial));
             menuItems.Add(new MenuOption("Exit", DoExit));
             menuItems.Add(new MenuOption("Upgrade Permissions", EnterUpgradePermissions));
+            menuItems.Add(new MenuOption("Upgrade Pages", EnterUpgradePages));
 
             ExecuteMenu(menuItems);
         }
@@ -487,6 +498,66 @@ namespace BoxSocial.Install
             loadUpdateOptions();
             doUpdate("EnterpriseResourcePlanning");
             InstallLanguage("en", @"EnterpriseResourcePlanning");
+        }
+
+        static void EnterUpgradePages()
+        {
+            loadUpdateOptions();
+
+            //Setup
+            Mysql db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+            Core core = new Core(null, db, null);
+
+            Console.Clear();
+
+            Console.ForegroundColor = ConsoleColor.White;
+
+            Console.SetCursorPosition(5, 5);
+            Console.Write("Upgrading...");
+
+            long offset = 0;
+            long rows = 100;
+
+            while (rows > 0)
+            {
+                db.CloseConnection();
+                Thread.Sleep(100);
+                db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
+                core = new Core(null, db, null);
+
+                SelectQuery query = User.GetSelectQueryStub(typeof(User));
+                query.LimitStart = (int)offset;
+                query.LimitCount = 100;
+                query.AddSort(SortOrder.Ascending, "user_keys.user_id");
+
+                DataTable dt = db.Query(query);
+                rows = dt.Rows.Count;
+                offset += 100;
+
+                foreach (DataRow dr in dt.Rows)
+                {
+                    User user = new User(core, dr, UserLoadOptions.Common);
+                    core.CreateNewSession(user);
+
+                    // get applications
+                    List<ApplicationEntry> applications = Application.GetApplications(core, user);
+
+                    foreach (ApplicationEntry ae in applications)
+                    {
+                        ae.UpdateInstall(core, user);
+                    }
+                }
+            }
+
+            Console.WriteLine("Pages Upgraded");
+            if (interactive)
+            {
+                Console.WriteLine("Press Enter to continue");
+                while (!(Console.ReadKey(true).Key == ConsoleKey.Enter))
+                {
+                    Thread.Sleep(100);
+                }
+            }
         }
 
         static void EnterUpgradePermissions()

@@ -148,6 +148,11 @@ namespace BoxSocial.Internals
 
             template.Parse("USER_ID", User.Id.ToString());
             template.Parse("USER_TYPE_ID", User.TypeId.ToString());
+
+            core.Template.Parse("PRIMITIVE_THUMB", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_ICON", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
+            core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
         }
     }
 

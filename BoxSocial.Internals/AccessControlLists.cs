@@ -735,6 +735,10 @@ namespace BoxSocial.Internals
             {
                 if (simple)
                 {
+                    //
+                    // Simple
+                    //
+
                     //HttpContext.Current.Response.Write("Simple<br />");
                     bool first = true;
                     PermissionTypes lastType = PermissionTypes.View;
@@ -801,6 +805,10 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
+                    //
+                    // Detailed
+                    //
+
                     foreach (AccessControlPermission itemPermission in itemPermissions)
                     {
                         SelectBox groupsSelectBox = BuildGroupsSelectBox(string.Format("new-permission-group[{0}]", itemPermission.Id), item.Owner);
@@ -858,6 +866,8 @@ namespace BoxSocial.Internals
                                 long.TryParse(parts[1], out primitiveKeyTypeId);
                                 long.TryParse(parts[2], out primitiveKeyId);
 
+                                //HttpContext.Current.Response.Write("Reading perms key: " + key + "<br />");
+
                                 ItemKey pk = new ItemKey(primitiveKeyId, primitiveKeyTypeId);
 
                                 UnsavedAccessControlGrant uacg = new UnsavedAccessControlGrant(core, pk, item.ItemKey, itemPermissionId, AccessControlGrants.Inherit);
@@ -880,11 +890,13 @@ namespace BoxSocial.Internals
 
                                 foreach (AccessControlGrant grant in itemGrants)
                                 {
-                                    if (grant.ItemKey.Equals(uacg.ItemKey) && grant.PrimitiveKey.Equals(uacg.PrimitiveKey))
+                                    if (grant.ItemKey.Equals(uacg.ItemKey) && grant.PrimitiveKey.Equals(uacg.PrimitiveKey) && grant.PermissionId.Equals(uacg.PermissionId))
                                     {
+                                        //HttpContext.Current.Response.Write("Found grant: " + key + "<br />");
                                         // We only want to trigger a database update if things have changed
                                         if (grant.Allow != uacg.Allow)
                                         {
+                                            //HttpContext.Current.Response.Write("Saving perms key: " + key + ", " + uacg.Allow + "<br />");
                                             grant.Allow = uacg.Allow;
                                         }
                                     }

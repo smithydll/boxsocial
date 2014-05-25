@@ -106,7 +106,7 @@
     <!-- ENDIF -->
         </p>
   <!-- ENDIF -->
-  <!-- IF NOT member_list.U_MAKE_OPERATOR -->
+  <!-- IF NOT GROUP_OPERATOR -->
     <!-- IF LOGGED_IN AND NOT member_list.ME -->
       <!-- IF member_list.SUBSCRIBED -->
         <p><span class="subscribe-{member_list.TYPE}-{member_list.ID} subscribe-button subscribed"><a href="{member_list.U_SUBSCRIBE}" onclick="return SubscribeItem({member_list.ID},{member_list.TYPE}, $(this).parent().hasClass('subscribed') );">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{member_list.SUBSCRIBERS}</span></p>
@@ -118,7 +118,7 @@
   <!-- IF member_list.LOCATION -->
         <p><strong>{L_LOCATION}:</strong> {member_list.LOCATION}</p>
   <!-- ENDIF -->
-        <p>Joined: {member_list.JOIN_DATE}</p>
+        <p><strong>Joined:</strong> {member_list.JOIN_DATE}</p>
   <!-- IF member_list.USER_CAPTION -->
         <p><em>{member_list.USER_CAPTION}</em></p>
   <!-- ENDIF -->

@@ -2402,9 +2402,112 @@ namespace BoxSocial.Internals
             core.Template.Parse("SUBSCRIBERS", core.Functions.LargeIntegerToString(page.User.Info.Subscribers));
         }
 
+        public static void ShowSubscriptions(object sender, ShowUPageEventArgs e)
+        {
+            e.Template.SetTemplate("viewsubscriptions.html");
+
+            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.User, true);
+
+            List<User> subscribers = Subscription.GetSubscriptions(e.Core, (User)e.Page.Owner, e.Page.TopLevelPageNumber, 18);
+
+            foreach (User subscriber in subscribers)
+            {
+                VariableCollection subscriberVariableCollection = e.Template.CreateChild("subscriber_list");
+
+                subscriberVariableCollection.Parse("USER_DISPLAY_NAME", subscriber.DisplayName);
+                subscriberVariableCollection.Parse("U_PROFILE", subscriber.Uri);
+                subscriberVariableCollection.Parse("ICON", subscriber.Icon);
+                subscriberVariableCollection.Parse("TILE", subscriber.Tile);
+                subscriberVariableCollection.Parse("MOBILE_COVER", subscriber.MobileCoverPhoto);
+
+                subscriberVariableCollection.Parse("ID", subscriber.Id);
+                subscriberVariableCollection.Parse("TYPE", subscriber.TypeId);
+                subscriberVariableCollection.Parse("LOCATION", subscriber.Profile.Country);
+                e.Core.Display.ParseBbcode(subscriberVariableCollection, "ABSTRACT", subscriber.Profile.Autobiography);
+                subscriberVariableCollection.Parse("SUBSCRIBERS", subscriber.Info.Subscribers);
+
+                if (Subscription.IsSubscribed(e.Core, subscriber.ItemKey))
+                {
+                    subscriberVariableCollection.Parse("SUBSCRIBERD", "TRUE");
+                    subscriberVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildUnsubscribeUri(subscriber.ItemKey));
+                }
+                else
+                {
+                    subscriberVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildSubscribeUri(subscriber.ItemKey));
+                }
+
+                if (e.Core.Session.SignedIn && subscriber.Id == e.Core.LoggedInMemberId)
+                {
+                    subscriberVariableCollection.Parse("ME", "TRUE");
+                }
+            }
+
+            string pageUri = e.Core.Hyperlink.BuildSubscriptionsUri(e.Page.User);
+            e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.Subscribers);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "subscriptions", "Subscriptions" });
+
+            e.Page.User.ParseBreadCrumbs(breadCrumbParts);
+        }
+
         public static void ShowSubscribers(object sender, ShowUPageEventArgs e)
         {
             e.Template.SetTemplate("viewsubscribers.html");
+
+            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.User, true);
+
+            List<User> subscribers = Subscription.GetSubscribers(e.Core, e.Page.Owner.ItemKey, e.Page.TopLevelPageNumber, 18);
+
+            foreach (User subscriber in subscribers)
+            {
+                VariableCollection subscriberVariableCollection = e.Template.CreateChild("subscriber_list");
+
+                subscriberVariableCollection.Parse("USER_DISPLAY_NAME", subscriber.DisplayName);
+                subscriberVariableCollection.Parse("U_PROFILE", subscriber.Uri);
+                subscriberVariableCollection.Parse("ICON", subscriber.Icon);
+                subscriberVariableCollection.Parse("TILE", subscriber.Tile);
+                subscriberVariableCollection.Parse("MOBILE_COVER", subscriber.MobileCoverPhoto);
+
+                subscriberVariableCollection.Parse("ID", subscriber.Id);
+                subscriberVariableCollection.Parse("TYPE", subscriber.TypeId);
+                subscriberVariableCollection.Parse("LOCATION", subscriber.Profile.Country);
+                e.Core.Display.ParseBbcode(subscriberVariableCollection, "ABSTRACT", subscriber.Profile.Autobiography);
+                subscriberVariableCollection.Parse("SUBSCRIBERS", subscriber.Info.Subscribers);
+
+                if (Subscription.IsSubscribed(e.Core, subscriber.ItemKey))
+                {
+                    subscriberVariableCollection.Parse("SUBSCRIBERD", "TRUE");
+                    subscriberVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildUnsubscribeUri(subscriber.ItemKey));
+                }
+                else
+                {
+                    subscriberVariableCollection.Parse("U_SUBSCRIBE", e.Core.Hyperlink.BuildSubscribeUri(subscriber.ItemKey));
+                }
+
+                if (e.Core.Session.SignedIn && subscriber.Id == e.Core.LoggedInMemberId)
+                {
+                    subscriberVariableCollection.Parse("ME", "TRUE");
+                }
+            }
+
+            string pageUri = e.Core.Hyperlink.BuildSubscribersUri(e.Page.User);
+            e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.Info.Subscribers);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "subscribers", "Subscribers" });
+
+            e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }
 
         public static void ShowFriends(object sender, ShowUPageEventArgs e)
@@ -2474,7 +2577,7 @@ namespace BoxSocial.Internals
                 friendVariableCollection.Parse("ID", friend.Id);
                 friendVariableCollection.Parse("TYPE", friend.TypeId);
                 friendVariableCollection.Parse("LOCATION", friend.Profile.Country);
-                friendVariableCollection.Parse("ABSTRACT", e.Core.Bbcode.Parse(friend.Profile.Autobiography));
+                e.Core.Display.ParseBbcode(friendVariableCollection, "ABSTRACT", friend.Profile.Autobiography);
                 friendVariableCollection.Parse("SUBSCRIBERS", friend.Info.Subscribers);
 
                 if (Subscription.IsSubscribed(e.Core, friend.ItemKey))

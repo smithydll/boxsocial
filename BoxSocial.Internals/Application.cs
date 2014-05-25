@@ -457,7 +457,7 @@ namespace BoxSocial.Internals
         private static DataTable GetApplicationRows(Core core, Primitive owner)
         {
             //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
-            long loggedIdUid = core.LoggedInMemberId;
+            //long loggedIdUid = core.LoggedInMemberId;
 			
             /*DataTable userApplicationsTable = core.db.Query(string.Format(@"SELECT {0}, {1}
                 FROM applications ap, primitive_apps pa

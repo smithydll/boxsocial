@@ -125,6 +125,8 @@ namespace BoxSocial.Internals
                 uQuery.AddField("grant_allow", grantAllow);
 
                 core.Db.Query(uQuery);
+
+                //HttpContext.Current.Response.Write(string.Format("Saved perms key: {0},{1},{2}<br />", PermissionId, PrimitiveKey.TypeId, PrimitiveKey.Id));
             }
         }
 		

@@ -104,6 +104,8 @@ namespace BoxSocial.Internals
         private string userNewPassword;
         [DataField("user_subscription_level")]
         private byte userSubscriptionLevel;
+        [DataField("user_subscriptions")]
+        private long userSubscriptions;
         [DataField("user_analytics_code", 15)]
         protected string analyticsCode;
         [DataField("user_invites")]
@@ -300,6 +302,18 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("userSubscriptionLevel", (byte)value);
+            }
+        }
+
+        public long Subscriptions
+        {
+            get
+            {
+                return userSubscriptions;
+            }
+            set
+            {
+                SetProperty("userSubscriptions", value);
             }
         }
 

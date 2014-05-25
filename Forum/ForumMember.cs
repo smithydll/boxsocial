@@ -213,8 +213,14 @@ namespace BoxSocial.Applications.Forum
 			iQuery.AddField("rank", 0);
 			iQuery.AddField("signature", "");
 			
-			
 			core.Db.Query(iQuery);
+
+            UpdateQuery uQuery = new UpdateQuery(typeof(ForumSettings));
+            uQuery.AddCondition("forum_item_id", owner.Id);
+            uQuery.AddCondition("forum_item_type_id", owner.TypeId);
+            uQuery.AddField("forum_members", new QueryOperation("forum_members", QueryOperations.Addition, 1));
+
+            core.Db.Query(uQuery);
 			
 			return new ForumMember(core, owner, user);
 		}
@@ -349,8 +355,15 @@ namespace BoxSocial.Applications.Forum
 
         public static string GenerateMemberlistUri(Core core, Primitive primitive, string filter)
         {
-            return core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
-                primitive.UriStub, filter));
+            if (string.IsNullOrEmpty(filter))
+            {
+                return GenerateMemberlistUri(core, primitive);
+            }
+            else
+            {
+                return core.Hyperlink.AppendSid(string.Format("{0}forum/memberlist?filter={1}",
+                    primitive.UriStub, filter));
+            }
         }
 
         public static void ShowUCP(object sender, ShowPPageEventArgs e)
@@ -400,6 +413,7 @@ namespace BoxSocial.Applications.Forum
         {
             core.Template.SetTemplate("Forum", "memberlist");
             ForumSettings.ShowForumHeader(core, page);
+            ForumSettings settings = new ForumSettings(core, page.Owner);
 
             core.Template.Parse("USER_ICON", page.Owner.Thumbnail);
             core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
@@ -446,6 +460,31 @@ namespace BoxSocial.Applications.Forum
                 memberVariableCollection.Parse("U_PROFILE", member.Uri);
 
                 memberVariableCollection.Parse("POSTS", member.ForumPosts.ToString());
+
+                memberVariableCollection.Parse("ICON", member.Icon);
+                memberVariableCollection.Parse("TILE", member.Tile);
+                memberVariableCollection.Parse("MOBILE_COVER", member.MobileCoverPhoto);
+
+                memberVariableCollection.Parse("ID", member.Id);
+                memberVariableCollection.Parse("TYPE", member.TypeId);
+                memberVariableCollection.Parse("LOCATION", member.Profile.Country);
+                memberVariableCollection.Parse("ABSTRACT", page.Core.Bbcode.Parse(member.Profile.Autobiography));
+                memberVariableCollection.Parse("SUBSCRIBERS", member.Info.Subscribers);
+
+                if (Subscription.IsSubscribed(page.Core, member.ItemKey))
+                {
+                    memberVariableCollection.Parse("SUBSCRIBERD", "TRUE");
+                    memberVariableCollection.Parse("U_SUBSCRIBE", page.Core.Hyperlink.BuildUnsubscribeUri(member.ItemKey));
+                }
+                else
+                {
+                    memberVariableCollection.Parse("U_SUBSCRIBE", page.Core.Hyperlink.BuildSubscribeUri(member.ItemKey));
+                }
+
+                if (page.Core.Session.SignedIn && member.Id == page.Core.LoggedInMemberId)
+                {
+                    memberVariableCollection.Parse("ME", "TRUE");
+                }
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
@@ -453,7 +492,9 @@ namespace BoxSocial.Applications.Forum
             breadCrumbParts.Add(new string[] { "memberlist", "Memberlist" });
 
             page.Owner.ParseBreadCrumbs(breadCrumbParts);
-        }
+
+            core.Display.ParsePagination(ForumMember.GenerateMemberlistUri(core, page.Owner, core.Functions.GetFilter()), 20, settings.Members);
+        } 
 
         private static void Save(Core core, PPage page)
         {

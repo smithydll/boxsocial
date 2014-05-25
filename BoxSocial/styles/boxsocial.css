@@ -556,7 +556,7 @@ div.blog-post h3 {
 	padding-bottom: 2px;
 }
 
-ul#profile-friends {
+ul#profile-friends, ul#profile-subscribers {
 	list-style: none;
 	padding: 5px;
 	margin: 0px;
@@ -567,14 +567,14 @@ ul#profile-friends dl {
 	margin: 0px;
 }
 
-ul#profile-friends li {
+ul#profile-friends li, ul#profile-subscribers li {
 	float: left;
 	width: 120px;
 	height: 120px;
 	display: inline;
 }
 
-ul#profile-friends li div {
+ul#profile-friends li div, ul#profile-subscribers li div {
 	width: 100px;
 }
 
@@ -1981,4 +1981,12 @@ div#upload canvas {
 
 username-card * {
     font-weight: normal;
+}
+
+div#today-feed li.today-feed h4.today-day {
+    text-align: center;
+    font-size: 110%;
+    color: #999999;
+    margin: 0;
+    padding: 0;
 }

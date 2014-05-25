@@ -816,20 +816,49 @@ namespace BoxSocial.Internals
                         query.AddFields("page_id");
                         query.AddCondition("page_item_id", viewer.Id);
                         query.AddCondition("page_item_type_id", viewer.TypeId);
-                        query.AddCondition("page_title", slugs[slug]);
+                        query.AddCondition("page_title", slugs[slug].PageTitle);
                         query.AddCondition("page_slug", slug);
                         query.AddCondition("page_parent_path", string.Empty);
 
                         if (core.Db.Query(query).Rows.Count == 0)
                         {
                             string tSlug = slug;
-                            Page.Create(core, false, viewer, slugs[slug].PageTitle, ref tSlug, 0, "", PageStatus.PageList, 0, Classifications.None);
+                            Page myPage = Page.Create(core, false, viewer, slugs[slug].PageTitle, ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
+
+                            if (myPage != null)
+                            {
+                                if (viewer is User)
+                                {
+                                    myPage.Access.Viewer = (User)viewer;
+                                }
+
+                                if (myPage.ListOnly)
+                                {
+                                    if (HasIcon)
+                                    {
+                                        myPage.Icon = Icon;
+                                        try
+                                        {
+                                            myPage.Update();
+                                        }
+                                        catch (UnauthorisedToUpdateItemException)
+                                        {
+                                            Console.WriteLine("Unauthorised");
+                                        }
+                                    }
+                                }
+                            }
                         }
                         else
                         {
                             try
                             {
                                 Page myPage = new Page(core, viewer, slug, string.Empty);
+
+                                if (viewer is User)
+                                {
+                                    myPage.Access.Viewer = (User)viewer;
+                                }
 
                                 if (myPage.ListOnly)
                                 {
@@ -846,6 +875,11 @@ namespace BoxSocial.Internals
                             {
                                 string tSlug = slug;
                                 Page myPage = Page.Create(core, false, viewer, slugs[slug].PageTitle, ref tSlug, 0, string.Empty, PageStatus.PageList, 0, Classifications.None);
+
+                                if (viewer is User)
+                                {
+                                    myPage.Access.Viewer = (User)viewer;
+                                }
 
                                 if (myPage.ListOnly)
                                 {

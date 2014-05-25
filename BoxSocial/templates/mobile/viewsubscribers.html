@@ -6,7 +6,7 @@
         <!-- ELSE -->
         <div class="info no-icon">
         <!-- ENDIF -->
-        <h2>{FRIENDS_TITLE}</h2>
+        <h2>Subscribers</h2>
         </div>
     </div>
 
@@ -14,30 +14,30 @@
 
 <div id="profile">
     <p class="action-buttons">{BREADCRUMBS}</p>
-<!-- IF FRIENDS -->
+<!-- IF subscriber_list -->
 	<!-- IF PAGINATION -->
 	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
 <ul class="list">
-<!-- BEGIN friend_list -->
+<!-- BEGIN subscriber_list -->
 	<li class="list-item icon">
-        <a href="{friend_list.U_PROFILE}">
-        <!-- IF friend_list.ICON -->
-		<img src="{friend_list.ICON}" alt="{friend_list.USER_DISPLAY_NAME}" />
+        <a href="{subscriber_list.U_PROFILE}">
+        <!-- IF subscriber_list.ICON -->
+		<img src="{subscriber_list.ICON}" alt="{subscriber_list.USER_DISPLAY_NAME}" />
 		<!-- ELSE -->
-		<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" />
+		<img src="/images/no_picture_100.png" alt="{subscriber_list.USER_DISPLAY_NAME}" />
 		<!-- ENDIF -->
-        {friend_list.USER_DISPLAY_NAME}
+        {subscriber_list.USER_DISPLAY_NAME}
         </a>
 	</li>
-<!-- END friend_list -->
+<!-- END subscriber_list -->
 </ul>
 <!-- ELSE -->
 	<div class="cheat-clear-left"></div>
 	<!-- IF PAGINATION -->
 	<p><strong>{L_GO_TO_PAGE}</strong> {PAGINATION}</p>
 	<!-- ENDIF -->
-<p>This user has no friends.</p>
+<p>This user has no subscribers.</p>
 <!-- ENDIF -->
 </div>
 </div>

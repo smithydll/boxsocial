@@ -178,6 +178,9 @@
     <Content Include="templates\account_preferences.html" />
     <Content Include="templates\account_security.html" />
     <Content Include="templates\acl.html" />
+    <Content Include="templates\mobile\viewsubscriptions.html" />
+    <Content Include="templates\mobile\viewsubscribers.html" />
+    <Content Include="templates\viewsubscriptions.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />
     <Content Include="templates\default.html" />
@@ -220,6 +223,7 @@
     <Content Include="templates\pane.share.post.html" />
     <Content Include="templates\pane.statusmessage.html" />
     <Content Include="templates\password_reset.html" />
+    <Content Include="templates\primitive_header.html" />
     <Content Include="templates\register.html" />
     <Content Include="templates\search.html" />
     <Content Include="templates\search_result.statusmessage.html" />

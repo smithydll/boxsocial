@@ -130,6 +130,11 @@ namespace BoxSocial.Groups
             }
 
             PageTitle = Group.DisplayName;
+
+            core.Template.Parse("PRIMITIVE_THUMB", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_ICON", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
+            core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
         }
 
         void core_FootHooks(HookEventArgs e)

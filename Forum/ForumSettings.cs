@@ -55,6 +55,8 @@ namespace BoxSocial.Applications.Forum
         private long topics;
         [DataField("forum_posts")]
         private long posts;
+        [DataField("forum_members")]
+        private long members;
         [DataField("forum_topics_per_page")]
         private int topicsPerPage;
         [DataField("forum_posts_per_page")]
@@ -80,6 +82,14 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 return topics;
+            }
+        }
+
+        public long Members
+        {
+            get
+            {
+                return members;
             }
         }
 

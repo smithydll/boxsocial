@@ -157,6 +157,11 @@ namespace BoxSocial.Internals
                 ItemInfo info = new ItemInfo(core, itemKey);
                 info.IncrementSubscribers();
 
+                UpdateQuery uQuery = new UpdateQuery(typeof(UserInfo));
+                uQuery.AddField("user_subscriptions", new QueryOperation("user_subscriptions", QueryOperations.Addition, 1));
+                uQuery.AddCondition("user_id", core.LoggedInMemberId);
+                core.Db.Query(uQuery);
+
                 return true;
             }
             else
@@ -193,10 +198,79 @@ namespace BoxSocial.Internals
                 ItemInfo info = new ItemInfo(core, itemKey);
                 info.DecrementSubscribers();
 
+                UpdateQuery uQuery = new UpdateQuery(typeof(UserInfo));
+                uQuery.AddField("user_subscriptions", new QueryOperation("user_subscriptions", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("user_id", core.LoggedInMemberId);
+                core.Db.Query(uQuery);
+
                 return true;
             }
 
             return false;
+        }
+
+        public static List<User> GetSubscribers(Core core, ItemKey itemKey, int page, int perPage)
+        {
+            List<User> subscribers = new List<User>();
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition("subscription_item_id", itemKey.Id);
+            query.AddCondition("subscription_item_type_id", itemKey.TypeId);
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            query.AddSort(SortOrder.Ascending, "subscription_time_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable subscribersDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in subscribersDataTable.Rows)
+            {
+                subscribers.Add(new User(core, dr, UserLoadOptions.All));
+            }
+
+            return subscribers;
+        }
+
+        public static List<User> GetSubscriptions(Core core, User owner, int page, int perPage)
+        {
+            List<User> subscribers = new List<User>();
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition(new DataField(typeof(Subscription), "user_id"), owner.Id);
+            query.AddCondition("subscription_item_type_id", ItemKey.GetTypeId(typeof(User)));
+            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddField(new DataField("gallery_items", "gallery_item_uri"));
+            query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "subscription_item_id", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "subscription_item_id", "user_id");
+            query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "subscription_item_id", "user_id");
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
+            query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+            query.AddSort(SortOrder.Ascending, "subscription_time_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable subscribersDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in subscribersDataTable.Rows)
+            {
+                subscribers.Add(new User(core, dr, UserLoadOptions.All));
+            }
+
+            return subscribers;
         }
 
         public override string Uri

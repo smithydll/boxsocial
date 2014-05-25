@@ -192,6 +192,18 @@ namespace BoxSocial.Internals
                 member.UriStub));
         }
 
+        public string BuildSubscriptionsUri(User member)
+        {
+            return AppendSid(string.Format("{0}subscriptions",
+                member.UriStub));
+        }
+
+        public string BuildSubscribersUri(User member)
+        {
+            return AppendSid(string.Format("{0}subscribers",
+                member.UriStub));
+        }
+
         public string BuildGalleryCommentsUri(Primitive owner)
         {
             return AppendSid(string.Format("{0}gallery/comments",

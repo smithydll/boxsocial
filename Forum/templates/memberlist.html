@@ -34,29 +34,59 @@
 
 <!-- IF PAGINATION -->
 <p>
-  <strong>Go to page:</strong> {PAGINATION}
+  <strong>{L_GO_TO_PAGE}</strong> {PAGINATION}
 </p>
 <!-- ENDIF -->
 
 <!-- IF member_list -->
-<dl id="group-members">
-  <!-- BEGIN member_list -->
-  <dt class="member"><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></dt>
-  <dd><a href="{member_list.U_PROFILE}">{L_VIEW_PROFILE}</a></dd>
-  <dd>{member_list.POSTS}</dd>
-  <dd>{member_list.COUNTRY}</dd>
-  <dd>{member_list.JOIN_DATE}</dd>
-  <!-- END member_list -->
-</dl>
+<ul id="group-members">
+<!-- BEGIN member_list -->
+<li style="width: 33%; height: auto; position: relative; float: left;">
+  <div class="contact-card-container" style="width: auto; margin: 5px;">
+    <div class="contact-card" style="width: 100%; position: relative; z-index: auto; box-shadow: none; border: 1px solid #cccccc;">
+  <!-- IF member_list.MOBILE_COVER -->
+      <div style="height: 80px; background-image: url('{member_list.MOBILE_COVER}'); background-position: center; background-color: #333333; background-size: cover; width: auto;">
+  <!-- ELSE -->
+      <div style="height: 80px; background-color: #333333; background-size: cover; width: auto;">
+  <!-- ENDIF -->
+  <!-- IF member_list.ICON -->
+		<img src="{member_list.ICON}" alt="{member_list.USER_DISPLAY_NAME}" />
+  <!-- ELSE -->
+        <img src="/images/no_picture_100.png" alt="{member_list.USER_DISPLAY_NAME}" />
+  <!-- ENDIF -->
+      </div>
+      <div style="width: auto;">
+        <p><strong><a href="{member_list.U_PROFILE}">{member_list.USER_DISPLAY_NAME}</a></strong></p>
+    <!-- IF LOGGED_IN AND NOT member_list.ME -->
+      <!-- IF member_list.SUBSCRIBED -->
+        <p><span class="subscribe-{member_list.TYPE}-{member_list.ID} subscribe-button subscribed"><a href="{member_list.U_SUBSCRIBE}" onclick="return SubscribeItem({member_list.ID},{member_list.TYPE}, $(this).parent().hasClass('subscribed') );">{L_UNSUBSCRIBE}</a></span><span class="subscribers">{member_list.SUBSCRIBERS}</span></p>
+      <!-- ELSE -->
+        <p><span class="subscribe-{member_list.TYPE}-{member_list.ID} subscribe-button"><a href="{member_list.U_SUBSCRIBE}" onclick="return SubscribeItem({member_list.ID},{member_list.TYPE}, $(this).parent().hasClass('subscribed') );">{L_SUBSCRIBE}</a></span><span class="subscribers">{member_list.SUBSCRIBERS}</span></p>
+      <!-- ENDIF -->
+    <!-- ENDIF -->
+  <!-- IF member_list.LOCATION -->
+        <p><strong>{L_LOCATION}:</strong> {member_list.LOCATION}</p>
+  <!-- ENDIF -->
+        <p><strong>Posts:</strong> {member_list.POSTS}</p>
+  <!-- IF member_list.USER_CAPTION -->
+        <p><em>{member_list.USER_CAPTION}</em></p>
+  <!-- ENDIF -->
+      </div>
+    </div>
+  </div>
+</li>
+<!-- END member_list -->
+</ul>
 <!-- ELSE -->
 <div>
   This forum has no members.
 </div>
 <!-- ENDIF -->
 
+<div class="cheat-clear-left"></div>
 <!-- IF PAGINATION -->
 <p>
-  <strong>Go to page:</strong> {PAGINATION}
+  <strong>{L_GO_TO_PAGE}</strong> {PAGINATION}
 </p>
 <!-- ENDIF -->
 </div>

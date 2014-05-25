@@ -21,6 +21,12 @@ namespace BoxSocial.IO
             Field = field;
         }
 
+        public TableSort(SortOrder order, DataField field)
+        {
+            Order = order;
+            Field = field.ToString();
+        }
+
         public override string ToString()
         {
             switch (Order)
@@ -318,6 +324,11 @@ namespace BoxSocial.IO
         }
 
         public void AddSort(SortOrder order, string field)
+        {
+            sorts.Add(new TableSort(order, field));
+        }
+
+        public void AddSort(SortOrder order, DataField field)
         {
             sorts.Add(new TableSort(order, field));
         }

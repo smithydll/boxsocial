@@ -27,6 +27,7 @@ using System.Globalization;
 using System.Web;
 using BoxSocial.Forms;
 using BoxSocial.IO;
+using TZ4Net;
 
 namespace BoxSocial.Internals
 {
@@ -324,6 +325,8 @@ namespace BoxSocial.Internals
 
         public static SelectBox BuildTimeZoneSelectBox(string name)
         {
+            //System.Collections.ObjectModel.ReadOnlyCollection<TimeZoneInfo> zones = TimeZoneInfo.GetSystemTimeZones();
+
             SelectBox dateTimeSelectBox = new SelectBox(name);
 
             dateTimeSelectBox.Add(new SelectBoxItem("1", UnixTime.GetOffsetString(1) + "International Date Line West"));

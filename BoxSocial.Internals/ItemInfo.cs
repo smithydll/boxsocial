@@ -60,6 +60,8 @@ namespace BoxSocial.Internals
         private long tweetId;
         [DataField("info_tweet_uri", 31)]
         private string tweetUri;
+        [DataField("info_facebook_post_id", 63)]
+        private string facebookPostId;
         [DataField("info_item_time_ut")]
         private long timeRaw;
 
@@ -494,6 +496,18 @@ namespace BoxSocial.Internals
             set
             {
                 tweetId = value;
+            }
+        }
+
+        internal string FacebookPostId
+        {
+            get
+            {
+                return facebookPostId;
+            }
+            set
+            {
+                facebookPostId = value;
             }
         }
 

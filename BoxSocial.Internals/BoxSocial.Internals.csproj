@@ -80,6 +80,9 @@
     <Reference Include="TwoStepsAuthenticator">
       <HintPath>C:\Users\Lachlan\Downloads\TwoStepsAuthenticator-master\TwoStepsAuthenticator-master\TwoStepsAuthenticator\bin\Debug\TwoStepsAuthenticator.dll</HintPath>
     </Reference>
+    <Reference Include="TZ4Net">
+      <HintPath>C:\Users\Lachlan\Downloads\tz4netv3-2014b\tz4netv3-2014b\src\TZ4Net\bin\Release\TZ4Net.dll</HintPath>
+    </Reference>
     <Reference Include="zxing">
       <HintPath>C:\Users\Lachlan\Downloads\ZXing.Net.0.12.0.0\net4.0\zxing.dll</HintPath>
     </Reference>
@@ -124,6 +127,7 @@
     <Compile Include="ControlPanelModule.cs" />
     <Compile Include="ControlPanelSubModule.cs" />
     <Compile Include="Emoticon.cs" />
+    <Compile Include="Facebook.cs" />
     <Compile Include="ReferralKey.cs" />
     <Compile Include="Core.cs" />
     <Compile Include="Country.cs" />

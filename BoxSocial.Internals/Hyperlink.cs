@@ -53,6 +53,9 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// The root domain name for boxsocial
+        /// </summary>
         public static string Domain
         {
             get
@@ -68,6 +71,9 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// The current domain being accessed via http
+        /// </summary>
         public string CurrentDomain
         {
             get

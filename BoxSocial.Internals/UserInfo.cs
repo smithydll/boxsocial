@@ -120,6 +120,18 @@ namespace BoxSocial.Internals
         private bool userTwitterSyndicate;
         [DataField("user_twitter_authenticated")]
         private bool userTwitterAthenticated;
+        [DataField("user_facebook_user_id", 63)]
+        private string userFacebookUserId;
+        [DataField("user_facebook_code", MYSQL_TEXT)]
+        private string userFacebookCode;
+        [DataField("user_facebook_access_token", MYSQL_TEXT)]
+        private string userFacebookAccessToken;
+        [DataField("user_facebook_expires_ut")]
+        private long userFacebookExpires;
+        [DataField("user_facebook_syndicate")]
+        private bool userFacebookSyndicate;
+        [DataField("user_facebook_authenticated")]
+        private bool userFacebookAthenticated;
         [DataField("user_two_factor_auth_key", 16)]
         private string twoFactorAuthKey;
         [DataField("user_two_factor_auth_verified")]
@@ -254,6 +266,78 @@ namespace BoxSocial.Internals
             set
             {
                 SetPropertyByRef(new { userTwitterTokenSecret }, value);
+            }
+        }
+
+        public string FacebookUserId
+        {
+            get
+            {
+                return userFacebookUserId;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userFacebookUserId }, value);
+            }
+        }
+
+        public bool FacebookSyndicate
+        {
+            get
+            {
+                return userFacebookSyndicate;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userFacebookSyndicate }, value);
+            }
+        }
+
+        public bool FacebookAuthenticated
+        {
+            get
+            {
+                return userFacebookAthenticated;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userFacebookAthenticated }, value);
+            }
+        }
+
+        internal string FacebookCode
+        {
+            get
+            {
+                return userFacebookCode;
+            }
+            set
+            {
+                SetPropertyByRef(new { userFacebookCode }, value);
+            }
+        }
+
+        internal string FacebookAccessToken
+        {
+            get
+            {
+                return userFacebookAccessToken;
+            }
+            set
+            {
+                SetPropertyByRef(new { userFacebookAccessToken }, value);
+            }
+        }
+
+        internal long FacebookExpires
+        {
+            get
+            {
+                return userFacebookExpires;
+            }
+            set
+            {
+                SetPropertyByRef(new { userFacebookExpires }, value);
             }
         }
 

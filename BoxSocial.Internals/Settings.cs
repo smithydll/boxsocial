@@ -465,11 +465,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string FacebookApiKey
+        public string FacebookApiAppid
         {
             get
             {
-                return WebConfigurationManager.AppSettings["facebook-api-key"];
+                return WebConfigurationManager.AppSettings["facebook-api-appid"];
             }
         }
 

@@ -36,11 +36,21 @@
 			</dd>
 			<dt><label for="timezone">My Timezone</label></dt>
 			<dd>{S_TIMEZONE}</dd>
+            <!-- IF S_TWITTER_INTEGRATION -->
             <dt><label for="twitter">Syndicate to Twitter</label></dt>
             <!-- IF S_TWITTER_USER_NAME -->
             <dd>{S_TWITTER_USER_NAME}</dd>
             <!-- ELSE -->
             <dd>{S_SYDNDICATE_TWITTER} {TWITTER_USER_NAME} <a href="{U_UNLINK_TWITTER}">Unlink</a></dd>
+            <!-- ENDIF -->
+            <!-- ENDIF -->
+            <!-- IF S_FACEBOOK_INTEGRATION -->
+            <dt><label for="twitter">Syndicate to Facebook</label></dt>
+            <!-- IF U_LINK_FACEBOOK -->
+            <dd><a href="{U_LINK_FACEBOOK}">Link Facebook account</a></dd>
+            <!-- ELSE -->
+            <dd>{S_SYDNDICATE_FACEBOOK} <a href="{U_UNLINK_FACEBOOK}">Unlink</a></dd>
+            <!-- ENDIF -->
             <!-- ENDIF -->
             <dt><label for="custom-domain">Custom Domain</label></dt>
             <dd>{S_CUSTOM_DOMAIN}</dd>

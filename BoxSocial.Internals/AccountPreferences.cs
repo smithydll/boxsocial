@@ -63,6 +63,7 @@ namespace BoxSocial.Internals
         void AccountPreferences_Load(object sender, EventArgs e)
         {
             this.AddModeHandler("unlink-twitter", new ModuleModeHandler(AccountPreferences_UnlinkTwitter));
+            this.AddModeHandler("unlink-facebook", new ModuleModeHandler(AccountPreferences_UnlinkFacebook));
         }
 
         void AccountPreferences_Show(object sender, EventArgs e)
@@ -83,6 +84,9 @@ namespace BoxSocial.Internals
 
             CheckBox twitterSyndicateCheckBox = new CheckBox("twitter-syndicate");
             twitterSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.TwitterSyndicate;
+
+            CheckBox facebookSyndicateCheckBox = new CheckBox("facebook-syndicate");
+            facebookSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.FacebookSyndicate;
 
             string radioChecked = " checked=\"checked\"";
 
@@ -134,6 +138,16 @@ namespace BoxSocial.Internals
             template.Parse("S_CUSTOM_DOMAIN", customDomainTextBox);
             template.Parse("S_ANALYTICS_CODE", analyticsCodeTextBox);
 
+            if (string.IsNullOrEmpty(core.Settings.TwitterApiKey))
+            {
+                template.Parse("S_TWITTER_INTEGRATION", "TRUE");
+            }
+
+            if (string.IsNullOrEmpty(core.Settings.FacebookApiAppid))
+            {
+                template.Parse("S_FACEBOOK_INTEGRATION", "TRUE");
+            }
+
             if (string.IsNullOrEmpty(LoggedInMember.UserInfo.TwitterUserName))
             {
                 template.Parse("S_TWITTER_USER_NAME", twitterUserNameTextBox);
@@ -143,6 +157,19 @@ namespace BoxSocial.Internals
                 template.Parse("TWITTER_USER_NAME", LoggedInMember.UserInfo.TwitterUserName);
                 template.Parse("S_SYDNDICATE_TWITTER", twitterSyndicateCheckBox);
                 template.Parse("U_UNLINK_TWITTER", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-twitter"), true));
+            }
+
+            if (string.IsNullOrEmpty(LoggedInMember.UserInfo.FacebookUserId))
+            {
+                string appId = core.Settings.FacebookApiAppid;
+                string redirectTo = (core.Settings.UseSecureCookies ? "https://" : "http://") + Hyperlink.Domain + "/api/facebook/callback";
+
+                template.Parse("U_LINK_FACEBOOK", string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&redirect_uri={1}", appId, System.Web.HttpUtility.UrlEncode(redirectTo)));
+            }
+            else
+            {
+                template.Parse("S_SYDNDICATE_FACEBOOK", facebookSyndicateCheckBox);
+                template.Parse("U_UNLINK_FACEBOOK", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-facebook"), true));
             }
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
@@ -297,6 +324,19 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.TwitterTokenSecret = string.Empty;
             LoggedInMember.UserInfo.TwitterAuthenticated = false;
             LoggedInMember.UserInfo.TwitterSyndicate = false;
+
+            LoggedInMember.UserInfo.Update();
+        }
+
+        void AccountPreferences_UnlinkFacebook(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            LoggedInMember.UserInfo.FacebookUserId = string.Empty;
+            LoggedInMember.UserInfo.FacebookCode = string.Empty;
+            LoggedInMember.UserInfo.FacebookAccessToken = string.Empty;
+            LoggedInMember.UserInfo.FacebookAuthenticated = false;
+            LoggedInMember.UserInfo.FacebookSyndicate = false;
 
             LoggedInMember.UserInfo.Update();
         }

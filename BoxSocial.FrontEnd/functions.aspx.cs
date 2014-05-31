@@ -79,6 +79,22 @@ namespace BoxSocial.FrontEnd
                     g.SaveGoogleAccess(core, oAuthToken, oAuthCode);*/
 
                     return;
+                case "facebook":
+                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
+
+                    string errorReason = core.Http.Query["error_reason"];
+                    string code = core.Http.Query["code"];
+
+                    if (!(errorReason == "user_denied"))
+                    {
+                        fb.SaveFacebookAccess(core, code);
+                    }
+                    else
+                    {
+                        core.Http.Redirect(core.Hyperlink.BuildAccountModuleUri("preferences") + "&status=facebook-auth-failed");
+                    }
+
+                    return;
             }
         }
 

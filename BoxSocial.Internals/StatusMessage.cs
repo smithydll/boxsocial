@@ -205,6 +205,13 @@ namespace BoxSocial.Internals
                 Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
                 t.DeleteStatus(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), Info.TweetId);
             }
+
+            if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
+            {
+                Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
+                FacebookAccessToken token = fb.OAuthAppAccessToken(core);
+                fb.DeleteStatus(token, info.FacebookPostId);
+            }
         }
 
         public static StatusMessage Create(Core core, User creator, string message)

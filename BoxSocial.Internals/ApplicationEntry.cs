@@ -1087,8 +1087,8 @@ namespace BoxSocial.Internals
             // maximum 48 per application per day
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
-                /* Post to Twitter, individual */
-                if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
+                /* Post to Twitter, Facebook, individual */
+                if ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated))
                 {
                     ItemInfo info = item.Info;
                     ItemKey sharedItem = item.ItemKey;
@@ -1126,21 +1126,36 @@ namespace BoxSocial.Internals
                         {
                             try
                             {
-                                description = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
-                                Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                                Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(description) ? description + " " : string.Empty) + info.ShareUri);
-
                                 UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-                                uQuery.AddField("info_tweet_id", tweet.Id);
-                                uQuery.AddField("info_tweet_uri", tweet.Uri);
                                 uQuery.AddCondition("info_item_id", sharedItem.Id);
                                 uQuery.AddCondition("info_item_type_id", sharedItem.TypeId);
+                                if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
+                                {
+                                    string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
+
+                                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                                    Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri);
+
+                                    uQuery.AddField("info_tweet_id", tweet.Id);
+                                    uQuery.AddField("info_tweet_uri", tweet.Uri);
+                                }
+
+                                if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
+                                {
+                                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
+
+                                    FacebookAccessToken token = fb.OAuthAppAccessToken(core);
+                                    FacebookPost post = fb.StatusesUpdate(token, description, info.ShareUri);
+
+                                    uQuery.AddField("info_facebook_post_id", post.PostId);
+                                    
+                                }
 
                                 core.Db.Query(uQuery);
                             }
                             catch (System.Net.WebException)
                             {
-                                // If Twitter is overloaded then we can't update twitter
+                                // If Twitter or Facebook are overloaded then we can't update twitter
                             }
                         }
                     }

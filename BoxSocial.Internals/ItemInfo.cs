@@ -238,6 +238,7 @@ namespace BoxSocial.Internals
                 iQuery.AddField("info_item_time_ut", UnixTime.UnixTimeStamp());
 
                 core.Db.Query(iQuery);
+                core.Db.CommitTransaction();
 
                 ItemInfo ii = new ItemInfo(core, item, itemKey.Id, itemKey.TypeId);
 

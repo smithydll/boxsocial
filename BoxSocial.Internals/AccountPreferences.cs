@@ -331,6 +331,8 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.TwitterSyndicate = false;
 
             LoggedInMember.UserInfo.Update();
+
+            core.Http.Redirect(BuildUri());
         }
 
         void AccountPreferences_UnlinkFacebook(object sender, EventArgs e)
@@ -344,6 +346,8 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.FacebookSyndicate = false;
 
             LoggedInMember.UserInfo.Update();
+
+            core.Http.Redirect(BuildUri());
         }
     }
 }

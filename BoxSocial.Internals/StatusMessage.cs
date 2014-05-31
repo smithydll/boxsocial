@@ -202,15 +202,21 @@ namespace BoxSocial.Internals
             core.Search.DeleteFromIndex(this);
             if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
             {
-                Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                t.DeleteStatus(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), Info.TweetId);
+                if (Info.TweetId > 0)
+                {
+                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                    t.DeleteStatus(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), Info.TweetId);
+                }
             }
 
             if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
             {
-                Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
-                FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
-                fb.DeleteStatus(token, info.FacebookPostId);
+                if (!string.IsNullOrEmpty(info.FacebookPostId))
+                {
+                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
+                    FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
+                    fb.DeleteStatus(token, info.FacebookPostId);
+                }
             }
         }
 

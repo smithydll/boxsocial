@@ -1144,7 +1144,7 @@ namespace BoxSocial.Internals
                                 {
                                     Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
 
-                                    FacebookAccessToken token = fb.OAuthAppAccessToken(core);
+                                    FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
                                     FacebookPost post = fb.StatusesUpdate(token, description, info.ShareUri);
 
                                     uQuery.AddField("info_facebook_post_id", post.PostId);

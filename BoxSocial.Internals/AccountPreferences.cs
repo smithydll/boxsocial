@@ -138,12 +138,12 @@ namespace BoxSocial.Internals
             template.Parse("S_CUSTOM_DOMAIN", customDomainTextBox);
             template.Parse("S_ANALYTICS_CODE", analyticsCodeTextBox);
 
-            if (string.IsNullOrEmpty(core.Settings.TwitterApiKey))
+            if (!string.IsNullOrEmpty(core.Settings.TwitterApiKey))
             {
                 template.Parse("S_TWITTER_INTEGRATION", "TRUE");
             }
 
-            if (string.IsNullOrEmpty(core.Settings.FacebookApiAppid))
+            if (!string.IsNullOrEmpty(core.Settings.FacebookApiAppid))
             {
                 template.Parse("S_FACEBOOK_INTEGRATION", "TRUE");
             }
@@ -164,7 +164,7 @@ namespace BoxSocial.Internals
                 string appId = core.Settings.FacebookApiAppid;
                 string redirectTo = (core.Settings.UseSecureCookies ? "https://" : "http://") + Hyperlink.Domain + "/api/facebook/callback";
 
-                template.Parse("U_LINK_FACEBOOK", string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&redirect_uri={1}", appId, System.Web.HttpUtility.UrlEncode(redirectTo)));
+                template.Parse("U_LINK_FACEBOOK", string.Format("https://www.facebook.com/dialog/oauth?client_id={0}&redirect_uri={1}&scope={2}", appId, System.Web.HttpUtility.UrlEncode(redirectTo), "publish_actions"));
             }
             else
             {
@@ -196,6 +196,11 @@ namespace BoxSocial.Internals
             template.Parse("S_HOMEPAGE", pagesSelectBox);
             template.Parse("S_TIMEZONE", timezoneSelectBox);
             //core.Display.ParseTimeZoneBox(template, "S_TIMEZONE", LoggedInMember.TimeZoneCode.ToString());
+
+            if (core.Http.Query["status"] == "facebook-auth-failed")
+            {
+                DisplayError("Failed to link your Facebook profile");
+            }
 
         }
 

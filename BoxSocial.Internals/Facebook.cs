@@ -91,9 +91,10 @@ namespace BoxSocial.Internals
             }
         }
 
-        public FacebookAccessToken(string accessToken)
+        public FacebookAccessToken(string accessToken, string userId)
         {
             this.accessToken = accessToken;
+            this.userId = userId;
             this.expires = 0;
         }
 
@@ -131,10 +132,9 @@ namespace BoxSocial.Internals
             return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant());
         }
 
-        internal FacebookAccessToken OAuthAppAccessToken(Core core)
+        internal FacebookAccessToken OAuthAppAccessToken(Core core, string userId)
         {
             string facebookEndpoint = "https://graph.facebook.com/oauth/access_token";
-            string redirectTo = (core.Settings.UseSecureCookies ? "https://" : "http://") + Hyperlink.Domain + "/api/facebook/callback";
 
             string tokenArgs = string.Format("client_id={0}&client_secret={1}&grant_type=client_credentials",
                 appId, appSecret);
@@ -157,8 +157,8 @@ namespace BoxSocial.Internals
 
                 if (!string.IsNullOrEmpty(responseDictionary["access_token"]))
                 {
-                    FacebookAccessToken token = new FacebookAccessToken(responseDictionary["access_token"]);
-                    return RefreshOAuthAccessToken(core, token);
+                    FacebookAccessToken token = new FacebookAccessToken(responseDictionary["access_token"], userId);
+                    return token;
                 }
             }
 

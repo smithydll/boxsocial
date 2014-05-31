@@ -91,7 +91,7 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        core.Http.Redirect(core.Hyperlink.BuildAccountModuleUri("preferences") + "&status=facebook-auth-failed");
+                        core.Http.Redirect(core.Hyperlink.BuildAccountSubModuleUri("dashboard", "preferences") + "?status=facebook-auth-failed");
                     }
 
                     return;

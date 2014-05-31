@@ -209,7 +209,7 @@ namespace BoxSocial.Internals
             if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
             {
                 Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
-                FacebookAccessToken token = fb.OAuthAppAccessToken(core);
+                FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
                 fb.DeleteStatus(token, info.FacebookPostId);
             }
         }

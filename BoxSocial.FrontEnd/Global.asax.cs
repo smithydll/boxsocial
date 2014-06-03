@@ -23,6 +23,7 @@ using System.Data;
 using System.Configuration;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -38,6 +39,7 @@ namespace BoxSocial.FrontEnd
 {
     public partial class Global : System.Web.HttpApplication
     {
+        protected static BackgroundWorker worker = new BackgroundWorker();
         protected void Application_Start(object sender, EventArgs e)
         {
             AppDomainSetup ads = AppDomain.CurrentDomain.SetupInformation;
@@ -57,11 +59,33 @@ namespace BoxSocial.FrontEnd
             ads.ShadowCopyDirectories = ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/");
             //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
+            // Implements a message queue processor
+            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+        }
+
+        protected void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            
+        }
+
+        protected void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            if (worker != null)
+            {
+                System.Threading.Thread.Sleep(3000);
+                worker.RunWorkerAsync();
+            }
         }
 
         protected void Application_End(object sender, EventArgs e)
         {
-
+            if (worker != null)
+            {
+                worker.CancelAsync();
+            }
         }
 
         protected void Application_Error(object sender, EventArgs e)

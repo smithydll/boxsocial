@@ -53,17 +53,11 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Dependencies\bin\MySql.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="openstacknet">
-      <HintPath>..\packages\openstack.net.1.1.0.2\lib\net40\openstacknet.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.5.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="RestSharp">
       <HintPath>..\packages\RestSharp.104.1\lib\net4\RestSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="SimpleRESTServices">
-      <HintPath>..\packages\SimpleRESTServices.1.0.6.3\lib\net40\SimpleRESTServices.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -73,10 +67,12 @@
   <ItemGroup>
     <Compile Include="AmazonS3.cs" />
     <Compile Include="Email.cs" />
+    <Compile Include="JobQueue.cs" />
     <Compile Include="Mailgun.cs" />
     <Compile Include="QueryCache.cs" />
+    <Compile Include="RackspaceCloudQueues.cs" />
     <Compile Include="Smtp.cs" />
-    <Compile Include="Rackspace.cs" />
+    <Compile Include="RackspaceCloudFiles.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />
     <Compile Include="IProse.cs" />
     <Compile Include="LocalStorage.cs" />

@@ -30,13 +30,13 @@ using net.openstack.Providers.Rackspace;
 
 namespace BoxSocial.IO
 {
-    public class Rackspace : Storage
+    public class RackspaceCloudFiles : Storage
     {
         CloudFilesProvider provider;
         CloudIdentity identity;
         string location = null;
 
-        public Rackspace(string keyId, string username, Database db)
+        public RackspaceCloudFiles(string keyId, string username, Database db)
             : base (db)
         {
             identity = new CloudIdentity() { APIKey = keyId, Username = username };
@@ -128,7 +128,7 @@ namespace BoxSocial.IO
         {
             try
             {
-                ObjectStore deleteObjectResponse = provider.DeleteObject(bin, fileName, region: location);
+                provider.DeleteObject(bin, fileName, region: location);
             }
             catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException)
             {
@@ -184,7 +184,7 @@ namespace BoxSocial.IO
 
         public override void CopyFile(string fromBin, string toBin, string fileName)
         {
-            ObjectStore copyObjectResponse = provider.CopyObject(fromBin, fileName, toBin, fileName, region: location);
+            provider.CopyObject(fromBin, fileName, toBin, fileName, region: location);
         }
 
         public override bool FileExists(string bin, string fileName)

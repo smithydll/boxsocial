@@ -65,14 +65,14 @@ namespace BoxSocial.IO
             Task deleteQueueTask = provider.DeleteQueueAsync(new QueueName(queue), CancellationToken.None);
         }
 
-        public override void Push(string queue, TimeSpan ttl, string jobMessage)
+        public /*override*/ void PushJob(string queue, TimeSpan ttl, string jobMessage)
         {
             provider.PostMessagesAsync(new QueueName(queue), CancellationToken.None, new Message(ttl, new Newtonsoft.Json.Linq.JObject(jobMessage)));
         }
 
-        public override void DeleteJob(string queue, long jobId)
+        public /*override*/ void DeleteJob(string queue, string jobId)
         {
-            //provider.DeleteMessageAsync(new QueueName(queue), new MessageId(jobId.ToString()), null, CancellationToken.None);
+            //provider.DeleteMessageAsync(new QueueName(queue), new MessageId(jobId), null, CancellationToken.None);
         }
     }
 }

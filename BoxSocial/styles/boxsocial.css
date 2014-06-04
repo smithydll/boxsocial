@@ -97,22 +97,27 @@ p {
 #body h2 {
 	font-size: 220%;
 	margin-top: 0;
+	font-weight: 200;
 }
 
 #body h3 {
 	font-size: 180%;
+	font-weight: 300;
 }
 
 #body h4 {
 	font-size: 150%;
+	font-weight: 400;
 }
 
 #body h5 {
 	font-size: 135%;
+	font-weight: 500;
 }
 
 #body h6 {
 	font-size: 120%;
+	font-weight: 600;
 }
 
 #head #search {
@@ -254,12 +259,12 @@ dl.form-sub-list dd
     min-height: 1.5em;
 }
 
-#form-login dt {
+#form-login dt, #form-password-reset dt {
 	float: left;
 	width: 140px;
 	display: block;
 }
-#form-login dd {
+#form-login dd, #form-password-reset dd {
 	margin-left: 150px;
 	margin-bottom: 2px;
 }
@@ -466,18 +471,20 @@ span.img-nb {
 }
 
 #login-box {
-	border: solid 1px #666699;
+	border: solid 1px #dddddd;
+	border-radius: 5px;
+	padding: 5px;
 }
 
 #login-box h2 {
-	border-bottom: solid 1px #666699;
-	padding: 1px 5px;
 	margin: 0px;
-	background-color: #EEEEFF;
+	font-size: 180%;
 }
 
 #login-box fieldset {
 	border: none;
+	padding: 0;
+	margin: 0;
 }
 
 p.error {
@@ -903,21 +910,32 @@ button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner {
     font-weight: normal !important;
 }
 
-input[type="text"], input[type="password"], textarea
-{
-	border: 1px solid #002288;
+input[type="text"], input[type="password"], textarea {
+	border: 1px solid #cccccc;
 	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
 	padding: 4px;
 	-webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    border-radius: 3px;
 }
 
-select
-{
-	border: 1px solid #002288;
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
+    outline: #ff9955 auto 5px;
+    outline-offset: -2px;
+}
+
+select {
+	border: 1px solid #cccccc;
 	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
 	vertical-align: -4px;
+	padding: 3px 4px;
+	border-radius: 3px;
+}
+
+select:focus {
+    outline: #ff9955 auto 5px;
+    outline-offset: -2px;
 }
 
 span.post-button, span.img-button, button {
@@ -1004,6 +1022,8 @@ input[type="cancel"]:hover, input[type="reset"]:hover {
 #search #search-text, #search-main #search-main-text {
     border: 1px solid #aaaaaa;
     border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     outline: none;
 }
 
@@ -1701,16 +1721,20 @@ li.droplist-user img {
 }
 
 .user-droplist, .permission-group-droplist {
-        border: 1px solid #028;
+        border: 1px solid #cccccc;
         background-color: #ffffff;
         position: relative;
+        border-radius: 3px;
 }
 
 .user-droplist input, .permission-group-droplist input {
         border: none;
-        outline: none;
         background-color: #ffffff;
         margin: 0;
+}
+
+.user-droplist input, .permission-group-droplist input:focus {
+        outline: none;
 }
 
 .user-droplist .username, .permission-group-droplist .username {

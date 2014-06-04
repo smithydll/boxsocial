@@ -37,19 +37,20 @@
 			<dt><label for="timezone">My Timezone</label></dt>
 			<dd>{S_TIMEZONE}</dd>
             <!-- IF S_TWITTER_INTEGRATION -->
-            <dt><label for="twitter">Syndicate to Twitter</label></dt>
             <!-- IF S_TWITTER_USER_NAME -->
-            <dd>{S_TWITTER_USER_NAME}</dd>
+            <dt><label for="twitter-user-name">Syndicate to Twitter</label></dt>
+            <dd><img src="https://g.twimg.com/twitter-bird-16x16.png" alt="Twitter" /> {S_TWITTER_USER_NAME}</dd>
             <!-- ELSE -->
-            <dd>{S_SYDNDICATE_TWITTER} {TWITTER_USER_NAME} <a href="{U_UNLINK_TWITTER}">Unlink</a></dd>
+            <dt><label for="twitter-syndicate">Syndicate to Twitter</label></dt>
+            <dd>{S_SYDNDICATE_TWITTER} <img src="https://g.twimg.com/twitter-bird-16x16.png" alt="Twitter" /> @{TWITTER_USER_NAME} <a href="{U_UNLINK_TWITTER}">Unlink</a></dd>
             <!-- ENDIF -->
             <!-- ENDIF -->
             <!-- IF S_FACEBOOK_INTEGRATION -->
-            <dt><label for="twitter">Syndicate to Facebook</label></dt>
+            <dt><label for="facebook-syndicate">Syndicate to Facebook</label></dt>
             <!-- IF U_LINK_FACEBOOK -->
-            <dd><a href="{U_LINK_FACEBOOK}">Link Facebook account</a></dd>
+            <dd><a href="{U_LINK_FACEBOOK}"><span style="height: 18px; display: inline-block; background: #4c69ba; background: -webkit-gradient(linear, center top, center bottom, from(#4c69ba), to(#3b55a0)); background: -webkit-linear-gradient(#4c69ba, #3b55a0); border-color: #4c69ba; -webkit-border-radius: 2px;"><img src="https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png" alt="Link Facebook account" /></span> Link Facebook account</a></dd>
             <!-- ELSE -->
-            <dd>{S_SYDNDICATE_FACEBOOK} <a href="{U_UNLINK_FACEBOOK}">Unlink</a></dd>
+            <dd>{S_SYDNDICATE_FACEBOOK} <span style="height: 18px; display: inline-block; background: #4c69ba; background: -webkit-gradient(linear, center top, center bottom, from(#4c69ba), to(#3b55a0)); background: -webkit-linear-gradient(#4c69ba, #3b55a0); border-color: #4c69ba; -webkit-border-radius: 2px;"><img src="https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png" alt="Link Facebook account" /></span> <a href="{U_UNLINK_FACEBOOK}">Unlink</a></dd>
             <!-- ENDIF -->
             <!-- ENDIF -->
             <dt><label for="custom-domain">Custom Domain</label></dt>

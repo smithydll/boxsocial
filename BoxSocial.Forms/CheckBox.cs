@@ -31,6 +31,7 @@ namespace BoxSocial.Forms
         private string caption;
         private bool isChecked;
         private bool disabled;
+        private StyleLength width;
 
         public string Caption
         {
@@ -68,12 +69,25 @@ namespace BoxSocial.Forms
             }
         }
 
+        public StyleLength Width
+        {
+            get
+            {
+                return width;
+            }
+            set
+            {
+                width = value;
+            }
+        }
+
         public CheckBox(string name)
         {
             this.name = name;
 
             isChecked = false;
             disabled = false;
+            width = new StyleLength(100F, LengthUnits.Percentage);
         }
 
         public override string ToString()
@@ -83,8 +97,11 @@ namespace BoxSocial.Forms
 
         public override string ToString(DisplayMedium medium)
         {
-            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"width: 100%;\" {1}{2}/>",
-                HttpUtility.HtmlEncode(name), (IsChecked) ? "checked=\"checked\" " : "", (IsDisabled) ? "disabled=\"disabled\" " : "");
+            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"{3}\" {1}{2}/>",
+                HttpUtility.HtmlEncode(name),
+                (IsChecked) ? "checked=\"checked\" " : "",
+                (IsDisabled) ? "disabled=\"disabled\" " : "",
+                width.Length > 0 ? "width: " + width + ";" : "");
         }
 
         public override void SetValue(string value)

@@ -83,6 +83,7 @@ function preparePermissionsList(id) {
             .bind("focus", function (event) {
                 textbox.width(textbox.parent().width() - textbox.position().left - border + 'px');
                 empty.hide();
+                textbox.parent().css("outline", "#ff9955 auto 5px");
             })
             .bind("click", function (event) {
                 textbox.autocomplete("search", "");
@@ -93,6 +94,7 @@ function preparePermissionsList(id) {
                     empty.show();
                 }
                 textbox.width('48px').width(textbox.parent().width() - textbox.position().left - border + 'px');
+                textbox.parent().css("outline", "none");
             })
             .autocomplete({
                 minLength: 0,

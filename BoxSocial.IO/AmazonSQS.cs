@@ -36,6 +36,7 @@ namespace BoxSocial.IO
         AmazonSQSConfig sqsConfig;
         Amazon.SQS.AmazonSQS client;
         AmazonSQSClient sqsClient;
+        Dictionary<string, string> queueUrls;
 
         public AmazonSQS(string keyId, string secretKey, Database db)
             : base (db)
@@ -44,6 +45,7 @@ namespace BoxSocial.IO
             sqsConfig.ServiceURL = "sqs.amazonaws.com";
 
             client = AWSClientFactory.CreateAmazonSQSClient(keyId, secretKey, sqsConfig);
+            queueUrls = new Dictionary<string, string>();
         }
 
         public override void CreateQueue(string queue)
@@ -55,11 +57,16 @@ namespace BoxSocial.IO
 
         private string GetQueueUrl(string queue)
         {
-            GetQueueUrlRequest request = new GetQueueUrlRequest();
-            request.QueueName = queue;
-            GetQueueUrlResponse response = client.GetQueueUrl(request);
+            if (!queueUrls.ContainsKey(queue))
+            {
+                GetQueueUrlRequest request = new GetQueueUrlRequest();
+                request.QueueName = queue;
+                GetQueueUrlResponse response = client.GetQueueUrl(request);
 
-            return response.GetQueueUrlResult.QueueUrl;
+                queueUrls.Add(queue, response.GetQueueUrlResult.QueueUrl);
+            }
+
+            return queueUrls[queue];
         }
 
         public override void DeleteQueue(string queue)
@@ -67,6 +74,33 @@ namespace BoxSocial.IO
             DeleteQueueRequest request = new DeleteQueueRequest();
             request.QueueUrl = GetQueueUrl(queue);
             DeleteQueueResponse response = client.DeleteQueue(request);
+        }
+
+        public /*override*/ void PushJob(string queue, TimeSpan ttl, string jobMessage)
+        {
+            SendMessageRequest request = new SendMessageRequest();
+            //request.DelaySeconds = (int)(ttl.Ticks / TimeSpan.TicksPerSecond);
+            request.QueueUrl = GetQueueUrl(queue);
+            request.MessageBody = jobMessage;
+            SendMessageResponse response = client.SendMessage(request);
+        }
+
+        public /*override*/ Job ClaimJob(string queue)
+        {
+            ReceiveMessageRequest request = new ReceiveMessageRequest();
+            request.MaxNumberOfMessages = 1;
+            request.QueueUrl = GetQueueUrl(queue);
+            ReceiveMessageResponse response = client.ReceiveMessage(request);
+            Message message = response.ReceiveMessageResult.Message[0];
+            return new Job(queue, message.MessageId, message.ReceiptHandle, message.Body);
+        }
+
+        public /*override*/ void DeleteJob(Job job)
+        {
+            DeleteMessageRequest request = new DeleteMessageRequest();
+            request.QueueUrl = GetQueueUrl(job.QueueName);
+            request.ReceiptHandle = job.Handle;
+            DeleteMessageResponse response = client.DeleteMessage(request);
         }
     }
 }

@@ -33,5 +33,9 @@ namespace BoxSocial.IO
         {
             this.db = db;
         }
+
+        public abstract void CreateQueue(string queue);
+
+        public abstract void DeleteQueue(string queue);
     }
 }

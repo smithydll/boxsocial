@@ -84,9 +84,11 @@ namespace BoxSocial.Internals
 
             CheckBox twitterSyndicateCheckBox = new CheckBox("twitter-syndicate");
             twitterSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.TwitterSyndicate;
+            twitterSyndicateCheckBox.Width.Length = 0;
 
             CheckBox facebookSyndicateCheckBox = new CheckBox("facebook-syndicate");
             facebookSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.FacebookSyndicate;
+            facebookSyndicateCheckBox.Width.Length = 0;
 
             string radioChecked = " checked=\"checked\"";
 

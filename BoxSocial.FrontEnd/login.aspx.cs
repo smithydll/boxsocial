@@ -351,6 +351,8 @@ namespace BoxSocial.FrontEnd
 
             if (Request.QueryString["mode"] == "reset-password")
             {
+                template.Parse("S_POST", core.Hyperlink.AppendSid("/sign-in/?mode=reset-password", true));
+
                 template.SetTemplate("password_reset.html");
 
                 EndResponse();

@@ -411,6 +411,9 @@
   <data name="EXPAND_COMMENTS" xml:space="preserve">
     <value>Expand Comments</value>
   </data>
+  <data name="FACEBOOK_FRIENDS" xml:space="preserve">
+    <value>Facebook Friends</value>
+  </data>
   <data name="FAMILY" xml:space="preserve">
     <value>Family</value>
   </data>
@@ -449,6 +452,9 @@
   </data>
   <data name="FRIENDS" xml:space="preserve">
     <value>Friends</value>
+  </data>
+  <data name="FRIENDS_OF_FACEBOOK_FRIENDS" xml:space="preserve">
+    <value>Friends of Facebook Friends</value>
   </data>
   <data name="GAY" xml:space="preserve">
     <value>Gay</value>
@@ -859,6 +865,9 @@
   </data>
   <data name="TIME" xml:space="preserve">
     <value>Time</value>
+  </data>
+  <data name="TIMELINE_DEFAULT" xml:space="preserve">
+    <value>Timeline Default</value>
   </data>
   <data name="TIMEZONE" xml:space="preserve">
     <value>Timezone</value>

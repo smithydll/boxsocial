@@ -920,11 +920,6 @@ input[type="text"], input[type="password"], textarea {
     border-radius: 3px;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus {
-    outline: #ff9955 auto 5px;
-    outline-offset: -2px;
-}
-
 select {
 	border: 1px solid #cccccc;
 	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
@@ -933,7 +928,7 @@ select {
 	border-radius: 3px;
 }
 
-select:focus {
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
     outline: #ff9955 auto 5px;
     outline-offset: -2px;
 }

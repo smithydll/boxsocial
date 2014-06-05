@@ -249,25 +249,39 @@ namespace BoxSocial.Internals
 
             HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(facebookEndpoint + "?" + tokenArgs);
 
-            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
-
-            if (response.StatusCode != HttpStatusCode.OK)
+            try
             {
+                HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                }
+                else
+                {
+                    Encoding encode = Encoding.GetEncoding("utf-8");
+                    StreamReader sr = new StreamReader(response.GetResponseStream(), encode);
+
+                    string responseString = sr.ReadToEnd();
+
+                    info = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+                }
             }
-            else
+            catch (System.Net.WebException ex)
             {
-                Encoding encode = Encoding.GetEncoding("utf-8");
-                StreamReader sr = new StreamReader(response.GetResponseStream(), encode);
-
-                string responseString = sr.ReadToEnd();
-
-                info = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
+                if (((HttpWebResponse)ex.Response).StatusCode == HttpStatusCode.BadRequest)
+                {
+                    return null;
+                }
+                else
+                {
+                    return null;
+                }
             }
 
             return info;
         }
 
-        public FacebookPost StatusesUpdate(FacebookAccessToken token, string message, string link)
+        public FacebookPost StatusesUpdate(FacebookAccessToken token, string message, string link, string sharePermissions)
         {
             string method = "POST";
             string facebookEndpoint = string.Format("https://graph.facebook.com/{0}/feed", token.UserId);
@@ -278,7 +292,10 @@ namespace BoxSocial.Internals
             {
                 body += "&link=" + UrlEncode(link);
             }
-            body += "&privacy=" + UrlEncode("{'value':'EVERYONE'}");
+            if (!string.IsNullOrEmpty(sharePermissions))
+            {
+                body += "&privacy=" + UrlEncode("{'value':'" + sharePermissions + "'}");
+            }
             body += "&access_token=" + UrlEncode(token.AccessToken);
 
             HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(facebookEndpoint);
@@ -330,11 +347,18 @@ namespace BoxSocial.Internals
 
                         Dictionary<string, string> info = GetUserInfo(access);
 
-                        core.Session.LoggedInMember.UserInfo.FacebookUserId = info["id"];
+                        if (info != null)
+                        {
+                            core.Session.LoggedInMember.UserInfo.FacebookUserId = info["id"];
 
-                        core.Session.LoggedInMember.UserInfo.Update();
+                            core.Session.LoggedInMember.UserInfo.Update();
 
-                        core.Http.Redirect(core.Hyperlink.BuildAccountSubModuleUri("dashboard", "preferences"));
+                            core.Http.Redirect(core.Hyperlink.BuildAccountSubModuleUri("dashboard", "preferences"));
+                        }
+                        else
+                        {
+                            core.Http.Redirect(core.Hyperlink.BuildAccountSubModuleUri("dashboard", "preferences") + "?status=facebook-auth-failed");
+                        }
                     }
             }
         }

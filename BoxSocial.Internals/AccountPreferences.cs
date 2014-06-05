@@ -90,6 +90,17 @@ namespace BoxSocial.Internals
             facebookSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.FacebookSyndicate;
             facebookSyndicateCheckBox.Width.Length = 0;
 
+            SelectBox facebookSharePermissionSelectBox = new SelectBox("facebook-share-permissions");
+            facebookSharePermissionSelectBox.Add(new SelectBoxItem("", core.Prose.GetString("TIMELINE_DEFAULT")));
+            facebookSharePermissionSelectBox.Add(new SelectBoxItem("EVERYONE", core.Prose.GetString("PUBLIC")));
+            facebookSharePermissionSelectBox.Add(new SelectBoxItem("FRIENDS_OF_FRIENDS", core.Prose.GetString("FRIENDS_OF_FACEBOOK_FRIENDS")));
+            facebookSharePermissionSelectBox.Add(new SelectBoxItem("ALL_FRIENDS", core.Prose.GetString("FACEBOOK_FRIENDS")));
+
+            if (LoggedInMember.UserInfo.FacebookSharePermissions != null)
+            {
+                facebookSharePermissionSelectBox.SelectedKey = LoggedInMember.UserInfo.FacebookSharePermissions;
+            }
+
             string radioChecked = " checked=\"checked\"";
 
             if (LoggedInMember.UserInfo.EmailNotifications)
@@ -171,6 +182,7 @@ namespace BoxSocial.Internals
             else
             {
                 template.Parse("S_SYDNDICATE_FACEBOOK", facebookSyndicateCheckBox);
+                template.Parse("S_FACEBOOK_SHARE_PERMISSIONS", facebookSharePermissionSelectBox);
                 template.Parse("U_UNLINK_FACEBOOK", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-facebook"), true));
             }
 
@@ -223,6 +235,9 @@ namespace BoxSocial.Internals
             string analyticsCode = string.Empty;
             ushort timeZoneCode = 30;
             string twitterUserName = string.Empty;
+            bool twitterSyndicate = (core.Http.Form["twitter-syndicate"] != null);
+            bool facebookSyndicate = (core.Http.Form["facebook-syndicate"] != null);
+            string facebookSharePermissions = core.Http.Form["facebook-share-permissions"];
 
             try
             {
@@ -311,6 +326,26 @@ namespace BoxSocial.Internals
                 LoggedInMember.UserInfo.Update();
 
                 core.Http.Redirect("https://api.twitter.com/oauth/authorize?oauth_token=" + auth.Token + "&screen_name=" + twitterUserName + "force_login=true");
+            }
+
+            if (LoggedInMember.UserInfo.TwitterAuthenticated)
+            {
+                LoggedInMember.UserInfo.TwitterSyndicate = twitterSyndicate;
+            }
+
+            if (LoggedInMember.UserInfo.FacebookAuthenticated)
+            {
+                LoggedInMember.UserInfo.FacebookSyndicate = facebookSyndicate;
+
+                switch (facebookSharePermissions)
+                {
+                    case "":
+                    case "EVERYONE":
+                    case "ALL_FRIENDS":
+                    case "FRIENDS_OF_FRIENDS":
+                        LoggedInMember.UserInfo.FacebookSharePermissions = facebookSharePermissions;
+                        break;
+                }
             }
 
             LoggedInMember.UserInfo.Update();

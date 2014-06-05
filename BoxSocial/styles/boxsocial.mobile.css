@@ -173,26 +173,31 @@ h2#sub-title {
 #body h2 {
 	font-size: 125%;
 	margin: 6px 0;
+	font-weight: 200;
 }
 
 #body h3 {
 	font-size: 120%;
 	margin: 4px 0;
+	font-weight: 300;
 }
 
 #body h4 {
 	font-size: 115%;
 	margin: 3px 0;
+	font-weight: 400;
 }
 
 #body h5 {
 	font-size: 110%;
 	margin: 3px 0;
+	font-weight: 500;
 }
 
 #body h6 {
 	font-size: 105%;
 	margin: 3px 0;
+	font-weight: 600;
 }
 
 .page-tiles {
@@ -257,21 +262,27 @@ button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner {
   border: 0;
 }
 
-input[type="text"], input[type="password"], textarea
-{
-	border: 1px solid #002288;
+input[type="text"], input[type="password"], textarea {
+	border: 1px solid #cccccc;
 	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
 	padding: 4px;
 	-webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    border-radius: 3px;
 }
 
-select
-{
-	border: 1px solid #002288;
-	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
+select {
+	/*border: 1px solid #cccccc;
+	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;*/
 	vertical-align: -4px;
+	padding: 3px 4px;
+	border-radius: 3px;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+    outline: #ff9955 auto 5px;
+    outline-offset: -2px;
 }
 
 span.post-button, span.img-button, button {
@@ -319,21 +330,23 @@ span.subscribers {
 }
 
 input[type="submit"] {
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 1px solid #008822;
-	background: #22aa44;
-	color: #ffffff;
-	margin: 2px;
-	padding: 4px 16px;
+	/*background: #22aa44;
+	color: #ffffff;*/
+	/*margin: 2px;
+	padding: 4px 16px;*/
+	font-size: 12pt;
 }
 
 input[type="cancel"], input[type="reset"] {
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 1px solid #888888;
-	background: #dddddd;
-	color: #666666;
-	margin: 2px;
-	padding: 4px 16px;
+	/*background: #dddddd;
+	color: #666666;*/
+	/*margin: 2px;
+	padding: 4px 16px;*/
+	font-size: 12pt;
 }
 
 span.post-button a, span.img-button a {
@@ -656,10 +669,11 @@ li.droplist-user img {
 }
 
 .user-droplist, .permission-group-droplist {
-        border: 1px solid #028;
+        border: 1px solid #cccccc;
         background-color: #ffffff;
         position: relative;
         min-height: 19pt;
+        border-radius: 3px;
 }
 
 .user-droplist .username, .permission-group-droplist .username {
@@ -1194,15 +1208,35 @@ div.ui-grid-b div.ui-block-a, div.ui-grid-b div.ui-block-b, div.ui-grid-b div.ui
 	margin: 0;
 }
 
+.account-pane > p, .account-pane > h2, .account-pane > h3 {
+    padding: 0 5px;
+}
+
+.account-pane dl, .account-wide-pane dl {
+    padding: 0;
+    margin: 0;
+}
+
 .account-pane dt, .account-wide-pane dt {
-	font-weight: bold;
+	font-weight: 400;
+	text-transform: uppercase;
 	margin: 0;
-	padding: 0;
+	padding: 0 5px;
+	margin-top: 16pt;
 }
 
 .account-pane dd, .account-wide-pane dd {
 	margin: 0;
-	padding: 0;
+	padding: 0 5px;
+	line-height: 32pt;
+	background: #eeeeee;
+	position: relative;
+	border-top: 1px solid #cccccc;
+	border-bottom: 1px solid #cccccc;
+}
+
+.account-pane dd *, .account-wide-pane dd * {
+	line-height: normal;
 }
 
 .iosfixed #search-menu, .iosfixed #post-menu {

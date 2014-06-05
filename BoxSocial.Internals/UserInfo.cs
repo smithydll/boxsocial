@@ -132,6 +132,8 @@ namespace BoxSocial.Internals
         private bool userFacebookSyndicate;
         [DataField("user_facebook_authenticated")]
         private bool userFacebookAthenticated;
+        [DataField("user_facebook_share_permissions")]
+        private string userFacebookSharePermissions;
         [DataField("user_two_factor_auth_key", 16)]
         private string twoFactorAuthKey;
         [DataField("user_two_factor_auth_verified")]
@@ -338,6 +340,18 @@ namespace BoxSocial.Internals
             set
             {
                 SetPropertyByRef(new { userFacebookExpires }, value);
+            }
+        }
+
+        internal string FacebookSharePermissions
+        {
+            get
+            {
+                return userFacebookSharePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { userFacebookSharePermissions }, value);
             }
         }
 

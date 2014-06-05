@@ -22,16 +22,24 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace BoxSocial.IO
 {
+    [JsonObject("job")]
     public class Job
     {
         string jobId;
         string handle;
         string queueName;
-        string message;
+        long applicationId;
+        long itemTypeId;
+        long itemId;
+        string function;
 
+        [JsonIgnore()]
         public string JobId
         {
             get
@@ -40,6 +48,7 @@ namespace BoxSocial.IO
             }
         }
 
+        [JsonIgnore()]
         public string Handle
         {
             get
@@ -48,6 +57,7 @@ namespace BoxSocial.IO
             }
         }
 
+        [JsonIgnore()]
         public string QueueName
         {
             get
@@ -56,11 +66,48 @@ namespace BoxSocial.IO
             }
         }
 
+        [JsonProperty("application_id")]
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
+            }
+        }
+
+        [JsonProperty("item_type_id")]
+        public long ItemTypeId
+        {
+            get
+            {
+                return itemTypeId;
+            }
+        }
+
+        [JsonProperty("item_id")]
+        public long ItemId
+        {
+            get
+            {
+                return itemId;
+            }
+        }
+
+        [JsonProperty("function")]
+        public string Function
+        {
+            get
+            {
+                return function;
+            }
+        }
+
+        [JsonIgnore()]
         public string Message
         {
             get
             {
-                return message;
+                return ToString();
             }
         }
 
@@ -68,8 +115,29 @@ namespace BoxSocial.IO
         {
             this.queueName = queueName;
             this.queueName = jobId;
-            this.message = message;
             this.handle = jobHandle;
+            Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(message, typeof(Dictionary<string, string>));
+
+            long.TryParse(strings["application_id"], out this.applicationId);
+            long.TryParse(strings["item_type_id"], out this.itemTypeId);
+            long.TryParse(strings["item_id"], out this.itemId);
+            this.function = strings["function"];
+        }
+
+        public Job(string queueName, string jobId, string jobHandle, long applicationId, long itemTypeId, long itemId, string function)
+        {
+            this.queueName = queueName;
+            this.queueName = jobId;
+            this.handle = jobHandle;
+            this.applicationId = applicationId;
+            this.itemTypeId = itemTypeId;
+            this.itemId = itemId;
+            this.function = function;
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }

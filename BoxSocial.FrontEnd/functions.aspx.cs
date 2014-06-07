@@ -41,6 +41,9 @@ namespace BoxSocial.FrontEnd
         {
             string function = core.Http["fun"];
 
+            string oAuthToken;
+            string oAuthVerifier;
+
             switch (function)
             {
                 case "date":
@@ -65,11 +68,19 @@ namespace BoxSocial.FrontEnd
                 case "twitter":
                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
                     
-                    string oAuthToken = core.Http.Query["oauth_token"];
-                    string oAuthVerifier = core.Http.Query["oauth_verifier"];
+                    oAuthToken = core.Http.Query["oauth_token"];
+                    oAuthVerifier = core.Http.Query["oauth_verifier"];
 
                     t.SaveTwitterAccess(core, oAuthToken, oAuthVerifier);
 
+                    return;
+                case "tumblr":
+                    Tumblr tr = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
+                    
+                    oAuthToken = core.Http.Query["oauth_token"];
+                    oAuthVerifier = core.Http.Query["oauth_verifier"]; // + "#_=_";
+
+                    tr.SaveTumblrAccess(core, oAuthToken, oAuthVerifier);
                     return;
                 case "googleplus":
                     /*Google g = new Google(core.Settings.GoogleApiKey, core.Settings.GoogleApiSecret);

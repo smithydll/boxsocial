@@ -63,6 +63,8 @@ namespace BoxSocial.Internals
         void AccountPreferences_Load(object sender, EventArgs e)
         {
             this.AddModeHandler("unlink-twitter", new ModuleModeHandler(AccountPreferences_UnlinkTwitter));
+            this.AddModeHandler("link-tumblr", new ModuleModeHandler(AccountPreferences_LinkTumblr));
+            this.AddModeHandler("unlink-tumblr", new ModuleModeHandler(AccountPreferences_UnlinkTumblr));
             this.AddModeHandler("unlink-facebook", new ModuleModeHandler(AccountPreferences_UnlinkFacebook));
         }
 
@@ -86,6 +88,10 @@ namespace BoxSocial.Internals
             twitterSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.TwitterSyndicate;
             twitterSyndicateCheckBox.Width.Length = 0;
 
+            CheckBox tumblrSyndicateCheckBox = new CheckBox("tumblr-syndicate");
+            tumblrSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.TumblrSyndicate;
+            tumblrSyndicateCheckBox.Width.Length = 0;
+
             CheckBox facebookSyndicateCheckBox = new CheckBox("facebook-syndicate");
             facebookSyndicateCheckBox.IsChecked = LoggedInMember.UserInfo.FacebookSyndicate;
             facebookSyndicateCheckBox.Width.Length = 0;
@@ -95,6 +101,24 @@ namespace BoxSocial.Internals
             facebookSharePermissionSelectBox.Add(new SelectBoxItem("EVERYONE", core.Prose.GetString("PUBLIC")));
             facebookSharePermissionSelectBox.Add(new SelectBoxItem("FRIENDS_OF_FRIENDS", core.Prose.GetString("FRIENDS_OF_FACEBOOK_FRIENDS")));
             facebookSharePermissionSelectBox.Add(new SelectBoxItem("ALL_FRIENDS", core.Prose.GetString("FACEBOOK_FRIENDS")));
+
+            SelectBox tumblrBlogsSelectBox = new SelectBox("tumblr-blogs");
+            if (LoggedInMember.UserInfo.TumblrAuthenticated)
+            {
+                Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
+                List<Dictionary<string, string>> blogs = t.GetUserInfo(new TumblrAccessToken(LoggedInMember.UserInfo.TumblrToken, LoggedInMember.UserInfo.TumblrTokenSecret)).Blogs;
+
+                foreach (Dictionary<string, string> blog in blogs)
+                {
+                    string hostname = (new Uri(blog["url"])).Host;
+                    tumblrBlogsSelectBox.Add(new SelectBoxItem(hostname, blog["title"]));
+
+                    if (hostname == LoggedInMember.UserInfo.TumblrHostname)
+                    {
+                        tumblrBlogsSelectBox.SelectedKey = LoggedInMember.UserInfo.TumblrHostname;
+                    }
+                }
+            }
 
             if (LoggedInMember.UserInfo.FacebookSharePermissions != null)
             {
@@ -156,6 +180,11 @@ namespace BoxSocial.Internals
                 template.Parse("S_TWITTER_INTEGRATION", "TRUE");
             }
 
+            if (!string.IsNullOrEmpty(core.Settings.TumblrApiKey))
+            {
+                template.Parse("S_TUMBLR_INTEGRATION", "TRUE");
+            }
+
             if (!string.IsNullOrEmpty(core.Settings.FacebookApiAppid))
             {
                 template.Parse("S_FACEBOOK_INTEGRATION", "TRUE");
@@ -170,6 +199,20 @@ namespace BoxSocial.Internals
                 template.Parse("TWITTER_USER_NAME", LoggedInMember.UserInfo.TwitterUserName);
                 template.Parse("S_SYDNDICATE_TWITTER", twitterSyndicateCheckBox);
                 template.Parse("U_UNLINK_TWITTER", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-twitter"), true));
+            }
+
+            if (string.IsNullOrEmpty(LoggedInMember.UserInfo.TumblrUserName))
+            {
+                template.Parse("U_LINK_TUMBLR", core.Hyperlink.AppendSid(BuildUri("preferences", "link-tumblr"), true));
+            }
+            else
+            {
+                /* TODO: get list of tumblr blogs */
+
+                template.Parse("TUMBLR_USER_NAME", LoggedInMember.UserInfo.TumblrUserName);
+                template.Parse("S_TUMBLR_BLOGS", tumblrBlogsSelectBox);
+                template.Parse("S_SYDNDICATE_TUMBLR", tumblrSyndicateCheckBox);
+                template.Parse("U_UNLINK_TUMBLR", core.Hyperlink.AppendSid(BuildUri("preferences", "unlink-tumblr"), true));
             }
 
             if (string.IsNullOrEmpty(LoggedInMember.UserInfo.FacebookUserId))
@@ -236,6 +279,7 @@ namespace BoxSocial.Internals
             ushort timeZoneCode = 30;
             string twitterUserName = string.Empty;
             bool twitterSyndicate = (core.Http.Form["twitter-syndicate"] != null);
+            bool tumblrSyndicate = (core.Http.Form["tumblr-syndicate"] != null);
             bool facebookSyndicate = (core.Http.Form["facebook-syndicate"] != null);
             string facebookSharePermissions = core.Http.Form["facebook-share-permissions"];
 
@@ -333,6 +377,11 @@ namespace BoxSocial.Internals
                 LoggedInMember.UserInfo.TwitterSyndicate = twitterSyndicate;
             }
 
+            if (LoggedInMember.UserInfo.TumblrAuthenticated)
+            {
+                LoggedInMember.UserInfo.TumblrSyndicate = tumblrSyndicate;
+            }
+
             if (LoggedInMember.UserInfo.FacebookAuthenticated)
             {
                 LoggedInMember.UserInfo.FacebookSyndicate = facebookSyndicate;
@@ -366,6 +415,39 @@ namespace BoxSocial.Internals
             LoggedInMember.UserInfo.TwitterTokenSecret = string.Empty;
             LoggedInMember.UserInfo.TwitterAuthenticated = false;
             LoggedInMember.UserInfo.TwitterSyndicate = false;
+
+            LoggedInMember.UserInfo.Update();
+
+            core.Http.Redirect(BuildUri());
+        }
+
+        void AccountPreferences_LinkTumblr(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
+            TumblrAuthToken auth = t.OAuthRequestToken();
+
+            LoggedInMember.UserInfo.TumblrToken = auth.Token;
+            LoggedInMember.UserInfo.TumblrTokenSecret = auth.Secret;
+            LoggedInMember.UserInfo.TumblrAuthenticated = false;
+            LoggedInMember.UserInfo.TumblrSyndicate = false;
+
+            LoggedInMember.UserInfo.Update();
+
+            core.Http.Redirect("https://www.tumblr.com/oauth/authorize?oauth_token=" + auth.Token);
+        }
+
+        void AccountPreferences_UnlinkTumblr(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            LoggedInMember.UserInfo.TumblrUserName = string.Empty;
+            LoggedInMember.UserInfo.TumblrHostname = string.Empty;
+            LoggedInMember.UserInfo.TumblrToken = string.Empty;
+            LoggedInMember.UserInfo.TumblrTokenSecret = string.Empty;
+            LoggedInMember.UserInfo.TumblrAuthenticated = false;
+            LoggedInMember.UserInfo.TumblrSyndicate = false;
 
             LoggedInMember.UserInfo.Update();
 

@@ -45,6 +45,15 @@
             <dd>{S_SYDNDICATE_TWITTER} <img src="https://g.twimg.com/twitter-bird-16x16.png" alt="Twitter" /> @{TWITTER_USER_NAME} <a href="{U_UNLINK_TWITTER}">Unlink</a></dd>
             <!-- ENDIF -->
             <!-- ENDIF -->
+            <!-- IF S_TUMBLR_INTEGRATION -->
+            <dt><label for="tumblr-syndicate">Syndicate to Tumblr</label></dt>
+            <!-- IF U_LINK_TUMBLR -->
+            <dd><img src="https://platform.tumblr.com/v1/share_4.png" alt="Tumblr" /> <a href="{U_LINK_TUMBLR}">Link Tumblr account</a></dd>
+            <!-- ELSE -->
+            <dd>{S_SYDNDICATE_TUMBLR} <img src="https://platform.tumblr.com/v1/share_4.png" alt="Tumblr" /> +{TUMBLR_USER_NAME} <a href="{U_UNLINK_TUMBLR}">Unlink</a><br />
+            {S_TUMBLR_BLOGS}</dd>
+            <!-- ENDIF -->
+            <!-- ENDIF -->
             <!-- IF S_FACEBOOK_INTEGRATION -->
             <dt><label for="facebook-syndicate">Syndicate to Facebook</label></dt>
             <!-- IF U_LINK_FACEBOOK -->

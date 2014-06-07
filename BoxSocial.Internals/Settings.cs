@@ -480,5 +480,21 @@ namespace BoxSocial.Internals
                 return WebConfigurationManager.AppSettings["facebook-api-secret"];
             }
         }
+
+        public string TumblrApiKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["tumblr-api-key"];
+            }
+        }
+
+        public string TumblrApiSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["tumblr-api-secret"];
+            }
+        }
     }
 }

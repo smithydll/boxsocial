@@ -134,6 +134,18 @@ namespace BoxSocial.Internals
         private bool userFacebookAthenticated;
         [DataField("user_facebook_share_permissions")]
         private string userFacebookSharePermissions;
+        [DataField("user_tumblr_user_name", 31)]
+        private string userTumblrUserName;
+        [DataField("user_tumblr_hostname", 63)]
+        private string userTumblrHostname;
+        [DataField("user_tumblr_token", 63)]
+        private string userTumblrToken;
+        [DataField("user_tumblr_token_secret", 63)]
+        private string userTumblrTokenSecret;
+        [DataField("user_tumblr_syndicate")]
+        private bool userTumblrSyndicate;
+        [DataField("user_tumblr_authenticated")]
+        private bool userTumblrAthenticated;
         [DataField("user_two_factor_auth_key", 16)]
         private string twoFactorAuthKey;
         [DataField("user_two_factor_auth_verified")]
@@ -352,6 +364,78 @@ namespace BoxSocial.Internals
             set
             {
                 SetPropertyByRef(new { userFacebookSharePermissions }, value);
+            }
+        }
+
+        public string TumblrUserName
+        {
+            get
+            {
+                return userTumblrUserName;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTumblrUserName }, value);
+            }
+        }
+
+        public string TumblrHostname
+        {
+            get
+            {
+                return userTumblrHostname;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTumblrHostname }, value);
+            }
+        }
+
+        public bool TumblrSyndicate
+        {
+            get
+            {
+                return userTumblrSyndicate;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTumblrSyndicate }, value);
+            }
+        }
+
+        public bool TumblrAuthenticated
+        {
+            get
+            {
+                return userTumblrAthenticated;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { userTumblrAthenticated }, value);
+            }
+        }
+
+        internal string TumblrToken
+        {
+            get
+            {
+                return userTumblrToken;
+            }
+            set
+            {
+                SetPropertyByRef(new { userTumblrToken }, value);
+            }
+        }
+
+        internal string TumblrTokenSecret
+        {
+            get
+            {
+                return userTumblrTokenSecret;
+            }
+            set
+            {
+                SetPropertyByRef(new { userTumblrTokenSecret }, value);
             }
         }
 

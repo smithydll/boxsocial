@@ -60,6 +60,7 @@ namespace BoxSocial.FrontEnd
             //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
             // Implements a message queue processor
+            worker.WorkerSupportsCancellation = true;
             worker.DoWork += new DoWorkEventHandler(worker_DoWork);
             worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
         }
@@ -335,6 +336,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/twitter/callback(/|)$", @"/functions.aspx?fun=twitter" });
                     patterns.Add(new string[] { @"^/api/googleplus/callback(/|)$", @"/functions.aspx?fun=googleplus" });
                     patterns.Add(new string[] { @"^/api/facebook/callback(/|)$", @"/functions.aspx?fun=facebook" });
+                    patterns.Add(new string[] { @"^/api/tumblr/callback(/|)$", @"/functions.aspx?fun=tumblr" });
 
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });

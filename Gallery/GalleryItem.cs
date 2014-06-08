@@ -2361,7 +2361,8 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2}^ -gravity center -extent {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.Arguments = string.Format("\"{3}\" -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2}^ -gravity center -extent {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.UseShellExecute = false;
                 p1.Start();
 
                 p1.WaitForExit();
@@ -2459,7 +2460,8 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2}^ -gravity center -extent {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.Arguments = string.Format("\"{3}\" -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2}^ -gravity center -extent {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.UseShellExecute = false;
                 p1.Start();
 
                 p1.WaitForExit();
@@ -2546,7 +2548,8 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.Arguments = string.Format("\"{3}\" -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.UseShellExecute = false;
                 p1.Start();
 
                 p1.WaitForExit();
@@ -2638,7 +2641,8 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.Arguments = string.Format("\"{3}\" -strip -auto-orient -interlace Plane -quality 80 -thumbnail {1}x{2} \"{0}\"", tempFilePath, width, height, storageFilePath);
+                p1.StartInfo.UseShellExecute = false;
                 p1.Start();
 
                 p1.WaitForExit();
@@ -2738,7 +2742,8 @@ namespace BoxSocial.Applications.Gallery
 
                 Process p1 = new Process();
                 p1.StartInfo.FileName = "convert";
-                p1.StartInfo.Arguments = string.Format("{3} -strip -auto-orient -interlace Plane -quality 80 -resize {1}x{1} -extent {1}x{2}+0+{4} \"{0}\"", tempFilePath, width, height, storageFilePath, cropY);
+                p1.StartInfo.Arguments = string.Format("\"{3}\" -strip -auto-orient -interlace Plane -quality 80 -resize {1}x{1} -extent {1}x{2}+0+{4} \"{0}\"", tempFilePath, width, height, storageFilePath, cropY);
+                p1.StartInfo.UseShellExecute = false;
                 p1.Start();
 
                 p1.WaitForExit();

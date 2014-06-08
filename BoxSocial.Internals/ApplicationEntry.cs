@@ -1147,7 +1147,7 @@ namespace BoxSocial.Internals
                                 {
                                     Uri shareUri = new Uri(info.ShareUri);
                                     Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
-                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(item.GetActionBody(subItems) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>", owner, true, string.Empty, string.Empty));
+                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(HttpUtility.HtmlEncode(item.GetActionBody(subItems)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>");
 
                                     if (post != null)
                                     {

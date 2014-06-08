@@ -1136,16 +1136,23 @@ namespace BoxSocial.Internals
                                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
                                     Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri);
 
-                                    uQuery.AddField("info_tweet_id", tweet.Id);
-                                    uQuery.AddField("info_tweet_uri", tweet.Uri);
+                                    if (tweet != null)
+                                    {
+                                        uQuery.AddField("info_tweet_id", tweet.Id);
+                                        uQuery.AddField("info_tweet_uri", tweet.Uri);
+                                    }
                                 }
 
                                 if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
                                 {
+                                    Uri shareUri = new Uri(info.ShareUri);
                                     Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
-                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(item.GetActionBody(subItems), owner, true, string.Empty, string.Empty));
+                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(item.GetActionBody(subItems) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>", owner, true, string.Empty, string.Empty));
 
-                                    uQuery.AddField("info_tumblr_post_id", post.Id);
+                                    if (post != null)
+                                    {
+                                        uQuery.AddField("info_tumblr_post_id", post.Id);
+                                    }
                                 }
 
                                 if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
@@ -1155,7 +1162,10 @@ namespace BoxSocial.Internals
                                     FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
                                     FacebookPost post = fb.StatusesUpdate(token, description, info.ShareUri, owner.UserInfo.FacebookSharePermissions);
 
-                                    uQuery.AddField("info_facebook_post_id", post.PostId);
+                                    if (post != null)
+                                    {
+                                        uQuery.AddField("info_facebook_post_id", post.PostId);
+                                    }
                                     
                                 }
 

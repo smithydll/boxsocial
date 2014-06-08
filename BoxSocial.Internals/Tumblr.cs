@@ -328,7 +328,7 @@ namespace BoxSocial.Internals
             string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
             string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
 
-            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
+            string parameters = "body=" + UrlEncode(post) + "&format=html&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&type=text";
 
             string twitterEndpoint = string.Format("http://api.tumblr.com/v2/blog/{0}/post", hostname);
 
@@ -337,7 +337,7 @@ namespace BoxSocial.Internals
             String oauthSignature = string.Empty;
             try
             {
-                oauthSignature = computeSignature(signature, consumerSecret + "&");
+                oauthSignature = computeSignature(signature, consumerSecret + "&" + token.Secret);
             }
             catch (Exception)
             {
@@ -363,7 +363,7 @@ namespace BoxSocial.Internals
 
             HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
 
-            if (response.StatusCode != HttpStatusCode.OK)
+            if (response.StatusCode != HttpStatusCode.OK && response.StatusCode != HttpStatusCode.Created)
             {
             }
             else
@@ -482,7 +482,7 @@ namespace BoxSocial.Internals
             string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
             string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
 
-            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
+            string parameters = "id=" + postId.ToString() + "&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
 
             string twitterEndpoint = string.Format("http://api.tumblr.com/v2/blog/{0}/post/delete", hostname);
 

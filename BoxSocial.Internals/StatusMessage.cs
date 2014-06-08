@@ -209,6 +209,15 @@ namespace BoxSocial.Internals
                 }
             }
 
+            if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
+            {
+                if (Info.TumblrPostId > 0)
+                {
+                    Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
+                    t.DeleteStatus(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, Info.TumblrPostId);
+                }
+            }
+
             if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
             {
                 if (!string.IsNullOrEmpty(info.FacebookPostId))

@@ -37,6 +37,21 @@ namespace BoxSocial.Internals
 {
     public class TumblrPost
     {
+        private long id;
+
+        public long Id
+        {
+            get
+            {
+                return id;
+            }
+        }
+
+        public TumblrPost(string response)
+        {
+            JObject json = JObject.Parse(response);
+            id = (long)json["response"]["id"];
+        }
     }
 
     public class TumblrAuthToken
@@ -304,6 +319,66 @@ namespace BoxSocial.Internals
             return null;
         }
 
+        public TumblrPost StatusesUpdate(TumblrAccessToken token, string hostname, string title, string post)
+        {
+            string method = "POST";
+
+            string oAuthSignatureMethod = "HMAC-SHA1";
+
+            string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
+
+            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
+
+            string twitterEndpoint = string.Format("http://api.tumblr.com/v2/blog/{0}/post", hostname);
+
+            string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
+
+            String oauthSignature = string.Empty;
+            try
+            {
+                oauthSignature = computeSignature(signature, consumerSecret + "&");
+            }
+            catch (Exception)
+            {
+            }
+
+            string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
+                oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
+
+            string body = "type=text&format=html&body=" + UrlEncode(post);
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(twitterEndpoint);
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.ContentType = "application/x-www-form-urlencoded";
+            wr.Method = method;
+            wr.Headers["Authorization"] = authorisationHeader;
+            wr.ContentLength = body.Length;
+
+            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body);
+
+            Stream stream = wr.GetRequestStream();
+            stream.Write(bodyBytes, 0, bodyBytes.Length);
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+            }
+            else
+            {
+                Encoding encode = Encoding.GetEncoding("utf-8");
+                StreamReader sr = new StreamReader(response.GetResponseStream(), encode);
+
+                string responseString = sr.ReadToEnd();
+
+                return new TumblrPost(responseString);
+            }
+
+            return null;
+        }
+
         public TumblrUserInfo GetUserInfo(TumblrAccessToken token)
         {
             string method = "GET";
@@ -395,6 +470,59 @@ namespace BoxSocial.Internals
                         core.Http.Redirect(core.Hyperlink.BuildAccountSubModuleUri("dashboard", "preferences"));
                     }
                 }
+            }
+        }
+
+        public void DeleteStatus(TumblrAccessToken token, string hostname, long postId)
+        {
+            string method = "POST";
+
+            string oAuthSignatureMethod = "HMAC-SHA1";
+
+            string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
+
+            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
+
+            string twitterEndpoint = string.Format("http://api.tumblr.com/v2/blog/{0}/post/delete", hostname);
+
+            string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
+
+            String oauthSignature = string.Empty;
+            try
+            {
+                oauthSignature = computeSignature(signature, consumerSecret + "&" + token.Secret);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
+                oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
+
+            string body = "id=" + postId.ToString();
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(twitterEndpoint);
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.ContentType = "application/x-www-form-urlencoded";
+            wr.Method = method;
+            wr.Headers["Authorization"] = authorisationHeader;
+            wr.ContentLength = body.Length;
+
+            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body);
+
+            Stream stream = wr.GetRequestStream();
+            stream.Write(bodyBytes, 0, bodyBytes.Length);
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+            }
+            else
+            {
+                // ignore response
             }
         }
     }

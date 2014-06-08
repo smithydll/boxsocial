@@ -62,8 +62,8 @@ namespace BoxSocial.Internals
         private string tweetUri;
         [DataField("info_facebook_post_id", 63)]
         private string facebookPostId;
-        [DataField("info_tumblr_post_id", 63)]
-        private string tumblrPostId;
+        [DataField("info_tumblr_post_id")]
+        private long tumblrPostId;
         [DataField("info_item_time_ut")]
         private long timeRaw;
 
@@ -514,7 +514,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        internal string TumblrPostId
+        internal long TumblrPostId
         {
             get
             {

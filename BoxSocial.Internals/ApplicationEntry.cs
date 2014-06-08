@@ -1088,7 +1088,7 @@ namespace BoxSocial.Internals
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
                 /* Post to Twitter, Facebook, individual */
-                if ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated))
+                if ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated))
                 {
                     ItemInfo info = item.Info;
                     ItemKey sharedItem = item.ItemKey;
@@ -1140,6 +1140,14 @@ namespace BoxSocial.Internals
                                     uQuery.AddField("info_tweet_uri", tweet.Uri);
                                 }
 
+                                if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
+                                {
+                                    Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
+                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(item.GetActionBody(subItems), owner, true, string.Empty, string.Empty));
+
+                                    uQuery.AddField("info_tumblr_post_id", post.Id);
+                                }
+
                                 if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
                                 {
                                     Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
@@ -1155,7 +1163,7 @@ namespace BoxSocial.Internals
                             }
                             catch (System.Net.WebException)
                             {
-                                // If Twitter or Facebook are overloaded then we can't update twitter
+                                // If Twitter, Tumblr, or Facebook are overloaded then we can't update twitter
                             }
                         }
                     }

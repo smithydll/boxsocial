@@ -469,6 +469,7 @@ namespace BoxSocial.Applications.Blog
         void BlogEntry_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
             core.Search.DeleteFromIndex(this);
+            ActionableItem.CleanUp(core, this);
         }
 
         /// <summary>
@@ -892,6 +893,39 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return "blog";
+            }
+        }
+
+
+        public ActionableItemType PostType
+        {
+            get
+            {
+                return ActionableItemType.Text;
+            }
+        }
+
+        public byte[] Data
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string DataContentType
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string Caption
+        {
+            get
+            {
+                return null;
             }
         }
     }

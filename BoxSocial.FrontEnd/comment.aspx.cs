@@ -397,7 +397,7 @@ namespace BoxSocial.FrontEnd
 
             /* save comment in the database */
 
-            Item item = null;
+            NumberedItem item = null;
             try
             {
                 item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
@@ -448,7 +448,7 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, new ItemKey(itemId, itemTypeId), Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
+                        ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
                     }
                     ICommentableItem citem = (ICommentableItem)item;
 

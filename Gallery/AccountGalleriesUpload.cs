@@ -249,7 +249,7 @@ namespace BoxSocial.Applications.Gallery
 
                         if (publishToFeed && i < 3)
                         {
-                            core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem.ItemKey, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                            core.CallingApplication.PublishToFeed(core, LoggedInMember, parent, newGalleryItem, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
                         }
                     }
 

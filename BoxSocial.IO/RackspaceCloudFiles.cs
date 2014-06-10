@@ -78,7 +78,7 @@ namespace BoxSocial.IO
             //headers.Add("Content-Type", contentType);
 
             // Do not overwrite or double work files
-            if (!FileExists(bin, fileName))
+            //if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
                 provider.CreateObject(bin, file, fileName, headers: headers, region: location);
@@ -92,7 +92,7 @@ namespace BoxSocial.IO
             //headers.Add("Content-Type", contentType);
 
             // Do not overwrite or double work files
-            if (!FileExists(bin, fileName))
+            //if (!FileExists(bin, fileName))
             {
                 file.Position = 0;
                 provider.CreateObject(bin, file, fileName, headers: headers, region: location);
@@ -146,6 +146,7 @@ namespace BoxSocial.IO
             {
                 MemoryStream ms = new MemoryStream();
                 provider.GetObject(bin, fileName, ms, region: location);
+                ms.Position = 0;
                 return ms;
             }
             catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException ex)

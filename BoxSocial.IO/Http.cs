@@ -165,6 +165,14 @@ namespace BoxSocial.IO
         {
             current.Response.Cookies.Add(cookie);
         }
+
+        public string RawUrl
+        {
+            get
+            {
+                return current.Request.RawUrl;
+            }
+        }
         
         public string Status
         {

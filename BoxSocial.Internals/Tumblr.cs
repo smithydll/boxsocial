@@ -186,6 +186,13 @@ namespace BoxSocial.Internals
             return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
         }
 
+        public static string UrlEncode(byte[] data)
+        {
+            Regex reg = new Regex(@"%[a-f0-9]{2}");
+
+            return reg.Replace(HttpUtility.UrlEncode(data), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
+        }
+
         private static string computeSignature(string baseString, string keyString)
         {
             byte[] keyBytes = UTF8Encoding.UTF8.GetBytes(keyString);
@@ -319,7 +326,7 @@ namespace BoxSocial.Internals
             return null;
         }
 
-        public TumblrPost StatusesUpdate(TumblrAccessToken token, string hostname, string title, string post)
+        public TumblrPost StatusesUpdate(TumblrAccessToken token, string hostname, ActionableItemType type, string title, string post, string link, byte[] data, string dataContentType)
         {
             string method = "POST";
 
@@ -328,7 +335,26 @@ namespace BoxSocial.Internals
             string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
             string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
 
-            string parameters = "body=" + UrlEncode(post) + "&format=html&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&type=text";
+            string postType = string.Empty;
+            string parameters = string.Empty;
+            switch (type)
+            {
+                case ActionableItemType.Photo:
+                    postType = "photo";
+                    parameters = "caption=" + UrlEncode(post) + "&format=html&link=" + UrlEncode(link) + "&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&type=" + postType;
+                    break;
+                case ActionableItemType.Audio:
+                    postType = "audio";
+                    parameters = "caption=" + UrlEncode(post) + "&format=html&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&type=" + postType;
+                    break;
+                case ActionableItemType.Video:
+                    postType = "video";
+                    break;
+                default:
+                    postType = "text";
+                    parameters = "body=" + UrlEncode(post) + "&format=html&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&type=" + postType;
+                    break;
+            }
 
             string twitterEndpoint = string.Format("http://api.tumblr.com/v2/blog/{0}/post", hostname);
 
@@ -346,20 +372,81 @@ namespace BoxSocial.Internals
             string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
                 oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
 
-            string body = "type=text&format=html&body=" + UrlEncode(post);
+            string guid = Guid.NewGuid().ToString();
+            string boundary = "----BSFB" + UnixTime.UnixTimeStamp().ToString() + guid.Replace("-", string.Empty);
+            StringBuilder body = new StringBuilder();
 
             HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(twitterEndpoint);
             wr.ProtocolVersion = HttpVersion.Version11;
             wr.UserAgent = "HttpCore/1.1";
-            wr.ContentType = "application/x-www-form-urlencoded";
             wr.Method = method;
             wr.Headers["Authorization"] = authorisationHeader;
-            wr.ContentLength = body.Length;
+            if (data == null)
+            {
+                body.Append("type=" + postType + "&format=html&body=" + UrlEncode(post));
 
-            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body);
+                wr.ContentType = "application/x-www-form-urlencoded";
+            }
+            else
+            {
+                string extension = "";
+                switch (dataContentType)
+                {
+                    case "image/jpeg":
+                        extension = ".jpg";
+                        break;
+                    case "image/gif":
+                        extension = ".gif";
+                        break;
+                    case "image/png":
+                        extension = ".png";
+                        break;
+                }
+
+                body.Append("--" + boundary + "\r\n");
+                body.Append("Content-Disposition: form-data; name=\"type\"\r\n\r\n");
+                body.Append(postType + "\r\n");
+
+                body.Append("--" + boundary + "\r\n");
+                body.Append("Content-Disposition: form-data; name=\"format\"\r\n\r\n");
+                body.Append("html\r\n");
+
+                body.Append("--" + boundary + "\r\n");
+                body.Append("Content-Disposition: form-data; name=\"link\"\r\n\r\n");
+                body.Append(link + "\r\n");
+
+                body.Append("--" + boundary + "\r\n");
+                body.Append("Content-Disposition: form-data; name=\"caption\"\r\n\r\n");
+                body.Append(post + "\r\n");
+
+                body.Append("--" + boundary + "\r\n");
+                body.Append("Content-Disposition: form-data; name=\"data[0]\"; filename=\"" + guid + extension + "\"\r\n");
+                body.Append("Content-Type: " + dataContentType + "\r\n\r\n");
+
+                wr.ContentType = "multipart/form-data; boundary=" + boundary;
+            }
+
+            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());
+            byte[] boundaryBytes = UTF8Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
+
+            if (data == null)
+            {
+                wr.ContentLength = bodyBytes.Length;
+            }
+            else
+            {
+                wr.ContentLength = bodyBytes.Length + data.Length + boundaryBytes.Length;
+            }
 
             Stream stream = wr.GetRequestStream();
             stream.Write(bodyBytes, 0, bodyBytes.Length);
+            if (data != null)
+            {
+                stream.Write(data, 0, data.Length);
+                stream.Write(boundaryBytes, 0, boundaryBytes.Length);
+            }
+            
+            stream.Close();
 
             HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
 

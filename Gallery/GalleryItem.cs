@@ -29,6 +29,7 @@ using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -843,6 +844,19 @@ namespace BoxSocial.Applications.Gallery
         void GalleryItem_ItemLoad()
         {
             OnCommentPosted += new CommentHandler(GalleryItem_CommentPosted);
+            ItemDeleted += new ItemDeletedEventHandler(GalleryItem_ItemDeleted);
+            ItemUpdated += new EventHandler(GalleryItem_ItemUpdated);
+        }
+
+        void GalleryItem_ItemUpdated(object sender, EventArgs e)
+        {
+            core.Search.UpdateIndex(this);
+        }
+
+        void GalleryItem_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            core.Search.DeleteFromIndex(this);
+            ActionableItem.CleanUp(core, this);
         }
 
         bool GalleryItem_CommentPosted(CommentPostedEventArgs e)
@@ -985,7 +999,7 @@ namespace BoxSocial.Applications.Gallery
              */
             string storageFilePath = string.Empty;
 
-            if (highQuality)
+            if (highQuality || (width <= (int)PictureScale.Ultra && height <= (int)PictureScale.Ultra))
             {
                 core.Storage.SaveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), storageName, stream, contentType);
             }
@@ -1048,6 +1062,12 @@ namespace BoxSocial.Applications.Gallery
             if (width > (int)PictureScale.Display || height > (int)PictureScale.Display)
             {
                 CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
+                displayExists = true;
+            }
+            else
+            {
+                // This strips all uploaded images of EXIF data
+                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, width, height);
                 displayExists = true;
             }
 
@@ -3422,7 +3442,7 @@ namespace BoxSocial.Applications.Gallery
 
         public Template RenderPreview()
         {
-            Template template = new Template("search_result.galleryitem.html");
+            Template template = new Template(Assembly.GetExecutingAssembly(), "search_result_galleryitem");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
@@ -3462,6 +3482,112 @@ namespace BoxSocial.Applications.Gallery
             }
 
             return template;
+        }
+
+
+        public ActionableItemType PostType
+        {
+            get
+            {
+                return ActionableItemType.Photo;
+            }
+        }
+
+        public byte[] Data
+        {
+            get
+            {
+                if (this.ItemBytes < 3145728)
+                {
+                    Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
+
+                    byte[] data = new byte[image.Length];
+                    image.Read(data, 0, data.Length);
+
+                    image.Close();
+
+                    return data;
+                }
+                else if (this.ItemWidth > (int)PictureScale.Full || this.ItemHeight > (int)PictureScale.Full)
+                {
+                    if (!FullExists)
+                    {
+                        Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
+
+                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
+                        FullExists = true;
+                        Update();
+                    }
+
+                    Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, FullPrefix), StoragePath);
+
+                    byte[] data = new byte[image.Length];
+                    image.Read(data, 0, data.Length);
+
+                    image.Close();
+
+                    return data;
+
+                }
+                else if (this.ItemWidth > (int)PictureScale.Display || this.ItemHeight > (int)PictureScale.Display)
+                {
+                    if (!DisplayExists)
+                    {
+                        Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
+
+                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
+                        DisplayExists = true;
+                        Update();
+                    }
+
+                    Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, DisplayPrefix), StoragePath);
+
+                    byte[] data = new byte[image.Length];
+                    image.Read(data, 0, data.Length);
+
+                    image.Close();
+
+                    return data;
+                }
+                else if (this.ItemWidth > (int)PictureScale.Mobile || this.ItemHeight > (int)PictureScale.Mobile)
+                {
+                    if (!MobileExists)
+                    {
+                        Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
+
+                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
+                        MobileExists = true;
+                        Update();
+                    }
+
+                    Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, MobilePrefix), StoragePath);
+
+                    byte[] data = new byte[image.Length];
+                    image.Read(data, 0, data.Length);
+
+                    image.Close();
+
+                    return data;
+                }
+
+                return null;
+            }
+        }
+
+        public string DataContentType
+        {
+            get
+            {
+                return ContentType;
+            }
+        }
+
+        public string Caption
+        {
+            get
+            {
+                return ItemAbstract;
+            }
         }
     }
 

@@ -200,33 +200,7 @@ namespace BoxSocial.Internals
         void StatusMessage_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
             core.Search.DeleteFromIndex(this);
-            if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
-            {
-                if (Info.TweetId > 0)
-                {
-                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                    t.DeleteStatus(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), Info.TweetId);
-                }
-            }
-
-            if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
-            {
-                if (Info.TumblrPostId > 0)
-                {
-                    Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
-                    t.DeleteStatus(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, Info.TumblrPostId);
-                }
-            }
-
-            if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
-            {
-                if (!string.IsNullOrEmpty(info.FacebookPostId))
-                {
-                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
-                    FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
-                    fb.DeleteStatus(token, info.FacebookPostId);
-                }
-            }
+            ActionableItem.CleanUp(core, this);
         }
 
         public static StatusMessage Create(Core core, User creator, string message)
@@ -604,6 +578,39 @@ namespace BoxSocial.Internals
             get
             {
                 return core.Prose.GetString("_STATUS");
+            }
+        }
+
+
+        public ActionableItemType PostType
+        {
+            get
+            {
+                return ActionableItemType.Text;
+            }
+        }
+
+        public byte[] Data
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string DataContentType
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string Caption
+        {
+            get
+            {
+                return null;
             }
         }
     }

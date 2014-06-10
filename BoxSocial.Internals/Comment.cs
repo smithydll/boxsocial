@@ -178,6 +178,12 @@ namespace BoxSocial.Internals
 
         void Comment_ItemLoad()
         {
+            ItemDeleted += new ItemDeletedEventHandler(Comment_ItemDeleted);
+        }
+
+        void Comment_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            ActionableItem.CleanUp(core, this);
         }
 
         public static Comment Create(Core core, ItemKey itemKey, string comment)
@@ -603,6 +609,39 @@ namespace BoxSocial.Internals
         public string GetActionBody(List<ItemKey> subItems)
         {
             return ShareString;
+        }
+
+
+        public ActionableItemType PostType
+        {
+            get
+            {
+                return ActionableItemType.Text;
+            }
+        }
+
+        public byte[] Data
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string DataContentType
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string Caption
+        {
+            get
+            {
+                return null;
+            }
         }
     }
 

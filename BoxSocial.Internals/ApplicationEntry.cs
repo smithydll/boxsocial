@@ -1058,24 +1058,30 @@ namespace BoxSocial.Internals
 
         public void PublishToFeed(Core core, User owner, IActionableItem item, string description)
         {
-            PublishToFeed(core, owner, item, new List<ItemKey>(), description);
+            PublishToFeed(core, owner, item, new List<NumberedItem>(), description);
         }
 
-        public void PublishToFeed(Core core, User owner, IActionableItem item, ItemKey subItem, string description)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, NumberedItem subItem, string description)
         {
             if (subItem != null)
             {
-                PublishToFeed(core, owner, item, new List<ItemKey> { subItem }, description);
+                PublishToFeed(core, owner, item, new List<NumberedItem> { subItem }, description);
             }
             else
             {
-                PublishToFeed(core, owner, item, new List<ItemKey>(), description);
+                PublishToFeed(core, owner, item, new List<NumberedItem>(), description);
             }
         }
 
-        public void PublishToFeed(Core core, User owner, IActionableItem item, List<ItemKey> subItems, string description)
+        public void PublishToFeed(Core core, User owner, IActionableItem item, List<NumberedItem> subItems, string description)
         {
             ItemKey itemKey = item.ItemKey;
+            List<ItemKey> subItemKeys = new List<Internals.ItemKey>();
+
+            foreach (NumberedItem i in subItems)
+            {
+                subItemKeys.Add(i.ItemKey);
+            }
 
             SelectQuery query = new SelectQuery(typeof(Action));
             query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
@@ -1091,11 +1097,12 @@ namespace BoxSocial.Internals
                 if ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated))
                 {
                     ItemInfo info = item.Info;
-                    ItemKey sharedItem = item.ItemKey;
+                    IActionableItem sharedItem = item;
+                    ItemKey sharedItemKey = item.ItemKey;
 
                     if (subItems.Count == 1)
                     {
-                        sharedItem = subItems[0];
+                        sharedItemKey = subItems[0].ItemKey;
                         try
                         {
                             info = new ItemInfo(core, subItems[0]);
@@ -1104,9 +1111,14 @@ namespace BoxSocial.Internals
                         {
                             info = ItemInfo.Create(core, subItems[0]);
                         }
+
+                        if (subItems[0] is IActionableItem)
+                        {
+                            sharedItem = (IActionableItem)subItems[0];
+                        }
                     }
 
-                    if (sharedItem.ImplementsShareable)
+                    if (sharedItemKey.ImplementsShareable)
                     {
                         bool publicItem = true;
 
@@ -1127,14 +1139,14 @@ namespace BoxSocial.Internals
                             try
                             {
                                 UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-                                uQuery.AddCondition("info_item_id", sharedItem.Id);
-                                uQuery.AddCondition("info_item_type_id", sharedItem.TypeId);
+                                uQuery.AddCondition("info_item_id", sharedItemKey.Id);
+                                uQuery.AddCondition("info_item_type_id", sharedItemKey.TypeId);
                                 if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
                                 {
                                     string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
                                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                                    Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri);
+                                    Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), sharedItem.PostType, (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
 
                                     if (tweet != null)
                                     {
@@ -1147,7 +1159,7 @@ namespace BoxSocial.Internals
                                 {
                                     Uri shareUri = new Uri(info.ShareUri);
                                     Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
-                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, string.Empty, core.Bbcode.Parse(HttpUtility.HtmlEncode(item.GetActionBody(subItems)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>");
+                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, sharedItem.PostType, string.Empty, core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>", info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
 
                                     if (post != null)
                                     {
@@ -1171,9 +1183,28 @@ namespace BoxSocial.Internals
 
                                 core.Db.Query(uQuery);
                             }
-                            catch (System.Net.WebException)
+                            catch (System.Net.WebException ex)
                             {
                                 // If Twitter, Tumblr, or Facebook are overloaded then we can't update twitter
+                                Encoding encode = Encoding.GetEncoding("utf-8");
+                                StreamReader sr = new StreamReader(ex.Response.GetResponseStream(), encode);
+
+                                string responseString = sr.ReadToEnd();
+
+                                try
+                                {
+                                    core.Email.SendEmail(System.Web.Configuration.WebConfigurationManager.AppSettings["error-email"], "An HTTP Error occured at " + Hyperlink.Domain, "URL: " + core.Http.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nHTTP RESPONSE:\n" + responseString + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                                }
+                                catch
+                                {
+                                    try
+                                    {
+                                        core.Email.SendEmail(System.Web.Configuration.WebConfigurationManager.AppSettings["error-email"], "An HTTP Error occured at " + Hyperlink.Domain, "HTTP RESPONSE:\n" + responseString + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                                    }
+                                    catch
+                                    {
+                                    }
+                                }
                             }
                         }
                     }
@@ -1213,7 +1244,7 @@ namespace BoxSocial.Internals
                         for (int i = 0; i < subItems.Count; i++)
                         {
                             if (subItemsShortList.Count == 3) break;
-                            subItemsShortList.Add(subItems[i]);
+                            subItemsShortList.Add(subItemKeys[i]);
                         }
 
                         string body = item.GetActionBody(subItemsShortList);
@@ -1247,7 +1278,7 @@ namespace BoxSocial.Internals
 
                         if (subItems != null)
                         {
-                            foreach (ItemKey subItem in subItems)
+                            foreach (ItemKey subItem in subItemKeys)
                             {
                                 InsertQuery iquery = new InsertQuery(typeof(ActionItem));
                                 iquery.AddField("action_id", action.Id);
@@ -1261,7 +1292,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    string body = item.GetActionBody(subItems);
+                    string body = item.GetActionBody(subItemKeys);
                     string bodyCache = string.Empty;
 
                     if (!body.Contains("[user") && !body.Contains("sid=true]"))
@@ -1282,8 +1313,8 @@ namespace BoxSocial.Internals
 
                     if (subItems != null && subItems.Count == 1)
                     {
-                        iquery.AddField("interact_item_id", subItems[0].Id);
-                        iquery.AddField("interact_item_type_id", subItems[0].TypeId);
+                        iquery.AddField("interact_item_id", subItemKeys[0].Id);
+                        iquery.AddField("interact_item_type_id", subItemKeys[0].TypeId);
                     }
                     else
                     {
@@ -1295,7 +1326,7 @@ namespace BoxSocial.Internals
 
                     if (subItems != null)
                     {
-                        foreach (ItemKey subItem in subItems)
+                        foreach (ItemKey subItem in subItemKeys)
                         {
                             iquery = new InsertQuery(typeof(ActionItem));
                             iquery.AddField("action_id", actionId);

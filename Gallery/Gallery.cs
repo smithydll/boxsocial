@@ -858,6 +858,12 @@ namespace BoxSocial.Applications.Gallery
         private void Gallery_ItemLoad()
         {
             OnCommentPosted += new CommentHandler(Gallery_CommentPosted);
+            ItemDeleted += new ItemDeletedEventHandler(Gallery_ItemDeleted);
+        }
+
+        void Gallery_ItemDeleted(object sender, ItemDeletedEventArgs e)
+        {
+            ActionableItem.CleanUp(core, this);
         }
 
         bool Gallery_CommentPosted(CommentPostedEventArgs e)
@@ -2509,6 +2515,39 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return core.Prose.GetString("_PHOTO_GALLERY");
+            }
+        }
+
+
+        public ActionableItemType PostType
+        {
+            get
+            {
+                return ActionableItemType.Text;
+            }
+        }
+
+        public byte[] Data
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string DataContentType
+        {
+            get
+            {
+                return null;
+            }
+        }
+
+        public string Caption
+        {
+            get
+            {
+                return null;
             }
         }
     }

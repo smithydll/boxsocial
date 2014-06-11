@@ -517,7 +517,11 @@ namespace BoxSocial.Internals
             {
                 ItemKey ik = loadedAssemblies[name];
                 ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
-                return (ApplicationEntry)ItemCache[ik];
+                ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
+
+                Prose.AddApplication(ae.Key);
+
+                return ae;
             }
             else
             {
@@ -555,6 +559,8 @@ namespace BoxSocial.Internals
                         }
                     }
                 }
+
+                Prose.AddApplication(ae.Key);
 
                 return ae;
             }
@@ -656,6 +662,8 @@ namespace BoxSocial.Internals
                         ApplicationEntry ae = new ApplicationEntry(this, dr);
                         ItemCache.RegisterItem(ae);
                         loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
+
+                        Prose.AddApplication(ae.Key);
                     }
 
                     if (loadedAssemblies != null)

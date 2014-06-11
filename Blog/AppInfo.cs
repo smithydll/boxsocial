@@ -320,7 +320,23 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
 
-            Blog blog = new Blog(core, (User)e.Owner);
+            Blog blog = null;
+
+            try
+            {
+                blog = new Blog(e.core, (User)e.Owner);
+            }
+            catch (InvalidBlogException)
+            {
+                if (e.Owner.ItemKey.Equals(e.core.LoggedInMemberItemKey))
+                {
+                    blog = Blog.Create(core);
+                }
+                else
+                {
+                    return;
+                }
+            }
 
             /* Title TextBox */
             TextBox titleTextBox = new TextBox("title");

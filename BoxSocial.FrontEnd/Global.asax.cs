@@ -338,6 +338,10 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/facebook/callback(/|)$", @"/functions.aspx?fun=facebook" });
                     patterns.Add(new string[] { @"^/api/tumblr/callback(/|)$", @"/functions.aspx?fun=tumblr" });
 
+                    patterns.Add(new string[] { @"^/oauth/oauth/request_token(/|)$", @"/oauth.aspx?method=request_token" });
+                    patterns.Add(new string[] { @"^/oauth/oauth/authorize(/|)$", @"/oauth.aspx?method=authorize" });
+                    patterns.Add(new string[] { @"^/oauth/oauth/access_token(/|)$", @"/oauth.aspx?method=access_token" });
+
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
                     patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });

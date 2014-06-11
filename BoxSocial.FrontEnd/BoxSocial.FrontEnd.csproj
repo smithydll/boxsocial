@@ -135,6 +135,9 @@
     <Compile Include="networkpage.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="oauth.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="opensource.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

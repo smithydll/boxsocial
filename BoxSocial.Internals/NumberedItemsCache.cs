@@ -163,6 +163,20 @@ namespace BoxSocial.Internals
             if (!(itemsCached.ContainsKey(itemKey)))
             {
                 itemsCached.Add(itemKey, item);
+
+                if (itemKey.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
+                {
+                    ApplicationEntry ae = (ApplicationEntry)item;
+
+                    /* The Prose should auto load because it is lightweight and so important */
+                    if (ae.Id > 0)
+                    {
+                        if (core.Prose != null)
+                        {
+                            core.Prose.AddApplication(ae.Key);
+                        }
+                    }
+                }
             }
 
             Type typeToGet;

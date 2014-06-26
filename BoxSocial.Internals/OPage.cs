@@ -41,5 +41,84 @@ namespace BoxSocial.Internals
     /// </summary>
     public class OPage : System.Web.UI.Page
     {
+        protected Template template;
+        public Mysql db;
+        protected Random rand;
+        Stopwatch timer;
+        public UnixTime tz;
+        protected Core core;
+        private bool pageEnded;
+
+        public OPage()
+        {
+            timer = new Stopwatch();
+            timer.Start();
+            rand = new Random();
+
+            Stopwatch initTimer = new Stopwatch();
+            initTimer.Start();
+
+            db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
+                WebConfigurationManager.AppSettings["mysql-password"],
+                WebConfigurationManager.AppSettings["mysql-database"],
+                WebConfigurationManager.AppSettings["mysql-host"]);
+
+            core = new Core(this, db);
+
+            HttpContext httpContext = HttpContext.Current;
+        }
+
+        public void EndResponse()
+        {
+            if (!pageEnded)
+            {
+                pageEnded = true;
+                long pageEnd = timer.ElapsedTicks;
+
+                long templateStart = timer.ElapsedTicks;
+                core.Http.Write(template);
+                double templateSeconds = (timer.ElapsedTicks - templateStart) / 10000000.0;
+
+                if (db != null)
+                {
+                    db.CloseConnection();
+                }
+
+                core.Prose.Close();
+                core.Search.Dispose();
+                //core.Dispose();
+                //core = null;
+
+                timer.Stop();
+                double seconds = (timer.ElapsedTicks) / 10000000.0;
+                double pageEndSeconds = (timer.ElapsedTicks - pageEnd) / 10000000.0;
+                if (core != null)
+                {
+                    if (core.LoggedInMemberId <= 2 && core.LoggedInMemberId != 0)
+                    {
+                        //HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
+                        // We will write it out as a comment to preserve html validation
+                        //HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
+                    }
+                }
+
+                core.Http.End();
+                //System.Threading.Thread.CurrentThread.Abort();
+            }
+        }
+
+        ~OPage()
+        {
+            // destructor
+            if (db != null)
+            {
+                db.CloseConnection();
+            }
+
+            core.Prose.Close();
+            core.Search.Dispose();
+            //core.Dispose();
+            //core = null;
+        }
     }
 }

@@ -1047,7 +1047,7 @@ namespace BoxSocial.Applications.Gallery
             bool fullExists = false;
             bool ultraExists = false;
 
-            if (width > (int)PictureScale.Ultra || height > (int)PictureScale.Ultra)
+            /*if (width > (int)PictureScale.Ultra || height > (int)PictureScale.Ultra)
             {
                 CreateScaleWithRatioPreserved(core, contentType, stream, storageName, UltraPrefix, (int)PictureScale.Ultra, (int)PictureScale.Ultra);
                 ultraExists = true;
@@ -1057,7 +1057,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 CreateScaleWithRatioPreserved(core, contentType, stream, storageName, FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
                 fullExists = true;
-            }
+            }*/
 
             if (width > (int)PictureScale.Display || height > (int)PictureScale.Display)
             {
@@ -1083,11 +1083,11 @@ namespace BoxSocial.Applications.Gallery
                 thumbExists = true;
             }
 
-            if (width > (int)PictureScale.Tiny || height > (int)PictureScale.Tiny)
+            /*if (width > (int)PictureScale.Tiny || height > (int)PictureScale.Tiny)
             {
                 CreateScaleWithRatioPreserved(core, contentType, stream, storageName, TinyPrefix, (int)PictureScale.Tiny, (int)PictureScale.Tiny);
                 tinyExists = true;
-            }
+            }*/
 
             CreateScaleWithSquareRatio(core, contentType, stream, storageName, HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
             CreateScaleWithSquareRatio(core, contentType, stream, storageName, SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);

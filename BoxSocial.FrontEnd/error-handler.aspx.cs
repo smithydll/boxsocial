@@ -46,26 +46,42 @@ namespace BoxSocial.FrontEnd
         {
             Exception ex = Server.GetLastError();
 
-            core.Display.ShowMessage("Error Message", "An error occured" /*+ "\n\n" + ex.ToString(), ShowMessageOptions.Bbcode*/);
-
-            try
+            if (ex.TargetSite.Name == "AssertVirtualPathExists")
             {
-                core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
+                template.SetTemplate("404.html");
+                core.Http.StatusCode = 404;
+                EndResponse();
             }
-            catch
+            else if (ex.TargetSite.DeclaringType.Name == "HttpForbiddenHandler")
             {
+                template.SetTemplate("403.html");
+                core.Http.StatusCode = 403;
+                EndResponse();
+            }
+            else
+            {
+
+                core.Display.ShowMessage("Error Message", "An error occured" /*+ "\n\n" + ex.ToString(), ShowMessageOptions.Bbcode*/);
+
                 try
                 {
-                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "EXCEPTION THROWN:\n" + ex.ToString());
+                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "URL: " + Request.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nEXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
                 {
+                    try
+                    {
+                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain, "EXCEPTION THROWN:\n" + ex.ToString());
+                    }
+                    catch
+                    {
+                    }
                 }
+
+                Server.ClearError();
+
+                EndResponse();
             }
-
-            Server.ClearError();
-
-            EndResponse();
         }
     }
 }

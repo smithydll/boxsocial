@@ -62,6 +62,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string SmsProvider
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-provider"];
+            }
+        }
+
+        public string QueueProvider
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["queue-provider"];
+            }
+        }
+
         public string ImagemagickTempPath
         {
             get
@@ -421,7 +437,15 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["oauth-google"] == "true";
+                return WebConfigurationManager.AppSettings["oauth-facebook"] == "true";
+            }
+        }
+
+        public bool FacebookEnabled
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["facebook-api-enabled"] == "true";
             }
         }
 

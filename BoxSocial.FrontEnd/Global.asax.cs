@@ -67,7 +67,36 @@ namespace BoxSocial.FrontEnd
 
         protected void worker_DoWork(object sender, DoWorkEventArgs e)
         {
-            
+            JobQueue queue;
+            Settings settings = new Settings(null);
+            Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
+                WebConfigurationManager.AppSettings["mysql-password"],
+                WebConfigurationManager.AppSettings["mysql-database"],
+                WebConfigurationManager.AppSettings["mysql-host"]);
+
+            switch (WebConfigurationManager.AppSettings["queue-provider"])
+            {
+                case "amazon":
+                    queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
+                    break;
+                case "rackspace":
+                    queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+                    break;
+                case "native":
+                default:
+                    //queue = new DatabaseQueue(db);
+                    break;
+            }
+
+            // Retrieve Job
+
+
+            // Execute Job
+
+
+            // Cleanup
+
+            db.CloseConnection();
         }
 
         protected void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -339,7 +368,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/tumblr/callback(/|)$", @"/functions.aspx?fun=tumblr" });
 
                     patterns.Add(new string[] { @"^/oauth/oauth/request_token(/|)$", @"/oauth.aspx?method=request_token" });
-                    patterns.Add(new string[] { @"^/oauth/oauth/authorize(/|)$", @"/oauth.aspx?method=authorize" });
+                    patterns.Add(new string[] { @"^/oauth/oauth/authorize(/|)$", @"/functions.aspx?fun=oauth&method=authorize" });
                     patterns.Add(new string[] { @"^/oauth/oauth/access_token(/|)$", @"/oauth.aspx?method=access_token" });
 
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });

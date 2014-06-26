@@ -31,6 +31,29 @@ namespace BoxSocial.Forms
         private Dictionary<string, CheckBox> itemKeys;
         private bool disabled;
         private int columns;
+        private Layout layout;
+
+        public Layout Layout
+        {
+            get
+            {
+                return layout;
+            }
+            set
+            {
+                layout = value;
+                if (layout == Forms.Layout.TwoColumn)
+                {
+                    columns = 2;
+                    layout = Forms.Layout.Vertical;
+                }
+                if (layout == Forms.Layout.ThreeColumn)
+                {
+                    columns = 3;
+                    layout = Forms.Layout.Vertical;
+                }
+            }
+        }
 
         public bool IsDisabled
         {
@@ -83,15 +106,31 @@ namespace BoxSocial.Forms
         public override string ToString(DisplayMedium medium)
         {
             StringBuilder checkBoxArray = new StringBuilder();
-            checkBoxArray.AppendLine(string.Format("<ul id=\"cl-" + name + "\">",
-                name));
-
-            foreach (CheckBox item in items)
+            switch (layout)
             {
-                checkBoxArray.AppendLine("<li>" + item.ToString() + "</li>");
-            }
+                case Forms.Layout.Vertical:
+                    checkBoxArray.AppendLine(string.Format("<ul id=\"cl-" + name + "\">",
+                        name));
 
-            checkBoxArray.AppendLine("</ul>");
+                    foreach (CheckBox item in items)
+                    {
+                        checkBoxArray.AppendLine("<li>" + item.ToString() + "</li>");
+                    }
+
+                    checkBoxArray.AppendLine("</ul>");
+                    break;
+                case Forms.Layout.Horizontal:
+                    checkBoxArray.AppendLine(string.Format("<span id=\"cl-" + name + "\">",
+                        name));
+
+                    foreach (CheckBox item in items)
+                    {
+                        checkBoxArray.AppendLine("<span>" + item.ToString() + "</span>");
+                    }
+
+                    checkBoxArray.AppendLine("</span>");
+                    break;
+            }
 
             return checkBoxArray.ToString();
         }

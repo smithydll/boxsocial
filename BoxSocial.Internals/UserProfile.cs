@@ -27,6 +27,40 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+
+    public enum Gender : byte
+    {
+        Undefined = 0x00,
+        Male = 0x01,
+        Female = 0x02,
+        Intersex = 0x03,
+    }
+
+    public enum Sexuality : byte
+    {
+        Undefined = 0x00,
+        Unsure = 0x01,
+        Asexual = 0x02,
+        Bisexual = 0x03,
+        Hetrosexual = 0x04,
+        Homosexual = 0x05,
+        Pansexual = 0x06,
+        Polysexual = 0x07,
+    }
+
+    public enum MaritialStatus : byte
+    {
+        Undefined = 0x00,
+        Single = 0x01,
+        MonogomousRelationship = 0x02,
+        OpenRelationship = 0x03,
+        Engaged = 0x04,
+        Married = 0x05,
+        Separated = 0x06,
+        Divorced = 0x07,
+        Widowed = 0x08,
+    }
+
     [DataTable("user_profile", "USER")]
     public sealed class UserProfile : NumberedItem
     {
@@ -38,12 +72,17 @@ namespace BoxSocial.Internals
         private string autobiography;
         [DataField("profile_curriculum_vitae", MYSQL_TEXT)]
         private string curriculumVitae;
-        [DataField("profile_gender", 15)]
-        private string gender;
-        [DataField("profile_sexuality", 15)]
-        private string sexuality;
-        [DataField("profile_maritial_status", 15)]
-        private string maritialStatus;
+        [DataField("profile_gender")]
+        private byte gender;
+        // There is no way the labels I used would have made everyone happy
+        [DataField("profile_interested_in_men")]
+        private bool interestedInMen;
+        [DataField("profile_interested_in_women")]
+        private bool interestedInWomen;
+        [DataField("profile_sexuality")]
+        private byte sexuality;
+        [DataField("profile_maritial_status")]
+        private byte maritialStatus;
         [DataField("profile_maritial_with")]
         private long maritialWith;
         [DataField("profile_maritial_with_confirmed")]
@@ -117,27 +156,53 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (gender)
+                switch (GenderRaw)
                 {
-                    case "MALE":
+                    case Internals.Gender.Male:
                         return core.Prose.GetString("MALE");
-                    case "FEMALE":
+                    case Internals.Gender.Female:
                         return core.Prose.GetString("FEMALE");
+                    case Internals.Gender.Intersex:
+                        return core.Prose.GetString("INTERSEX");
                     default:
                         return "FALSE";
                 }
             }
         }
 
-        public string GenderRaw
+        public Gender GenderRaw
         {
             get
             {
-                return gender;
+                return (Gender)gender;
             }
             set
             {
-                SetProperty("gender", value);
+                SetPropertyByRef(new { gender }, (byte)value);
+            }
+        }
+
+        public bool InterestedInMen
+        {
+            get
+            {
+                return interestedInMen;
+            }
+            set
+            {
+                SetPropertyByRef(new { interestedInMen }, value);
+            }
+        }
+
+        public bool InterestedInWomen
+        {
+            get
+            {
+                return interestedInWomen;
+            }
+            set
+            {
+                SetPropertyByRef(new { interestedInWomen }, value);
             }
         }
 
@@ -145,14 +210,16 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (sexuality)
+                switch (SexualityRaw)
                 {
-                    case "UNSURE":
+                    case Internals.Sexuality.Unsure:
                         return core.Prose.GetString("NOT_SURE");
-                    case "STRAIGHT":
+                    case Internals.Sexuality.Asexual:
+                        return core.Prose.GetString("ASEXUAL");
+                    case Internals.Sexuality.Hetrosexual:
                         return core.Prose.GetString("STRAIGHT");
-                    case "HOMOSEXUAL":
-                        if (gender == "FEMALE")
+                    case Internals.Sexuality.Homosexual:
+                        if (GenderRaw == Internals.Gender.Female)
                         {
                             return core.Prose.GetString("LESBIAN");
                         }
@@ -160,25 +227,27 @@ namespace BoxSocial.Internals
                         {
                             return core.Prose.GetString("GAY");
                         }
-                    case "BISEXUAL":
+                    case Internals.Sexuality.Bisexual:
                         return core.Prose.GetString("BISEXUAL");
-                    case "TRANSEXUAL":
-                        return core.Prose.GetString("TRANSEXUAL");
+                    case Internals.Sexuality.Pansexual:
+                        return core.Prose.GetString("PANSEXUAL");
+                    case Internals.Sexuality.Polysexual:
+                        return core.Prose.GetString("POLYSEXUAL");
                     default:
                         return "FALSE";
                 }
             }
         }
 
-        public string SexualityRaw
+        public Sexuality SexualityRaw
         {
             get
             {
-                return sexuality;
+                return (Sexuality)sexuality;
             }
             set
             {
-                SetProperty("sexuality", value);
+                SetPropertyByRef(new { sexuality }, (byte)value);
             }
         }
 
@@ -186,26 +255,51 @@ namespace BoxSocial.Internals
         {
             get
             {
-                switch (maritialStatus)
+                switch (MaritialStatusRaw)
                 {
-                    case "SINGLE":
+                    case Internals.MaritialStatus.Single:
                         return core.Prose.GetString("SINGLE");
-                    case "RELATIONSHIP":
+                    case Internals.MaritialStatus.MonogomousRelationship:
                         if (MaritialWithConfirmed && MaritialWithId > 0)
                         {
-                            return string.Format(core.Prose.GetString("IN_A_RELATIONSHIP"), MaritialWithId.ToString());
+                            return string.Format(core.Prose.GetString("IN_A_RELATIONSHIP_WITH"), MaritialWithId.ToString());
                         }
                         else
                         {
                             return core.Prose.GetString("IN_A_RELATIONSHIP");
                         }
-                    case "MARRIED":
-                        return core.Prose.GetString("MARRIED");
-                    case "SWINGER":
-                        return core.Prose.GetString("SWINGER");
-                    case "DIVORCED":
+                    case Internals.MaritialStatus.OpenRelationship:
+                        if (MaritialWithConfirmed && MaritialWithId > 0)
+                        {
+                            return string.Format(core.Prose.GetString("IN_A_OPEN_RELATIONSHIP_WITH"), MaritialWithId.ToString());
+                        }
+                        else
+                        {
+                            return core.Prose.GetString("IN_A_OPEN_RELATIONSHIP");
+                        }
+                    case Internals.MaritialStatus.Engaged:
+                        if (MaritialWithConfirmed && MaritialWithId > 0)
+                        {
+                            return string.Format(core.Prose.GetString("ENGAGED_TO"), MaritialWithId.ToString());
+                        }
+                        else
+                        {
+                            return core.Prose.GetString("ENGAGED");
+                        }
+                    case Internals.MaritialStatus.Married:
+                        if (MaritialWithConfirmed && MaritialWithId > 0)
+                        {
+                            return string.Format(core.Prose.GetString("MARRIED_TO"), MaritialWithId.ToString());
+                        }
+                        else
+                        {
+                            return core.Prose.GetString("MARRIED");
+                        }
+                    case Internals.MaritialStatus.Separated:
+                        return core.Prose.GetString("SEPARATED");
+                    case Internals.MaritialStatus.Divorced:
                         return core.Prose.GetString("DIVORCED");
-                    case "WIDOWED":
+                    case Internals.MaritialStatus.Widowed:
                         return core.Prose.GetString("WIDOWED");
                     default:
                         return "FALSE";
@@ -237,15 +331,15 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string MaritialStatusRaw
+        public MaritialStatus MaritialStatusRaw
         {
             get
             {
-                return maritialStatus;
+                return (MaritialStatus)maritialStatus;
             }
             set
             {
-                SetProperty("maritialStatus", value);
+                SetPropertyByRef(new { maritialStatus }, (byte)value);
             }
         }
 
@@ -645,12 +739,9 @@ namespace BoxSocial.Internals
             {
                 if (maritialWith == 0)
                 {
-                    switch (maritialStatus.ToUpper())
+                    switch (MaritialStatusRaw)
                     {
-                        case null:
-                        case "":
-                        case "FALSE":
-                        case "UNDEF":
+                        case Internals.MaritialStatus.Undefined:
                             // Ignore if empty or null
                             break;
                         default:
@@ -662,12 +753,9 @@ namespace BoxSocial.Internals
 
             if (HasPropertyUpdated("maritialWithConfirmed"))
             {
-                switch (maritialStatus.ToUpper())
+                switch (MaritialStatusRaw)
                 {
-                    case null:
-                    case "":
-                    case "FALSE":
-                    case "UNDEF":
+                    case  Internals.MaritialStatus.Undefined:
                         // Ignore if empty or null
                         break;
                     default:
@@ -675,13 +763,15 @@ namespace BoxSocial.Internals
                         {
                             core.LoadUserProfile(maritialWith);
                             ApplicationEntry aem = core.GetApplication("Profile");
-                            switch (maritialStatus)
+                            switch (MaritialStatusRaw)
                             {
-                                case "RELATIONSHIP":
+                                case Internals.MaritialStatus.MonogomousRelationship:
                                     //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now in a relationship with [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
                                     //aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now in a relationship with [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;
-                                case "MARRIED":
+                                case Internals.MaritialStatus.OpenRelationship:
+                                    break;
+                                case Internals.MaritialStatus.Married:
                                     //ae.PublishToFeed(core.Session.LoggedInMember, core.Session.LoggedInMember.ItemKey, "[user]" + core.LoggedInMemberId.ToString() + "[/user] is now married to [user]" + core.PrimitiveCache[maritialWith].Id + "[/user]");
                                     //aem.PublishToFeed(core.PrimitiveCache[maritialWith], core.Session.LoggedInMember.ItemKey, "[user]" + maritialWith.ToString() + "[/user] is now married to [user]" + core.Session.LoggedInMember.Id + "[/user]");
                                     break;

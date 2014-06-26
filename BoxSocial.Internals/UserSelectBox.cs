@@ -158,7 +158,7 @@ namespace BoxSocial.Internals
                 switch (medium)
                 {
                     case Forms.DisplayMedium.Desktop:
-                        users.Append(string.Format("<span class=\"username\">{1}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, core.PrimitiveCache[userId].DisplayName));
+                        users.Append(string.Format("<span class=\"username\">{1}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, core.PrimitiveCache[userId].DisplayName));
                         break;
                     case Forms.DisplayMedium.Mobile:
                     case Forms.DisplayMedium.Tablet:
@@ -170,7 +170,7 @@ namespace BoxSocial.Internals
             switch (medium)
             {
                 case Forms.DisplayMedium.Desktop:
-                    return string.Format("<div id=\"{0}\" class=\"user-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"/></div>",
+                    return string.Format("<div id=\"{0}\" class=\"user-droplist{8}\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
                             HttpUtility.HtmlEncode(name),
                             HttpUtility.HtmlEncode(string.Empty),
                             (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
@@ -178,10 +178,11 @@ namespace BoxSocial.Internals
                             width,
                             Script.ToString(),
                             users.ToString(),
-                            idList.ToString());
+                            idList.ToString(),
+                            SelectMultiple ? " multiple" : " single");
                 case Forms.DisplayMedium.Mobile:
                 case Forms.DisplayMedium.Tablet:
-                    return string.Format("<div id=\"{0}\" class=\"user-droplist\" onclick=\"showUsersBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"/></div>",
+                    return string.Format("<div id=\"{0}\" class=\"user-droplist{8}\" onclick=\"showUsersBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
                             HttpUtility.HtmlEncode(name),
                             HttpUtility.HtmlEncode(string.Empty),
                             (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
@@ -189,10 +190,22 @@ namespace BoxSocial.Internals
                             width,
                             Script.ToString(),
                             users.ToString(),
-                            idList.ToString());
+                            idList.ToString(),
+                            SelectMultiple ? " multiple" : " single");
                 default:
                     return string.Empty;
             }
+        }
+
+        public static long FormUser(Core core, string name, long defaultValue)
+        {
+            List<long> users = FormUsers(core, name);
+
+            if (users.Count == 1)
+            {
+                return users[0];
+            }
+            return defaultValue;
         }
 
         public static List<long> FormUsers(Core core, string name)

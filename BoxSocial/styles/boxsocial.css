@@ -910,7 +910,7 @@ button::-moz-focus-inner, input[type="submit"]::-moz-focus-inner {
     font-weight: normal !important;
 }
 
-input[type="text"], input[type="password"], textarea {
+input[type="text"], input[type="password"], input[type="email"], textarea {
 	border: 1px solid #cccccc;
 	background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
 	padding: 4px;
@@ -928,7 +928,7 @@ select {
 	border-radius: 3px;
 }
 
-input[type="text"]:focus, input[type="password"]:focus, textarea:focus, select:focus {
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="checkbox"]:focus, textarea:focus, select:focus {
     outline: #ff9955 auto 5px;
     outline-offset: -2px;
 }
@@ -1597,7 +1597,7 @@ dl#app-list {
 	list-style: none;
 }
 
-.username-dropbox {
+/*.username-dropbox {
 	position: absolute;
 	width: 250px;
 	list-style: none;
@@ -1605,7 +1605,7 @@ dl#app-list {
 	padding: 0.1em;
 	background-color: #ccccee;
 	border: solid 1px #666699;
-}
+}*/
 
 .username-name {
 	background-color: #ccccee;
@@ -1614,7 +1614,7 @@ dl#app-list {
 	margin-right: 0.5em;
 }
 
-.username-field a, .username-dropbox a {
+.username-field a, .user-droplist span.delete, .permission-group-droplist span.delete {
 	cursor: pointer;
 }
 
@@ -1728,7 +1728,7 @@ li.droplist-user img {
         margin: 0;
 }
 
-.user-droplist input, .permission-group-droplist input:focus {
+.user-droplist input:focus, .permission-group-droplist input:focus {
         outline: none;
 }
 

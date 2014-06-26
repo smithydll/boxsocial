@@ -112,6 +112,20 @@
 			<dt>{L_MARITIAL_STATUS}:</dt>
 			<dd>{USER_MARITIAL_STATUS}</dd>
 			<!-- ENDIF -->
+            <!-- IF USER_INTERESTED_IN_MEN OR USER_INTERESTED_IN_WOMEN -->
+			<dt>{L_INTERESTED_IN}:</dt>
+			<dd>
+            <!-- IF USER_INTERESTED_IN_MEN -->
+            {L_MEN}
+            <!-- ENDIF -->
+            <!-- IF USER_INTERESTED_IN_MEN AND USER_INTERESTED_IN_WOMEN -->
+            {L__AND}
+            <!-- ENDIF -->
+            <!-- IF USER_INTERESTED_IN_WOMEN -->
+            {L_WOMEN}
+            <!-- ENDIF -->
+            </dd>
+			<!-- ENDIF -->
 			<!-- IF USER_SEXUALITY -->
 			<dt>{L_SEXUALITY}:</dt>
 			<dd>{USER_SEXUALITY}</dd>

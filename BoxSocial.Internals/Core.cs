@@ -519,7 +519,10 @@ namespace BoxSocial.Internals
                 ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
                 ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
 
-                Prose.AddApplication(ae.Key);
+                if (Prose != null)
+                {
+                    Prose.AddApplication(ae.Key);
+                }
 
                 return ae;
             }
@@ -560,7 +563,10 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                Prose.AddApplication(ae.Key);
+                if (Prose != null)
+                {
+                    Prose.AddApplication(ae.Key);
+                }
 
                 return ae;
             }
@@ -663,7 +669,10 @@ namespace BoxSocial.Internals
                         ItemCache.RegisterItem(ae);
                         loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
 
-                        Prose.AddApplication(ae.Key);
+                        if (Prose != null)
+                        {
+                            Prose.AddApplication(ae.Key);
+                        }
                     }
 
                     if (loadedAssemblies != null)
@@ -817,6 +826,22 @@ namespace BoxSocial.Internals
             this.template = template;
 			
 			ItemKey.populateItemTypeCache(this);
+            QueryCache.populateQueryCache();
+
+            userProfileCache = new PrimitivesCache(this);
+            itemsCache = new NumberedItemsCache(this);
+            accessControlCache = new AccessControlCache(this);
+
+            primitiveTypes = ItemKey.PrimitiveTypes;
+        }
+
+        public Core(OPage page, Mysql db)
+        {
+            LoadApplication += new LoadHandler(Core_LoadApplication);
+
+            this.db = db;
+
+            ItemKey.populateItemTypeCache(this);
             QueryCache.populateQueryCache();
 
             userProfileCache = new PrimitivesCache(this);

@@ -245,9 +245,9 @@ namespace BoxSocial.Internals
             {
                 switch (Profile.GenderRaw)
                 {
-                    case "MALE":
+                    case Gender.Male:
                         return core.Prose.GetString("HIS");
-                    case "FEMALE":
+                    case Gender.Female:
                         return core.Prose.GetString("HER");
                     default:
                         return core.Prose.GetString("THEIR");
@@ -2221,7 +2221,12 @@ namespace BoxSocial.Internals
                 age = ageInt.ToString() + " years old";
             }
 
-            core.Template.Parse("USER_SEXUALITY", page.User.Profile.Sexuality);
+            if (page.User.Access.Can("VIEW_SEXUALITY"))
+            {
+                core.Template.Parse("USER_SEXUALITY", page.User.Profile.Sexuality);
+                core.Template.Parse("USER_INTERESTED_IN_MEN", page.User.Profile.InterestedInMen ? "TRUE" : "FALSE");
+                core.Template.Parse("USER_INTERESTED_IN_WOMEN", page.User.Profile.InterestedInWomen ? "TRUE" : "FALSE");
+            }
             core.Template.Parse("USER_GENDER", page.User.Profile.Gender);
             core.Display.ParseBbcode("USER_AUTOBIOGRAPHY", page.User.Profile.Autobiography);
             core.Display.ParseBbcode("USER_MARITIAL_STATUS", page.User.Profile.MaritialStatus);
@@ -2243,15 +2248,15 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("IS_PROFILE", "TRUE");
 
-            if (page.User.Profile.MaritialStatusRaw != "UNDEF")
+            if (page.User.Profile.MaritialStatusRaw != MaritialStatus.Undefined)
             {
                 hasProfileInfo = true;
             }
-            if (page.User.Profile.GenderRaw != "UNDEF")
+            if (page.User.Profile.GenderRaw != Gender.Undefined)
             {
                 hasProfileInfo = true;
             }
-            if (page.User.Profile.SexualityRaw != "UNDEF")
+            if (page.User.Profile.SexualityRaw != Sexuality.Undefined)
             {
                 hasProfileInfo = true;
             }

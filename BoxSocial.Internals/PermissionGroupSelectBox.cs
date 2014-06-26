@@ -185,7 +185,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"username\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    users.Append(string.Format("<span class=\"username\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings\'.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:
@@ -198,7 +198,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.PrimitiveCache[ppg.ItemKey].DisplayName));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:
@@ -211,7 +211,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:
@@ -224,7 +224,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:
@@ -240,7 +240,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, core.Prose.GetString(ppg.LanguageKey)));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:
@@ -253,7 +253,7 @@ namespace BoxSocial.Internals
                             switch (medium)
                             {
                                 case Forms.DisplayMedium.Desktop:
-                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
+                                    users.Append(string.Format("<span class=\"group\">{2}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{1}-{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"group-{1}-{0}\" name=\"group[{1},{0}]\" value=\"{1},{0}\" /></span>", ppg.ItemKey.Id, ppg.ItemKey.TypeId, ppg.DisplayName));
                                     break;
                                 case DisplayMedium.Mobile:
                                 case DisplayMedium.Tablet:

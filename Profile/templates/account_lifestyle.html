@@ -1,17 +1,25 @@
-<h3>Lifestyle</h3>
+<h3>{L_LIFESTYLE}</h3>
+
+<script type="text/javascript">
+    $(function () {
+        $(".account-pane input[type='submit']").hide();
+    });
+</script>
 
 <form action="{S_ACCOUNT}" method="post">
 	<fieldset>
-		<legend>Lifestyle</legend>
+		<legend>{L_LIFESTYLE}</legend>
 		<dl>
-			<dt><label for="religion">Religion</label></dt>
+			<dt><label for="religion">{L_RELIGION}</label></dt>
 			<dd>{S_RELIGION}</dd>
-			<dt><label for="maritial-status">Maritial status</label></dt>
+			<dt><label for="maritial-status">{L_MARITIAL_STATUS}</label></dt>
 			<dd>{S_MARITIAL_STATUS}<span id="maritial-verb"></span> {S_RELATION}</dd>
-			<dt><label for="sexuality">Sexuality</label></dt>
+            <dt><label>{L_INTERESTED_IN}</label></dt>
+			<dd>{S_INTERESTED_IN}</dd>
+			<dt><label for="sexuality">{L_SEXUALITY}</label></dt>
 			<dd>{S_SEXUALITY}</dd>
 			<dt></dt>
-			<dd><input type="submit" name="save" value="Save" /></dd>
+			<dd><input type="submit" name="save" value="{L_SAVE}" /></dd>
 		</dl>
 		<input type="hidden" name="module" value="profile" />
 		<input type="hidden" name="sub" value="lifestyle" />

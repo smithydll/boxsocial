@@ -51,7 +51,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Prose : IProse
     {
-        private const string MARKER = ""; //"¶";
+        private const string MARKER = ""; //"¶"; //
 
         private Core core;
         private string language;

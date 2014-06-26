@@ -33,6 +33,12 @@ $(document).ready(function () {
                 event.preventDefault();
             }
         })
+        .bind("focus", function (event) {
+            $(this).parent().css("outline", "#ff9955 auto 5px");
+        })
+        .bind("blur", function (event) {
+            $(this).parent().css("outline", "none");
+        })
         .autocomplete({
             minLength: 0,
             source: function (request, response) {
@@ -44,9 +50,12 @@ $(document).ready(function () {
             },
             select: function (event, ui) {
                 this.value = "";
-                if (cv($(this).siblings('.ids'), ui.item.id) == 0) {
-                    $(this).before($('<span class="username">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),' + ui.item.id + '); $(this).parent().remove();">x</span><input type="hidden" id="user-' + ui.item.id + '" name="user[' + ui.item.id + ']" value="' + ui.item.id + '" /></span>'));
-                    avl($(this).siblings('.ids'), ui.item.id);
+                if ($(this).parent().hasClass('multiple') || $(this).siblings('.ids').val() == '') {
+                    if (cv($(this).siblings('.ids'), ui.item.id) == 0) {
+                        $(this).before($('<span class="username">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),' + ui.item.id + '); $(this).parent().siblings(\'.ids\').trigger(\'change\'); $(this).parent().remove();">x</span><input type="hidden" id="user-' + ui.item.id + '" name="user[' + ui.item.id + ']" value="' + ui.item.id + '" /></span>'));
+                        avl($(this).siblings('.ids'), ui.item.id);
+                        $(this).siblings('.ids').trigger("change");
+                    }
                 }
                 return false;
             },
@@ -108,10 +117,11 @@ function preparePermissionsList(id) {
                 select: function (event, ui) {
                     this.value = "";
                     if (cv($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id) == 0) {
-                        $(this).before($('<span class="' + ((ui.item.id > 0) ? 'username' : 'group') + '">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),\'' + ui.item.typeId + '-' + ui.item.id + '\'); $(this).parent().remove();">x</span><input type="hidden" id="group-' + ui.item.typeId + '-' + ui.item.id + '" name="group[' + ui.item.TypeId + ',' + ui.item.id + ']" value="' + ui.item.typeId + ',' + ui.item.id + '" /></span>'));
+                        $(this).before($('<span class="' + ((ui.item.id > 0) ? 'username' : 'group') + '">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),\'' + ui.item.typeId + '-' + ui.item.id + '\'); $(this).parent().siblings(\'.ids\').trigger(\'change\'); $(this).parent().remove();">x</span><input type="hidden" id="group-' + ui.item.typeId + '-' + ui.item.id + '" name="group[' + ui.item.TypeId + ',' + ui.item.id + ']" value="' + ui.item.typeId + ',' + ui.item.id + '" /></span>'));
                         avl($(this).siblings('.ids'), ui.item.typeId + '-' + ui.item.id);
                         empty.hide();
                         textbox.width('48px').width(textbox.parent().width() - textbox.position().left - border + 'px');
+                        $(this).siblings('.ids').trigger("change");
                     }
                     return false;
                 },
@@ -211,4 +221,18 @@ function LoadedCard(r, e, a) {
     $(".contact-card-container").on('mouseleave', function (e) {
         $('.contact-card').unwrap().remove();
     });
+}
+
+function CheckRelationship(a, b) {
+    switch ($('#' + a).val()) {
+        case "2":
+        case "3":
+        case "4":
+        case "5":
+            $('#' + b).show();
+            break;
+        default:
+            $('#' + b).hide();
+            break;
+    }
 }

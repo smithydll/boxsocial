@@ -498,3 +498,31 @@ function toggleStatusComments(parent, id, type, el) {
     }
     return false;
 }
+
+function SaveParameter(module, submodule, field) {
+    var f = $('#' + field);
+    var val = f.val();
+    if (f.attr('type') == 'checkbox') {
+        val = f.is(':checked') ? 'true' : 'false';
+    }
+    if (f.hasClass("user-droplist")) {
+        return PostToAccount(Parameter_Saved, module, submodule, -1, { parameter: field, "value-text": $('#' + field + "-text").val(), "value-ids": $('#' + field + "-ids").val() }, field);
+    }
+    else {
+        return PostToAccount(Parameter_Saved, module, submodule, -1, { parameter: field, value: val }, field);
+    }
+}
+
+function Parameter_Saved(r, e, a) {
+    if (r['code'] == 'SUCCESS') {
+        $('#' + a).css("outline", "#99ff55 auto 5px").animate({ outline: "rgba(153, 255, 85, 0) auto 5px" }, { duration: 5000, complete: function () {
+            $('#' + a).css("outline", "");
+        }
+        });
+    } else {
+        $('#' + a).css("outline", "#ff5555 auto 5px").animate({ outline: "rgba(255, 85, 85, 0) auto 5px" }, { duration: 5000, complete: function () {
+            $('#' + a).css("outline", "");
+        }
+        });
+    }
+}

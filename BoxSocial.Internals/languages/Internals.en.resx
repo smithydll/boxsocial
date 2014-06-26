@@ -138,6 +138,9 @@
   <data name="APRIL" xml:space="preserve">
     <value>April</value>
   </data>
+  <data name="ASEXUAL" xml:space="preserve">
+    <value>Asexual</value>
+  </data>
   <data name="AUGUST" xml:space="preserve">
     <value>August</value>
   </data>
@@ -405,6 +408,12 @@
   <data name="EMAIL" xml:space="preserve">
     <value>E-mail</value>
   </data>
+  <data name="ENGAGED" xml:space="preserve">
+    <value>Engaged</value>
+  </data>
+  <data name="ENGAGED_TO" xml:space="preserve">
+    <value>Engaged to [user]{0}[/user]</value>
+  </data>
   <data name="EVERYONE" xml:space="preserve">
     <value>Everyone</value>
   </data>
@@ -495,8 +504,20 @@
   <data name="INHERIT" xml:space="preserve">
     <value>Inherit</value>
   </data>
+  <data name="INTERESTED_IN" xml:space="preserve">
+    <value>Interested In</value>
+  </data>
+  <data name="INTERSEX" xml:space="preserve">
+    <value>Intersex</value>
+  </data>
   <data name="INVALID" xml:space="preserve">
     <value>Invalid</value>
+  </data>
+  <data name="IN_A_OPEN_RELATIONSHIP" xml:space="preserve">
+    <value>In an open relationship</value>
+  </data>
+  <data name="IN_A_OPEN_RELATIONSHIP_WITH" xml:space="preserve">
+    <value>In an open relationship with [user]{0}[/user]</value>
   </data>
   <data name="IN_A_RELATIONSHIP" xml:space="preserve">
     <value>In a Relationship</value>
@@ -534,6 +555,9 @@
   <data name="LESBIAN" xml:space="preserve">
     <value>Lesbian</value>
   </data>
+  <data name="LIFESTYLE" xml:space="preserve">
+    <value>Lifestyle</value>
+  </data>
   <data name="LIKE" xml:space="preserve">
     <value>Like</value>
   </data>
@@ -561,6 +585,9 @@
   <data name="MARRIED" xml:space="preserve">
     <value>Married</value>
   </data>
+  <data name="MARRIED_TO" xml:space="preserve">
+    <value>Married to [user]{0}[/user]</value>
+  </data>
   <data name="MAY" xml:space="preserve">
     <value>May</value>
   </data>
@@ -572,6 +599,9 @@
   </data>
   <data name="MEMBERS" xml:space="preserve">
     <value>Members</value>
+  </data>
+  <data name="MEN" xml:space="preserve">
+    <value>Men</value>
   </data>
   <data name="MIDDLE_GIVEN_NAME" xml:space="preserve">
     <value>Middle Given Name/Middle Initial</value>
@@ -689,6 +719,9 @@
   <data name="PAGES" xml:space="preserve">
     <value>Pages</value>
   </data>
+  <data name="PANSEXUAL" xml:space="preserve">
+    <value>Pansexual</value>
+  </data>
   <data name="PASSWORD" xml:space="preserve">
     <value>Password</value>
   </data>
@@ -697,6 +730,9 @@
   </data>
   <data name="PHONE" xml:space="preserve">
     <value>Phone</value>
+  </data>
+  <data name="POLYSEXUAL" xml:space="preserve">
+    <value>Polysexual</value>
   </data>
   <data name="POST" xml:space="preserve">
     <value>Post</value>
@@ -764,8 +800,14 @@
   <data name="REPLY" xml:space="preserve">
     <value>Reply</value>
   </data>
+  <data name="REPLY_TO_COMMENT" xml:space="preserve">
+    <value>Reply to comment</value>
+  </data>
   <data name="REPLY_TO_POST" xml:space="preserve">
     <value>Reply to Post</value>
+  </data>
+  <data name="REPORT" xml:space="preserve">
+    <value>Report</value>
   </data>
   <data name="REPORT_AS_SPAM" xml:space="preserve">
     <value>Report as SPAM</value>
@@ -793,6 +835,9 @@
   </data>
   <data name="SEND_MESSAGE" xml:space="preserve">
     <value>Send Message</value>
+  </data>
+  <data name="SEPARATED" xml:space="preserve">
+    <value>Separated</value>
   </data>
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
@@ -920,6 +965,15 @@
   <data name="VIEW_ALL" xml:space="preserve">
     <value>View All</value>
   </data>
+  <data name="VIEW_AS_CONVERSATION" xml:space="preserve">
+    <value>View as conversation</value>
+  </data>
+  <data name="VOTE_DOWN" xml:space="preserve">
+    <value>Vote down</value>
+  </data>
+  <data name="VOTE_UP" xml:space="preserve">
+    <value>Vote up</value>
+  </data>
   <data name="WEDNESDAY" xml:space="preserve">
     <value>Wednesday</value>
   </data>
@@ -932,6 +986,9 @@
   <data name="WIDOWED" xml:space="preserve">
     <value>Widowed</value>
   </data>
+  <data name="WOMEN" xml:space="preserve">
+    <value>Women</value>
+  </data>
   <data name="YEAR" xml:space="preserve">
     <value>Year</value>
   </data>
@@ -940,6 +997,9 @@
   </data>
   <data name="YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
+  </data>
+  <data name="_AND" xml:space="preserve">
+    <value>and</value>
   </data>
   <data name="_COMMENTED_ON" xml:space="preserve">
     <value>commented on {0} {1}</value>

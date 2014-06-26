@@ -246,6 +246,21 @@ namespace BoxSocial.Internals
                 }
                 loadBatchedIds(key.TypeId, key.Id);
                 NumberedItem item = itemsCached[new NumberedItemId(key.Id, key.TypeId)];
+
+                if (key.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
+                {
+                    ApplicationEntry ae = (ApplicationEntry)item;
+
+                    /* The Prose should auto load because it is lightweight and so important */
+                    if (ae.Id > 0)
+                    {
+                        if (core.Prose != null)
+                        {
+                            core.Prose.AddApplication(ae.Key);
+                        }
+                    }
+                }
+
                 return item;
             }
         }

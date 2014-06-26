@@ -67,19 +67,13 @@ namespace BoxSocial.Applications.Profile
         {
             SetTemplate("account_profile");
 
-            string selected = " checked=\"checked\"";
-            switch (LoggedInMember.Profile.GenderRaw)
-            {
-                case "UNDEF":
-                    template.Parse("S_GENDER_UNDEF", selected);
-                    break;
-                case "MALE":
-                    template.Parse("S_GENDER_MALE", selected);
-                    break;
-                case "FEMALE":
-                    template.Parse("S_GENDER_FEMALE", selected);
-                    break;
-            }
+            RadioList genderRadioList = new RadioList("gender");
+            genderRadioList.Add(new RadioListItem(genderRadioList.Name, ((byte)Gender.Undefined).ToString(), core.Prose.GetString("NONE_SPECIFIED")));
+            genderRadioList.Add(new RadioListItem(genderRadioList.Name, ((byte)Gender.Male).ToString(), core.Prose.GetString("MALE")));
+            genderRadioList.Add(new RadioListItem(genderRadioList.Name, ((byte)Gender.Female).ToString(), core.Prose.GetString("FEMALE")));
+            genderRadioList.Add(new RadioListItem(genderRadioList.Name, ((byte)Gender.Intersex).ToString(), core.Prose.GetString("INTERSEX")));
+            genderRadioList.SelectedKey = ((byte)LoggedInMember.Profile.GenderRaw).ToString();
+            genderRadioList.Layout = Layout.Horizontal;
 
             TextBox heightTextBox = new TextBox("height");
             heightTextBox.MaxLength = 3;
@@ -141,6 +135,8 @@ namespace BoxSocial.Applications.Profile
 				countriesSelectBox.SelectedKey = LoggedInMember.Profile.CountryIso;
 			}
 
+            template.Parse("S_GENDER", genderRadioList);
+
             template.Parse("S_DOB_YEAR", dobYearsSelectBox);
             template.Parse("S_DOB_MONTH", dobMonthsSelectBox);
             template.Parse("S_DOB_DAY", dobDaysSelectBox);
@@ -161,7 +157,7 @@ namespace BoxSocial.Applications.Profile
 
             LoggedInMember.Profile.DateOfBirth = DateTime.Parse(dob);
             LoggedInMember.Profile.CountryIso = core.Http.Form["country"];
-            LoggedInMember.Profile.GenderRaw = core.Http.Form["gender"];
+            LoggedInMember.Profile.GenderRaw = (Gender)byte.Parse(core.Http.Form["gender"]);
             LoggedInMember.Profile.Autobiography = core.Http.Form["auto-biography"];
             LoggedInMember.Profile.Height = core.Functions.FormByte("height", 0);
 

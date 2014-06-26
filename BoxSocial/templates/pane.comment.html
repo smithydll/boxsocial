@@ -21,24 +21,24 @@
 			{comment-list.COMMENT}
 		</div>
         <div class="r-stuff light">
-        <span class="img-button voteup-item"><a href="#" onclick="return LikeItem({comment-list.ID},{comment-list.TYPE_ID},$(this).children('.upvotes'));" title="Vote up"><span class="upvotes">{comment-list.LIKES}</span><span class="sprite voteup-sprite"></span></a></span><span class="img-button votedown-item"><a href="#" onclick="return DislikeItem({comment-list.ID},{comment-list.TYPE_ID},$(this).children('.downvotes'));" title="Vote down"><span class="sprite votedown-sprite"></span><span class="downvotes">{comment-list.DISLIKES}</span></a></span><!--
-        --><span class="img-button share-item"><a href="#" onclick="return ShareItem({comment-list.ID},{ITEM_ID});" title="Share"><span class="sprite share-sprite"></span></a></span><!--
+        <span class="img-button voteup-item"><a href="#" onclick="return LikeItem({comment-list.ID},{comment-list.TYPE_ID},$(this).children('.upvotes'));" title="{L_VOTE_UP}"><span class="upvotes">{comment-list.LIKES}</span><span class="sprite voteup-sprite"></span></a></span><span class="img-button votedown-item"><a href="#" onclick="return DislikeItem({comment-list.ID},{comment-list.TYPE_ID},$(this).children('.downvotes'));" title="{L_VOTE_DOWN}"><span class="sprite votedown-sprite"></span><span class="downvotes">{comment-list.DISLIKES}</span></a></span><!--
+        --><span class="img-button share-item"><a href="#" onclick="return ShareItem({comment-list.ID},{ITEM_ID});" title="{L_SHARE}"><span class="sprite share-sprite"></span></a></span><!--
         <!-- IF LOGGED_IN -->
 		<!-- IF IS_USER_GUESTBOOK -->
 		<!-- IF U_CONVERSATION -->
-        --><span class="img-button conversation-item"><a href="{comment-list.U_CONVERSATION}" title="View as Conversation"><span class="sprite conversation-sprite"></span></a></span><!--
+        --><span class="img-button conversation-item"><a href="{comment-list.U_CONVERSATION}" title="{L_VIEW_AS_CONVERSATION}"><span class="sprite conversation-sprite"></span></a></span><!--
 		<!-- ENDIF -->
         <!-- IF CAN_COMMENT -->
 		<!-- IF U_REPLY -->
-        --><span class="img-button reply-item"><a href="{comment-list.U_REPLY}" title="Reply to Post">Reply</a></span><!--
+        --><span class="img-button reply-item"><a href="{comment-list.U_REPLY}" title="{L_REPLY_TO_COMMENT}">{L_REPLY}</a></span><!--
 		<!-- ENDIF -->
 		<!-- ENDIF -->
-        --><span class="img-button quote-item"><a href="#" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});" title="Quote Comment">Quote</a></span><!--
+        --><span class="img-button quote-item"><a href="#" onclick="return QuoteComment({comment-list.ID},{ITEM_ID});" title="{L_QUOTE_COMMENT}">{L_QUOTE}</a></span><!--
 		<!-- ENDIF -->
 		<!-- IF comment-list.MODERATE -->
-        --><span class="img-button delete-item"><a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="Delete Comment"><span class="sprite delete-sprite"></span></a></span><!--
+        --><span class="img-button delete-item"><a href="{comment-list.U_DELETE}" onclick="return DeleteComment({comment-list.ID},{ITEM_ID});" title="{L_DELETE}"><span class="sprite delete-sprite"></span></a></span><!--
 		<!-- ENDIF -->
-        --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="Report as SPAM"><span class="sprite report-sprite"></span></a></span><!--
+        --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="{L_REPORT}"><span class="sprite report-sprite"></span></a></span><!--
         <!-- ENDIF -->
         -->
         </div>

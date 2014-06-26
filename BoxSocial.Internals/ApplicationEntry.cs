@@ -40,6 +40,12 @@ namespace BoxSocial.Internals
         All = Key | Info,
     }
 
+    public enum ApplicationType : byte
+    {
+        Native = 0x00,
+        OAuth = 0x01,
+    }
+
     [Cacheable]
     [DataTable("applications", "APPLICATION")]
     [Primitive("APPLICATION", ApplicationLoadOptions.All, "application_id", "application_assembly_name")]
@@ -84,6 +90,8 @@ namespace BoxSocial.Internals
         private bool updateQueued;
         [DataField("application_simple_permissions")]
         private bool simplePermissions;
+        [DataField("application_type")]
+        private byte applicationType;
 
         //TODO: USER_APPLICATION_FIELDS
         private ushort permissions;
@@ -158,11 +166,24 @@ namespace BoxSocial.Internals
             }
         }
 
+
         public override string Type
         {
             get
             {
                 return "APPLICATION";
+            }
+        }
+
+        public ApplicationType ApplicationType
+        {
+            get
+            {
+                return (ApplicationType)applicationType;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { applicationType }, value);
             }
         }
 
@@ -190,7 +211,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("title", value);
+                SetPropertyByRef(new { title }, value);
             }
         }
 
@@ -247,7 +268,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("description", value);
+                SetPropertyByRef(new { description }, value);
             }
         }
 
@@ -267,7 +288,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("isPrimitive", value);
+                SetPropertyByRef(new { isPrimitive }, value);
             }
         }
 
@@ -279,7 +300,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("isLocked", value);
+                SetPropertyByRef(new { isLocked }, value);
             }
         }
 
@@ -291,7 +312,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("updateQueued", value);
+                SetPropertyByRef(new { updateQueued }, value);
             }
         }
 
@@ -378,7 +399,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("hasStyleSheet", value);
+                SetPropertyByRef(new { hasStyleSheet }, value);
             }
         }
 
@@ -390,7 +411,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("hasJavaScript", value);
+                SetPropertyByRef(new { hasJavaScript }, value);
             }
         }
 
@@ -402,7 +423,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("primitives", (byte)value);
+                SetPropertyByRef(new { primitives }, value);
             }
         }
 
@@ -414,7 +435,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("usesComments", value);
+                SetPropertyByRef(new { usesComments }, value);
             }
         }
 
@@ -426,7 +447,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetProperty("usesRatings", value);
+                SetPropertyByRef(new { usesRatings }, value);
             }
         }
 

@@ -26,11 +26,20 @@ using System.Web;
 
 namespace BoxSocial.Forms
 {
+    public enum Layout
+    {
+        Horizontal,
+        Vertical,
+        TwoColumn,
+        ThreeColumn,
+    }
+
     public class RadioList : FormField
     {
         private List<RadioListItem> items;
         private Dictionary<string, RadioListItem> itemKeys;
         private string selectedKey;
+        private Layout layout;
 
         /// <summary>
         /// Selected item.
@@ -58,6 +67,18 @@ namespace BoxSocial.Forms
             }
         }
 
+        public Layout Layout
+        {
+            get
+            {
+                return layout;
+            }
+            set
+            {
+                layout = value;
+            }
+        }
+
         /// <summary>
         /// Radio List constructor.
         /// </summary>
@@ -65,6 +86,7 @@ namespace BoxSocial.Forms
         public RadioList(string name)
         {
             this.name = name;
+            layout = Forms.Layout.Vertical;
 
             items = new List<RadioListItem>();
             itemKeys = new Dictionary<string, RadioListItem>();
@@ -158,15 +180,30 @@ namespace BoxSocial.Forms
         public override string ToString(DisplayMedium medium)
         {
             StringBuilder selectBox = new StringBuilder();
-            selectBox.AppendLine(string.Format("<ul id=\"rl-" + HttpUtility.HtmlEncode(name) + "\">",
-                name));
 
-            foreach (RadioListItem item in items)
+            switch (layout)
             {
-                selectBox.AppendLine("<li>" + item.ToString() + "</li>");
-            }
+                case Forms.Layout.Vertical:
+                    selectBox.AppendLine(string.Format("<ul id=\"rl-" + HttpUtility.HtmlEncode(name) + "\">",
+                        name));
 
-            selectBox.AppendLine("</ul>");
+                    foreach (RadioListItem item in items)
+                    {
+                        selectBox.AppendLine("  <li>" + item.ToString() + "</li>");
+                    }
+
+                    selectBox.AppendLine("</ul>");
+                    break;
+                case Forms.Layout.Horizontal:
+                    selectBox.AppendLine(string.Format("<span id=\"rl-" + HttpUtility.HtmlEncode(name) + "\">",
+                        name));
+                    foreach (RadioListItem item in items)
+                    {
+                        selectBox.AppendLine("  <span>" + item.ToString() + "</span>");
+                    }
+                    selectBox.AppendLine("</span>");
+                    break;
+            }
 
             return selectBox.ToString();
         }

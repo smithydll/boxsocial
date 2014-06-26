@@ -185,7 +185,7 @@ namespace BoxSocial.Internals
                 template.Parse("S_TUMBLR_INTEGRATION", "TRUE");
             }
 
-            if (!string.IsNullOrEmpty(core.Settings.FacebookApiAppid))
+            if (core.Settings.FacebookEnabled || ((!string.IsNullOrEmpty(core.Settings.FacebookApiAppid)) && LoggedInMember.UserInfo.FacebookAuthenticated))
             {
                 template.Parse("S_FACEBOOK_INTEGRATION", "TRUE");
             }

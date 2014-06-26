@@ -68,26 +68,30 @@ namespace BoxSocial.Applications.Profile
 
         void AccountLifestyle_Show(object sender, EventArgs e)
         {
+            if (core.IsAjax)
+            {
+                AccountLifestyle_SaveParameter(sender, e);
+                return;
+            }
+
 			Save(new EventHandler(AccountLifestyle_Save));
 			
             SetTemplate("account_lifestyle");
 
             SelectBox maritialStatusesSelectBox = new SelectBox("maritial-status");
-            maritialStatusesSelectBox.Add(new SelectBoxItem("UNDEF", "No Answer"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("SINGLE", "Single"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("RELATIONSHIP", "In a Relationship"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("MARRIED", "Married"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("SWINGER", "Swinger"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("DIVORCED", "Divorced"));
-            maritialStatusesSelectBox.Add(new SelectBoxItem("WIDOWED", "Widowed"));
-
-			if (LoggedInMember.Profile.MaritialStatusRaw != null)
-			{
-				maritialStatusesSelectBox.SelectedKey = LoggedInMember.Profile.MaritialStatusRaw;
-			}
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Undefined).ToString(), core.Prose.GetString("NO_ANSWER")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Single).ToString(), core.Prose.GetString("SINGLE")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.MonogomousRelationship).ToString(), core.Prose.GetString("IN_A_RELATIONSHIP")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.OpenRelationship).ToString(), core.Prose.GetString("IN_A_OPEN_RELATIONSHIP")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Engaged).ToString(), core.Prose.GetString("ENGAGED")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Married).ToString(), core.Prose.GetString("MARRIED")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Separated).ToString(), core.Prose.GetString("SEPARATED")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Divorced).ToString(), core.Prose.GetString("DIVORCED")));
+            maritialStatusesSelectBox.Add(new SelectBoxItem(((byte)MaritialStatus.Widowed).ToString(), core.Prose.GetString("WIDOWED")));
+            maritialStatusesSelectBox.SelectedKey = ((byte)LoggedInMember.Profile.MaritialStatusRaw).ToString();
 
             SelectBox religionsSelectBox = new SelectBox("religion");
-            religionsSelectBox.Add(new SelectBoxItem("0", "No Answer"));
+            religionsSelectBox.Add(new SelectBoxItem("0", core.Prose.GetString("NO_ANSWER")));
 
             // TODO: Fix this
             DataTable religionsTable = db.Query("SELECT * FROM religions ORDER BY religion_title ASC");
@@ -97,31 +101,61 @@ namespace BoxSocial.Applications.Profile
                 religionsSelectBox.Add(new SelectBoxItem(((short)religionRow["religion_id"]).ToString(), (string)religionRow["religion_title"]));
             }
 
-			if (LoggedInMember.Profile.ReligionId != null)
-			{
-				religionsSelectBox.SelectedKey = LoggedInMember.Profile.ReligionId.ToString();
-			}
+            religionsSelectBox.SelectedKey = LoggedInMember.Profile.ReligionId.ToString();
+            religionsSelectBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + religionsSelectBox.Name + "');";
 
             SelectBox sexualitiesSelectBox = new SelectBox("sexuality");
-            sexualitiesSelectBox.Add(new SelectBoxItem("UNDEF", "No Answer"));
-            sexualitiesSelectBox.Add(new SelectBoxItem("UNSURE", "Unsure"));
-            sexualitiesSelectBox.Add(new SelectBoxItem("STRAIGHT", "Straight"));
-            sexualitiesSelectBox.Add(new SelectBoxItem("HOMOSEXUAL", "Homosexual"));
-            sexualitiesSelectBox.Add(new SelectBoxItem("BISEXUAL", "Bisexual"));
-            sexualitiesSelectBox.Add(new SelectBoxItem("TRANSEXUAL", "Transexual"));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Undefined).ToString(), core.Prose.GetString("NO_ANSWER")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Unsure).ToString(), core.Prose.GetString("NOT_SURE")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Asexual).ToString(), core.Prose.GetString("ASEXUAL")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Hetrosexual).ToString(), core.Prose.GetString("STRAIGHT")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Homosexual).ToString(), LoggedInMember.Profile.GenderRaw == Gender.Female ? core.Prose.GetString("LESBIAN") : core.Prose.GetString("GAY")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Bisexual).ToString(), core.Prose.GetString("BISEXUAL")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Pansexual).ToString(), core.Prose.GetString("PANSEXUAL")));
+            sexualitiesSelectBox.Add(new SelectBoxItem(((byte)Sexuality.Polysexual).ToString(), core.Prose.GetString("POLYSEXUAL")));
+    		sexualitiesSelectBox.SelectedKey = ((byte)LoggedInMember.Profile.SexualityRaw).ToString();
+            sexualitiesSelectBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + sexualitiesSelectBox.Name + "');";
 
-			if (LoggedInMember.Profile.SexualityRaw != null)
-			{
-				sexualitiesSelectBox.SelectedKey = LoggedInMember.Profile.SexualityRaw;
-			}
+            CheckBoxArray interestedInCheckBoxes = new CheckBoxArray("interested-in");
+            interestedInCheckBoxes.Layout = Layout.Horizontal;
+            
+            CheckBox interestedInMenCheckBox = new CheckBox("interested-in-men");
+            interestedInMenCheckBox.Caption = core.Prose.GetString("MEN");
+            interestedInMenCheckBox.IsChecked = LoggedInMember.Profile.InterestedInMen;
+            interestedInMenCheckBox.Width = new StyleLength();
+            interestedInMenCheckBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + interestedInMenCheckBox.Name + "');";
+
+            CheckBox interestedInWomenCheckBox = new CheckBox("interested-in-women");
+            interestedInWomenCheckBox.Caption = core.Prose.GetString("WOMEN");
+            interestedInWomenCheckBox.IsChecked = LoggedInMember.Profile.InterestedInWomen;
+            interestedInWomenCheckBox.Width = new StyleLength();
+            interestedInWomenCheckBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + interestedInWomenCheckBox.Name + "');";
+
+            interestedInCheckBoxes.Add(interestedInMenCheckBox);
+            interestedInCheckBoxes.Add(interestedInWomenCheckBox);
 
             UserSelectBox relationUserSelectBox = new UserSelectBox(core, "relation");
             relationUserSelectBox.Width = new StyleLength();
             relationUserSelectBox.SelectMultiple = false;
+            relationUserSelectBox.IsVisible = false;
+            relationUserSelectBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + relationUserSelectBox.Name + "');";
+
+            maritialStatusesSelectBox.Script.OnChange = "SaveParameter('profile', 'lifestyle', '" + maritialStatusesSelectBox.Name + "'); CheckRelationship('" + maritialStatusesSelectBox.Name + "', '" + relationUserSelectBox.Name + "');";
 
             template.Parse("S_MARITIAL_STATUS", maritialStatusesSelectBox);
             template.Parse("S_RELIGION", religionsSelectBox);
             template.Parse("S_SEXUALITY", sexualitiesSelectBox);
+            template.Parse("S_INTERESTED_IN", interestedInCheckBoxes);
+
+            switch (LoggedInMember.Profile.MaritialStatusRaw)
+            {
+                case MaritialStatus.MonogomousRelationship:
+                case MaritialStatus.OpenRelationship:
+                case MaritialStatus.Engaged:
+                case MaritialStatus.Married:
+                    relationUserSelectBox.IsVisible = true;
+                    break;
+            }
 
             if (LoggedInMember.Profile.MaritialWithConfirmed && LoggedInMember.Profile.MaritialWithId > 0)
             {
@@ -134,12 +168,58 @@ namespace BoxSocial.Applications.Profile
             template.Parse("S_RELATION", relationUserSelectBox);
         }
 
-        void AccountLifestyle_Save(object sender, EventArgs e)
+        void AccountLifestyle_SaveParameter(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
 
-            long relationId = core.Functions.FormLong("relation[ids]", 0);
-            string relationshipWith = core.Http.Form["relation[raw]"];
+            MaritialStatus existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
+            long existingMaritialWith = LoggedInMember.Profile.MaritialWithId;
+
+            switch (core.Http.Form["parameter"])
+            {
+                case "religion":
+                    LoggedInMember.Profile.ReligionId = short.Parse(core.Http.Form["value"]);
+                    break;
+                case "maritial-status":
+                    LoggedInMember.Profile.MaritialStatusRaw = (MaritialStatus)byte.Parse(core.Http.Form["value"]);
+
+                    ProcessUpdateMaritialStatus(existingMaritialStatus, (MaritialStatus)byte.Parse(core.Http.Form["value"]), existingMaritialWith, existingMaritialWith);
+                    break;
+                case "relation":
+                    long relationId = UserSelectBox.FormUser(core, "value", 0);
+
+                    ProcessUpdateMaritialStatus(existingMaritialStatus, existingMaritialStatus, existingMaritialWith, relationId);
+                    break;
+                case "interested-in-men":
+                    LoggedInMember.Profile.InterestedInMen = (core.Http.Form["value"] == "true");
+                    break;
+                case "interested-in-women":
+                    LoggedInMember.Profile.InterestedInWomen = (core.Http.Form["value"] == "true");
+                    break;
+                case "sexuality":
+                    LoggedInMember.Profile.SexualityRaw = (Sexuality)byte.Parse(core.Http.Form["value"]);
+                    break;
+                default:
+                    core.Ajax.SendStatus("FAIL");
+                    return;
+            }
+
+            try
+            {
+                LoggedInMember.Profile.Update();
+
+                core.Ajax.SendStatus("SUCCESS");
+            }
+            catch (UnauthorisedToUpdateItemException)
+            {
+                core.Ajax.SendStatus("FAIL");
+            }
+        }
+
+        private void ProcessUpdateMaritialStatus(MaritialStatus existingMaritialStatus, MaritialStatus newMaritialStatus, long existingMaritialWith, long newMaritialWith)
+        {
+            long relationId = newMaritialWith;
+
             User relation = null;
 
             if (relationId > 0)
@@ -147,21 +227,6 @@ namespace BoxSocial.Applications.Profile
                 core.PrimitiveCache.LoadUserProfile(relationId);
                 relation = core.PrimitiveCache[relationId];
             }
-            else
-            {
-                if (!string.IsNullOrEmpty(relationshipWith))
-                {
-                    long key = core.LoadUserProfile(relationshipWith);
-                    relation = core.PrimitiveCache[key];
-                }
-            }
-
-            string existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
-            long existingMaritialWith = LoggedInMember.Profile.MaritialWithId;
-
-            LoggedInMember.Profile.ReligionId = short.Parse(core.Http.Form["religion"]);
-            LoggedInMember.Profile.SexualityRaw = core.Http.Form["sexuality"];
-            LoggedInMember.Profile.MaritialStatusRaw = core.Http.Form["maritial-status"];
 
             if (relation != null)
             {
@@ -179,10 +244,12 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.Profile.MaritialWithId = 0;
             }
 
-            switch (core.Http.Form["maritial-status"])
+            switch (newMaritialStatus)
             {
-                case "RELATIONSHIP":
-                case "MARRIED":
+                case MaritialStatus.MonogomousRelationship:
+                case MaritialStatus.OpenRelationship:
+                case MaritialStatus.Engaged:
+                case MaritialStatus.Married:
                     if (relation != null && relation.Id != existingMaritialWith)
                     {
                         ApplicationEntry ae = core.GetApplication("Profile");
@@ -201,13 +268,16 @@ namespace BoxSocial.Applications.Profile
 
                             oldRelation.Profile.MaritialWithId = 0;
                             oldRelation.Profile.MaritialWithConfirmed = false;
-                            oldRelation.Profile.MaritialStatusRaw = "";
+                            oldRelation.Profile.MaritialStatusRaw = MaritialStatus.Undefined;
 
                             oldRelation.Profile.Update();
                         }
                     }
                     else
                     {
+                        LoggedInMember.Profile.MaritialWithId = 0;
+                        LoggedInMember.Profile.MaritialWithConfirmed = false;
+
                         if (existingMaritialWith > 0)
                         {
                             core.LoadUserProfile(existingMaritialWith);
@@ -215,7 +285,7 @@ namespace BoxSocial.Applications.Profile
 
                             oldRelation.Profile.MaritialWithId = 0;
                             oldRelation.Profile.MaritialWithConfirmed = false;
-                            oldRelation.Profile.MaritialStatusRaw = "";
+                            oldRelation.Profile.MaritialStatusRaw = MaritialStatus.Undefined;
 
                             oldRelation.Profile.Update();
                         }
@@ -224,8 +294,10 @@ namespace BoxSocial.Applications.Profile
                 default:
                     switch (existingMaritialStatus)
                     {
-                        case "RELATIONSHIP":
-                        case "MARRIED":
+                        case MaritialStatus.MonogomousRelationship:
+                        case MaritialStatus.OpenRelationship:
+                        case MaritialStatus.Engaged:
+                        case MaritialStatus.Married:
                             if (existingMaritialWith > 0)
                             {
                                 core.LoadUserProfile(existingMaritialWith);
@@ -236,7 +308,7 @@ namespace BoxSocial.Applications.Profile
 
                                 relation.Profile.MaritialWithId = 0;
                                 relation.Profile.MaritialWithConfirmed = false;
-                                relation.Profile.MaritialStatusRaw = "";
+                                relation.Profile.MaritialStatusRaw = MaritialStatus.Undefined;
 
                                 relation.Profile.Update();
                             }
@@ -247,6 +319,24 @@ namespace BoxSocial.Applications.Profile
                     }
                     break;
             }
+        }
+
+        void AccountLifestyle_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long relationId = UserSelectBox.FormUser(core, "relation", 0);
+
+            MaritialStatus existingMaritialStatus = LoggedInMember.Profile.MaritialStatusRaw;
+            long existingMaritialWith = LoggedInMember.Profile.MaritialWithId;
+
+            LoggedInMember.Profile.ReligionId = short.Parse(core.Http.Form["religion"]);
+            LoggedInMember.Profile.SexualityRaw = (Sexuality)byte.Parse(core.Http.Form["sexuality"]);
+            LoggedInMember.Profile.MaritialStatusRaw = (MaritialStatus)byte.Parse(core.Http.Form["maritial-status"]);
+            LoggedInMember.Profile.InterestedInMen = core.Http.Form["interested-in-men"] != null;
+            LoggedInMember.Profile.InterestedInWomen = core.Http.Form["interested-in-women"] != null;
+
+            ProcessUpdateMaritialStatus(existingMaritialStatus, (MaritialStatus)byte.Parse(core.Http.Form["value"]), existingMaritialWith, relationId);
 
             LoggedInMember.Profile.Update();
 
@@ -276,8 +366,8 @@ namespace BoxSocial.Applications.Profile
 
             core.Display.ShowConfirmBox(core.Hyperlink.AppendSid(Owner.AccountUriStub, true),
                 "Confirm relationship",
-                string.Format("Confirm your relationship with {0}",
-                relation.DisplayName), hiddenFieldList);
+                string.Format("Confirm your relationship status {1} with {0}",
+                relation.DisplayName, relation.Profile.MaritialStatus), hiddenFieldList);
         }
 
         void AccountLifestyle_ConfirmRelationship_Save(object sender, EventArgs e)

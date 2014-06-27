@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -41,5 +42,7 @@ namespace BoxSocial.Internals
         void Initialise(Core core);
 
         AppPrimitives GetAppPrimitiveSupport();
+
+        bool ExecuteJob(Job job);
     }
 }

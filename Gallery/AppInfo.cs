@@ -160,6 +160,17 @@ namespace BoxSocial.Applications.Gallery
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        public new bool ExecuteJob(Job job)
+        {
+            switch (job.Function)
+            {
+                case "resize":
+                    break;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Builds installation info for the application.
         /// </summary>

@@ -509,6 +509,20 @@ namespace BoxSocial.Internals
         private static Object loadedAssembliesLock = new object();
         private static Dictionary<string, ItemKey> loadedAssemblies = null;
 
+        public ApplicationEntry GetApplication(long applicationId)
+        {
+            ItemKey ik = new ItemKey(applicationId, ItemType.GetTypeId(typeof(ApplicationEntry)));
+            ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
+            ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
+
+            if (Prose != null)
+            {
+                Prose.AddApplication(ae.Key);
+            }
+
+            return ae;
+        }
+
         public ApplicationEntry GetApplication(string name)
         {
             loadAssemblies();
@@ -936,6 +950,16 @@ namespace BoxSocial.Internals
                 }
             }
             Functions.Generate404();
+        }
+
+        public bool InvokeJob(Job job)
+        {
+            ApplicationEntry ae = GetApplication(job.ApplicationId);
+
+            Application jobApplication = Application.GetApplication(this, AppPrimitives.Member, ae);
+            jobApplication.ExecuteJob(job);
+
+            return false;
         }
 
         public void AdjustCommentCount(ItemKey itemKey, int adjustment)

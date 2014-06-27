@@ -40,6 +40,8 @@ namespace BoxSocial.FrontEnd
     public partial class Global : System.Web.HttpApplication
     {
         protected static BackgroundWorker worker = new BackgroundWorker();
+        protected static JobQueue queue = null;
+
         protected void Application_Start(object sender, EventArgs e)
         {
             AppDomainSetup ads = AppDomain.CurrentDomain.SetupInformation;
@@ -60,27 +62,13 @@ namespace BoxSocial.FrontEnd
             //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
             // Implements a message queue processor
-            worker.WorkerSupportsCancellation = true;
-            worker.DoWork += new DoWorkEventHandler(worker_DoWork);
-            worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-        }
-
-        protected void worker_DoWork(object sender, DoWorkEventArgs e)
-        {
-            JobQueue queue;
-            Settings settings = new Settings(null);
-            Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
-                WebConfigurationManager.AppSettings["mysql-password"],
-                WebConfigurationManager.AppSettings["mysql-database"],
-                WebConfigurationManager.AppSettings["mysql-host"]);
-
             switch (WebConfigurationManager.AppSettings["queue-provider"])
             {
                 case "amazon":
-                    queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
+                    queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
                     break;
                 case "rackspace":
-                    queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"], db);
+                    queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
                     break;
                 case "native":
                 default:
@@ -88,11 +76,65 @@ namespace BoxSocial.FrontEnd
                     break;
             }
 
-            // Retrieve Job
+            // Check the queues and create is not exist
+            if (queue != null)
+            {
+                if (!queue.QueueExists(WebConfigurationManager.AppSettings["queue-default-priority"]))
+                {
+                    queue.CreateQueue(WebConfigurationManager.AppSettings["queue-default-priority"]);
+                }
 
+                // Starts the queue processor
+                worker.WorkerReportsProgress = true;
+                worker.WorkerSupportsCancellation = true;
+                worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+                worker.RunWorkerAsync();
+            }
+        }
 
-            // Execute Job
+        protected void worker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
+                WebConfigurationManager.AppSettings["mysql-password"],
+                WebConfigurationManager.AppSettings["mysql-database"],
+                WebConfigurationManager.AppSettings["mysql-host"]);
 
+            Core core = new Core(null, db, null);
+
+            if (queue != null)
+            {
+                // Retrieve Jobs
+                Dictionary<string, int> queues = new Dictionary<string, int>();
+                queues.Add(WebConfigurationManager.AppSettings["queue-default-priority"], 100);
+
+                foreach (string queueName in queues.Keys)
+                {
+                    List<Job> jobs = queue.ClaimJobs(queueName, queues[queueName]);
+
+                    foreach (Job job in jobs)
+                    {
+                        core.LoadUserProfile(job.UserId);
+                    }
+
+                    foreach (Job job in jobs)
+                    {
+                        core.CreateNewSession(core.PrimitiveCache[job.UserId]);
+
+                        // Load Application
+                        ApplicationEntry ae = core.GetApplication(job.ApplicationId);
+                        core.GetApplication(job.ApplicationId);
+                        BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+
+                        // Execute Job
+                        if (core.InvokeJob(job))
+                        {
+                            queue.DeleteJob(job);
+                        }
+
+                    }
+                }
+            }
 
             // Cleanup
 
@@ -105,7 +147,7 @@ namespace BoxSocial.FrontEnd
 
             if (worker != null)
             {
-                System.Threading.Thread.Sleep(3000);
+                System.Threading.Thread.Sleep(10000);
                 worker.RunWorkerAsync();
             }
         }

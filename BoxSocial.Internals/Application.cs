@@ -46,6 +46,11 @@ namespace BoxSocial.Internals
             RegisterPages();
         }
 
+        public bool ExecuteJob(Job job)
+        {
+            return false;
+        }
+
         public List<string> GetSlugs()
         {
             List<string> slugs = new List<string>();

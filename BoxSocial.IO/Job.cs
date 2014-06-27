@@ -38,6 +38,7 @@ namespace BoxSocial.IO
         long itemTypeId;
         long itemId;
         string function;
+        long userId;
 
         [JsonIgnore()]
         public string JobId
@@ -72,6 +73,15 @@ namespace BoxSocial.IO
             get
             {
                 return applicationId;
+            }
+        }
+
+        [JsonProperty("user_id")]
+        public long UserId
+        {
+            get
+            {
+                return userId;
             }
         }
 
@@ -119,17 +129,19 @@ namespace BoxSocial.IO
             Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(message, typeof(Dictionary<string, string>));
 
             long.TryParse(strings["application_id"], out this.applicationId);
+            long.TryParse(strings["user_id"], out this.userId);
             long.TryParse(strings["item_type_id"], out this.itemTypeId);
             long.TryParse(strings["item_id"], out this.itemId);
             this.function = strings["function"];
         }
 
-        public Job(string queueName, string jobId, string jobHandle, long applicationId, long itemTypeId, long itemId, string function)
+        public Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function)
         {
             this.queueName = queueName;
             this.queueName = jobId;
             this.handle = jobHandle;
             this.applicationId = applicationId;
+            this.userId = userId;
             this.itemTypeId = itemTypeId;
             this.itemId = itemId;
             this.function = function;

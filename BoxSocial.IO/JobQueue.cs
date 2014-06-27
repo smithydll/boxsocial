@@ -27,15 +27,20 @@ namespace BoxSocial.IO
 {
     public abstract class JobQueue
     {
-        private Database db;
-
-        public JobQueue(Database db)
+        public JobQueue()
         {
-            this.db = db;
         }
 
         public abstract void CreateQueue(string queue);
 
         public abstract void DeleteQueue(string queue);
+
+        public abstract bool QueueExists(string queue);
+
+        public abstract void PushJob(string queue, TimeSpan ttl, string jobMessage);
+
+        public abstract void DeleteJob(Job job);
+
+        public abstract List<Job> ClaimJobs(string queue, int count);
     }
 }

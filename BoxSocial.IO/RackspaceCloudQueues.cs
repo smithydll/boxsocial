@@ -38,8 +38,7 @@ namespace BoxSocial.IO
         CloudIdentity identity;
         string location = null;
 
-        public RackspaceCloudQueues(string keyId, string username, Database db)
-            : base (db)
+        public RackspaceCloudQueues(string keyId, string username)
         {
             identity = new CloudIdentity() { APIKey = keyId, Username = username };
             provider = new CloudQueuesProvider(identity, location, Guid.NewGuid(), false, null);
@@ -57,22 +56,41 @@ namespace BoxSocial.IO
 
         public override void CreateQueue(string queue)
         {
-            Task<bool> createQueueTasks = provider.CreateQueueAsync(new QueueName(queue), CancellationToken.None);
+            Task<bool> createQueueTasks = provider.CreateQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
         }
 
         public override void DeleteQueue(string queue)
         {
-            Task deleteQueueTask = provider.DeleteQueueAsync(new QueueName(queue), CancellationToken.None);
+            Task deleteQueueTask = provider.DeleteQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
         }
 
-        public /*override*/ void PushJob(string queue, TimeSpan ttl, string jobMessage)
+        public override bool QueueExists(string queue)
         {
-            provider.PostMessagesAsync(new QueueName(queue), CancellationToken.None, new Message(ttl, new Newtonsoft.Json.Linq.JObject(jobMessage)));
+            return provider.QueueExistsAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None).Result;
         }
 
-        public /*override*/ void DeleteJob(string queue, string jobId)
+        public override void PushJob(string queue, TimeSpan ttl, string jobMessage)
         {
-            //provider.DeleteMessageAsync(new QueueName(queue), new MessageId(jobId), null, CancellationToken.None);
+            provider.PostMessagesAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None, new Message(ttl, new Newtonsoft.Json.Linq.JObject(jobMessage)));
+        }
+
+        public override List<Job> ClaimJobs(string queue, int count)
+        {
+            List<Job> claimedJobs = new List<Job>();
+
+            Task<Claim> claims = provider.ClaimMessageAsync(new QueueName(SanitiseQueueName(queue)), count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), CancellationToken.None);
+            
+            for (int i= 0; i < claims.Result.Messages.Count; i++)
+            {
+                claimedJobs.Add(new Job(queue, claims.Result.Messages[i].Id.ToString(), null, claims.Result.Messages[i].Body.ToString()));
+            }
+
+            return claimedJobs;
+        }
+
+        public override void DeleteJob(Job job)
+        {
+            provider.DeleteMessageAsync(new QueueName(SanitiseQueueName(job.QueueName)), new MessageId(job.JobId), null, CancellationToken.None);
         }
     }
 }

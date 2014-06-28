@@ -37,7 +37,9 @@ namespace BoxSocial.IO
 
         public abstract bool QueueExists(string queue);
 
-        public abstract void PushJob(string queue, TimeSpan ttl, string jobMessage);
+        public abstract void PushJob(Job jobMessage);
+
+        public abstract void PushJob(TimeSpan ttl, Job jobMessage);
 
         public abstract void DeleteJob(Job job);
 

@@ -210,6 +210,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public DisplayMedium Medium
+        {
+            get
+            {
+                if (isMobile)
+                {
+                    return DisplayMedium.Mobile;
+                }
+                return DisplayMedium.Desktop;
+            }
+        }
+
         private long initTime = 0;
         private long loadTime = 0;
         public TPage()

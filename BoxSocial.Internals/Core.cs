@@ -54,6 +54,7 @@ namespace BoxSocial.Internals
         private Hyperlink hyperlink;
         private Settings applicationSettings;
         private Storage storage;
+        private JobQueue queue;
         private Search search;
         private List<Emoticon> emoticons;
 
@@ -210,6 +211,10 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (HttpContext.Current != null && http == null)
+                {
+                    http = new Http();
+                }
                 return http;
             }
             internal set
@@ -296,6 +301,37 @@ namespace BoxSocial.Internals
             }
         }
 
+        public JobQueue Queue
+        {
+            get
+            {
+                if (queue == null)
+                {
+                    switch (WebConfigurationManager.AppSettings["queue-provider"])
+                    {
+                        case "amazon_sqs":
+                            queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
+                            break;
+                        case "rackspace":
+                            queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
+
+                            string location = WebConfigurationManager.AppSettings["rackspace-location"];
+                            if (!string.IsNullOrEmpty(location))
+                            {
+                                ((RackspaceCloudQueues)queue).SetLocation(location);
+                            }
+                            break;
+                        case "database":
+                        default:
+                            //queue = new DatabaseQueue(db);
+                            break;
+                    }
+                }
+
+                return queue;
+            }
+        }
+
         public Search Search
         {
             get
@@ -357,6 +393,11 @@ namespace BoxSocial.Internals
         {
             get
             {
+                if (prose == null)
+                {
+                    prose = new Prose();
+                    prose.Initialise(this, "en");
+                }
                 return prose;
             }
             internal set
@@ -818,6 +859,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Forms.DisplayMedium Medium
+        {
+            get
+            {
+                return page.Medium;
+            }
+        }
+
 
         /// <summary>
         /// Loads the application entry for the calling application
@@ -956,8 +1005,12 @@ namespace BoxSocial.Internals
         {
             ApplicationEntry ae = GetApplication(job.ApplicationId);
 
-            Application jobApplication = Application.GetApplication(this, AppPrimitives.Member, ae);
-            jobApplication.ExecuteJob(job);
+            Application jobApplication = Application.GetApplication(this, AppPrimitives.Any, ae);
+
+            if (jobApplication != null)
+            {
+                return jobApplication.ExecuteJob(job);
+            }
 
             return false;
         }

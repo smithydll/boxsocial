@@ -73,7 +73,7 @@ namespace BoxSocial.Internals
 
             this.countryIso = iso;
 
-            if (core.Prose.ContainsKey("Internals", "COUNTRY_" + iso))
+            if (core.Prose != null && core.Prose.ContainsKey("Internals", "COUNTRY_" + iso))
             {
                 countryName = core.Prose.GetString("Internals", "COUNTRY_" + iso);
                 return;

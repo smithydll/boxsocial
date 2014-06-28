@@ -121,7 +121,14 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssemblyName + ".dll");
+                            if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                            {
+                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", AssemblyName + ".dll");
+                            }
+                            else
+                            {
+                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssemblyName + ".dll");
+                            }
                         }
                     }
                     else
@@ -132,7 +139,14 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), AssemblyName + ".dll");
+                            if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                            {
+                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "applications", AssemblyName + ".dll");
+                            }
+                            else
+                            {
+                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications", AssemblyName + ".dll");
+                            }
                         }
                     }
 

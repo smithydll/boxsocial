@@ -1059,29 +1059,35 @@ namespace BoxSocial.Applications.Gallery
                 fullExists = true;
             }*/
 
-            if (width > (int)PictureScale.Display || height > (int)PictureScale.Display)
+            switch (core.Medium)
             {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
-                displayExists = true;
-            }
-            else
-            {
-                // This strips all uploaded images of EXIF data
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, width, height);
-                displayExists = true;
+                case Forms.DisplayMedium.Desktop:
+                    if (width > (int)PictureScale.Display || height > (int)PictureScale.Display)
+                    {
+                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
+                        displayExists = true;
+                    }
+                    else
+                    {
+                        // This strips all uploaded images of EXIF data
+                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, width, height);
+                        displayExists = true;
+                    }
+                    break;
+                case Forms.DisplayMedium.Mobile:
+                    if (width > (int)PictureScale.Mobile || height > (int)PictureScale.Mobile)
+                    {
+                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
+                        mobileExists = true;
+                    }
+                    break;
             }
 
-            if (width > (int)PictureScale.Mobile || height > (int)PictureScale.Mobile)
-            {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
-                mobileExists = true;
-            }
-
-            if (width > (int)PictureScale.Thumbnail || height > (int)PictureScale.Thumbnail)
+            /*if (width > (int)PictureScale.Thumbnail || height > (int)PictureScale.Thumbnail)
             {
                 CreateScaleWithRatioPreserved(core, contentType, stream, storageName, ThumbnailPrefix, (int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail);
                 thumbExists = true;
-            }
+            }*/
 
             /*if (width > (int)PictureScale.Tiny || height > (int)PictureScale.Tiny)
             {
@@ -1089,10 +1095,10 @@ namespace BoxSocial.Applications.Gallery
                 tinyExists = true;
             }*/
 
-            CreateScaleWithSquareRatio(core, contentType, stream, storageName, HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
-            CreateScaleWithSquareRatio(core, contentType, stream, storageName, SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);
-            CreateScaleWithSquareRatio(core, contentType, stream, storageName, TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile);
-            CreateScaleWithSquareRatio(core, contentType, stream, storageName, IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon);
+            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
+            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);
+            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile);
+            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon);
 
             if (!string.IsNullOrEmpty(storageFilePath))
             {
@@ -1168,10 +1174,10 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_item_id", owner.Id);
             iQuery.AddField("gallery_item_item_type_id", owner.TypeId);
             iQuery.AddField("gallery_item_classification", (byte)classification);
-            iQuery.AddField("gallery_item_icon_exists", true);
-            iQuery.AddField("gallery_item_tile_exists", true);
-            iQuery.AddField("gallery_item_square_exists", true);
-            iQuery.AddField("gallery_item_high_exists", true);
+            iQuery.AddField("gallery_item_icon_exists", false);
+            iQuery.AddField("gallery_item_tile_exists", false);
+            iQuery.AddField("gallery_item_square_exists", false);
+            iQuery.AddField("gallery_item_high_exists", false);
             iQuery.AddField("gallery_item_tiny_exists", tinyExists);
             iQuery.AddField("gallery_item_thumb_exists", thumbExists);
             iQuery.AddField("gallery_item_mobile_exists", mobileExists);
@@ -1221,8 +1227,31 @@ namespace BoxSocial.Applications.Gallery
                 }
 
                 GalleryItem newGalleryItem = new GalleryItem(core, owner, itemId);
+                core.Db.CommitTransaction();
 
                 core.Search.Index(newGalleryItem);
+
+                if (core.Queue != null)
+                {
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_ultra"));
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_full"));
+                    switch (core.Medium)
+                    {
+                        case Forms.DisplayMedium.Desktop:
+                            core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_mobile"));
+                            break;
+                        case Forms.DisplayMedium.Mobile:
+                            core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_display"));
+                            break;
+                    }
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_thumb"));
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_tiny"));
+
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_high"));
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_square"));
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_tile"));
+                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, core.CallingApplication.Id, core.LoggedInMemberId, newGalleryItem.ItemKey.TypeId, newGalleryItem.ItemKey.Id, "create_icon"));
+                }
 
                 return newGalleryItem;
                 //return itemId;
@@ -2630,7 +2659,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        private static void CreateScaleWithRatioPreserved(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
+        public static void CreateScaleWithRatioPreserved(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
         {
             // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")

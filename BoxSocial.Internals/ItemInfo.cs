@@ -212,12 +212,12 @@ namespace BoxSocial.Internals
             {
                 byte[] bytes = new byte[] { 
                 (byte)(itemKey.TypeId & 0x00FF), 
-                (byte)((itemKey.TypeId & 0xFF00 >> 8) + (itemKey.Id & 0xFF0000000000 >> 40)), 
-                (byte)(itemKey.Id & 0x00FF00000000 >> 32), 
-                (byte)(itemKey.Id & 0x0000FF000000 >> 24), 
-                (byte)(itemKey.Id & 0x000000FF0000 >> 16), 
-                (byte)(itemKey.Id & 0x00000000FF00 >> 8), 
-                (byte)(itemKey.Id & 0x0000000000FF) };
+                (byte)(((itemKey.TypeId & 0xFF00) >> 8) + ((itemKey.Id & 0xFF0000000000) >> 40)), 
+                (byte)((itemKey.Id & 0x00FF00000000) >> 32), 
+                (byte)((itemKey.Id & 0x0000FF000000) >> 24), 
+                (byte)((itemKey.Id & 0x000000FF0000) >> 16), 
+                (byte)((itemKey.Id & 0x00000000FF00) >> 8), 
+                (byte)((itemKey.Id & 0x0000000000FF)) };
 
                 byte[] keyBytes = Encoding.UTF8.GetBytes(encryptKey);
                 DESCryptoServiceProvider des = new DESCryptoServiceProvider();
@@ -248,7 +248,7 @@ namespace BoxSocial.Internals
             }
             catch (OverflowException)
             {
-                HttpContext.Current.Response.Write(itemKey.TypeId.ToString() + "," + itemKey.Id.ToString() + "<br />");
+                HttpContext.Current.Response.Write("OVERFLOW: type: " + itemKey.TypeId.ToString() + ", id: " + itemKey.Id.ToString() + "<br />");
                 HttpContext.Current.Response.End();
                 return null;
             }

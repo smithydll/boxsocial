@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -160,12 +161,161 @@ namespace BoxSocial.Applications.Gallery
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
-        public new bool ExecuteJob(Job job)
+        public override bool ExecuteJob(Job job)
         {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
             switch (job.Function)
             {
-                case "resize":
-                    break;
+                case "create_ultra":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.UltraExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Ultra || gi.ItemHeight > (int)PictureScale.Ultra)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.UltraPrefix, (int)PictureScale.Ultra, (int)PictureScale.Ultra);
+
+                            gi.UltraExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_full":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.FullExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Full || gi.ItemHeight > (int)PictureScale.Full)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
+
+                            gi.FullExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_display":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.DisplayExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Display || gi.ItemHeight > (int)PictureScale.Display)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
+
+                            gi.DisplayExists = true;
+                            gi.Update();
+                        }
+                        else
+                        {
+                            // This strips all uploaded images of EXIF data
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, gi.ItemWidth, gi.ItemHeight);
+
+                            gi.DisplayExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_mobile":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.MobileExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Mobile || gi.ItemHeight > (int)PictureScale.Mobile)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
+
+                            gi.MobileExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_thumb":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.ThumbnailExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Thumbnail || gi.ItemHeight > (int)PictureScale.Thumbnail)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.ThumbnailPrefix, (int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail);
+
+                            gi.ThumbnailExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_tiny":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.TinyExists) return true;
+
+                        if (gi.ItemWidth > (int)PictureScale.Tiny || gi.ItemHeight > (int)PictureScale.Tiny)
+                        {
+                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.TinyPrefix, (int)PictureScale.Tiny, (int)PictureScale.Tiny);
+
+                            gi.TinyExists = true;
+                            gi.Update();
+                        }
+                    }
+                    return true;
+                case "create_high":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.TinyExists) return true;
+                        
+                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
+
+                        gi.TinyExists = true;
+                        gi.Update();
+                    }
+                    return true;
+                case "create_square":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.SquareExists) return true;
+
+                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);
+
+                        gi.SquareExists = true;
+                        gi.Update();
+                    }
+                    return true;
+                case "create_tile":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.TileExists) return true;
+
+                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile);
+
+                        gi.TileExists = true;
+                        gi.Update();
+                    }
+                    return true;
+                case "create_icon":
+                    {
+                        GalleryItem gi = new GalleryItem(core, job.ItemId);
+
+                        if (gi.IconExists) return true;
+
+                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon);
+
+                        gi.IconExists = true;
+                        gi.Update();
+                    }
+                    return true;
             }
 
             return false;

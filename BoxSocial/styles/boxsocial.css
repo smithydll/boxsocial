@@ -1856,6 +1856,10 @@ blockquote {
 
 .infinite-more {
     display: none;
+    background-color: #eeeeee;
+    width: 100%;
+    padding: 0.5em;
+    text-align: center;
 }
 
 p.posted-by 

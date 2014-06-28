@@ -28,6 +28,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -46,7 +47,7 @@ namespace BoxSocial.Internals
             RegisterPages();
         }
 
-        public bool ExecuteJob(Job job)
+        public virtual bool ExecuteJob(Job job)
         {
             return false;
         }
@@ -722,7 +723,14 @@ namespace BoxSocial.Internals
 					else
 					{
 						//assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
-                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
+                        if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                        {
+                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", ae.AssemblyName + ".dll");
+                        }
+                        else
+                        {
+                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
+                        }
 					}
                 }
                 else
@@ -734,7 +742,14 @@ namespace BoxSocial.Internals
 					else
 					{
 						//assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
-                        assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), ae.AssemblyName + ".dll");
+                        if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                        {
+                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "applications", ae.AssemblyName + ".dll");
+                        }
+                        else
+                        {
+                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications", ae.AssemblyName + ".dll");
+                        }
 					}
                 }
                 Assembly assembly = Assembly.LoadFrom(assemblyPath);
@@ -756,7 +771,13 @@ namespace BoxSocial.Internals
             catch (Exception ex)
             {
                 // TODO DEBUG HERE
-                Console.WriteLine(ex.ToString());
+                try
+                {
+                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in Application.cs", "EXCEPTION THROWN:\n" + ex.ToString());
+                }
+                catch
+                {
+                }
             }
             return null;
         }
@@ -779,20 +800,25 @@ namespace BoxSocial.Internals
                         || primitive == AppPrimitives.Any)
                     {
                         newApplication.Initialise(core);
-                        core.Template.AddPageAssembly(ae.Assembly);
 
-                        if (ae.HasStyleSheet)
+                        if (core.Template != null)
                         {
-                            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                            core.Template.AddPageAssembly(ae.Assembly);
 
-                            styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
-                        }
 
-                        if (ae.HasJavascript)
-                        {
-                            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+                            if (ae.HasStyleSheet)
+                            {
+                                VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
 
-                            javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                                styleSheetVariableCollection.Parse("URI", @"/styles/applications/" + ae.Key + @".css");
+                            }
+
+                            if (ae.HasJavascript)
+                            {
+                                VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+
+                                javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                            }
                         }
 
                         /* Initialise prose class for the application */

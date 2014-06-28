@@ -38,6 +38,7 @@ namespace BoxSocial.IO
         long itemTypeId;
         long itemId;
         string function;
+        string body;
         long userId;
 
         [JsonIgnore()]
@@ -112,6 +113,15 @@ namespace BoxSocial.IO
             }
         }
 
+        [JsonProperty("body")]
+        public string Body
+        {
+            get
+            {
+                return body;
+            }
+        }
+
         [JsonIgnore()]
         public string Message
         {
@@ -121,10 +131,10 @@ namespace BoxSocial.IO
             }
         }
 
-        public Job(string queueName, string jobId, string jobHandle, string message)
+        internal Job(string queueName, string jobId, string jobHandle, string message)
         {
             this.queueName = queueName;
-            this.queueName = jobId;
+            this.jobId = jobId;
             this.handle = jobHandle;
             Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(message, typeof(Dictionary<string, string>));
 
@@ -135,16 +145,40 @@ namespace BoxSocial.IO
             this.function = strings["function"];
         }
 
-        public Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function)
+        internal Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function)
+            : this(queueName, jobId, jobHandle, applicationId, userId, itemTypeId, itemId, function, string.Empty)
+        {
+        }
+
+        internal Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function, string body)
         {
             this.queueName = queueName;
-            this.queueName = jobId;
+            this.jobId = jobId;
             this.handle = jobHandle;
             this.applicationId = applicationId;
             this.userId = userId;
             this.itemTypeId = itemTypeId;
             this.itemId = itemId;
             this.function = function;
+            this.body = body;
+        }
+
+        public Job(string queueName, long applicationId, long userId, long itemTypeId, long itemId, string function)
+            : this(queueName, applicationId, userId, itemTypeId, itemId, function, string.Empty)
+        {
+        }
+
+        public Job(string queueName, long applicationId, long userId, long itemTypeId, long itemId, string function, string body)
+        {
+            this.queueName = queueName;
+            this.jobId = string.Empty;
+            this.handle = string.Empty;
+            this.applicationId = applicationId;
+            this.userId = userId;
+            this.itemTypeId = itemTypeId;
+            this.itemId = itemId;
+            this.function = function;
+            this.body = body;
         }
 
         public override string ToString()

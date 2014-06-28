@@ -426,7 +426,7 @@ var loadCount = 0;
 
 $(document).ready(function () {
     $(".infinite-more").siblings().hide();
-    $(".infinite-more").show();
+    $(".infinite-more").css('display', 'block');
     $(window).scroll(function () {
         var trigger = 200;
 

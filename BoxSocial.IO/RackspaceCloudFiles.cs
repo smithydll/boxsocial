@@ -199,6 +199,10 @@ namespace BoxSocial.IO
             {
                 return false;
             }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         public override bool IsCloudStorage

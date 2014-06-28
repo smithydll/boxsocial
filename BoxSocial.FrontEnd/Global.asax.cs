@@ -64,13 +64,19 @@ namespace BoxSocial.FrontEnd
             // Implements a message queue processor
             switch (WebConfigurationManager.AppSettings["queue-provider"])
             {
-                case "amazon":
+                case "amazon_sqs":
                     queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
                     break;
                 case "rackspace":
                     queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
+
+                    string location = WebConfigurationManager.AppSettings["rackspace-location"];
+                    if (!string.IsNullOrEmpty(location))
+                    {
+                        ((RackspaceCloudQueues)queue).SetLocation(location);
+                    }
                     break;
-                case "native":
+                case "database":
                 default:
                     //queue = new DatabaseQueue(db);
                     break;
@@ -101,43 +107,76 @@ namespace BoxSocial.FrontEnd
                 WebConfigurationManager.AppSettings["mysql-host"]);
 
             Core core = new Core(null, db, null);
+            //core.Http = new Http();
+            //core.Prose = new Prose();
 
-            if (queue != null)
+            try
             {
-                // Retrieve Jobs
-                Dictionary<string, int> queues = new Dictionary<string, int>();
-                queues.Add(WebConfigurationManager.AppSettings["queue-default-priority"], 100);
-
-                foreach (string queueName in queues.Keys)
+                if (queue != null)
                 {
-                    List<Job> jobs = queue.ClaimJobs(queueName, queues[queueName]);
+                    int failedJobs = 0;
 
-                    foreach (Job job in jobs)
+                    // Retrieve Jobs
+                    Dictionary<string, int> queues = new Dictionary<string, int>();
+                    queues.Add(WebConfigurationManager.AppSettings["queue-default-priority"], 10);
+
+                    foreach (string queueName in queues.Keys)
                     {
-                        core.LoadUserProfile(job.UserId);
-                    }
+                        List<Job> jobs = queue.ClaimJobs(queueName, queues[queueName]);
 
-                    foreach (Job job in jobs)
-                    {
-                        core.CreateNewSession(core.PrimitiveCache[job.UserId]);
-
-                        // Load Application
-                        ApplicationEntry ae = core.GetApplication(job.ApplicationId);
-                        core.GetApplication(job.ApplicationId);
-                        BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
-
-                        // Execute Job
-                        if (core.InvokeJob(job))
+                        foreach (Job job in jobs)
                         {
-                            queue.DeleteJob(job);
+                            core.LoadUserProfile(job.UserId);
                         }
 
+                        foreach (Job job in jobs)
+                        {
+                            core.CreateNewSession(core.PrimitiveCache[job.UserId]);
+
+                            // Load Application
+                            ApplicationEntry ae = core.GetApplication(job.ApplicationId);
+                            BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+
+                            // Execute Job
+                            if (core.InvokeJob(job))
+                            {
+                                queue.DeleteJob(job);
+                            }
+                            else
+                            {
+                                failedJobs++;
+                                //queue.ReleaseJob(job);
+                            }
+                        }
+                    }
+
+                    if (failedJobs > 0)
+                    {
+                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                try
+                {
+                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
+                }
+                catch
+                {
+                    try
+                    {
+                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
+                    }
+                    catch
+                    {
                     }
                 }
             }
 
             // Cleanup
 
+            //core.Prose.Close();
             db.CloseConnection();
         }
 
@@ -147,7 +186,7 @@ namespace BoxSocial.FrontEnd
 
             if (worker != null)
             {
-                System.Threading.Thread.Sleep(10000);
+                System.Threading.Thread.Sleep(15000);
                 worker.RunWorkerAsync();
             }
         }

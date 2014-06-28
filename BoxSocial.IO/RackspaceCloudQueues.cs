@@ -29,6 +29,7 @@ using net.openstack.Core.Domain;
 using net.openstack.Core.Domain.Queues;
 using net.openstack.Core.Exceptions;
 using net.openstack.Providers.Rackspace;
+using Newtonsoft.Json;
 
 namespace BoxSocial.IO
 {
@@ -52,37 +53,69 @@ namespace BoxSocial.IO
         public void SetLocation(string location)
         {
             this.location = location;
+            provider = new CloudQueuesProvider(identity, location, Guid.NewGuid(), false, null);
         }
 
         public override void CreateQueue(string queue)
         {
             Task<bool> createQueueTasks = provider.CreateQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
+            createQueueTasks.Wait();
         }
 
         public override void DeleteQueue(string queue)
         {
             Task deleteQueueTask = provider.DeleteQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
+            deleteQueueTask.Wait();
         }
 
         public override bool QueueExists(string queue)
         {
-            return provider.QueueExistsAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None).Result;
+            Task<bool> result = provider.QueueExistsAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
+            result.Wait();
+            return result.Result;
         }
 
-        public override void PushJob(string queue, TimeSpan ttl, string jobMessage)
+        public override void PushJob(Job jobMessage)
         {
-            provider.PostMessagesAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None, new Message(ttl, new Newtonsoft.Json.Linq.JObject(jobMessage)));
+            PushJob(TimeSpan.FromDays(7), jobMessage);
+        }
+
+        public override void PushJob(TimeSpan ttl, Job jobMessage)
+        {
+            try
+            {
+                Task postResult = provider.PostMessagesAsync(new QueueName(SanitiseQueueName(jobMessage.QueueName)), CancellationToken.None, new Message<Job>(ttl, jobMessage));
+                postResult.Wait();
+            }
+            catch (System.AggregateException)
+            {
+            }
+            catch (System.Net.WebException)
+            {
+                // some jobs will eventually execute even if not in the queue
+            }
         }
 
         public override List<Job> ClaimJobs(string queue, int count)
         {
             List<Job> claimedJobs = new List<Job>();
 
-            Task<Claim> claims = provider.ClaimMessageAsync(new QueueName(SanitiseQueueName(queue)), count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), CancellationToken.None);
-            
-            for (int i= 0; i < claims.Result.Messages.Count; i++)
+            try
             {
-                claimedJobs.Add(new Job(queue, claims.Result.Messages[i].Id.ToString(), null, claims.Result.Messages[i].Body.ToString()));
+                Task<Claim> claims = provider.ClaimMessageAsync(new QueueName(SanitiseQueueName(queue)), count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), CancellationToken.None);
+                claims.Wait();
+
+                for (int i = 0; i < claims.Result.Messages.Count; i++)
+                {
+                    claimedJobs.Add(new Job(queue, claims.Result.Messages[i].Id.ToString(), null, claims.Result.Messages[i].Body.ToString()));
+                }
+            }
+            catch (System.AggregateException)
+            {
+            }
+            catch (System.Net.WebException)
+            {
+                // wait until next time to claim
             }
 
             return claimedJobs;
@@ -90,7 +123,18 @@ namespace BoxSocial.IO
 
         public override void DeleteJob(Job job)
         {
-            provider.DeleteMessageAsync(new QueueName(SanitiseQueueName(job.QueueName)), new MessageId(job.JobId), null, CancellationToken.None);
+            try
+            {
+                Task deleteResult = provider.DeleteMessageAsync(new QueueName(SanitiseQueueName(job.QueueName)), new MessageId(job.JobId), null, CancellationToken.None);
+                deleteResult.Wait();
+            }
+            catch (System.AggregateException)
+            {
+            }
+            catch (System.Net.WebException)
+            {
+                // some jobs won't execute if complete even if in the queue
+            }
         }
     }
 }

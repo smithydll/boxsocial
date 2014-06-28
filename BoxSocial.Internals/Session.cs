@@ -420,7 +420,7 @@ namespace BoxSocial.Internals
 			this.core = core;
 			this.db = core.Db;
 			isLoggedIn = true;
-            /* only used by the installer, two factor will not be enabled at this point */
+            /* only used by the installer, and background worker two factor will not be enabled at this point */
             this.signInState = SessionSignInState.SignedIn;
 			loggedInMember = user;
 			ipAddress = new IPAddress(0);

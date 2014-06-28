@@ -78,6 +78,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string QueueDefaultPriority
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["queue-default-priority"];
+            }
+        }
+
         public string ImagemagickTempPath
         {
             get

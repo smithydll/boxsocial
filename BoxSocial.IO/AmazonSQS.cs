@@ -28,6 +28,7 @@ using Amazon;
 using Amazon.SQS;
 using Amazon.SQS.Model;
 using Amazon.SQS.Util;
+using Newtonsoft.Json;
 
 namespace BoxSocial.IO
 {
@@ -41,7 +42,7 @@ namespace BoxSocial.IO
         public AmazonSQS(string keyId, string secretKey)
         {
             sqsConfig = new AmazonSQSConfig();
-            sqsConfig.ServiceURL = "sqs.amazonaws.com";
+            //sqsConfig.ServiceURL = "https://sqs.amazonaws.com";
 
             client = AWSClientFactory.CreateAmazonSQSClient(keyId, secretKey, sqsConfig);
             queueUrls = new Dictionary<string, string>();
@@ -96,12 +97,17 @@ namespace BoxSocial.IO
             }
         }
 
-        public override void PushJob(string queue, TimeSpan ttl, string jobMessage)
+        public override void PushJob(Job jobMessage)
+        {
+            PushJob(TimeSpan.FromDays(7), jobMessage);
+        }
+
+        public override void PushJob(TimeSpan ttl, Job jobMessage)
         {
             SendMessageRequest request = new SendMessageRequest();
             //request.DelaySeconds = (int)(ttl.Ticks / TimeSpan.TicksPerSecond);
-            request.QueueUrl = GetQueueUrl(SanitiseQueueName(queue));
-            request.MessageBody = jobMessage;
+            request.QueueUrl = GetQueueUrl(SanitiseQueueName(jobMessage.QueueName));
+            request.MessageBody = JsonConvert.SerializeObject(jobMessage);
             SendMessageResponse response = client.SendMessage(request);
         }
 

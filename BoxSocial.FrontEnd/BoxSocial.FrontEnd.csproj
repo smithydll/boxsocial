@@ -211,6 +211,10 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.KnowledgeBase\BoxSocial.KnowledgeBase.csproj">
+      <Project>{6C246552-7F85-4712-B41C-8DDE6A3F81EA}</Project>
+      <Name>BoxSocial.KnowledgeBase</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Calendar\Calendar.csproj">
       <Project>{28571091-8A91-49BB-B69E-E33FA70B7ACE}</Project>
       <Name>Calendar</Name>

@@ -29,11 +29,10 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class UserSelectBox : FormField
+    public class TagSelectBox : FormField
     {
         private Core core;
-        private bool selectMultiple = true;
-        private List<long> userIds;
+        private List<long> tagIds;
         private StyleLength width;
         protected bool visible;
         protected bool disabled;
@@ -63,18 +62,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool SelectMultiple
-        {
-            get
-            {
-                return selectMultiple;
-            }
-            set
-            {
-                selectMultiple = value;
-            }
-        }
-
         public StyleLength Width
         {
             get
@@ -87,19 +74,19 @@ namespace BoxSocial.Internals
             }
         }
 
-        public List<long> Invitees
+        public List<long> TagIds
         {
             get
             {
-                return userIds;
+                return tagIds;
             }
             set
             {
-                userIds = value;
+                tagIds = value;
             }
         }
 
-        public UserSelectBox(Core core, string name)
+        public TagSelectBox(Core core, string name)
         {
             this.core = core;
             this.name = name;
@@ -107,16 +94,16 @@ namespace BoxSocial.Internals
             disabled = false;
             visible = true;
 
-            userIds = new List<long>();
+            tagIds = new List<long>();
             width = new StyleLength(100F, LengthUnits.Percentage);
             script = new ScriptProperty();
         }
 
-        public UserSelectBox(Core core, string name, List<long> userIds)
+        public TagSelectBox(Core core, string name, List<long> tagIds)
         {
             this.core = core;
             this.name = name;
-            this.userIds = userIds;
+            this.tagIds = tagIds;
 
             disabled = false;
             visible = true;
@@ -125,9 +112,14 @@ namespace BoxSocial.Internals
             script = new ScriptProperty();
         }
 
-        public void AddUserId(long userId)
+        public void AddTagId(long tagId)
         {
-            this.userIds.Add(userId);
+            this.tagIds.Add(tagId);
+        }
+
+        public void AddTag(Tag tag)
+        {
+            this.tagIds.Add(tag.Id);
         }
 
         public override string ToString()
@@ -137,13 +129,18 @@ namespace BoxSocial.Internals
 
         public override string ToString(Forms.DisplayMedium medium)
         {
-            core.PrimitiveCache.LoadUserProfiles(userIds);
+            long tagTypeId = ItemType.GetTypeId(typeof(Tag));
 
-            StringBuilder users = new StringBuilder();
+            foreach (long tagId in tagIds)
+            {
+                core.ItemCache.RequestItem(new ItemKey(tagId, tagTypeId));
+            }
+
+            StringBuilder tags = new StringBuilder();
             StringBuilder idList = new StringBuilder();
 
             bool first = true;
-            foreach (long userId in userIds)
+            foreach (long tagId in tagIds)
             {
                 if (!first)
                 {
@@ -153,16 +150,16 @@ namespace BoxSocial.Internals
                 {
                     first = false;
                 }
-                idList.Append(userId.ToString());
+                idList.Append(tagId.ToString());
 
                 switch (medium)
                 {
                     case Forms.DisplayMedium.Desktop:
-                        users.Append(string.Format("<span class=\"username\">{1}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, HttpUtility.HtmlEncode(core.PrimitiveCache[userId].DisplayName)));
+                        tags.Append(string.Format("<span class=\"tag\">{1}<span class=\"delete\" onclick=\"rvl($(this).parent().siblings('.ids'),'{0}'); $(this).parent().siblings('.ids').trigger(\'change\'); $(this).parent().remove();\">x</span><input type=\"hidden\" id=\"tag-{0}\" name=\"tag[{0}]\" value=\"{0}\" /></span>", tagId, HttpUtility.HtmlEncode(((Tag)core.ItemCache[new ItemKey(tagId, tagTypeId)]).TagText)));
                         break;
                     case Forms.DisplayMedium.Mobile:
                     case Forms.DisplayMedium.Tablet:
-                        users.Append(string.Format("<span class=\"item-{0} username\">{1}<input type=\"hidden\" id=\"user-{0}\" name=\"user[{0}]\" value=\"{0}\" /></span>", userId, HttpUtility.HtmlEncode(core.PrimitiveCache[userId].DisplayName)));
+                        tags.Append(string.Format("<span class=\"item-{0} tag\">{1}<input type=\"hidden\" id=\"tag-{0}\" name=\"tag[{0}]\" value=\"{0}\" /></span>", tagId, HttpUtility.HtmlEncode(((Tag)core.ItemCache[new ItemKey(tagId, tagTypeId)]).TagText)));
                         break;
                 }
             }
@@ -170,52 +167,39 @@ namespace BoxSocial.Internals
             switch (medium)
             {
                 case Forms.DisplayMedium.Desktop:
-                    return string.Format("<div id=\"{0}\" class=\"user-droplist{8}\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
+                    return string.Format("<div id=\"{0}\" class=\"tag-droplist\" onclick=\"$(this).children('.textbox').focus();\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
                             HttpUtility.HtmlEncode(name),
                             HttpUtility.HtmlEncode(string.Empty),
                             (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
                             (!IsVisible) ? " display: none;" : string.Empty,
                             width,
                             Script.ToString(),
-                            users.ToString(),
-                            idList.ToString(),
-                            SelectMultiple ? " multiple" : " single");
+                            tags.ToString(),
+                            idList.ToString());
                 case Forms.DisplayMedium.Mobile:
                 case Forms.DisplayMedium.Tablet:
-                    return string.Format("<div id=\"{0}\" class=\"user-droplist{8}\" onclick=\"showUsersBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
+                    return string.Format("<div id=\"{0}\" class=\"tag-droplist\" onclick=\"showUsersBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
                             HttpUtility.HtmlEncode(name),
                             HttpUtility.HtmlEncode(string.Empty),
                             (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,
                             (!IsVisible) ? " display: none;" : string.Empty,
                             width,
                             Script.ToString(),
-                            users.ToString(),
-                            idList.ToString(),
-                            SelectMultiple ? " multiple" : " single");
+                            tags.ToString(),
+                            idList.ToString());
                 default:
                     return string.Empty;
             }
         }
 
-        public static long FormUser(Core core, string name, long defaultValue)
-        {
-            List<long> users = FormUsers(core, name);
-
-            if (users.Count == 1)
-            {
-                return users[0];
-            }
-            return defaultValue;
-        }
-
-        public static List<long> FormUsers(Core core, string name)
+        public static List<long> FormTags(Core core, string name)
         {
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-            List<long> userIds = new List<long>();
+            List<long> tagIds = new List<long>();
 
             string formValue = core.Http.Form[name + "-ids"];
             if (!string.IsNullOrEmpty(formValue))
@@ -229,27 +213,41 @@ namespace BoxSocial.Internals
 
                     if (id > 0)
                     {
-                        userIds.Add(id);
+                        tagIds.Add(id);
                     }
                 }
             }
 
             int limit = 10;
-            string userNames = core.Http.Form[name + "-text"];
+            string tagsText = core.Http.Form[name + "-text"];
 
-            if (!string.IsNullOrEmpty(userNames))
+            if (!string.IsNullOrEmpty(tagsText))
             {
-                string[] usernames = userNames.Split(new char[] { ',', ';', ' ' });
+                string[] tagText = tagsText.Split(new char[] { ',', ';', ' ' });
 
-                foreach (string username in usernames)
+                foreach (string tag in tagText)
                 {
                     if (limit > 0)
                     {
-                        long id = core.PrimitiveCache.LoadUserProfile(username);
-                        if (id > 0)
+                        string normalisedTag = string.Empty;
+                        Tag.NormaliseTag(tag, ref normalisedTag);
+
+                        if (!string.IsNullOrEmpty(normalisedTag) && normalisedTag.Length >= 2)
                         {
-                            userIds.Add(id);
-                            limit--;
+                            try
+                            {
+                                Tag existingTag = new Tag(core, normalisedTag);
+
+                                tagIds.Add(existingTag.Id);
+                                limit--;
+                            }
+                            catch (InvalidTagException)
+                            {
+                                Tag newTag = Tag.Create(core, tag);
+
+                                tagIds.Add(newTag.Id);
+                                limit--;
+                            }
                         }
                     }
                     else
@@ -259,7 +257,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return userIds;
+            return tagIds;
         }
 
         public ScriptProperty Script
@@ -272,7 +270,7 @@ namespace BoxSocial.Internals
 
         public override void SetValue(string value)
         {
-            userIds = FormUsers(core, value);
+            tagIds = FormTags(core, value);
         }
     }
 }

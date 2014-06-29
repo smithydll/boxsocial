@@ -139,6 +139,22 @@ namespace BoxSocial.IO
 
             return array;
         }
+
+        public string HttpMethod
+        {
+            get
+            {
+                return current.Request.HttpMethod;
+            }
+        }
+
+        public string UrlReferer
+        {
+            get
+            {
+                return current.Request.UrlReferrer.ToString();
+            }
+        }
         
         public NameValueCollection Query
         {

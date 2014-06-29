@@ -178,6 +178,7 @@
     <Content Include="templates\account_preferences.html" />
     <Content Include="templates\account_security.html" />
     <Content Include="templates\acl.html" />
+    <Content Include="templates\help_topic.html" />
     <Content Include="templates\mobile\viewsubscriptions.html" />
     <Content Include="templates\mobile\viewsubscribers.html" />
     <Content Include="templates\viewsubscriptions.html" />

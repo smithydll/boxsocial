@@ -52,8 +52,12 @@ namespace BoxSocial.Internals
         private string phoneNumber;
         [DataField("phone_type")]
         private byte phoneType;
+        [DataField("phone_validated")]
+        private bool phoneValidated;
         [DataField("phone_time_ut")]
         private long phoneTimeRaw;
+        [DataField("phone_validated_time_ut")]
+        private long phoneValidatedTime;
         [DataField("phone_simple_permissions")]
         private bool simplePermissions;
 
@@ -89,6 +93,14 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("phoneType", (byte)value);
+            }
+        }
+
+        public bool Validated
+        {
+            get
+            {
+                return phoneValidated;
             }
         }
 

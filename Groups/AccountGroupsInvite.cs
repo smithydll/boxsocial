@@ -92,6 +92,10 @@ namespace BoxSocial.Groups
                         break;
                 }
 
+                UserSelectBox inviteUserSelectBox = new UserSelectBox(core, "username");
+                inviteUserSelectBox.SelectMultiple = false;
+
+                template.Parse("S_USERNAME", inviteUserSelectBox);
                 template.Parse("S_ID", groupId.ToString());
             }
             catch (InvalidGroupException)
@@ -107,7 +111,6 @@ namespace BoxSocial.Groups
             AuthoriseRequestSid();
 
             long groupId = core.Functions.FormLong("id", 0);
-            string username = core.Http.Form["username"];
 
             try
             {
@@ -115,7 +118,16 @@ namespace BoxSocial.Groups
 
                 try
                 {
-                    User inviteMember = core.PrimitiveCache[core.LoadUserProfile(username)];
+                    long userId = UserSelectBox.FormUser(core, "username", 0);
+
+                    core.LoadUserProfile(userId);
+                    User inviteMember = core.PrimitiveCache[userId];
+
+                    if (!inviteMember.IsFriend(LoggedInMember.ItemKey))
+                    {
+                        core.Display.ShowMessage("Error", "You can only invite mutual friends to groups.");
+                        return;
+                    }
 
                     if (!thisGroup.IsGroupMember(LoggedInMember.ItemKey))
                     {
@@ -163,7 +175,7 @@ namespace BoxSocial.Groups
                 }
                 catch (InvalidUserException)
                 {
-                    SetError("The username you have entered does not exist.");
+                    SetError("The user you have entered does not exist.");
                     return;
                 }
             }

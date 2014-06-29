@@ -25,6 +25,50 @@ function namesRequested(r, e) {
 }
 
 $(document).ready(function () {
+    if ($(".tag-droplist .textbox").length > 0) {
+        $(".tag-droplist .textbox")
+        .bind("keydown", function (event) {
+            if (event.keyCode === $.ui.keyCode.TAB &&
+                        $(this).data("autocomplete").menu.active) {
+                event.preventDefault();
+            }
+        })
+        .bind("focus", function (event) {
+            $(this).parent().css("outline", "#ff9955 auto 5px");
+        })
+        .bind("blur", function (event) {
+            $(this).parent().css("outline", "none");
+        })
+        .autocomplete({
+            minLength: 0,
+            source: function (request, response) {
+                PostToPage(namesRequested, "api/tags", response, { ajax: "true", "tag-text": request.term });
+            },
+            focus: function () {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function (event, ui) {
+                this.value = "";
+                if (cv($(this).siblings('.ids'), ui.item.id) == 0) {
+                    $(this).before($('<span class="tag">' + ui.item.value + '<span class="delete" onclick="rvl($(this).parent().siblings(\'.ids\'),' + ui.item.key + '); $(this).parent().siblings(\'.ids\').trigger(\'change\'); $(this).parent().remove();">x</span><input type="hidden" id="tag-' + ui.item.key + '" name="tag[' + ui.item.key + ']" value="' + ui.item.key + '" /></span>'));
+                    avl($(this).siblings('.ids'), ui.item.id);
+                    $(this).siblings('.ids').trigger("change");
+                }
+                return false;
+            },
+            position: { collision: "flip" }
+        })
+        .data("ui-autocomplete")._renderItem = function (ul, item) {
+            return $('<li class="droplist-tag">')
+                .data("item.autocomplete", item)
+                .append('<a>' + item.value + '</a>')
+                .appendTo(ul);
+        };
+    };
+});
+
+$(document).ready(function () {
     if ($(".user-droplist .textbox").length > 0) {
         $(".user-droplist .textbox")
         .bind("keydown", function (event) {

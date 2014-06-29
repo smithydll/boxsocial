@@ -26,6 +26,7 @@ using System.Web;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.KnowledgeBase;
 
 namespace BoxSocial.FrontEnd
 {
@@ -44,6 +45,19 @@ namespace BoxSocial.FrontEnd
             if (!string.IsNullOrEmpty(topicSlug))
             {
                 template.SetTemplate("help_topic.html");
+
+                try
+                {
+                    HelpTopic topic = new HelpTopic(core, topicSlug);
+
+                    template.Parse("HELP_TOPIC_TITLE", topic.Title);
+                    core.Display.ParseBbcode("HELP_TOPIC_BODY", topic.Text.Replace("[site-title/]", core.Settings.SiteTitle));
+                }
+                catch (InvalidHelpTopicException)
+                {
+                    core.Functions.Generate404();
+                    return;
+                }
             }
             else
             {

@@ -1180,6 +1180,8 @@ namespace BoxSocial.Internals
                                 {
                                     string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
+                                    //core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.TypeId, "publish_tweet", twitterDescription));
+
                                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
                                     Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), sharedItem.PostType, (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
 

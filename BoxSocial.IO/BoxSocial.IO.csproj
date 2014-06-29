@@ -81,6 +81,7 @@
     <Compile Include="Mailgun.cs" />
     <Compile Include="QueryCache.cs" />
     <Compile Include="RackspaceCloudQueues.cs" />
+    <Compile Include="SmsGateway.cs" />
     <Compile Include="Smtp.cs" />
     <Compile Include="RackspaceCloudFiles.cs" />
     <Compile Include="DataFieldKeyAttribute.cs" />

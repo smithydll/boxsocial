@@ -57,6 +57,11 @@ namespace BoxSocial.FrontEnd
                 case "friend-list":
                     ReturnFriendList();
                     return;
+                case "tag-list":
+                    ReturnTagList();
+                    return;
+                case "search-list":
+                    return;
                 case "contact-card":
                     ReturnContactCard();
                     return;
@@ -107,6 +112,24 @@ namespace BoxSocial.FrontEnd
 
                     return;
             }
+        }
+
+        private void ReturnTagList()
+        {
+            string tagText = core.Http.Form["tag-text"];
+
+
+            List<Tag> tags = Tag.SearchTags(core, tagText);
+
+            Dictionary<string, string> tagsText = new Dictionary<string, string>();
+
+            foreach (Tag tag in tags)
+            {
+                tagsText.Add(tag.Id.ToString(), tag.TagText);
+            }
+
+            core.Ajax.SendDictionary("tagSelect", tagsText);
+
         }
 
         private void ReturnFriendList()

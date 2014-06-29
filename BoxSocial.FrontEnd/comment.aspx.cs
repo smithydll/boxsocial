@@ -367,6 +367,12 @@ namespace BoxSocial.FrontEnd
                 return;
             }
 
+            if (itemId == 0 || itemTypeId == 0)
+            {
+                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x08)");
+                return;
+            }
+
             try
             {
                 // This isn't the most elegant fix, but it works

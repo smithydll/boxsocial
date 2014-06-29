@@ -348,8 +348,8 @@ namespace BoxSocial.Applications.Blog
             postTextBox.Lines = 15;
 
             /* Tags TextBox */
-            TextBox tagsTextBox = new TextBox("tags");
-            tagsTextBox.MaxLength = 127;
+            TagSelectBox tagsTextBox = new TagSelectBox(core, "tags");
+            //tagsTextBox.MaxLength = 127;
 
             CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
             publishToFeedCheckBox.IsChecked = true;

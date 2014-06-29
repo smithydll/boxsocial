@@ -189,6 +189,101 @@ namespace BoxSocial.Internals
             return tagList;
         }
 
+        public static List<Tag> SearchTags(Core core, string tagText)
+        {
+            List<Tag> tags = new List<Tag>();
+
+            if (!string.IsNullOrEmpty(tagText))
+            {
+                string normalisedText = string.Empty;
+                Tag.NormaliseTag(tagText, ref normalisedText);
+
+                SelectQuery query = Tag.GetSelectQueryStub(typeof(Tag));
+                query.AddCondition("tag_text_normalised", ConditionEquality.Like, QueryCondition.EscapeLikeness(normalisedText) + "%");
+                query.AddSort(SortOrder.Descending, "tag_items");
+
+                query.LimitCount = 20;
+
+                DataTable tagsTable = core.Db.Query(query);
+
+                foreach (DataRow dr in tagsTable.Rows)
+                {
+                    tags.Add(new Tag(core, dr));
+                }
+            }
+
+            return tags;
+        }
+
+        public static void LoadTagsIntoItem(Core core, NumberedItem item, List<long> tagIds)
+        {
+            LoadTagsIntoItem(core, item, tagIds, false);
+        }
+
+        public static void LoadTagsIntoItem(Core core, NumberedItem item, List<long> tagIds, bool isNewItem)
+        {
+            if (isNewItem)
+            {
+                if (tagIds.Count == 0)
+                {
+                    return;
+                }
+            }
+
+            List<Tag> itemTags = GetTags(core, item);
+            List<long> itemTagIds = new List<long>();
+
+            List<long> tagsToAdd = new List<long>();
+            List<long> tagsToRemove = new List<long>();
+
+            foreach (Tag tag in itemTags)
+            {
+                itemTagIds.Add(tag.Id);
+                if (!tagIds.Contains(tag.Id))
+                {
+                    tagsToRemove.Add(tag.Id);
+                }
+            }
+
+            foreach (long tagId in tagIds)
+            {
+                if (!itemTagIds.Contains(tagId))
+                {
+                    tagsToAdd.Add(tagId);
+                }
+            }
+
+            if (tagsToAdd.Count > 0)
+            {
+                for (int i = 0; i < tagsToAdd.Count; i++)
+                {
+                    ItemTag.Create(core, item, tagsToAdd[i]);
+                }
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(Tag));
+                uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Addition, 1));
+                uQuery.AddCondition("tag_id", ConditionEquality.In, tagsToAdd.ToArray());
+
+                core.Db.Query(uQuery);
+            }
+
+            if (tagsToRemove.Count > 0)
+            {
+                DeleteQuery dQuery = new DeleteQuery(typeof(ItemTag));
+                dQuery.AddCondition("tag_id", ConditionEquality.In, tagsToRemove.ToArray());
+                dQuery.AddCondition("item_id", item.Id);
+                dQuery.AddCondition("item_type_id", item.ItemKey.TypeId);
+
+                core.Db.Query(dQuery);
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(Tag));
+                uQuery.AddField("tag_items", new QueryOperation("tag_items", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("tag_id", ConditionEquality.In, tagsToRemove.ToArray());
+
+                core.Db.Query(uQuery);
+            }
+        }
+
         public static void LoadTagsIntoItem(Core core, NumberedItem item, string tagList)
         {
             LoadTagsIntoItem(core, item, tagList, false);

@@ -389,6 +389,7 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { @"^/api/subscribe(/|)$", @"/subscribe.aspx" });
                             patterns.Add(new string[] { @"^/api/functions(/|)$", @"/functions.aspx" });
                             patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
+                            patterns.Add(new string[] { @"^/api/tags(/|)$", @"/functions.aspx?fun=tag-list" });
                             patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
                             patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
 
@@ -441,6 +442,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/subscribe(/|)$", @"/subscribe.aspx" });
                     patterns.Add(new string[] { @"^/api/functions(/|)$", @"/functions.aspx" });
                     patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
+                    patterns.Add(new string[] { @"^/api/tags(/|)$", @"/functions.aspx?fun=tag-list" });
                     patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
                     patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
                     patterns.Add(new string[] { @"^/api/twitter/callback(/|)$", @"/functions.aspx?fun=twitter" });

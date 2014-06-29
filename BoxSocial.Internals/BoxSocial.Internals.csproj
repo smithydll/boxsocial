@@ -197,6 +197,7 @@
     <Compile Include="SolrSearch.cs" />
     <Compile Include="StaticShowAttribute.cs" />
     <Compile Include="Subscription.cs" />
+    <Compile Include="TagSelectBox.cs" />
     <Compile Include="ToggleButton.cs" />
     <Compile Include="Tumblr.cs" />
     <Compile Include="Twitter.cs" />

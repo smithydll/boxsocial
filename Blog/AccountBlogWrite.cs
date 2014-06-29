@@ -102,8 +102,8 @@ namespace BoxSocial.Applications.Blog
             postTextBox.Lines = 15;
 
             /* Tags TextBox */
-            TextBox tagsTextBox = new TextBox("tags");
-            tagsTextBox.MaxLength = 127;
+            TagSelectBox tagsTextBox = new TagSelectBox(core, "tags");
+            //tagsTextBox.MaxLength = 127;
 
             CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
             publishToFeedCheckBox.IsChecked = true;
@@ -153,18 +153,19 @@ namespace BoxSocial.Applications.Blog
 
                     List<Tag> tags = Tag.GetTags(core, be);
 
-                    string tagList = string.Empty;
+                    //string tagList = string.Empty;
 
                     foreach (Tag tag in tags)
                     {
-                        if (tagList != string.Empty)
+                        /*if (tagList != string.Empty)
                         {
                             tagList += ", ";
                         }
-                        tagList += tag.TagText;
+                        tagList += tag.TagText;*/
+                        tagsTextBox.AddTag(tag);
                     }
 
-                    tagsTextBox.Value = tagList;
+                    //tagsTextBox.Value = tagList;
 
                     if (be.OwnerId != core.LoggedInMemberId)
                     {
@@ -250,7 +251,7 @@ namespace BoxSocial.Applications.Blog
         void AccountBlogWrite_Save(object sender, EventArgs e)
         {
             string title = core.Http.Form["title"];
-            string tags = core.Http.Form["tags"];
+            //string tags = core.Http.Form["tags"];
             string postBody = core.Http.Form["post"];
             bool publishToFeed = (core.Http.Form["publish-feed"] != null);
 
@@ -368,7 +369,7 @@ namespace BoxSocial.Applications.Blog
 
                 myBlogEntry.Update();
 
-                Tag.LoadTagsIntoItem(core, myBlogEntry, tags);
+                Tag.LoadTagsIntoItem(core, myBlogEntry, TagSelectBox.FormTags(core, "tags"));
             }
             else if (postId == 0) // else if to make sure only one triggers
             {
@@ -414,7 +415,7 @@ namespace BoxSocial.Applications.Blog
                         break;
                 }
 
-                Tag.LoadTagsIntoItem(core, myBlogEntry, tags, true);
+                Tag.LoadTagsIntoItem(core, myBlogEntry, TagSelectBox.FormTags(core, "tags"), true);
 
                 if (publishToFeed && publishStatus == PublishStatuses.Publish)
                 {

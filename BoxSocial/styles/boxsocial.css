@@ -885,8 +885,8 @@ tr:hover td {
 
 #new-stuff, #x-stuff, .r-stuff
 {
-	padding: 1px 2px 8px 2px;
-	margin-top: 8px;
+	padding: 1px 2px 18px 2px;
+	margin-top: 18px;
 }
 
 #x-stuff {
@@ -1614,7 +1614,7 @@ dl#app-list {
 	margin-right: 0.5em;
 }
 
-.username-field a, .user-droplist span.delete, .permission-group-droplist span.delete {
+.username-field a, .tag-droplist span.delete, .user-droplist span.delete, .permission-group-droplist span.delete {
 	cursor: pointer;
 }
 
@@ -1694,7 +1694,7 @@ li.droplist-user img {
         width: 32px;
 }
 
-.user-droplist .empty, .permission-group-droplist .empty {
+.tag-droplist .empty, .user-droplist .empty, .permission-group-droplist .empty {
         color: #999999;
         padding: 2px;
         margin: 2px;
@@ -1702,7 +1702,7 @@ li.droplist-user img {
         cursor: pointer;
 }
 
-.user-droplist .delete, .permission-group-droplist .delete {
+.tag-droplist .delete, .user-droplist .delete, .permission-group-droplist .delete {
         margin-left: 4px;
         display: inline-block;
         width: 1em;
@@ -1710,25 +1710,25 @@ li.droplist-user img {
         border-radius: 3px;
 }
 
-.user-droplist .delete:hover, .permission-group-droplist .delete:hover {
+.tag-droplist .delete:hover, .user-droplist .delete:hover, .permission-group-droplist .delete:hover {
         color: #2244aa;
         background-color: #ffffff;
 }
 
-.user-droplist, .permission-group-droplist {
+.tag-droplist, .user-droplist, .permission-group-droplist {
         border: 1px solid #cccccc;
         background-color: #ffffff;
         position: relative;
         border-radius: 3px;
 }
 
-.user-droplist input, .permission-group-droplist input {
+.tag-droplist input, .user-droplist input, .permission-group-droplist input {
         border: none;
         background-color: #ffffff;
         margin: 0;
 }
 
-.user-droplist input:focus, .permission-group-droplist input:focus {
+.tag-droplist input:focus, .user-droplist input:focus, .permission-group-droplist input:focus {
         outline: none;
 }
 
@@ -1754,6 +1754,16 @@ li.droplist-user img {
         cursor: default;
 }
 
+.tag-droplist .tag {
+        border: 1px solid #220088;
+	    background: #4422aa;
+        color: #ffffff;
+        padding: 2px;
+        margin: 2px;
+        display: inline-block;
+        border-radius: 3px;
+        cursor: default;
+}
 
 ul.feed-list {
     padding: 0;

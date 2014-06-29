@@ -137,6 +137,20 @@ namespace BoxSocial.Internals
             return (ItemTag)newItem;
         }
 
+        public static ItemTag Create(Core core, NumberedItem item, long tagId)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item newItem = Item.Create(core, typeof(ItemTag), new FieldValuePair("item_id", item.Id),
+                new FieldValuePair("item_type_id", item.ItemKey.TypeId),
+                new FieldValuePair("tag_id", tagId));
+
+            return (ItemTag)newItem;
+        }
+
         public override long Id
         {
             get

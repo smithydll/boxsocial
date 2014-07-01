@@ -75,7 +75,7 @@ namespace BoxSocial.Applications.Mail
 
                 db.Query(query);
 
-                core.Template.Parse("U_UNSEEN_MAIL", "FALSE");
+                core.Template.Parse("UNSEEN_MAIL", "FALSE");
             }
 
             List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);

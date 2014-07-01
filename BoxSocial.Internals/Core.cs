@@ -603,14 +603,14 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        cache = new Cache();
+                        cache = new System.Web.Caching.Cache();
                     }
 
                     if (cache != null)
                     {
                         try
                         {
-                            cache.Add("Applications", loadedAssemblies, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
+                            cache.Add("Applications", loadedAssemblies, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
                         }
                         catch (NullReferenceException)
                         {
@@ -677,7 +677,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        cache = new Cache();
+                        cache = new System.Web.Caching.Cache();
                     }
 
                     try
@@ -736,7 +736,7 @@ namespace BoxSocial.Internals
                         {
                             try
                             {
-                                cache.Add("Applications", loadedAssemblies, null, Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
+                                cache.Add("Applications", loadedAssemblies, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
                             }
                             catch (NullReferenceException)
                             {

@@ -125,6 +125,13 @@
             <!-- ENDIF -->
 			<p class="blog-date">{blog_list.DATE}</p>
 			<p>{blog_list.POST}</p>
+            <!-- IF blog_list.tags_list -->
+            <p><strong>{L_TAGS}</strong>:
+            <!-- BEGIN blog_list.tags_list -->
+                <a href="{blog_list.tags_list.U_SEARCH}">{blog_list.tags_list.TEXT}</a>
+            <!-- END blog_list.tags_list -->
+            </p>
+            <!-- ENDIF -->
             <div class="r-stuff light">
                 <span class="img-button like-item"><a href="#" onclick="return LikeItem({blog_list.ID},{blog_list.TYPE_ID},$(this).children('.likes'));" title="{L_LIKE}"><span class="sprite like-sprite"></span><span class="likes">{blog_list.LIKES}</span></a></span><!--
                 <!-- IF blog_list.SHAREABLE -->

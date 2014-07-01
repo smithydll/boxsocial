@@ -75,10 +75,12 @@
   <ItemGroup>
     <Compile Include="AmazonS3.cs" />
     <Compile Include="AmazonSQS.cs" />
+    <Compile Include="Cache.cs" />
     <Compile Include="Email.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="JobQueue.cs" />
     <Compile Include="Mailgun.cs" />
+    <Compile Include="Memcached.cs" />
     <Compile Include="QueryCache.cs" />
     <Compile Include="RackspaceCloudQueues.cs" />
     <Compile Include="SmsGateway.cs" />

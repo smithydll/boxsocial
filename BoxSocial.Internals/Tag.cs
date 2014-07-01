@@ -162,6 +162,49 @@ namespace BoxSocial.Internals
             return tags;
         }
 
+        public static Dictionary<ItemKey, List<Tag>> GetTags(Core core, List<NumberedItem> items)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Dictionary<ItemKey, List<Tag>> tags = new Dictionary<ItemKey, List<Tag>>();
+
+            if (items.Count == 0)
+            {
+                return tags;
+            }
+
+            Dictionary<long, List<long>> itemIds = new Dictionary<long, List<long>>();
+            
+            foreach (NumberedItem item in items)
+            {
+                if (!itemIds.ContainsKey(item.ItemKey.TypeId))
+                {
+                    itemIds.Add(item.ItemKey.TypeId, new List<long>());
+                }
+                itemIds[item.ItemKey.TypeId].Add(item.Id);
+            }
+
+            foreach (long itemTypeId in itemIds.Keys)
+            {
+                SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
+                query.AddCondition("item_id", ConditionEquality.In, itemIds[itemTypeId]);
+                query.AddCondition("item_type_id", itemTypeId);
+                query.AddSort(SortOrder.Ascending, "tag_text_normalised");
+
+                DataTable tagsTable = core.Db.Query(query);
+
+                foreach (DataRow dr in tagsTable.Rows)
+                {
+                    tags[new ItemKey((long)dr["item_id"], itemTypeId)].Add(new Tag(core, dr));
+                }
+            }
+
+            return tags;
+        }
+
         public static List<Tag> GetTags(Core core, string[] tags)
         {
             if (core == null)
@@ -427,7 +470,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                throw new NotImplementedException();
+                return core.Hyperlink.AppendAbsoluteSid("/search?q=" + HttpUtility.UrlEncode("#" + textNormalised));
             }
         }
     }

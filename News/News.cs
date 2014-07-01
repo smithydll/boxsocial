@@ -199,6 +199,8 @@ namespace BoxSocial.Applications.News
             e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
             e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
 
+            e.Core.Display.ParsePageList(e.Page.Owner, true);
+
             List<Article> articles = news.GetArticles(e.Page.TopLevelPageNumber, 10);
 			
 			e.Template.Parse("NEWS_COUNT", articles.Count.ToString());

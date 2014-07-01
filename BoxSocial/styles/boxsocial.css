@@ -372,10 +372,10 @@ li.empty {
 }
 
 #profile div.pane h3 {
-	padding: 1px 5px;
-	margin: 0px;
+	/*padding: 1px 5px;*/
+	margin: 0.6em 0 0 0;
 	color: #333333;
-	font-size: 140%;
+	/*font-size: 140%;*/
 }
 
 #profile div#profile-group-info-pane h4 {
@@ -1864,12 +1864,22 @@ blockquote {
     text-align: left;
 }
 
-.infinite-more {
+.infinite-more, .infinite-new {
     display: none;
+}
+
+.infinite-new a {
+    display: block;
+}
+
+.infinite-more, .infinite-new a {
     background-color: #eeeeee;
     width: 100%;
     padding: 0.5em;
     text-align: center;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }
 
 p.posted-by 
@@ -2022,4 +2032,8 @@ div#today-feed li.today-feed h4.today-day {
     color: #999999;
     margin: 0;
     padding: 0;
+}
+
+code {
+    line-height: 100%;
 }

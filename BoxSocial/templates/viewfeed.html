@@ -3,6 +3,7 @@
     <script type="text/javascript">
     <!--
         nid = {NEWEST_ID};
+        queryMode = 'query';
     -->
     </script>
 
@@ -21,7 +22,8 @@
 	</div>
     <!-- ENDIF -->
 
-    <div class="infinite">
+    <div id="feed-infinite" class="infinite">
+        <p class="infinite-new"><a href="#" onclick="return loadNewContent('fetch', $('#feed-infinite'));">New posts (<span class="new-posts">0</span>)</a></p>
 		<h4 class="today-day"><!--a href="/{USERNAME}/feed"-->{L_FEED}<!--/a--></h4>
 		<!-- IF HAS_FEED_ITEMS -->
 		<ul id="today-feeds">

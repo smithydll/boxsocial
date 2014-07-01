@@ -5,12 +5,7 @@
     <ul class="comment-list">
     <li>
         <h4 class="owner">{L_POST_COMMENT}</h4>
-		<!-- IF USER_ICON -->
-		<div class="comment-disp-pic">
-			<img src="{USER_ICON}" data-at2x="{USER_TILE}" alt="{USER_DISPLAY_NAME}" />
-		</div>
-		<!-- ENDIF -->
-        <div class="comment-text">
+        <div>
 	        <textarea id="comment-text-{ITEM_ID}" class="comment-textarea" name="comment" style="width: 100%; height: 56px;" rows="3" cols="75" onfocus="$(this).css('height', '78px'); $(this).siblings('.comment-buttons').show(); /*$(this).siblings('.comment-buttons')[0].scrollIntoView();*/"></textarea>
 	        <p style="text-align: right; display: none;" class="comment-buttons"><input type="submit" value="Post" onclick="return SubmitComment({ITEM_ID},{ITEM_TYPE},0,'{COMMENT_SORT}');" id="comment-submit-{ITEM_ID}" class="comment-submit" />
             <input type="reset" value="Cancel" onclick="$(this).parent().hide(); $(this).parent().siblings('.comment-textarea').css('height', '56px');" /></p>

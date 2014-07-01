@@ -74,6 +74,7 @@ div#rc-bottom {
 	<!--
 	    var sid = '{SID}';
         var medium = 'desktop';
+        var queryMode = '';
 
     <!-- IF S_TRIM_SID -->
 	    $(document).ready(function () {
@@ -122,11 +123,15 @@ div#rc-bottom {
 				<!-- IF LOGGED_IN -->
 				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
 				<a href="{U_ACCOUNT}">{L_MY_ACCOUNT}</a>
-                <!-- IF U_UNREAD_NOTIFICATIONS -->
-                <a href="{U_ACCOUNT}"><span class="notifications">{U_UNREAD_NOTIFICATIONS}</span></a>
+                <!-- IF UNREAD_NOTIFICATIONS -->
+                <a href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
+                <!-- ELSE -->
+                <a id="notifications-tile" style="display: none;" href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
                 <!-- ENDIF -->
-                <!-- IF U_UNSEEN_MAIL -->
+                <!-- IF UNSEEN_MAIL -->
                 <a href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
+                <!-- ELSE -->
+                <a id="mail-notifications-tile" style="display: none;" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
                 <!-- ENDIF -->
                 |
 				<a href="{U_SIGNOUT}">{L_SIGNOUT}</a> |

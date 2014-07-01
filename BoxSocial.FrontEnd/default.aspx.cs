@@ -57,6 +57,12 @@ namespace BoxSocial.FrontEnd
                 template.Parse("DATE_STRING", tz.Now.ToLongDateString());
 
                 ShowUnseenNotifications();
+
+                if (core.Session.LoggedInMember.UserInfo.Invites == 0 && core.Session.LoggedInMember.UserInfo.Friends < 5)
+                {
+                    template.Parse("NEW_HERE", "TRUE");
+                    template.Parse("U_ACCOUNT_INVITE", core.Hyperlink.BuildAccountSubModuleUri("friends", "invite"));
+                }
             }
         }
 

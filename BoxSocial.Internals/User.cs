@@ -418,6 +418,8 @@ namespace BoxSocial.Internals
                 else
                 {
                     SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_cover_exists"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_storage_path"));
                     query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
@@ -426,6 +428,11 @@ namespace BoxSocial.Internals
 
                     if (coverTable.Rows.Count == 1)
                     {
+                        if (core.Settings.UseCdn && (byte)coverTable.Rows[0]["gallery_item_cover_exists"] > 0)
+                        {
+                            return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnCoverBucketDomain, (string)coverTable.Rows[0]["gallery_item_storage_path"]);
+                        }
+
                         if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
                         {
                             userCoverPhotoUri = string.Format("/{0}/{1}",
@@ -461,6 +468,8 @@ namespace BoxSocial.Internals
                 else
                 {
                     SelectQuery query = new SelectQuery("gallery_items");
+                    query.AddField(new DataField("gallery_items", "gallery_item_mobile_cover_exists"));
+                    query.AddField(new DataField("gallery_items", "gallery_item_storage_path"));
                     query.AddField(new DataField("gallery_items", "gallery_item_uri"));
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
@@ -469,6 +478,11 @@ namespace BoxSocial.Internals
 
                     if (coverTable.Rows.Count == 1)
                     {
+                        if (core.Settings.UseCdn && (byte)coverTable.Rows[0]["gallery_item_mobile_cover_exists"] > 0)
+                        {
+                            return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnMobileCoverBucketDomain, (string)coverTable.Rows[0]["gallery_item_storage_path"]);
+                        }
+
                         if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
                         {
                             userCoverPhotoUri = string.Format("/{0}/{1}",

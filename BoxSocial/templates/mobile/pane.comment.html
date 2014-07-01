@@ -1,6 +1,13 @@
 	<!-- BEGIN comment-list -->
-	<li id="c{comment-list.ID}">
-        <div>
+	<li class="c{comment-list.ID}">
+        <!-- IF comment-list.IS_SPAM -->
+		<h4>{L_THIS_COMMENT_HAS_BEEN_MARKED_AS_SPAM} (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" class="comment-a-{comment-list.ID}">{L__SHOW_COMMENT}</a>)</h4>
+		<!-- ENDIF -->
+        <!-- IF comment-list.IS_SPAM -->
+        <div class="comment-{comment-list.ID}" style="display: none;">
+        <!-- ELSE -->
+        <div class="comment-{comment-list.ID}">
+        <!-- ENDIF -->
 		<!-- IF comment-list.USER_ICON -->
 		<div class="comment-disp-pic">
 			<img src="{comment-list.USER_ICON}" data-at2x="{comment-list.USER_TILE}" alt="{comment-list.USER_DISPLAY_NAME}" />
@@ -10,21 +17,10 @@
 		<!-- IF comment-list.OWNER -->
 		<h4 class="owner">{L_POSTED_BY}: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
 		<!-- ENDIF -->
-		<!-- IF comment-list.IS_SPAM -->
-		<h4>{L_THIS_COMMENT_HAS_BEEN_MARKED_AS_SPAM} (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">{L__SHOW_COMMENT}</a>)</h4>
-		<!-- ENDIF -->
 		<!-- IF comment-list.NORMAL -->
 		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
 		<!-- ENDIF -->
-		<!-- IF comment-list.IS_SPAM -->
-		<div id ="comment-{comment-list.ID}" style="display: none;">
-		<h4>Posted by: <a href="{comment-list.U_PROFILE}">{comment-list.USERNAME}</a></h4>
 		<p class="time">{L_POSTED}: {comment-list.TIME}</p>
-		<!-- ELSE -->
-		<p class="time">{L_POSTED}: {comment-list.TIME}</p>
-		<div>
-		<!-- ENDIF -->
-        </div>
         </div>
         <div class="comment-text">
 			{comment-list.COMMENT}

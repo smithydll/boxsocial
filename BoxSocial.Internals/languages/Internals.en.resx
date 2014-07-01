@@ -1010,6 +1010,9 @@
   <data name="_ITEMS" xml:space="preserve">
     <value>{0} items</value>
   </data>
+  <data name="_POSTED" xml:space="preserve">
+    <value>posted</value>
+  </data>
   <data name="_SHOW_COMMENT" xml:space="preserve">
     <value>show comment</value>
   </data>

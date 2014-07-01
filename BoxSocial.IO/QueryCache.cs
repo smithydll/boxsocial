@@ -71,7 +71,7 @@ namespace BoxSocial.IO
             }
             else
             {
-                cache = new Cache();
+                cache = new System.Web.Caching.Cache();
             }
 
             if (cache != null)
@@ -99,7 +99,7 @@ namespace BoxSocial.IO
 
                     if (cache != null)
                     {
-                        cache.Add("queries", queries, null, Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("queries", queries, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
                     }
                 }
             }
@@ -116,7 +116,7 @@ namespace BoxSocial.IO
             }
             else
             {
-                cache = new Cache();
+                cache = new System.Web.Caching.Cache();
             }
 
             if (cache != null)
@@ -126,7 +126,7 @@ namespace BoxSocial.IO
                     if (!queries.ContainsKey(typeId))
                     {
                         queries.Add(typeId, query.ToString());
-                        cache.Add("queries", queries, null, Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("queries", queries, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
                     }
                 }
             }

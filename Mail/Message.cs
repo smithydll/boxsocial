@@ -272,6 +272,8 @@ namespace BoxSocial.Applications.Mail
                 uquery.AddCondition("user_id", ConditionEquality.In, recipientIds);
 
                 core.Db.Query(uquery);
+
+                // Send notifications
             }
 			
 			return (Message)newItem;

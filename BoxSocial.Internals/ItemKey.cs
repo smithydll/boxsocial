@@ -312,7 +312,7 @@ namespace BoxSocial.Internals
 			}
 			else
 			{
-				cache = new Cache();
+                cache = new System.Web.Caching.Cache();
 			}
 			
 			if (cache != null)
@@ -369,8 +369,8 @@ namespace BoxSocial.Internals
 
                     if (cache != null)
                     {
-                        cache.Add("itemTypeIds", itemTypeCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
-                        cache.Add("itemApplicationIds", itemApplicationCache, null, Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("itemTypeIds", itemTypeCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("itemApplicationIds", itemApplicationCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
                     }
                 }
             }

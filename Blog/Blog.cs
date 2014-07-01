@@ -1033,6 +1033,16 @@ namespace BoxSocial.Applications.Blog
                         core.Template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
                     }
 
+                    List<Tag> tags = Tag.GetTags(core, blogEntries[i]);
+
+                    foreach (Tag t in tags)
+                    {
+                        VariableCollection tagsVariableCollection = blogPostVariableCollection.CreateChild("tags_list");
+
+                        tagsVariableCollection.Parse("U_SEARCH", t.Uri);
+                        tagsVariableCollection.Parse("TEXT", t.TagText);
+                    }
+
                     if (post > 0)
                     {
                         postTitle = blogEntries[i].Title;

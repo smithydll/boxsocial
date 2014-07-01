@@ -103,7 +103,7 @@ function SentAction(r, e, a) {
 }
 
 function DeleteComment(id, iid) {
-    return PostToPage(DeletedComment, "api/comment?mode=delete&item=" + id, "#c" + id, { ajax: "true" });
+    return PostToPage(DeletedComment, "api/comment?mode=delete&item=" + id, ".c" + id, { ajax: "true" });
 }
 
 function DeletedComment(r, e) {
@@ -216,18 +216,18 @@ function PostToAccount(onPost, module, sub, id, params, a) {
     }
 }
 
-function PostToPage(onPost, page, nodes, params, a) {
+function PostToPage(onPost, page, nodes, params, a, format) {
     var u = page;
     if (page.indexOf(host) != 0) {
         u = host + page;
     }
     $.post(AppendSid(u), params, function (data) {
         if (onPost != null) {
-            var r = ProcessAjaxResult(data);
-            if (r != null) onPost(r, nodes, a);
+            var r = ProcessAjaxResult(data, format);
+            if (r != null) onPost(r['result'], nodes, a, r['code']);
         }
         else {
-            ProcessAjaxResult(data);
+            ProcessAjaxResult(data, format);
         }
     }, 'xml');
 
@@ -244,45 +244,59 @@ function AppendSid(uri) {
     return uri + "sid=" + sid;
 }
 
-function ProcessAjaxResult(doc) {
+function ProcessAjaxResult(body, format) {
+    if (format == 'json') {
+        return ProcessAjaxResultJson(body);
+    }
+    else {
+        return ProcessAjaxResultXml(body);
+    }
+}
+
+function ProcessAjaxResultJson(body) {
+    var doc = $.parseJSON(body);
+    var type = doc['type'];
+    var status;
+    var title;
+    var message;
+
+    if (type == 'Message') {
+        showModalMessage(doc['title'], doc['message']);
+        return null;
+    }
+    else if (type == 'Raw') {
+        return { code: doc['code'], result: doc };
+    }
+}
+
+function ProcessAjaxResultXml(doc) {
     var type = GetNode(doc, 'type');
     var status;
     var title;
     var message;
 
     if (type == 'Message') {
-        //window.alert(GetNode(doc, 'title'), GetNode(doc, 'message'));
-        $(function () {
-            $("#dialog-message").attr('title', GetNode(doc, 'title')).text(GetNode(doc, 'message')).dialog({
-                modal: true,
-                resizable: false,
-                buttons: {
-                    Ok: function () {
-                        $(this).dialog("close");
-                    }
-                }
-            });
-        });
+        showModalMessage(GetNode(doc, 'title'), GetNode(doc, 'message'));
         return null;
     }
     else if (type == 'Raw') {
-        return { code: GetNode(doc, 'code'), message: GetNode(doc, 'message') };
+        return { code: GetNode(doc, 'code'), result: { code: GetNode(doc, 'code'), message: GetNode(doc, 'message')} };
     }
     else if (type == 'Status') {
-        return { code: GetNode(doc, 'code') };
+        return { code: GetNode(doc, 'code'), result: { code: GetNode(doc, 'code')} };
     }
     else if (type == 'Array') {
-        return { code: GetNode(doc, 'code'), 'array': GetNode(doc, 'array') };
+        return { code: GetNode(doc, 'code'), result : { code: GetNode(doc, 'code'), 'array': GetNode(doc, 'array') } };
     }
     else if (type == 'Dictionary') {
-        var a = {};
+        var a = { };
         var xmlDoc = $.parseXML(doc);
         var xml = $(doc);
         var e = xml.find('array').find('item').each(function () {
             //a.push({ key: $(this).find('key').text(), value: $(this).find('value').text() });
             a[$(this).find('key').text()] = $(this).find('value').text();
         });
-        return a;
+        return { code: GetNode(doc, 'code'), result: a };
     }
     else if (type == 'UserDictionary') {
         var a = new Array();
@@ -291,7 +305,7 @@ function ProcessAjaxResult(doc) {
         var e = xml.find('array').find('item').each(function () {
             a.push({ id: $(this).find('id').text(), value: $(this).find('value').text(), tile: $(this).find('tile').text() });
         });
-        return a;
+        return { code: GetNode(doc, 'code'), result: a };
     }
     else if (type == 'PermissionGroupDictionary') {
         var a = new Array();
@@ -300,7 +314,7 @@ function ProcessAjaxResult(doc) {
         var e = xml.find('array').find('item').each(function () {
             a.push({ id: $(this).find('id').text(), typeId: $(this).find('type-id').text(), value: $(this).find('value').text(), tile: $(this).find('tile').text() });
         });
-        return a;
+        return { code: GetNode(doc, 'code'), result: a };
     }
     else {
         return doc;
@@ -310,6 +324,18 @@ function ProcessAjaxResult(doc) {
 function GetNode(doc, node) {
     var n = doc.getElementsByTagName(node)[0];
     return n.text || n.textContent;
+}
+
+function showModalMessage(title, message) {
+    $("#dialog-message").attr('title', title).text(message).dialog({
+        modal: true,
+        resizable: false,
+        buttons: {
+            Ok: function () {
+                $(this).dialog("close");
+            }
+        }
+    });
 }
 
 function UpdateSlug() {
@@ -329,17 +355,17 @@ function UpdateSlug() {
 }
 
 function ShowSpamComment(id) {
-    var commentDiv = $("#comment-" + id);
-    var commentADiv = $("#comment-a-" + id);
-    if (commentDiv.style.display == "block") {
+    var commentDiv = $(".comment-" + id);
+    var commentADiv = $(".comment-a-" + id);
+    if (commentDiv.is(':visible')) {
         // hide
-        commentDiv.style.display = "none";
-        commentADiv.val("show comment");
+        commentDiv.hide();
+        commentADiv.text("show comment");
     }
     else {
         // show
-        commentDiv.style.display = "block";
-        commentADiv.val("hide comment");
+        commentDiv.show();
+        commentADiv.text("hide comment");
     }
 
     return false;
@@ -392,32 +418,6 @@ function DeleteStatus(i) {
 
 function DeletedStatus(r, e, a) {
     $("#status-" + a).remove();
-}
-
-function ShowShareContent(r, e, a) {
-    $("#share-form").html(r['message']);
-    preparePermissionsList('#share-permissions');
-    $("#share-form").dialog({
-        modal: true,
-        width: 640,
-        resizable: false,
-        buttons: {
-            Cancel: function () {
-                $(this).dialog("close");
-            },
-            Share: function () {
-                PostToPage(SharedContent, "api/share", null, { ajax: 'true', 'share-message': $('#share-message').val(), item: a['item'], type: a['type'], 'share-permissions-ids': $('#share-permissions-ids').val(), 'share-permissions-text': $('#share-permissions-text').val() }, '');
-                $(this).dialog("close");
-                $("#share-form").html("Post shared");
-                var successDialog = $("#share-form").dialog({ buttons: { OK: function () { $(this).dialog("close"); } } });
-                setTimeout(function () { successDialog.dialog("close") }, 2000);
-            }
-        }
-    });
-}
-
-function SharedContent(r, e, a) {
-    SentStatus(r, e, a);
 }
 
 var lastScrollPosn = 0;
@@ -473,21 +473,6 @@ function LoadedInfinite(r, e, a) {
     infiniteLoading = false;
 }
 
-function loadNewContent(u, n) {
-    PostToPage(LoadedNew, u, n, { ajax: 'true' }, '');
-    return false;
-}
-
-function LoadedNew(r, e, a) {
-    e.prepend(r['message']);
-
-    var c = r['code'];
-    if (c == 'noNewContent') {
-    }
-    else {
-    }
-}
-
 function toggleStatusComments(parent, id, type, el) {
     if (parent.hasClass('active')) {
         parent.removeClass('active');
@@ -525,4 +510,58 @@ function Parameter_Saved(r, e, a) {
         }
         });
     }
+}
+
+$(document).ready(function () {
+    // Set to check new content every minute, otherwise could generate a lot of traffic
+    setInterval(checkNewContent, 60000);
+});
+
+function checkNewContent() {
+    if (document.hidden || document.webkitHidden || document.msHidden) {
+        return;
+    }
+    if (queryMode == 'query') {
+        if (nid > 0) {
+            loadNewContent(queryMode, $('#feed-infinite'));
+            return;
+        }
+    }
+    loadNewContent(queryMode, $('#feed-infinite'));
+}
+
+function loadNewContent(mode, n) {
+    PostToPage(LoadedNew, '/api/feed', n, { ajax: 'true', mode: mode, 'newest-id': nid });
+    return false;
+}
+
+function LoadedNew(r, e, a, c) {
+    if (c == 'noNewContent') {
+        e.find('.infinite-new').hide();
+    }
+    else if (c == 'newContent') {
+        var feedCount = parseInt(r['feed-count']);
+        if (feedCount > 0) {
+            e.find('.infinite-new').show().find('.new-posts').text(r['feed-count']);
+        }
+    }
+    else if (c == 'newFeedItems') {
+        e.find('.infinite-new').hide();
+        if (r['update'] == 'true') {
+            $('.today-feed ul.feed-list').first().before(r['template']);
+        }
+        if (r['newest-id'] > 0) {
+            nid = r['newest-id'];
+        }
+    }
+    var notification = parseInt(r['notifications']);
+    var mail = parseInt(r['mail']);
+    if (notification > 0) {
+        $('#notifications-tile').show();
+        $('.notifications').text(notification);
+    }
+    if (mail > 0) {
+        $('#mail-notifications-tile').show();
+        //$('.mail-notifications').text(mail);
+    } 
 }

@@ -40,6 +40,8 @@ namespace BoxSocial.FrontEnd
     public partial class Global : System.Web.HttpApplication
     {
         protected static BackgroundWorker worker = new BackgroundWorker();
+
+        private static Object queueLock = new object();
         protected static JobQueue queue = null;
 
         protected void Application_Start(object sender, EventArgs e)
@@ -62,24 +64,27 @@ namespace BoxSocial.FrontEnd
             //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
             // Implements a message queue processor
-            switch (WebConfigurationManager.AppSettings["queue-provider"])
+            lock (queueLock)
             {
-                case "amazon_sqs":
-                    queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
-                    break;
-                case "rackspace":
-                    queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
+                switch (WebConfigurationManager.AppSettings["queue-provider"])
+                {
+                    case "amazon_sqs":
+                        queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
+                        break;
+                    case "rackspace":
+                        queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
 
-                    string location = WebConfigurationManager.AppSettings["rackspace-location"];
-                    if (!string.IsNullOrEmpty(location))
-                    {
-                        ((RackspaceCloudQueues)queue).SetLocation(location);
-                    }
-                    break;
-                case "database":
-                default:
-                    //queue = new DatabaseQueue(db);
-                    break;
+                        string location = WebConfigurationManager.AppSettings["rackspace-location"];
+                        if (!string.IsNullOrEmpty(location))
+                        {
+                            ((RackspaceCloudQueues)queue).SetLocation(location);
+                        }
+                        break;
+                    case "database":
+                    default:
+                        //queue = new DatabaseQueue(db);
+                        break;
+                }
             }
 
             // Check the queues and create is not exist
@@ -122,7 +127,11 @@ namespace BoxSocial.FrontEnd
 
                     foreach (string queueName in queues.Keys)
                     {
-                        List<Job> jobs = queue.ClaimJobs(queueName, queues[queueName]);
+                        List<Job> jobs = null;
+                        lock (queueLock)
+                        {
+                            jobs = queue.ClaimJobs(queueName, queues[queueName]);
+                        }
 
                         foreach (Job job in jobs)
                         {
@@ -140,7 +149,10 @@ namespace BoxSocial.FrontEnd
                             // Execute Job
                             if (core.InvokeJob(job))
                             {
-                                queue.DeleteJob(job);
+                                lock (queueLock)
+                                {
+                                    queue.DeleteJob(job);
+                                }
                             }
                             else
                             {
@@ -186,8 +198,16 @@ namespace BoxSocial.FrontEnd
 
             if (worker != null)
             {
-                System.Threading.Thread.Sleep(15000);
-                worker.RunWorkerAsync();
+                if (!worker.CancellationPending)
+                {
+                    System.Threading.Thread.Sleep(15000);
+                    worker.RunWorkerAsync();
+                }
+                else
+                {
+                    worker.Dispose();
+                    worker = null;
+                }
             }
         }
 
@@ -308,7 +328,7 @@ namespace BoxSocial.FrontEnd
 			        }
 			        else
 			        {
-				        cache = new Cache();
+                        cache = new System.Web.Caching.Cache();
 			        }
 
                     if (cache != null)
@@ -354,7 +374,7 @@ namespace BoxSocial.FrontEnd
 
                         if (cache != null)
                         {
-                            cache.Add("primitiveTypeIds", primitiveTypeIds, null, Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                            cache.Add("primitiveTypeIds", primitiveTypeIds, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
                         }
                     }
 
@@ -391,6 +411,7 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
                             patterns.Add(new string[] { @"^/api/tags(/|)$", @"/functions.aspx?fun=tag-list" });
                             patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
+                            patterns.Add(new string[] { @"^/api/feed(/|)$", @"/functions.aspx?fun=feed" });
                             patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
 
                             patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
@@ -444,6 +465,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/friends(/|)$", @"/functions.aspx?fun=friend-list" });
                     patterns.Add(new string[] { @"^/api/tags(/|)$", @"/functions.aspx?fun=tag-list" });
                     patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
+                    patterns.Add(new string[] { @"^/api/feed(/|)$", @"/functions.aspx?fun=feed" });
                     patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
                     patterns.Add(new string[] { @"^/api/twitter/callback(/|)$", @"/functions.aspx?fun=twitter" });
                     patterns.Add(new string[] { @"^/api/googleplus/callback(/|)$", @"/functions.aspx?fun=googleplus" });

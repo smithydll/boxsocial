@@ -1,16 +1,17 @@
 	<!-- BEGIN comment-list -->
-	<li id="c{comment-list.ID}">
+	<li class="c{comment-list.ID}">
 		<!-- IF comment-list.IS_SPAM -->
-		<h4>This Comment has been marked as spam (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" id ="comment-a-{comment-list.ID}">show comment</a>)</h4>
+		<h4>This Comment has been marked as spam (<a href="#" onclick="return ShowSpamComment({comment-list.ID});" class="comment-a-{comment-list.ID}">show comment</a>)</h4>
 		<!-- ENDIF -->
 		<!-- IF comment-list.IS_SPAM -->
-		<div id ="comment-{comment-list.ID}" style="display: none;">
+		<div class="comment-{comment-list.ID}" style="display: none;">
 		<!-- ELSE -->
         <!-- IF comment-list.OWNER -->
 		<div class="owner">
         <!-- ELSE -->
         <div class="normal">
 		<!-- ENDIF -->
+        <!-- ENDIF -->
 		<!-- IF comment-list.USER_ICON -->
 		<div class="comment-disp-pic">
 			<img src="{comment-list.USER_ICON}" data-at2x="{comment-list.USER_TILE}" alt="{comment-list.USER_DISPLAY_NAME}" />
@@ -41,6 +42,7 @@
         --><span class="img-button report-item"><a href="#" onclick="return ReportComment({comment-list.ID},{ITEM_ID});" title="{L_REPORT}"><span class="sprite report-sprite"></span></a></span><!--
         <!-- ENDIF -->
         -->
+        </div>
         </div>
 		<div class="cheat-clear-left"></div>
 		</div>

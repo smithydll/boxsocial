@@ -966,12 +966,13 @@ namespace BoxSocial.Internals
                     string formSubmitUri = core.Hyperlink.AppendSid(session.LoggedInMember.AccountUriStub, true);
                     template.Parse("S_ACCOUNT", formSubmitUri);
 
-                    template.Parse("U_UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
+                    template.Parse("UNREAD_NOTIFICATIONS", session.LoggedInMember.UserInfo.UnreadNotifications);
 
                     if (session.LoggedInMember.UserInfo.UnseenMail > 0)
                     {
-                        template.Parse("U_UNSEEN_MAIL", core.Hyperlink.BuildAccountSubModuleUri("mail", "inbox"));
+                        template.Parse("UNSEEN_MAIL", "TRUE");
                     }
+                    template.Parse("U_UNSEEN_MAIL", core.Hyperlink.BuildAccountSubModuleUri("mail", "inbox"));
                 }
                 if (!core.Hyperlink.SidUrls)
                 {

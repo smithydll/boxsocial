@@ -31,6 +31,83 @@ namespace BoxSocial.Internals
 {
     public class Feed
     {
+        public static int GetNewerItemCount(Core core, User owner, long newerThanOffset)
+        {
+            int count = 0;
+
+            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            query.AddSort(SortOrder.Descending, "action_time_ut");
+            query.LimitCount = 20;
+
+            List<long> friendIds = owner.GetFriendIds(100);
+            if (core.Session.IsLoggedIn)
+            {
+                friendIds.Add(core.LoggedInMemberId);
+            }
+
+            friendIds.AddRange(owner.GetSubscriptionIds(100));
+
+            QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
+
+            List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
+            List<Action> tempActions = new List<Action>(10);
+
+            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+
+            if (!feedReader.HasRows)
+            {
+                feedReader.Close();
+                feedReader.Dispose();
+                return count;
+            }
+
+            while (feedReader.Read())
+            {
+                Action action = new Action(core, owner, feedReader);
+                tempActions.Add(action);
+            }
+
+            feedReader.Close();
+            feedReader.Dispose();
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+            }
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(action.ActionItemKey);
+            }
+
+            foreach (Action action in tempActions)
+            {
+                tempMessages.Add(action.PermissiveParent);
+            }
+
+            if (tempMessages.Count > 0)
+            {
+                core.AcessControlCache.CacheGrants(tempMessages);
+            }
+
+            foreach (Action action in tempActions)
+            {
+                if (action.PermissiveParent.Access.Can("VIEW"))
+                {
+                    if (count == 10)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        count++;
+                    }
+                }
+            }
+
+            return count;
+        }
+
         public static List<Action> GetNewerItems(Core core, User owner, long newerThanOffset)
         {
             List<Action> feedItems = new List<Action>(10);
@@ -373,18 +450,22 @@ namespace BoxSocial.Internals
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
 
+                    ItemKey interactItemKey = null;
+
                     if (feedAction.InteractItemKey.Id > 0)
                     {
+                        interactItemKey = feedAction.InteractItemKey;
                         feedItemVariableCollection.Parse("ID", feedAction.InteractItemKey.Id);
                         feedItemVariableCollection.Parse("TYPE_ID", feedAction.InteractItemKey.TypeId);
                     }
                     else
                     {
+                        interactItemKey = feedAction.ActionItemKey;
                         feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
                         feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
                     }
 
-                    if (feedAction.ActionItemKey.ImplementsLikeable)
+                    if (interactItemKey.ImplementsLikeable)
                     {
                         feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
 
@@ -395,7 +476,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
-                    if (feedAction.ActionItemKey.ImplementsCommentable)
+                    if (interactItemKey.ImplementsCommentable)
                     {
                         feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
 
@@ -409,7 +490,7 @@ namespace BoxSocial.Internals
                     if (feedAction.PermissiveParent.Access.IsPublic())
                     {
                         feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                        if (feedAction.ActionItemKey.ImplementsShareable)
+                        if (interactItemKey.ImplementsShareable)
                         {
                             feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
                             //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);

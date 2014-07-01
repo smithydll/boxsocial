@@ -65,6 +65,9 @@ namespace BoxSocial.FrontEnd
                 case "contact-card":
                     ReturnContactCard();
                     return;
+                case "feed":
+                    CheckNewFeedItems();
+                    return;
                 case "permission-groups-list":
                     ReturnPermissionGroupList();
                     return;
@@ -182,6 +185,125 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidUserException)
             {
+            }
+        }
+
+        private void CheckNewFeedItems()
+        {
+            string mode = core.Http["mode"];
+            long newestId = core.Functions.RequestLong("newest-id", 0);
+            long newerId = 0;
+
+            if (mode == "query")
+            {
+                int count = Feed.GetNewerItemCount(core, core.Session.LoggedInMember, newestId); ;
+
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                returnValues.Add("notifications", session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
+                returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
+                
+                if (count > 0)
+                {
+                    returnValues.Add("feed-count", count.ToString());
+
+                    core.Ajax.SendDictionary("newContent", returnValues);
+                }
+                else
+                {
+                    core.Ajax.SendDictionary("noNewContent", returnValues);
+                }
+            }
+            else if (mode == "fetch")
+            {
+                List<BoxSocial.Internals.Action> feedActions = Feed.GetNewerItems(core, core.Session.LoggedInMember, newestId);
+
+                Template template = new Template("pane.feeditem.html");
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
+
+                foreach (BoxSocial.Internals.Action feedAction in feedActions)
+                {
+                    VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
+
+                    if (feedAction.Id > newerId)
+                    {
+                        newerId = feedAction.Id;
+                    }
+
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
+
+                    feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
+
+                    feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+
+                    if (feedAction.ActionItemKey.ImplementsLikeable)
+                    {
+                        feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
+
+                        if (feedAction.Info.Likes > 0)
+                        {
+                            feedItemVariableCollection.Parse("LIKES", string.Format(" {0:d}", feedAction.Info.Likes));
+                            feedItemVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", feedAction.Info.Dislikes));
+                        }
+                    }
+
+                    if (feedAction.ActionItemKey.ImplementsCommentable)
+                    {
+                        feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
+
+                        if (feedAction.Info.Comments > 0)
+                        {
+                            feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", feedAction.Info.Comments));
+                        }
+                    }
+
+                    //Access access = new Access(core, feedAction.ActionItemKey, true);
+                    if (feedAction.PermissiveParent.Access.IsPublic())
+                    {
+                        feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                        if (feedAction.ActionItemKey.ImplementsShareable)
+                        {
+                            feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                            //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                            if (feedAction.Info.SharedTimes > 0)
+                            {
+                                feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                            }
+                        }
+                    }
+
+                    if (feedAction.Owner is User)
+                    {
+                        feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).Tile);
+                        feedItemVariableCollection.Parse("USER_ICON", ((User)feedAction.Owner).Icon);
+                    }
+                }
+
+
+                // Check for new messages and upload
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                returnValues.Add("update", "true");
+                returnValues.Add("template", template.ToString());
+                returnValues.Add("newest-id", newerId.ToString());
+
+                returnValues.Add("notifications", session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
+                returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
+
+                core.Ajax.SendDictionary("newFeedItems", returnValues);
+            }
+            else
+            {
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                returnValues.Add("notifications", session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
+                returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
+
+                core.Ajax.SendDictionary("unreadItems", returnValues);
             }
         }
 

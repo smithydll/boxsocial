@@ -1417,15 +1417,25 @@ namespace BoxSocial.Internals
                     e.SuffixText = "------";
                     break;
                 case BbcodeParseMode.Normal:
+                    bool hasColour = e.Attributes.HasAttribute("color");
+
+                    if (hasColour)
+                    {
+                        try { System.Drawing.ColorTranslator.FromHtml(e.Attributes.GetAttribute("color")); }
+                        catch { e.AbortParse(); }
+                    }
+
                     if (!e.InList)
                     {
-                        e.PrefixText = "<strong>Code</strong></p><p><code>";
+                        e.PrefixText = string.Format("<strong>Code</strong></p><p><code{0}>", hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
                         e.SuffixText = "</code></p><p>";
+                        e.RemoveContents();
                     }
                     else
                     {
-                        e.PrefixText = "<strong>Code</strong><br /><code>";
+                        e.PrefixText = string.Format("<strong>Code</strong><br /><code{0}>", hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
                         e.SuffixText = "</code>";
+                        e.RemoveContents();
                     }
                     break;
             }

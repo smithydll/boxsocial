@@ -1064,21 +1064,18 @@ namespace BoxSocial.Applications.Gallery
                 case Forms.DisplayMedium.Desktop:
                     if (width > (int)PictureScale.Display || height > (int)PictureScale.Display)
                     {
-                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
-                        displayExists = true;
+                        displayExists = CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
                     }
                     else
                     {
                         // This strips all uploaded images of EXIF data
-                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, width, height);
-                        displayExists = true;
+                        displayExists = CreateScaleWithRatioPreserved(core, contentType, stream, storageName, DisplayPrefix, width, height);
                     }
                     break;
                 case Forms.DisplayMedium.Mobile:
                     if (width > (int)PictureScale.Mobile || height > (int)PictureScale.Mobile)
                     {
-                        CreateScaleWithRatioPreserved(core, contentType, stream, storageName, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
-                        mobileExists = true;
+                        mobileExists = CreateScaleWithRatioPreserved(core, contentType, stream, storageName, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
                     }
                     break;
             }
@@ -2140,6 +2137,8 @@ namespace BoxSocial.Applications.Gallery
 
                     if (!scaleExists)
                     {
+                        bool flag;
+
                         if (scale == PictureScale.MobileCover && e.Core.Storage.IsCloudStorage && !e.Core.Settings.UseCdn)
                         {
                             //HttpContext.Current.Response.Write("Scale not found: " + timer.ElapsedMilliseconds.ToString() + "\n");
@@ -2150,22 +2149,25 @@ namespace BoxSocial.Applications.Gallery
                             case PictureScale.Tile:
                             case PictureScale.Square:
                             case PictureScale.High:
-                                CreateScaleWithSquareRatio(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+                                flag = CreateScaleWithSquareRatio(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
 
-                                switch (scale)
+                                if (flag)
                                 {
-                                    case PictureScale.Icon:
-                                        galleryItem.IconExists = true;
-                                        break;
-                                    case PictureScale.Tile:
-                                        galleryItem.TileExists = true;
-                                        break;
-                                    case PictureScale.Square:
-                                        galleryItem.SquareExists = true;
-                                        break;
-                                    case PictureScale.High:
-                                        galleryItem.HighExists = true;
-                                        break;
+                                    switch (scale)
+                                    {
+                                        case PictureScale.Icon:
+                                            galleryItem.IconExists = true;
+                                            break;
+                                        case PictureScale.Tile:
+                                            galleryItem.TileExists = true;
+                                            break;
+                                        case PictureScale.Square:
+                                            galleryItem.SquareExists = true;
+                                            break;
+                                        case PictureScale.High:
+                                            galleryItem.HighExists = true;
+                                            break;
+                                    }
                                 }
                                 break;
                             case PictureScale.Tiny:
@@ -2174,28 +2176,31 @@ namespace BoxSocial.Applications.Gallery
                             case PictureScale.Display:
                             case PictureScale.Full:
                             case PictureScale.Ultra:
-                                CreateScaleWithRatioPreserved(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
+                                flag = CreateScaleWithRatioPreserved(e.Core, galleryItem, galleryItem.StoragePath, storagePrefix, (int)scale, (int)scale);
 
-                                switch (scale)
+                                if (flag)
                                 {
-                                    case PictureScale.Tiny:
-                                        galleryItem.TinyExists = true;
-                                        break;
-                                    case PictureScale.Thumbnail:
-                                        galleryItem.ThumbnailExists = true;
-                                        break;
-                                    case PictureScale.Mobile:
-                                        galleryItem.MobileExists = true;
-                                        break;
-                                    case PictureScale.Display:
-                                        galleryItem.DisplayExists = true;
-                                        break;
-                                    case PictureScale.Full:
-                                        galleryItem.FullExists = true;
-                                        break;
-                                    case PictureScale.Ultra:
-                                        galleryItem.UltraExists = true;
-                                        break;
+                                    switch (scale)
+                                    {
+                                        case PictureScale.Tiny:
+                                            galleryItem.TinyExists = true;
+                                            break;
+                                        case PictureScale.Thumbnail:
+                                            galleryItem.ThumbnailExists = true;
+                                            break;
+                                        case PictureScale.Mobile:
+                                            galleryItem.MobileExists = true;
+                                            break;
+                                        case PictureScale.Display:
+                                            galleryItem.DisplayExists = true;
+                                            break;
+                                        case PictureScale.Full:
+                                            galleryItem.FullExists = true;
+                                            break;
+                                        case PictureScale.Ultra:
+                                            galleryItem.UltraExists = true;
+                                            break;
+                                    }
                                 }
                                 break;
                             case PictureScale.Cover:
@@ -2377,7 +2382,7 @@ namespace BoxSocial.Applications.Gallery
             return null;
         }
 
-        public static void CreateScaleWithSquareRatio(Core core, string contentType, Stream stream, string fileName, string bin, int width, int height)
+        public static bool CreateScaleWithSquareRatio(Core core, string contentType, Stream stream, string fileName, string bin, int width, int height)
         {
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
@@ -2388,23 +2393,30 @@ namespace BoxSocial.Applications.Gallery
                 {
                     Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
 
-                    if (fs is MemoryStream)
+                    try
                     {
-                        MemoryStream ms = (MemoryStream)fs;
-                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                        ms.WriteTo(ds);
-                        ds.Close();
-                        fs.Close();
+                        if (fs is MemoryStream)
+                        {
+                            MemoryStream ms = (MemoryStream)fs;
+                            FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                            ms.WriteTo(ds);
+                            ds.Close();
+                            fs.Close();
+                        }
+                        else
+                        {
+                            fs.Position = 0;
+                            byte[] bytes = new byte[fs.Length];
+                            fs.Read(bytes, 0, (int)fs.Length);
+                            FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                            ds.Write(bytes, 0, bytes.Length);
+                            ds.Close();
+                            fs.Close();
+                        }
                     }
-                    else
+                    catch (IOException)
                     {
-                        fs.Position = 0;
-                        byte[] bytes = new byte[fs.Length];
-                        fs.Read(bytes, 0, (int)fs.Length);
-                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                        ds.Write(bytes, 0, bytes.Length);
-                        ds.Close();
-                        fs.Close();
+                        return false;
                     }
                 }
 
@@ -2470,6 +2482,8 @@ namespace BoxSocial.Applications.Gallery
                     fs.Close();
                 }
             }
+
+            return true;
         }
 
 
@@ -2478,7 +2492,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateScaleWithSquareRatio(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
+        public static bool CreateScaleWithSquareRatio(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
         {
             // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
@@ -2488,23 +2502,30 @@ namespace BoxSocial.Applications.Gallery
                 string storageFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, "_storage", fileName);
                 string tempFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, bin, fileName);
 
-                if (fs is MemoryStream)
+                try
                 {
-                    MemoryStream ms = (MemoryStream)fs;
-                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                    ms.WriteTo(ds);
-                    ds.Close();
-                    fs.Close();
+                    if (fs is MemoryStream)
+                    {
+                        MemoryStream ms = (MemoryStream)fs;
+                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                        ms.WriteTo(ds);
+                        ds.Close();
+                        fs.Close();
+                    }
+                    else
+                    {
+                        fs.Position = 0;
+                        byte[] bytes = new byte[fs.Length];
+                        fs.Read(bytes, 0, (int)fs.Length);
+                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                        ds.Write(bytes, 0, bytes.Length);
+                        ds.Close();
+                        fs.Close();
+                    }
                 }
-                else
+                catch (IOException)
                 {
-                    fs.Position = 0;
-                    byte[] bytes = new byte[fs.Length];
-                    fs.Read(bytes, 0, (int)fs.Length);
-                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                    ds.Write(bytes, 0, bytes.Length);
-                    ds.Close();
-                    fs.Close();
+                    return false;
                 }
 
                 Process p1 = new Process();
@@ -2562,9 +2583,11 @@ namespace BoxSocial.Applications.Gallery
                 stream.Close();
                 fs.Close();
             }
+
+            return true;
         }
 
-        public static void CreateScaleWithRatioPreserved(Core core, string contentType, Stream stream, string fileName, string bin, int width, int height)
+        public static bool CreateScaleWithRatioPreserved(Core core, string contentType, Stream stream, string fileName, string bin, int width, int height)
         {
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
             {
@@ -2575,23 +2598,30 @@ namespace BoxSocial.Applications.Gallery
                 {
                     Stream fs = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), fileName);
 
-                    if (fs is MemoryStream)
+                    try
                     {
-                        MemoryStream ms = (MemoryStream)fs;
-                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                        ms.WriteTo(ds);
-                        ds.Close();
-                        fs.Close();
+                        if (fs is MemoryStream)
+                        {
+                            MemoryStream ms = (MemoryStream)fs;
+                            FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                            ms.WriteTo(ds);
+                            ds.Close();
+                            fs.Close();
+                        }
+                        else
+                        {
+                            fs.Position = 0;
+                            byte[] bytes = new byte[fs.Length];
+                            fs.Read(bytes, 0, (int)fs.Length);
+                            FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                            ds.Write(bytes, 0, bytes.Length);
+                            ds.Close();
+                            fs.Close();
+                        }
                     }
-                    else
+                    catch (IOException)
                     {
-                        fs.Position = 0;
-                        byte[] bytes = new byte[fs.Length];
-                        fs.Read(bytes, 0, (int)fs.Length);
-                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                        ds.Write(bytes, 0, bytes.Length);
-                        ds.Close();
-                        fs.Close();
+                        return false; // FAIL
                     }
                 }
 
@@ -2652,6 +2682,8 @@ namespace BoxSocial.Applications.Gallery
                     fs.Close();
                 }
             }
+
+            return true;
         }
 
         /// <summary>
@@ -2659,7 +2691,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core"></param>
         /// <param name="fileName"></param>
-        public static void CreateScaleWithRatioPreserved(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
+        public static bool CreateScaleWithRatioPreserved(Core core, GalleryItem gi, string fileName, string bin, int width, int height)
         {
             // Imagemagick is only supported under mono which doesn't have very good implementation of GDI for image resizing
             if (Core.IsUnix && WebConfigurationManager.AppSettings["image-method"] == "imagemagick")
@@ -2669,23 +2701,30 @@ namespace BoxSocial.Applications.Gallery
                 string storageFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, "_storage", fileName);
                 string tempFilePath = System.IO.Path.Combine(core.Settings.ImagemagickTempPath, bin, fileName);
 
-                if (fs is MemoryStream)
+                try
                 {
-                    MemoryStream ms = (MemoryStream)fs;
-                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                    ms.WriteTo(ds);
-                    ds.Close();
-                    fs.Close();
+                    if (fs is MemoryStream)
+                    {
+                        MemoryStream ms = (MemoryStream)fs;
+                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                        ms.WriteTo(ds);
+                        ds.Close();
+                        fs.Close();
+                    }
+                    else
+                    {
+                        fs.Position = 0;
+                        byte[] bytes = new byte[fs.Length];
+                        fs.Read(bytes, 0, (int)fs.Length);
+                        FileStream ds = new FileStream(storageFilePath, FileMode.Create);
+                        ds.Write(bytes, 0, bytes.Length);
+                        ds.Close();
+                        fs.Close();
+                    }
                 }
-                else
+                catch (IOException)
                 {
-                    fs.Position = 0;
-                    byte[] bytes = new byte[fs.Length];
-                    fs.Read(bytes, 0, (int)fs.Length);
-                    FileStream ds = new FileStream(storageFilePath, FileMode.Create);
-                    ds.Write(bytes, 0, bytes.Length);
-                    ds.Close();
-                    fs.Close();
+                    return false;
                 }
 
                 Process p1 = new Process();
@@ -2737,6 +2776,8 @@ namespace BoxSocial.Applications.Gallery
                     core.Storage.CopyFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, bin), fileName);
                 }
             }
+
+            return true;
         }
 
         /// <summary>
@@ -3543,9 +3584,11 @@ namespace BoxSocial.Applications.Gallery
                     {
                         Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
 
-                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
-                        FullExists = true;
-                        Update();
+                        if (CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full))
+                        {
+                            FullExists = true;
+                            Update();
+                        }
                     }
 
                     Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, FullPrefix), StoragePath);
@@ -3564,9 +3607,11 @@ namespace BoxSocial.Applications.Gallery
                     {
                         Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
 
-                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
-                        DisplayExists = true;
-                        Update();
+                        if (CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display))
+                        {
+                            DisplayExists = true;
+                            Update();
+                        }
                     }
 
                     Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, DisplayPrefix), StoragePath);
@@ -3584,9 +3629,11 @@ namespace BoxSocial.Applications.Gallery
                     {
                         Stream stream = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), StoragePath);
 
-                        CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
-                        MobileExists = true;
-                        Update();
+                        if (CreateScaleWithRatioPreserved(core, contentType, stream, StoragePath, MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile))
+                        {
+                            MobileExists = true;
+                            Update();
+                        }
                     }
 
                     Stream image = core.Storage.RetrieveFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, MobilePrefix), StoragePath);

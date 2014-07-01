@@ -178,7 +178,7 @@ namespace BoxSocial.Internals
                             idList.ToString());
                 case Forms.DisplayMedium.Mobile:
                 case Forms.DisplayMedium.Tablet:
-                    return string.Format("<div id=\"{0}\" class=\"tag-droplist\" onclick=\"showUsersBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
+                    return string.Format("<div id=\"{0}\" class=\"tag-droplist\" onclick=\"showTagsBar(event, '{0}', 'users');\" style=\"width: {4};{3}\">{6}<input type=\"text\" name=\"{0}-text\" id=\"{0}-text\" value=\"{1}\" class=\"textbox\" style=\"\"{2}{5}/><input type=\"hidden\" name=\"{0}-ids\" id=\"{0}-ids\" class=\"ids\" value=\"{7}\"{5}/></div>",
                             HttpUtility.HtmlEncode(name),
                             HttpUtility.HtmlEncode(string.Empty),
                             (IsDisabled) ? " disabled=\"disabled\"" : string.Empty,

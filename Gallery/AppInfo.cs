@@ -178,10 +178,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Ultra || gi.ItemHeight > (int)PictureScale.Ultra)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.UltraPrefix, (int)PictureScale.Ultra, (int)PictureScale.Ultra);
-
-                            gi.UltraExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.UltraPrefix, (int)PictureScale.Ultra, (int)PictureScale.Ultra))
+                            {
+                                gi.UltraExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -193,10 +194,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Full || gi.ItemHeight > (int)PictureScale.Full)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
-
-                            gi.FullExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full))
+                            {
+                                gi.FullExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -208,18 +210,20 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Display || gi.ItemHeight > (int)PictureScale.Display)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display);
-
-                            gi.DisplayExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, (int)PictureScale.Display, (int)PictureScale.Display))
+                            {
+                                gi.DisplayExists = true;
+                                gi.Update();
+                            }
                         }
                         else
                         {
                             // This strips all uploaded images of EXIF data
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, gi.ItemWidth, gi.ItemHeight);
-
-                            gi.DisplayExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.DisplayPrefix, gi.ItemWidth, gi.ItemHeight))
+                            {
+                                gi.DisplayExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -231,10 +235,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Mobile || gi.ItemHeight > (int)PictureScale.Mobile)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile);
-
-                            gi.MobileExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.MobilePrefix, (int)PictureScale.Mobile, (int)PictureScale.Mobile))
+                            {
+                                gi.MobileExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -246,10 +251,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Thumbnail || gi.ItemHeight > (int)PictureScale.Thumbnail)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.ThumbnailPrefix, (int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail);
-
-                            gi.ThumbnailExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.ThumbnailPrefix, (int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail))
+                            {
+                                gi.ThumbnailExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -261,10 +267,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.ItemWidth > (int)PictureScale.Tiny || gi.ItemHeight > (int)PictureScale.Tiny)
                         {
-                            GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.TinyPrefix, (int)PictureScale.Tiny, (int)PictureScale.Tiny);
-
-                            gi.TinyExists = true;
-                            gi.Update();
+                            if (GalleryItem.CreateScaleWithRatioPreserved(core, gi, gi.StoragePath, GalleryItem.TinyPrefix, (int)PictureScale.Tiny, (int)PictureScale.Tiny))
+                            {
+                                gi.TinyExists = true;
+                                gi.Update();
+                            }
                         }
                     }
                     return true;
@@ -273,11 +280,12 @@ namespace BoxSocial.Applications.Gallery
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
                         if (gi.TinyExists) return true;
-                        
-                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
 
-                        gi.TinyExists = true;
-                        gi.Update();
+                        if (GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.HighPrefix, (int)PictureScale.High, (int)PictureScale.High))
+                        {
+                            gi.TinyExists = true;
+                            gi.Update();
+                        }
                     }
                     return true;
                 case "create_square":
@@ -286,10 +294,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.SquareExists) return true;
 
-                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);
-
-                        gi.SquareExists = true;
-                        gi.Update();
+                        if (GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square))
+                        {
+                            gi.SquareExists = true;
+                            gi.Update();
+                        }
                     }
                     return true;
                 case "create_tile":
@@ -298,10 +307,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.TileExists) return true;
 
-                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile);
-
-                        gi.TileExists = true;
-                        gi.Update();
+                        if (GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile))
+                        {
+                            gi.TileExists = true;
+                            gi.Update();
+                        }
                     }
                     return true;
                 case "create_icon":
@@ -310,10 +320,11 @@ namespace BoxSocial.Applications.Gallery
 
                         if (gi.IconExists) return true;
 
-                        GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon);
-
-                        gi.IconExists = true;
-                        gi.Update();
+                        if (GalleryItem.CreateScaleWithSquareRatio(core, gi, gi.StoragePath, GalleryItem.IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon))
+                        {
+                            gi.IconExists = true;
+                            gi.Update();
+                        }
                     }
                     return true;
             }

@@ -800,6 +800,8 @@ ul.feed-list li div.feed-disp-pic img
 	background-color: White;
 	border: solid 1px #cccccc;
     border-radius: 5px;
+    width: 50px;
+    height: 50px;
 }
 
 ul.feed-list li div.feed-title {
@@ -1596,4 +1598,22 @@ span.breadcrumbs a {
 
 #pane-profile-info dl dd {
     margin-left: 13em;
+}
+
+.infinite-more, .infinite-new {
+    display: none;
+}
+
+.infinite-new a {
+    display: block;
+}
+
+.infinite-more, .infinite-new a {
+    background-color: #eeeeee;
+    width: 100%;
+    padding: 0.5em;
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
 }

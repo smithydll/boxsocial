@@ -126,6 +126,7 @@
     <Compile Include="ContentPreviewCache.cs" />
     <Compile Include="ControlPanelModule.cs" />
     <Compile Include="ControlPanelSubModule.cs" />
+    <Compile Include="DatabaseQueue.cs" />
     <Compile Include="Emoticon.cs" />
     <Compile Include="Facebook.cs" />
     <Compile Include="OAuth.cs" />

@@ -2262,18 +2262,7 @@ namespace BoxSocial.Internals
 
             core.Template.Parse("IS_PROFILE", "TRUE");
 
-            if (page.User.Profile.MaritialStatusRaw != MaritialStatus.Undefined)
-            {
-                hasProfileInfo = true;
-            }
-            if (page.User.Profile.GenderRaw != Gender.Undefined)
-            {
-                hasProfileInfo = true;
-            }
-            if (page.User.Profile.SexualityRaw != Sexuality.Undefined)
-            {
-                hasProfileInfo = true;
-            }
+            hasProfileInfo = true;
 
             if (hasProfileInfo)
             {

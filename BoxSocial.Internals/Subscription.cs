@@ -38,6 +38,8 @@ namespace BoxSocial.Internals
         private ItemKey itemKey;
         [DataField("user_id", DataFieldKeys.Index, "i_subscription")]
         private long ownerId;
+        [DataField("subscriber_type_id")]
+        private long subscriberTypeId;
         [DataField("subscription_time_ut")]
         private long timeRaw;
         [DataField("subscription_ip", 55)]

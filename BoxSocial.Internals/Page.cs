@@ -603,7 +603,7 @@ namespace BoxSocial.Internals
             if (Owner is User)
             {
                 ApplicationEntry ae = core.GetApplication("Profile");
-                ae.SendNotification(core, (User)Owner, string.Format("[user]{0}[/user] commented on your page.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                ae.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your page.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }
 

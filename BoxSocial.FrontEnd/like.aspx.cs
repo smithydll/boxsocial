@@ -116,6 +116,17 @@ namespace BoxSocial.FrontEnd
                 }
                 Like.LikeItem(core, itemKey, like);
 
+                switch (like)
+                {
+                    case LikeType.Like:
+                        NotificationSubscription.Create(core, loggedInMember, itemKey);
+                        break;
+                    case LikeType.Neutral:
+                    case LikeType.Dislike:
+                        NotificationSubscription.Unsubscribe(core, loggedInMember, itemKey);
+                        break;
+                }
+
                 core.Ajax.SendStatus("likeAccepted");
             }
             catch (InvalidItemException ex)

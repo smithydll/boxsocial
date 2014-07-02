@@ -1039,11 +1039,16 @@ namespace BoxSocial.Internals
             return output;
         }
 
-        public void SendNotification(Core core, User receiver, string subject, string body, Template emailBody)
+        public void QueueNotifications(Core core, ItemKey itemKey, string notifyFunction)
+        {
+            core.Queue.PushJob(new Job(core.Settings.QueueNotifications, core.CallingApplication.Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
+        }
+
+        public void SendNotification(Core core, User receiver, ItemKey itemKey, string subject, string body, Template emailBody)
         {
             if (canNotify(core, receiver))
             {
-                Notification.Create(core, this, receiver, subject, body);
+                Notification.Create(core, this, receiver, itemKey, subject, body);
 
                 if (receiver.UserInfo.EmailNotifications)
                 {
@@ -1052,11 +1057,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public void SendNotification(Core core, User receiver, string subject, string body)
+        public void SendNotification(Core core, User receiver, ItemKey itemKey, string subject, string body)
         {
             if (canNotify(core, receiver))
             {
-                Notification.Create(core, this, receiver, subject, body);
+                Notification.Create(core, this, receiver, itemKey, subject, body);
 
                 if (receiver.UserInfo.EmailNotifications)
                 {

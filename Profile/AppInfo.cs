@@ -122,6 +122,23 @@ namespace BoxSocial.Applications.Profile
 
         }
 
+        public override bool ExecuteJob(Job job)
+        {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
+            switch (job.Function)
+            {
+                case "notifyFriendRequest":
+                    AccountFriendManage.NotifyFriendRequest(core, job);
+                    break;
+            }
+
+            return false;
+        }
+
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();

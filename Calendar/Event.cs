@@ -255,7 +255,7 @@ namespace BoxSocial.Applications.Calendar
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification(core, (User)Owner, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }
 
@@ -377,7 +377,7 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
                     emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
-                    core.CallingApplication.SendNotification(core, invitee, string.Format("{0} has invited you to {1}",
+                    core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
                         user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                 }
@@ -430,7 +430,7 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
                         emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
-                        core.CallingApplication.SendNotification(core, invitee, string.Format("{0} has invited you to {1}",
+                        core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
                             user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
 
                     }

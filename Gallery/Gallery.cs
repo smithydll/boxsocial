@@ -870,7 +870,7 @@ namespace BoxSocial.Applications.Gallery
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification(core, (User)Owner, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
                     e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
             }
 

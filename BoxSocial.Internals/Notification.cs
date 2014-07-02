@@ -47,6 +47,8 @@ namespace BoxSocial.Internals
         private string primitiveType;*/
         [DataField("notification_primitive", DataFieldKeys.Index)]
         private ItemKey ownerKey;
+        [DataField("notification_item", DataFieldKeys.Index)]
+        private ItemKey itemKey;
         [DataField("notification_time_ut")]
         private long timeRaw;
         [DataField("notification_read")]
@@ -101,7 +103,14 @@ namespace BoxSocial.Internals
         {
             this.owner = owner;
 
-            loadItemInfo(notificationRow);
+            try
+            {
+                loadItemInfo(notificationRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNotificationException();
+            }
         }
 
         private Notification(Core core, Primitive owner, long notificationId, string subject, string body, long timeRaw, int applicationId)
@@ -128,12 +137,12 @@ namespace BoxSocial.Internals
             UpdateQuery uquery = new UpdateQuery("notifications");
         }
 
-        internal static Notification Create(Core core, User receiver, string subject, string body)
+        internal static Notification Create(Core core, User receiver, ItemKey itemKey, string subject, string body)
         {
-            return Create(core, null, receiver, subject, body);
+            return Create(core, null, receiver, itemKey, subject, body);
         }
 
-        public static Notification Create(Core core, ApplicationEntry application, User receiver, string subject, string body)
+        public static Notification Create(Core core, ApplicationEntry application, User receiver, ItemKey itemKey, string subject, string body)
         {
             if (core == null)
             {
@@ -151,6 +160,11 @@ namespace BoxSocial.Internals
             InsertQuery iQuery = new InsertQuery("notifications");
             iQuery.AddField("notification_primitive_id", receiver.Id);
             iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            if (itemKey != null)
+            {
+                iQuery.AddField("notification_item_id", itemKey.Id);
+                iQuery.AddField("notification_item_type_id", itemKey.TypeId);
+            }
             iQuery.AddField("notification_title", subject);
             iQuery.AddField("notification_body", body);
             iQuery.AddField("notification_time_ut", UnixTime.UnixTimeStamp());
@@ -233,5 +247,9 @@ namespace BoxSocial.Internals
                 throw new NotImplementedException();
             }
         }
+    }
+
+    public class InvalidNotificationException : Exception
+    {
     }
 }

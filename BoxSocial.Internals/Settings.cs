@@ -86,6 +86,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string QueueNotifications
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(WebConfigurationManager.AppSettings["queue-default-priority"]))
+                {
+                    return WebConfigurationManager.AppSettings["queue-default-priority"];
+                }
+                else
+                {
+                    return QueueDefaultPriority;
+                }
+            }
+        }
+
         public string ImagemagickTempPath
         {
             get

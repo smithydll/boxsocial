@@ -1523,6 +1523,13 @@ namespace BoxSocial.Internals
 
                 db.Query(idQuery);
 
+                /* delete notifications */
+                idQuery = new DeleteQuery(Item.GetTable(typeof(Notification)));
+                idQuery.AddCondition("action_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("action_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+
+                db.Query(idQuery);
+
                 /* Select action sub items so we can inform the action to re-calculate it's view */
                 foreach (DataRow row in table.Rows)
                 {

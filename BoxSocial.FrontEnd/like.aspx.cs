@@ -119,11 +119,13 @@ namespace BoxSocial.FrontEnd
                 switch (like)
                 {
                     case LikeType.Like:
-                        NotificationSubscription.Create(core, loggedInMember, itemKey);
+                        //NotificationSubscription.Create(core, loggedInMember, itemKey);
+                        Subscription.SubscribeToItem(core, itemKey);
                         break;
                     case LikeType.Neutral:
                     case LikeType.Dislike:
-                        NotificationSubscription.Unsubscribe(core, loggedInMember, itemKey);
+                        //NotificationSubscription.Unsubscribe(core, loggedInMember, itemKey);
+                        Subscription.UnsubscribeFromItem(core, itemKey);
                         break;
                 }
 

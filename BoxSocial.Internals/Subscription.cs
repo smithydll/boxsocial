@@ -53,6 +53,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey SubscriberKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, BoxSocial.Internals.ItemType.GetTypeId(typeof(User)));
+            }
+        }
+
         public long ItemId
         {
             get
@@ -209,7 +217,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public static List<User> GetSubscribers(Core core, ItemKey itemKey, int page, int perPage)
+        public static List<User> GetUserSubscribers(Core core, ItemKey itemKey, int page, int perPage)
         {
             List<User> subscribers = new List<User>();
 
@@ -236,6 +244,29 @@ namespace BoxSocial.Internals
             foreach (DataRow dr in subscribersDataTable.Rows)
             {
                 subscribers.Add(new User(core, dr, UserLoadOptions.All));
+            }
+
+            return subscribers;
+        }
+
+        public static List<ItemKey> GetSubscribers(Core core, ItemKey itemKey, int page, int perPage)
+        {
+            List<ItemKey> subscribers = new List<ItemKey>();
+
+            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            query.AddCondition("subscription_item_id", itemKey.Id);
+            query.AddCondition("subscription_item_type_id", itemKey.TypeId);
+            query.AddSort(SortOrder.Ascending, "subscription_time_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            DataTable subscribersDataTable = core.Db.Query(query);
+
+            foreach (DataRow dr in subscribersDataTable.Rows)
+            {
+                Subscription subscription = new Subscription(core, dr);
+
+                subscribers.Add(subscription.SubscriberKey);
             }
 
             return subscribers;

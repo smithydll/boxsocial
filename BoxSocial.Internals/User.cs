@@ -2475,7 +2475,7 @@ namespace BoxSocial.Internals
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);
 
-            List<User> subscribers = Subscription.GetSubscribers(e.Core, e.Page.Owner.ItemKey, e.Page.TopLevelPageNumber, 18);
+            List<User> subscribers = Subscription.GetUserSubscribers(e.Core, e.Page.Owner.ItemKey, e.Page.TopLevelPageNumber, 18);
 
             foreach (User subscriber in subscribers)
             {

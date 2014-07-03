@@ -128,6 +128,50 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string TemplatePath
+        {
+            get
+            {
+                if (Http == null)
+                {
+                    if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates")))
+                    {
+                        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates");
+                    }
+                    else
+                    {
+                        return Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "templates");
+                    }
+                }
+                else
+                {
+                    return Http.TemplatePath;
+                }
+            }
+        }
+
+        public string TemplateEmailPath
+        {
+            get
+            {
+                if (Http == null)
+                {
+                    if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates")))
+                    {
+                        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "templates", "emails");
+                    }
+                    else
+                    {
+                        return Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "templates", "emails");
+                    }
+                }
+                else
+                {
+                    return Http.TemplateEmailPath;
+                }
+            }
+        }
+
         /// <summary>
         /// Current path path
         /// </summary>

@@ -97,7 +97,23 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return string.Format(core.Http.DefaultProtocol + "{0}/", Domain);
+                string protocol = "http://";
+                if (core.Http != null)
+                {
+                    protocol = core.Http.DefaultProtocol;
+                }
+                else
+                {
+                    if (core.Settings.UseSecureCookies)
+                    {
+                        protocol = "https://";
+                    }
+                    else
+                    {
+                        protocol = "http://";
+                    }
+                }
+                return string.Format(protocol + "{0}/", Domain);
             }
         }
 

@@ -121,6 +121,23 @@ namespace BoxSocial.Applications.GuestBook
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        public override bool ExecuteJob(Job job)
+        {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
+            switch (job.Function)
+            {
+                case "notifyUserComment":
+                    UserGuestBook.NotifyUserComment(core, job);
+                    return true;
+            }
+
+            return false;
+        }
+
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();

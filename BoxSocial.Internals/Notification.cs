@@ -35,16 +35,12 @@ namespace BoxSocial.Internals
 
         [DataField("notification_id", DataFieldKeys.Primary)]
         private long notificationId;
-        [DataField("notification_title", 63)]
+        [DataField("notification_title", NOTIFICATION_MAX_BODY)]
         private string title;
         [DataField("notification_body", NOTIFICATION_MAX_BODY)]
         private string body;
         [DataField("notification_application", typeof(ApplicationEntry))]
         private long applicationId;
-        /*[DataField("notification_primitive_id")]
-        private long primitiveId;
-        [DataField("notification_primitive_type", NAMESPACE)]
-        private string primitiveType;*/
         [DataField("notification_primitive", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("notification_item", DataFieldKeys.Index)]

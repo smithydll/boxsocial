@@ -68,6 +68,7 @@ namespace BoxSocial.Internals
         private bool deleted;
 
         private ICommentableItem item;
+        private User user;
 
         public long CommentId
         {
@@ -82,6 +83,24 @@ namespace BoxSocial.Internals
             get
             {
                 return userId;
+            }
+        }
+
+        public User User
+        {
+            get
+            {
+                if (user == null || userId != user.Id)
+                {
+                    core.PrimitiveCache.LoadUserProfile(userId);
+                    user = core.PrimitiveCache[userId];
+                    //creator = (User)core.ItemCache[new ItemKey(creatorId, typeof(User))];
+                    return user;
+                }
+                else
+                {
+                    return user;
+                }
             }
         }
 		

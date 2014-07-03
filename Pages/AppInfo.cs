@@ -120,6 +120,23 @@ namespace BoxSocial.Applications.Pages
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        public override bool ExecuteJob(Job job)
+        {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
+            switch (job.Function)
+            {
+                case "notifyPageComment":
+                    Page.NotifyPageComment(core, job);
+                    return true;
+            }
+
+            return false;
+        }
+
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();

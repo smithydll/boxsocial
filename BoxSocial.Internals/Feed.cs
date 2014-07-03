@@ -45,7 +45,7 @@ namespace BoxSocial.Internals
                 friendIds.Add(core.LoggedInMemberId);
             }
 
-            friendIds.AddRange(owner.GetSubscriptionIds(100));
+            friendIds.AddRange(owner.GetSubscriptionUserIds(100));
 
             QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
 
@@ -122,7 +122,7 @@ namespace BoxSocial.Internals
                 friendIds.Add(core.LoggedInMemberId);
             }
 
-            friendIds.AddRange(owner.GetSubscriptionIds(100));
+            friendIds.AddRange(owner.GetSubscriptionUserIds(100));
 
             QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
 
@@ -210,7 +210,7 @@ namespace BoxSocial.Internals
             }
 
             // TODO: Add subscriptions to feed
-            friendIds.AddRange(owner.GetSubscriptionIds(100));
+            friendIds.AddRange(owner.GetSubscriptionUserIds(100));
 
             if (friendIds.Count > 0)
             {

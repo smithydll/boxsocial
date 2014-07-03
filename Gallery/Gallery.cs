@@ -283,6 +283,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         /// <summary>
         /// Gets the owner of the gallery
         /// </summary>
@@ -870,11 +878,35 @@ namespace BoxSocial.Applications.Gallery
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
-                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+                core.CallingApplication.QueueNotifications(core, e.Comment.ItemKey, "notifyGalleryComment");
+                /*core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your gallery.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));*/
             }
 
             return true;
+        }
+
+        public static void NotifyGalleryComment(Core core, Job job)
+        {
+            Comment comment = new Comment(core, job.ItemId);
+            Gallery ev = new Gallery(core, comment.CommentedItemKey.Id);
+
+            Template emailTemplate = new Template(core.CallingApplication.Assembly, core.TemplateEmailPath, "email_gallery_comment");
+            emailTemplate.SetProse(core.Prose);
+
+            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
+            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
+            emailTemplate.Parse("GALLERY_OWNER_DISPLAYNAME_OWNERSHIP", ev.Owner.DisplayNameOwnership);
+            emailTemplate.Parse("U_VIEW_GALLERY", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
+
+            if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
+            {
+                core.CallingApplication.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]gallery[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+            }
+
+            core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [user]{2}[/user] [iurl=\"{1}\"]gallery[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev), ev.OwnerKey.Id), string.Empty, emailTemplate);
         }
 
         public void CommentPosted(CommentPostedEventArgs e)

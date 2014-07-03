@@ -1041,7 +1041,29 @@ namespace BoxSocial.Internals
 
         public void QueueNotifications(Core core, ItemKey itemKey, string notifyFunction)
         {
-            core.Queue.PushJob(new Job(core.Settings.QueueNotifications, core.CallingApplication.Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
+            core.Queue.PushJob(new Job(core.Settings.QueueNotifications, Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
+        }
+
+        public void SendNotification(Core core, ItemKey donotNotify, ItemKey itemKey, string subject, string body, Template emailBody)
+        {
+            long userTypeId = ItemType.GetTypeId(typeof(User));
+            List<ItemKey> receiverKeys = Subscription.GetSubscribers(core, itemKey, 0, 0);
+
+            foreach (ItemKey receiverKey in receiverKeys)
+            {
+                if (receiverKey.TypeId == userTypeId && (!receiverKey.Equals(donotNotify)))
+                {
+                    core.LoadUserProfile(receiverKey.Id);
+                }
+            }
+
+            foreach (ItemKey receiverKey in receiverKeys)
+            {
+                if (receiverKey.TypeId == userTypeId && (!receiverKey.Equals(donotNotify)))
+                {
+                    SendNotification(core, core.PrimitiveCache[receiverKey.Id], itemKey, subject, body, emailBody);
+                }
+            }
         }
 
         public void SendNotification(Core core, User receiver, ItemKey itemKey, string subject, string body, Template emailBody)
@@ -1052,6 +1074,9 @@ namespace BoxSocial.Internals
 
                 if (receiver.UserInfo.EmailNotifications)
                 {
+                    // Header so we can use the same emailBody for multiple subscribers
+                    emailBody.Parse("TO_NAME", receiver.DisplayName);
+
                     core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(subject))), emailBody);
                 }
             }
@@ -1065,7 +1090,7 @@ namespace BoxSocial.Internals
 
                 if (receiver.UserInfo.EmailNotifications)
                 {
-                    Template emailTemplate = new Template(core.Http.TemplateEmailPath, "notification.html");
+                    Template emailTemplate = new Template(core.TemplateEmailPath, "notification.html");
 
                     emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
                     emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));

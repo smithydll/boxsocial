@@ -206,6 +206,50 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
+        ///
+        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{FROM_NAME} has commented on {GALLERY_OWNER_DISPLAYNAME_OWNERSHIP} gallery.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
+        ///
+        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_GALLERY}&quot;&gt;View gallery.&lt;/a&gt;&lt;/p&gt;
+        ///
+        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE notification_footer.html --&gt;
+        ///&lt;!-- INCLUDE email_footer.html --&gt;.
+        /// </summary>
+        internal static string email_gallery_comment {
+            get {
+                return ResourceManager.GetString("email_gallery_comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
+        ///
+        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{FROM_NAME} has commented on {GALLERY_OWNER_DISPLAYNAME_OWNERSHIP} picture.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
+        ///
+        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_GALLERY_ITEM}&quot;&gt;View picture.&lt;/a&gt;&lt;/p&gt;
+        ///
+        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE notification_footer.html --&gt;
+        ///&lt;!-- INCLUDE email_footer.html --&gt;.
+        /// </summary>
+        internal static string email_gallery_item_comment {
+            get {
+                return ResourceManager.GetString("email_gallery_item_comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;Upload Photo&lt;/h2&gt;
@@ -292,7 +336,18 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;ul class=&quot;status-feed&quot;&gt;
+        ///  &lt;!-- BEGIN status_messages --&gt;
+        ///  &lt;li class=&quot;status-post&quot; id=&quot;status-{status_messages.ID}&quot;&gt;
+        ///        &lt;!-- IF status_messages.USER_ICON --&gt;
+        ///		&lt;div class=&quot;status-disp-pic&quot;&gt;
+        ///			&lt;img src=&quot;{status_messages.USER_ICON}&quot; alt=&quot;{status_messages.USER_DISPLAY_NAME}&quot; /&gt;
+        ///		&lt;/div&gt;
+        ///		&lt;!-- ENDIF --&gt;
+        ///        &lt;!-- IF $_IS_MOBILE --&gt;
+        ///        &lt;div class=&quot;status-body&quot; style=&quot;cursor: pointer;&quot; onclick=&quot;window.location.href = &apos;{status_messages.URI}&apos;;&quot;&gt;
+        ///        &lt;!-- ELSE --&gt;
+        ///		&lt;div class=&quot;status- [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string search_result_galleryitem {
             get {

@@ -1262,7 +1262,7 @@ namespace BoxSocial.Groups
             {
                 if (string.IsNullOrEmpty(domain))
                 {
-                    if (core.Http.Domain != Hyperlink.Domain)
+                    if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
                     {
                         return core.Hyperlink.Uri + "group/" + Slug.ToLower() + "/";
                     }
@@ -1274,7 +1274,7 @@ namespace BoxSocial.Groups
                 }
                 else
                 {
-                    if (domain == core.Http.Domain)
+                    if (core.Http != null && domain == core.Http.Domain)
                     {
                         return "/";
                     }

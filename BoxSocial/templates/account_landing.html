@@ -14,12 +14,12 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<!--td>{notifications_list.DATE}</td>
-	<td>{notifications_list.ACTION}</td>
-	<td>{notifications_list.DESCRIPTION}</td-->
     <td>{notifications_list.ACTION}
      <p class="time">{notifications_list.DATE}</p>
-     {notifications_list.DESCRIPTION}</td>
+     <!-- IF notifications_list.DESCRIPTION -->
+     {notifications_list.DESCRIPTION}
+     <!-- ENDIF -->
+     </td>
 </tr>
 <!-- END notifications_list -->
 </table>
@@ -34,9 +34,6 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<!--td>{invitations_list.DATE}</td>
-	<td>{invitations_list.ACTION}</td>
-	<td>{invitations_list.DESCRIPTION}</td-->
     <td>{invitations_list.ACTION}<br />{invitations_list.DESCRIPTION}<br />{invitations_list.DATE}</td>
 </tr>
 <!-- END invitations_list -->

@@ -108,6 +108,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="templates\email_user_guestbook_comment.html" />
     <Content Include="templates\viewguestbook.html" />
     <Content Include="templates\viewprofileguestbook.html" />
   </ItemGroup>

@@ -387,22 +387,23 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Lifestyle&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;{L_LIFESTYLE}&lt;/h3&gt;
+        ///
+        ///&lt;script type=&quot;text/javascript&quot;&gt;
+        ///    $(function () {
+        ///        $(&quot;.account-pane input[type=&apos;submit&apos;]&quot;).hide();
+        ///    });
+        ///&lt;/script&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Lifestyle&lt;/legend&gt;
+        ///		&lt;legend&gt;{L_LIFESTYLE}&lt;/legend&gt;
         ///		&lt;dl&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;religion&quot;&gt;Religion&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;religion&quot;&gt;{L_RELIGION}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_RELIGION}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;maritial-status&quot;&gt;Maritial status&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;maritial-status&quot;&gt;{L_MARITIAL_STATUS}&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;{S_MARITIAL_STATUS}&lt;span id=&quot;maritial-verb&quot;&gt;&lt;/span&gt; {S_RELATION}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;sexuality&quot;&gt;Sexuality&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;{S_SEXUALITY}&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
-        ///		&lt;/dl&gt;
-        ///		&lt;input [rest of string was truncated]&quot;;.
+        ///            &lt;dt&gt;&lt;label&gt;{L [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_lifestyle {
             get {
@@ -550,6 +551,28 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
+        ///
+        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{FROM_NAME} has commented on an event you&apos;re subscribed to.&lt;/p&gt;
+        ///
+        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
+        ///
+        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_EVENT}&quot;&gt;View event.&lt;/a&gt;&lt;/p&gt;
+        ///
+        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
+        ///
+        ///&lt;!-- INCLUDE notification_footer.html --&gt;
+        ///&lt;!-- INCLUDE email_footer.html --&gt;.
+        /// </summary>
+        internal static string email_status_comment {
+            get {
+                return ResourceManager.GetString("email_status_comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;script type=&quot;text/javascript&quot;&gt;
         ///&lt;!--
         ///    $(document).ready(function () {
@@ -592,7 +615,7 @@ namespace BoxSocial.Applications.Profile {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;!-- IF BREADCRUMBS --&gt;
+        ///&lt;!-- IF $_IS_DESKTOP AND BREADCRUMBS --&gt;
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
@@ -606,9 +629,7 @@ namespace BoxSocial.Applications.Profile {
         ///        &lt;h2&gt;{L_FEED}&lt;/h2&gt;
         ///        &lt;/div&gt;
         ///    &lt;/div&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///
-        ///&lt;div i [rest of string was truncated]&quot;;.
+        ///&lt;!-- EN [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewfeed {
             get {
@@ -619,7 +640,7 @@ namespace BoxSocial.Applications.Profile {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;!-- IF BREADCRUMBS --&gt;
+        ///&lt;!-- IF $_IS_DESKTOP AND BREADCRUMBS --&gt;
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
@@ -633,8 +654,7 @@ namespace BoxSocial.Applications.Profile {
         ///        &lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
         ///        &lt;/div&gt;
         ///    &lt;/div&gt;
-        ///&lt;!-- ENDIF --&gt;
-        ///        /// [rest of string was truncated]&quot;;.
+        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewstatusfeed {
             get {

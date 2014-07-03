@@ -133,6 +133,7 @@
     <Content Include="templates\account_navigation_tab_add.html" />
     <Content Include="templates\account_pages_manage.html" />
     <Content Include="templates\account_write.html" />
+    <Content Include="templates\email_page_comment.html" />
     <Content Include="templates\header_navigation_tabs.mobile.html" />
     <Content Include="templates\header_navigation_tabs.html" />
     <Content Include="templates\viewlist.html" />

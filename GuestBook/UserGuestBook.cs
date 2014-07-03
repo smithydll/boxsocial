@@ -42,30 +42,6 @@ namespace BoxSocial.Applications.GuestBook
 
             this.owner = owner;
 
-            OnCommentPosted += new CommentHandler(UserGuestBook_CommentPosted);
-        }
-
-        bool UserGuestBook_CommentPosted(CommentPostedEventArgs e)
-        {
-            User userProfile = new User(core, e.ItemId);
-
-            Template notificationTemplate = new Template(Assembly.GetExecutingAssembly(), "user_guestbook_notification");
-            notificationTemplate.Parse("U_PROFILE", e.Comment.BuildUri(this));
-            notificationTemplate.Parse("POSTER", e.Poster.DisplayName);
-            notificationTemplate.Parse("COMMENT", e.Comment.Body);
-
-            ApplicationEntry ae = core.GetApplication("GuestBook");
-            ae.SendNotification(core, owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), notificationTemplate.ToString());
-
-            return true;
-        }
-
-        public void CommentPosted(CommentPostedEventArgs e)
-        {
-            if (OnCommentPosted != null)
-            {
-                OnCommentPosted(e);
-            }
         }
 
         public override long Id
@@ -133,6 +109,36 @@ namespace BoxSocial.Applications.GuestBook
             {
                 return "guest book";
             }
+        }
+
+
+        public void CommentPosted(CommentPostedEventArgs e)
+        {
+            
+        }
+
+        public static void NotifyUserComment(Core core, Job job)
+        {
+            Comment comment = new Comment(core, job.ItemId);
+            core.LoadUserProfile(comment.CommentedItemKey.Id);
+            User ev = core.PrimitiveCache[comment.CommentedItemKey.Id];
+
+            Template emailTemplate = new Template(core.CallingApplication.Assembly, core.TemplateEmailPath, "email_user_guestbook_comment");
+            emailTemplate.SetProse(core.Prose);
+
+            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
+            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
+            emailTemplate.Parse("OWNER_DISPLAYNAME_OWNERSHIP", ev.Owner.DisplayNameOwnership);
+            emailTemplate.Parse("U_VIEW_GUEST_BOOK", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
+
+            if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.ItemKey)))
+            {
+                core.CallingApplication.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]guest book[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+            }
+
+            //core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [user]{2}[/user] [iurl=\"{1}\"]blog post[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev), ev.OwnerKey.Id), string.Empty, emailTemplate);
         }
     }
 }

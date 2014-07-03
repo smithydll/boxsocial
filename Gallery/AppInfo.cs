@@ -170,6 +170,12 @@ namespace BoxSocial.Applications.Gallery
 
             switch (job.Function)
             {
+                case "notifyGalleryComment":
+                    Gallery.NotifyGalleryComment(core, job);
+                    return true;
+                case "notifyGalleryItemComment":
+                    GalleryItem.NotifyGalleryItemComment(core, job);
+                    return true;
                 case "create_ultra":
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);

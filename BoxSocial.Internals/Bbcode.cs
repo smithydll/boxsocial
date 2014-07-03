@@ -1828,7 +1828,7 @@ namespace BoxSocial.Internals
                     if (e.Attributes.HasAttributes())
                     {
                         e.PrefixText = string.Empty;
-                        e.SuffixText = string.Format("(http://" + Hyperlink.Domain + "{0})", core.Hyperlink.StripSid(e.Attributes.GetAttribute("default")));
+                        e.SuffixText = string.Empty; //string.Format("(http://" + Hyperlink.Domain + "{0})", core.Hyperlink.StripSid(e.Attributes.GetAttribute("default")));
                     }
                     else
                     {

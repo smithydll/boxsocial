@@ -794,8 +794,10 @@ namespace BoxSocial.Internals
         bool User_CommentPosted(CommentPostedEventArgs e)
         {
             ApplicationEntry ae = core.GetApplication("GuestBook");
-            ae.SendNotification(core, this, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
-                e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+            /*ae.SendNotification(core, this, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your guest book.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));*/
+
+            ae.QueueNotifications(core, e.Comment.ItemKey, "notifyUserComment");
 
             return true;
         }
@@ -867,12 +869,12 @@ namespace BoxSocial.Internals
             this.userIconUri = member.userIconUri;
         }
 
-        public List<long> GetSubscriptionIds()
+        public List<long> GetSubscriptionUserIds()
         {
-            return GetSubscriptionIds(255);
+            return GetSubscriptionUserIds(255);
         }
 
-        public List<long> GetSubscriptionIds(int count)
+        public List<long> GetSubscriptionUserIds(int count)
         {
             List<long> subscriptionIds = new List<long>();
 
@@ -2113,9 +2115,9 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain) || core.IsMobile || core.Http.IsSecure || core.Http.ForceDomain)
+                if ((string.IsNullOrEmpty(domain) || core.IsMobile || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
                 {
-                    if (core.Http.Domain != Hyperlink.Domain)
+                    if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
                     {
                         return core.Hyperlink.Uri + "user/" + UserName.ToLower() + "/";
                     }
@@ -2127,7 +2129,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (domain == core.Http.Domain)
+                    if (core.Http != null && domain == core.Http.Domain)
                     {
                         return "/";
                     }

@@ -167,6 +167,23 @@ namespace BoxSocial.Applications.Blog
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        public override bool ExecuteJob(Job job)
+        {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
+            switch (job.Function)
+            {
+                case "notifyBlogComment":
+                    BlogEntry.NotifyBlogComment(core, job);
+                    return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Builds installation info for the application.
         /// </summary>

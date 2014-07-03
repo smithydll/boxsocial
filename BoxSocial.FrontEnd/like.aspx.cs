@@ -120,7 +120,14 @@ namespace BoxSocial.FrontEnd
                 {
                     case LikeType.Like:
                         //NotificationSubscription.Create(core, loggedInMember, itemKey);
-                        Subscription.SubscribeToItem(core, itemKey);
+                        try
+                        {
+                            Subscription.SubscribeToItem(core, itemKey);
+                        }
+                        catch (AlreadySubscribedException)
+                        {
+                            // not a problem
+                        }
                         break;
                     case LikeType.Neutral:
                     case LikeType.Dislike:

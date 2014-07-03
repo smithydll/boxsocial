@@ -399,6 +399,9 @@
   <data name="EARLIER_IN_THE_MONTH" xml:space="preserve">
     <value>Earlier in the Month</value>
   </data>
+  <data name="EARLIER_THIS_WEEK" xml:space="preserve">
+    <value>Earlier This Week</value>
+  </data>
   <data name="EDIT" xml:space="preserve">
     <value>Edit</value>
   </data>

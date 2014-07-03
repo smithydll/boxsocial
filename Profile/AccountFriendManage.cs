@@ -375,7 +375,6 @@ namespace BoxSocial.Applications.Profile
 
             emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
             emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
             emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
             emailTemplate.Parse("FROM_USERNAME", core.Session.LoggedInMember.UserName);
             emailTemplate.Parse("U_ACCEPT_FRIEND_REQUEST", core.Hyperlink.StripSid(core.Hyperlink.AppendCoreSid(core.Hyperlink.BuildAddFriendUri(core.LoggedInMemberId, false), false)));

@@ -135,6 +135,14 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get
@@ -255,8 +263,12 @@ namespace BoxSocial.Applications.Calendar
         {
             if (Owner is User)
             {
-                core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
-                    e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+                core.CallingApplication.QueueNotifications(core, e.Comment.ItemKey, "notifyEventComment");
+                /*if (!e.Comment.OwnerKey.Equals(ownerKey)) // do not notify me when commenting on my own item
+                {
+                    core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
+                        e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
+                }*/
             }
 
             return true;
@@ -268,6 +280,28 @@ namespace BoxSocial.Applications.Calendar
             {
                 OnCommentPosted(e);
             }
+        }
+
+        public static void NotifyEventComment(Core core, Job job)
+        {
+            Comment comment = new Comment(core, job.ItemId);
+            Event ev = new Event(core, comment.CommentedItemKey.Id);
+
+            Template emailTemplate = new Template(core.CallingApplication.Assembly, core.TemplateEmailPath, "email_event_comment");
+            emailTemplate.SetProse(core.Prose);
+
+            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
+            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
+            emailTemplate.Parse("U_VIEW_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
+
+            if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
+            {
+                core.CallingApplication.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]event[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+            }
+
+            core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [iurl=\"{1}\"]event[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
         }
 
         public static Event Create(Core core, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)

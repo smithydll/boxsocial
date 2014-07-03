@@ -526,6 +526,10 @@ namespace BoxSocial.Internals
                 {
                     return core.Prose.GetString("YESTERDAY");
                 }
+                else if (ts.TotalDays > -7)
+                {
+                    return core.Prose.GetString("EARLIER_THIS_WEEK");
+                }
                 else if (ts.TotalDays > -14)
                 {
                     return core.Prose.GetString("LAST_WEEK");

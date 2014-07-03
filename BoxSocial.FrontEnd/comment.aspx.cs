@@ -465,7 +465,14 @@ namespace BoxSocial.FrontEnd
 
                 // Notify everyone who comments on the item by default, track this so people can unsubscribe later
                 //NotificationSubscription.Create(core, loggedInMember, itemKey);
-                Subscription.SubscribeToItem(core, itemKey);
+                try
+                {
+                    Subscription.SubscribeToItem(core, itemKey);
+                }
+                catch (AlreadySubscribedException)
+                {
+                    // not a problem
+                }
                 
             }
             catch (NotLoggedInException)

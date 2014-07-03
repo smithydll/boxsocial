@@ -133,7 +133,10 @@ namespace BoxSocial.Applications.Profile
             {
                 case "notifyFriendRequest":
                     AccountFriendManage.NotifyFriendRequest(core, job);
-                    break;
+                    return true;
+                case "notifyStatusComment":
+                    StatusMessage.NotifyStatusMessageComment(core, job);
+                    return true;
             }
 
             return false;

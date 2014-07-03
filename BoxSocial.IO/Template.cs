@@ -373,6 +373,17 @@ namespace BoxSocial.IO
             this.templateName = templateName;
         }
 
+        public Template(Assembly assembly, string basePath, string templateName)
+        {
+            this.variables = new VariableCollection(medium);
+            this.path = basePath;
+
+            AddPageAssembly(assembly);
+
+            this.templateAssembly = assembly.GetName().Name;
+            this.templateName = templateName;
+        }
+
         public Template(string fileName)
         {
             this.variables = new VariableCollection(medium);

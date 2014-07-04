@@ -172,6 +172,28 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string LanguagePath
+        {
+            get
+            {
+                if (Http == null)
+                {
+                    if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "language")))
+                    {
+                        return Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "language");
+                    }
+                    else
+                    {
+                        return Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "language");
+                    }
+                }
+                else
+                {
+                    return Http.LanguagePath;
+                }
+            }
+        }
+
         /// <summary>
         /// Current path path
         /// </summary>

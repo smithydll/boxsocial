@@ -1044,7 +1044,8 @@ namespace BoxSocial.Internals
             core.Queue.PushJob(new Job(core.Settings.QueueNotifications, Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
         }
 
-        public void SendNotification(Core core, ItemKey donotNotify, ItemKey itemKey, string subject, string body, Template emailBody)
+        // Keep
+        public void SendNotification(Core core, ItemKey donotNotify, User actionBy, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)
         {
             long userTypeId = ItemType.GetTypeId(typeof(User));
             List<ItemKey> receiverKeys = Subscription.GetSubscribers(core, itemKey, 0, 0);
@@ -1061,7 +1062,49 @@ namespace BoxSocial.Internals
             {
                 if (receiverKey.TypeId == userTypeId && (!receiverKey.Equals(donotNotify)))
                 {
-                    SendNotification(core, core.PrimitiveCache[receiverKey.Id], itemKey, subject, body, emailBody);
+                    SendNotification(core, actionBy, core.PrimitiveCache[receiverKey.Id], itemOwnerKey, itemKey, verb, url);
+                }
+            }
+        }
+
+        // Keep
+        public void SendNotification(Core core, User actionBy, User receiver, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)
+        {
+            SendNotification(core, actionBy, receiver, itemOwnerKey, itemKey, verb, url, string.Empty);
+        }
+
+        // Keep
+        public void SendNotification(Core core, User actionBy, User receiver, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url, string action)
+        {
+            if (canNotify(core, receiver))
+            {
+                Notification notification = Notification.Create(core, this, actionBy, receiver, itemOwnerKey, itemKey, verb, url, action);
+
+                if (receiver.UserInfo.EmailNotifications)
+                {
+                    // Header so we can use the same emailBody for multiple subscribers
+                    Template emailTemplate = new Template(core.TemplateEmailPath, "notification.html");
+
+                    emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                    emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+                    emailTemplate.Parse("TO_NAME", receiver.DisplayName);
+                    core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notification.NotificationString);
+
+                    // TODO parse action links
+                    if (itemKey.ImplementsNotifiable)
+                    {
+                        Dictionary<string, string> actions = notification.NotifiedItem.GetNotificationActions(action);
+
+                        foreach (string a in actions.Keys)
+                        {
+                            VariableCollection actionsVariableCollection = emailTemplate.CreateChild("actions_list");
+
+                            actionsVariableCollection.Parse("ACTION", actions[a]);
+                            actionsVariableCollection.Parse("U_ACTION", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(notification.NotifiedItem.GetNotificationActionUrl(a))));
+                        }
+                    }
+
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(notification.NotificationString))), emailTemplate);
                 }
             }
         }

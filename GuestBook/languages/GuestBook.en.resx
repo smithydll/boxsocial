@@ -120,4 +120,10 @@
   <data name="GUEST_BOOK" xml:space="preserve">
     <value>{0} Guest Book</value>
   </data>
+  <data name="_COMMENTED_GUEST_BOOK" xml:space="preserve">
+    <value>posted to {0} guest book</value>
+  </data>
+  <data name="_GUEST_BOOK" xml:space="preserve">
+    <value>guest book</value>
+  </data>
 </root>

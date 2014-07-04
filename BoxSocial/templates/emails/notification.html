@@ -3,7 +3,15 @@
 
 <p>You have received the following notification:</p>
 
-{NOTIFICATION_MESSAGE}
+<p>{NOTIFICATION_MESSAGE}</p>
+
+<!-- IF actions_list -->
+<p>
+<!-- BEGIN actions_list -->
+<span style="padding: 5px; margin: 5px; border-radius: 3px; background-color: #ffaa55; color: #ffffff; font-weight: bold;"><a href="{actions_list.U_ACTION}">{actions_list.ACTION}</a></span>
+<!-- END actions_list -->
+</p>
+<!-- ENDIF -->
 
 <p>The {SITE_TITLE} Team</p>
 

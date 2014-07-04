@@ -19,6 +19,13 @@
      <!-- IF notifications_list.DESCRIPTION -->
      {notifications_list.DESCRIPTION}
      <!-- ENDIF -->
+         <!-- IF notifications_list.actions_list -->
+        <p>
+        <!-- BEGIN notifications_list.actions_list -->
+        <span class="post-button"><a href="{notifications_list.actions_list.U_ACTION}">{notifications_list.actions_list.ACTION}</a></span>
+        <!-- END notifications_list.actions_list -->
+        </p>
+        <!-- ENDIF -->
      </td>
 </tr>
 <!-- END notifications_list -->

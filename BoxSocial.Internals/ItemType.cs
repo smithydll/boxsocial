@@ -50,6 +50,8 @@ namespace BoxSocial.Internals
         private bool typeImplementsIShareable;
         [DataField("type_viewable")]
         private bool typeImplementsIViewable;
+        [DataField("type_notifiable")]
+        private bool typeImplementsINotifiable;
 			
 		public long TypeId
 		{
@@ -128,6 +130,14 @@ namespace BoxSocial.Internals
             get
             {
                 return typeImplementsIViewable;
+            }
+        }
+
+        public bool Notifiable
+        {
+            get
+            {
+                return typeImplementsINotifiable;
             }
         }
 

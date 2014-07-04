@@ -35,30 +35,204 @@ namespace BoxSocial.Internals
 
         [DataField("notification_id", DataFieldKeys.Primary)]
         private long notificationId;
+        // TODO: remove
         [DataField("notification_title", NOTIFICATION_MAX_BODY)]
         private string title;
         [DataField("notification_body", NOTIFICATION_MAX_BODY)]
         private string body;
+        // end remove
         [DataField("notification_application", typeof(ApplicationEntry))]
         private long applicationId;
-        [DataField("notification_primitive", DataFieldKeys.Index)]
+        [DataField("notification_primitive", DataFieldKeys.Index)] // recipient
         private ItemKey ownerKey;
         [DataField("notification_item", DataFieldKeys.Index)]
         private ItemKey itemKey;
+        [DataField("notification_item_owner")]
+        private ItemKey itemOwnerKey;
+        [DataField("notification_user_id")]
+        private long userId;
+        [DataField("notification_user_count")]
+        private int userCount;
         [DataField("notification_time_ut")]
         private long timeRaw;
         [DataField("notification_read")]
         private bool read;
         [DataField("notification_seen")]
         private bool seen;
+        [DataField("notification_verb", 31)]
+        private string verb;
+        [DataField("notification_action", 15)]
+        private string action;
+        [DataField("notification_url", 255)]
+        private string url;
+        [DataField("notification_verification_string", 32)] // TODO: verify account links sent via e-mail (nvid)
+        private string verificationString;
 
-        private Primitive owner;
+        private Primitive recipient;
+        private User user;
+        private INotifiableItem item;
+
+        public INotifiableItem NotifiedItem
+        {
+            get
+            {
+                if (item == null)
+                {
+                    core.ItemCache.RequestItem(itemKey);
+                    try
+                    {
+                        item = (INotifiableItem)core.ItemCache[itemKey];
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            item = (INotifiableItem)NumberedItem.Reflect(core, itemKey);
+                            HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
+                        }
+                        catch
+                        {
+                            item = null;
+                        }
+                    }
+                }
+                return item;
+            }
+        }
+
+        // temp
+        private NumberedItem nitem;
+        private NumberedItem notifiedItem
+        {
+            get
+            {
+                if (nitem == null)
+                {
+                    core.ItemCache.RequestItem(itemKey);
+                    try
+                    {
+                        nitem = (NumberedItem)core.ItemCache[itemKey];
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            nitem = (NumberedItem)NumberedItem.Reflect(core, itemKey);
+                            HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + itemKey.ToString());
+                        }
+                        catch
+                        {
+                            nitem = null;
+                        }
+                    }
+                }
+                return nitem;
+            }
+        }
+
+        public string NotificationString
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(title))
+                {
+                    return title;
+                }
+
+                // Force the prose to load
+                if (itemKey.Id > 0)
+                {
+                    NumberedItem item = notifiedItem;
+                }
+
+                string fragment = core.Prose.GetString(verb);
+                if (itemOwnerKey.Id > 0)
+                {
+                    if (itemOwnerKey.TypeId == ItemType.GetTypeId(typeof(User)))
+                    {
+                        if (itemOwnerKey.Id == ownerKey.Id)
+                        {
+                            fragment = string.Format(fragment, core.Prose.GetString("_YOUR"));
+                        }
+                        else
+                        {
+                            fragment = string.Format(fragment, string.Format("[user ownership=true link=false]{0}[/user]", itemOwnerKey.Id));
+                        }
+                    }
+                    else
+                    {
+                        core.PrimitiveCache.LoadPrimitiveProfile(itemOwnerKey);
+                        try
+                        {
+                            Primitive primitive = core.PrimitiveCache[itemOwnerKey];
+
+                            fragment = string.Format(fragment, primitive.DisplayNameOwnership);
+                        }
+                        catch
+                        {
+                            // the code should NEVER fall back to this
+                            fragment = string.Format(fragment, core.Prose.GetString("_A"));
+                        }
+                    }
+                }
+                if (userCount <= 1)
+                {
+                    return string.Format(core.Prose.GetString("_NOTIFICATION_PHRASE"),
+                        string.Format("[user]{0}[/user]", userId),
+                        string.Format("[iurl=\"{1}\"]{0}[/iurl]", fragment, url));
+                }
+                else if (userCount == 2)
+                {
+                    return string.Format(core.Prose.GetString("_NOTIFICATION_PHRASE_2"),
+                        string.Format("[user]{0}[/user]", userId),
+                        string.Format("[iurl=\"{1}\"]{0}[/iurl]", fragment, url),
+                        userCount - 1);
+                }
+                else
+                {
+                    return string.Format(core.Prose.GetString("_NOTIFICATION_PHRASE_3"),
+                        string.Format("[user]{0}[/user]", userId),
+                        string.Format("[iurl=\"{1}\"]{0}[/iurl]", fragment, url),
+                        userCount - 1);
+                }
+            }
+        }
 
         public long NotificationId
         {
             get
             {
                 return notificationId;
+            }
+        }
+
+        public User User
+        {
+            get
+            {
+                if (user == null || userId != user.Id)
+                {
+                    core.LoadUserProfile(userId);
+                    user = core.PrimitiveCache[userId];
+                }
+                return user;
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (recipient == null || ownerKey.Id != recipient.Id || ownerKey.TypeId != recipient.TypeId)
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    recipient = core.PrimitiveCache[ownerKey];
+                    return recipient;
+                }
+                else
+                {
+                    return recipient;
+                }
             }
         }
 
@@ -78,6 +252,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string Action
+        {
+            get
+            {
+                return action;
+            }
+        }
+
         public bool IsRead
         {
             get
@@ -94,10 +276,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey NotificationItemKey
+        {
+            get
+            {
+                return itemKey;
+            }
+        }
+
         public Notification(Core core, Primitive owner, DataRow notificationRow)
             : base(core)
         {
-            this.owner = owner;
+            this.recipient = owner;
 
             try
             {
@@ -113,7 +303,7 @@ namespace BoxSocial.Internals
             : base(core)
         {
             this.db = db;
-            this.owner = owner;
+            this.recipient = owner;
 
             this.notificationId = notificationId;
             this.applicationId = applicationId;
@@ -176,7 +366,70 @@ namespace BoxSocial.Internals
 
             core.Db.Query(query);
 
-            return new Notification(core, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
+            Notification notification = new Notification(core, receiver, notificationId, subject, body, UnixTime.UnixTimeStamp(), applicationId);
+
+
+
+            return notification;
+        }
+
+        public static Notification Create(Core core, ApplicationEntry application, User actionBy, User receiver, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url, string action)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            int applicationId = 0;
+
+            if (application != null)
+            {
+                // TODO: ensure only internals can call a null application
+                applicationId = (int)application.Id;
+            }
+
+            InsertQuery iQuery = new InsertQuery("notifications");
+            iQuery.AddField("notification_primitive_id", receiver.Id);
+            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            if (itemKey != null)
+            {
+                iQuery.AddField("notification_item_id", itemKey.Id);
+                iQuery.AddField("notification_item_type_id", itemKey.TypeId);
+            }
+            if (itemOwnerKey != null)
+            {
+                iQuery.AddField("notification_item_owner_id", itemOwnerKey.Id);
+                iQuery.AddField("notification_item_owner_type_id", itemOwnerKey.TypeId);
+            }
+            iQuery.AddField("notification_user_id", actionBy.Id);
+            iQuery.AddField("notification_user_count", 1);
+            iQuery.AddField("notification_verb", verb);
+            iQuery.AddField("notification_action", action);
+            iQuery.AddField("notification_url", url);
+            iQuery.AddField("notification_time_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("notification_read", false);
+            iQuery.AddField("notification_seen", false);
+            iQuery.AddField("notification_application", applicationId);
+
+            long notificationId = core.Db.Query(iQuery);
+
+            UpdateQuery query = new UpdateQuery(typeof(UserInfo));
+            query.AddField("user_unread_notifications", new QueryOperation("user_unread_notifications", QueryOperations.Addition, 1));
+            query.AddCondition("user_id", receiver.Id);
+
+            core.Db.Query(query);
+
+            Notification notification = new Notification(core, receiver, notificationId, string.Empty, string.Empty, UnixTime.UnixTimeStamp(), applicationId);
+            // this is not elegant
+            // TODO: write appropriate constructor
+            notification.userId = actionBy.Id;
+            notification.verb = verb;
+            notification.action = action;
+            notification.url = url;
+            notification.itemKey = itemKey;
+            notification.itemOwnerKey = itemOwnerKey;
+
+            return notification;
         }
 
         public static List<Notification> GetRecentNotifications(Core core)

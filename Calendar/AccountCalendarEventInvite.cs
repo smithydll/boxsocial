@@ -72,6 +72,7 @@ namespace BoxSocial.Applications.Calendar
 
         void AccountCalendarEventInvite_StatusChanged(object sender, ModuleModeEventArgs e)
         {
+            //RedirectSid();
             AuthoriseRequestSid();
 
             long eventId = core.Functions.RequestLong("id", 0);

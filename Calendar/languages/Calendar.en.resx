@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ACCEPT" xml:space="preserve">
+    <value>Accept</value>
+  </data>
   <data name="ATTENDING" xml:space="preserve">
     <value>Attending</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="MANAGE_CALENDAR" xml:space="preserve">
     <value>Manage Calendar</value>
+  </data>
+  <data name="MAYBE" xml:space="preserve">
+    <value>Maybe</value>
   </data>
   <data name="NEW_EVENT" xml:space="preserve">
     <value>New Event</value>
@@ -183,10 +189,19 @@
   <data name="PRIORITY" xml:space="preserve">
     <value>Priority</value>
   </data>
+  <data name="REJECT" xml:space="preserve">
+    <value>Reject</value>
+  </data>
   <data name="START_TIME" xml:space="preserve">
     <value>Start Time</value>
   </data>
   <data name="TASKS" xml:space="preserve">
     <value>Tasks</value>
+  </data>
+  <data name="_COMMENTED_EVENT" xml:space="preserve">
+    <value>commented on {0} event</value>
+  </data>
+  <data name="_INVITED_EVENT" xml:space="preserve">
+    <value>invited you to {0} event</value>
   </data>
 </root>

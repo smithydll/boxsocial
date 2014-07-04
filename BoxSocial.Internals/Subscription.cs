@@ -259,8 +259,11 @@ namespace BoxSocial.Internals
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
             query.AddSort(SortOrder.Ascending, "subscription_time_ut");
-            query.LimitStart = (page - 1) * perPage;
-            query.LimitCount = perPage;
+            if (page > 0 && perPage > 0)
+            {
+                query.LimitStart = (page - 1) * perPage;
+                query.LimitCount = perPage;
+            }
 
             DataTable subscribersDataTable = core.Db.Query(query);
 

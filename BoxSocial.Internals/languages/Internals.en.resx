@@ -135,6 +135,9 @@
   <data name="ALLOW" xml:space="preserve">
     <value>Allow</value>
   </data>
+  <data name="ANONYMOUS" xml:space="preserve">
+    <value>Anonymous</value>
+  </data>
   <data name="APRIL" xml:space="preserve">
     <value>April</value>
   </data>
@@ -1001,11 +1004,20 @@
   <data name="YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="_A" xml:space="preserve">
+    <value>a</value>
+  </data>
   <data name="_AND" xml:space="preserve">
     <value>and</value>
   </data>
   <data name="_COMMENTED_ON" xml:space="preserve">
     <value>commented on {0} {1}</value>
+  </data>
+  <data name="_COMMENTED_PAGE" xml:space="preserve">
+    <value>commented on {0} page</value>
+  </data>
+  <data name="_COMMENTED_STATUS_MESSAGE" xml:space="preserve">
+    <value>commented on {0} status</value>
   </data>
   <data name="_ITEM" xml:space="preserve">
     <value>{0} item</value>
@@ -1013,10 +1025,23 @@
   <data name="_ITEMS" xml:space="preserve">
     <value>{0} items</value>
   </data>
+  <data name="_NOTIFICATION_PHRASE" xml:space="preserve">
+    <value>{0} {1}</value>
+    <comment>&lt;List of users&gt;&lt;verb&gt;, other languages might order phrasing differenty</comment>
+  </data>
+  <data name="_NOTIFICATION_PHRASE_2" xml:space="preserve">
+    <value>{0} and {2} other {1}</value>
+  </data>
+  <data name="_NOTIFICATION_PHRASE_3" xml:space="preserve">
+    <value>{0} and {2} others {1}</value>
+  </data>
   <data name="_POSTED" xml:space="preserve">
     <value>posted</value>
   </data>
   <data name="_SHOW_COMMENT" xml:space="preserve">
     <value>show comment</value>
+  </data>
+  <data name="_YOUR" xml:space="preserve">
+    <value>your</value>
   </data>
 </root>

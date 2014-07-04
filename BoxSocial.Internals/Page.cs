@@ -625,23 +625,12 @@ namespace BoxSocial.Internals
             Page ev = new Page(core, comment.CommentedItemKey.Id);
             ApplicationEntry ae = core.GetApplication("Pages");
 
-            Template emailTemplate = new Template(ae.Assembly, core.TemplateEmailPath, "email_page_comment");
-            emailTemplate.SetProse(core.Prose);
-
-            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
-            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
-            emailTemplate.Parse("PAGE_OWNER_DISPLAYNAME_OWNERSHIP", ev.Owner.DisplayNameOwnership);
-            emailTemplate.Parse("U_VIEW_PAGE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
-
-
             if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
             {
-                ae.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]page[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+                ae.SendNotification(core, comment.User, (User)ev.Owner, ev.OwnerKey, ev.ItemKey, "_COMMENTED_PAGE", comment.BuildUri(ev));
             }
 
-            ae.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [user]{2}[/user] [iurl=\"{1}\"]page[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev), ev.OwnerKey.Id), string.Empty, emailTemplate);
+            ae.SendNotification(core, comment.OwnerKey, comment.User, ev.OwnerKey, ev.ItemKey, "_COMMENTED_PAGE", comment.BuildUri(ev));
         }
 
         private void loadPageInfo(DataRow pageRow)

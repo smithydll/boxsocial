@@ -107,7 +107,7 @@ namespace BoxSocial.Applications.GuestBook
         {
             get
             {
-                return "guest book";
+                return core.Prose.GetString("_GUEST_BOOK");
             }
         }
 
@@ -123,19 +123,9 @@ namespace BoxSocial.Applications.GuestBook
             core.LoadUserProfile(comment.CommentedItemKey.Id);
             User ev = core.PrimitiveCache[comment.CommentedItemKey.Id];
 
-            Template emailTemplate = new Template(core.CallingApplication.Assembly, core.TemplateEmailPath, "email_user_guestbook_comment");
-            emailTemplate.SetProse(core.Prose);
-
-            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
-            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
-            emailTemplate.Parse("OWNER_DISPLAYNAME_OWNERSHIP", ev.Owner.DisplayNameOwnership);
-            emailTemplate.Parse("U_VIEW_GUEST_BOOK", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
-
             if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.ItemKey)))
             {
-                core.CallingApplication.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]guest book[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+                core.CallingApplication.SendNotification(core, comment.User, (User)ev.Owner, ev.ItemKey, ev.ItemKey, "_COMMENTED_GUEST_BOOK", comment.BuildUri(ev));
             }
 
             //core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [user]{2}[/user] [iurl=\"{1}\"]blog post[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev), ev.OwnerKey.Id), string.Empty, emailTemplate);

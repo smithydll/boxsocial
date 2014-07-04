@@ -162,6 +162,36 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool ImplementsViewable
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.Viewable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
+        public bool ImplementsNotifiable
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.Notifiable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public bool InheritsPrimitive
         {
             get

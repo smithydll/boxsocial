@@ -33,7 +33,7 @@ namespace BoxSocial.Applications.Calendar
     [Permission("VIEW", "Can view the event", PermissionTypes.View)]
     [Permission("COMMENT", "Can leave comments on the event", PermissionTypes.Interact)]
     [Permission("INVITE", "Can invite people to the event", PermissionTypes.CreateAndEdit)]
-    public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable
+    public class Event : NumberedItem, ICommentableItem, IPermissibleItem, IComparable, INotifiableItem
     {
         #region Data Fields
         [DataField("event_id", DataFieldKeys.Primary)]
@@ -287,21 +287,12 @@ namespace BoxSocial.Applications.Calendar
             Comment comment = new Comment(core, job.ItemId);
             Event ev = new Event(core, comment.CommentedItemKey.Id);
 
-            Template emailTemplate = new Template(core.CallingApplication.Assembly, core.TemplateEmailPath, "email_event_comment");
-            emailTemplate.SetProse(core.Prose);
-
-            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("FROM_NAME", comment.User.DisplayName);
-            core.Display.ParseBbcode(emailTemplate, "COMMENT", comment.Body);
-            emailTemplate.Parse("U_VIEW_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(comment.BuildUri(ev))));
-
             if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
             {
-                core.CallingApplication.SendNotification(core, (User)ev.Owner, ev.ItemKey, string.Format("[user]{0}[/user] commented on your [iurl=\"{1}\"]event[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+                core.CallingApplication.SendNotification(core, comment.User, (User)ev.Owner, ev.OwnerKey, ev.ItemKey, "_COMMENTED_EVENT", comment.BuildUri(ev));
             }
 
-            core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [iurl=\"{1}\"]event[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev)), string.Empty, emailTemplate);
+            core.CallingApplication.SendNotification(core, comment.OwnerKey, comment.User, ev.OwnerKey, ev.ItemKey, "_COMMENTED_EVENT", comment.BuildUri(ev));
         }
 
         public static Event Create(Core core, Primitive owner, string subject, string location, string description, long startTimestamp, long endTimestamp)
@@ -398,7 +389,7 @@ namespace BoxSocial.Applications.Calendar
 
                     db.Query(uQuery);
 
-                    Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
+                    /*Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
 
                     emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
                     emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
@@ -412,7 +403,9 @@ namespace BoxSocial.Applications.Calendar
                     emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
                     core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
-                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
+                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);*/
+
+                    core.CallingApplication.SendNotification(core, user, invitee, OwnerKey, ItemKey, "_INVITED_EVENT", Uri, "invite");
 
                 }
                 else
@@ -452,7 +445,7 @@ namespace BoxSocial.Applications.Calendar
 
                         long invitationId = db.Query(iQuery);
 
-                        Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
+                        /*Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
 
                         emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
                         emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
@@ -465,7 +458,9 @@ namespace BoxSocial.Applications.Calendar
                         emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
 
                         core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
-                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);
+                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);*/
+
+                        core.CallingApplication.SendNotification(core, user, invitee, OwnerKey, ItemKey, "_INVITED_EVENT", Uri, "invite");
 
                     }
                     else
@@ -604,6 +599,11 @@ namespace BoxSocial.Applications.Calendar
         public static string BuildEventAcceptUri(Core core, Event calendarEvent)
         {
             return core.Hyperlink.BuildAccountSubModuleUri("calendar", "invite-event", "accept", calendarEvent.Id, true);
+        }
+
+        public static string BuildEventMaybeUri(Core core, Event calendarEvent)
+        {
+            return core.Hyperlink.BuildAccountSubModuleUri("calendar", "invite-event", "maybe", calendarEvent.Id, true);
         }
 
         public static string BuildEventRejectUri(Core core, Event calendarEvent)
@@ -974,6 +974,38 @@ namespace BoxSocial.Applications.Calendar
             {
                 return "event";
             }
+        }
+
+
+        public Dictionary<string, string> GetNotificationActions(string verb)
+        {
+            Dictionary<string, string> actions = new Dictionary<string, string>();
+
+            switch (verb)
+            {
+                case "invite":
+                    actions.Add("accept", core.Prose.GetString("ACCEPT"));
+                    actions.Add("maybe", core.Prose.GetString("MAYBE"));
+                    actions.Add("reject", core.Prose.GetString("REJECT"));
+                    break;
+            }
+
+            return actions;
+        }
+
+        public string GetNotificationActionUrl(string action)
+        {
+            switch (action)
+            {
+                case "accept":
+                    return BuildEventAcceptUri(core, this);
+                case "maybe":
+                    return BuildEventMaybeUri(core, this);
+                case "reject":
+                    return BuildEventRejectUri(core, this);
+            }
+
+            return string.Empty;
         }
     }
 

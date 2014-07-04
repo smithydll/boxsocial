@@ -51,7 +51,7 @@ namespace BoxSocial.Internals
     /// </summary>
     public class Prose : IProse
     {
-        private const string MARKER = ""; //"¶"; //
+        private const string MARKER = "¶"; //""; //
 
         private Core core;
         private string language;
@@ -102,7 +102,7 @@ namespace BoxSocial.Internals
             {
                 if (!languageResources.ContainsKey(key))
                 {
-                    ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.Http.LanguagePath, key), null);
+                    ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.LanguagePath, key), null);
 
                     languageResources.Add(key, rm);
                 }

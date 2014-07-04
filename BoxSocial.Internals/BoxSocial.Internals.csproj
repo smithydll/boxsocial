@@ -129,6 +129,7 @@
     <Compile Include="DatabaseQueue.cs" />
     <Compile Include="Emoticon.cs" />
     <Compile Include="Facebook.cs" />
+    <Compile Include="INotifiableItem.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OPage.cs">
       <SubType>ASPXCodeBehind</SubType>

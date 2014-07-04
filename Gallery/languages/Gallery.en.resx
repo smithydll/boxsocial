@@ -156,6 +156,12 @@
   <data name="UPLOAD_PHOTO" xml:space="preserve">
     <value>Upload Photo</value>
   </data>
+  <data name="_COMMENTED_GALLERY" xml:space="preserve">
+    <value>commented on {0} gallery</value>
+  </data>
+  <data name="_COMMENTED_GALLERY_ITEM" xml:space="preserve">
+    <value>commented on {0} photo</value>
+  </data>
   <data name="_PHOTO_GALLERY" xml:space="preserve">
     <value>photo gallery</value>
   </data>

@@ -574,6 +574,13 @@ namespace BoxSocial.Internals
                     offset += 20;
                 }
 
+                if (domain.ToLower().EndsWith("youtu.be"))
+                {
+                    //output = output.Replace(match.Value, "\n[youtube]" + match.Groups[1].Value + "[/youtube]");
+                    output = output.Insert(match.Groups[1].Index + offset, "\n[youtube]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 10, "[/youtube]");
+                    offset += 20;
+                }
+
                 if (domain.ToLower().EndsWith("twitter.com") && path.ToLower().Contains("/status/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[tweet]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/tweet]");
@@ -2082,7 +2089,20 @@ namespace BoxSocial.Internals
                     string youTubeUrl = e.Contents;
                     e.RemoveContents();
 
-                    if (youTubeUrl.ToLower().StartsWith("http://") || youTubeUrl.ToLower().StartsWith("https://"))
+                    if (youTubeUrl.ToLower().StartsWith("http://youtu.be/") || youTubeUrl.ToLower().StartsWith("https://youtu.be/") || youTubeUrl.ToLower().StartsWith("youtu.be/"))
+                    {
+                        char[] splitChars = { '/' };
+                        string[] argh = youTubeUrl.Split(splitChars);
+                        if (argh.Length < 2)
+                        {
+                            e.AbortParse();
+                        }
+                        else
+                        {
+                            youTubeUrl = argh[argh.Length - 1];
+                        }
+                    }
+                    else if (youTubeUrl.ToLower().StartsWith("http://") || youTubeUrl.ToLower().StartsWith("https://"))
                     {
                         char[] splitChars = { '=', '?', '&' };
                         string[] argh = youTubeUrl.Split(splitChars);
@@ -2559,7 +2579,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        e.PrefixText = "Anonymous";
+                        e.PrefixText = core.Prose.GetString("ANONYMOUS");
                         e.SuffixText = string.Empty;
                     }
                     break;
@@ -2594,20 +2614,38 @@ namespace BoxSocial.Internals
                             if (e.Attributes.HasAttribute("ownership") &&
                                 e.Attributes.GetAttribute("ownership") == "true")
                             {
-                                e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
-                                    userUser.DisplayNameOwnership, userUser.Uri, userUser.Id);
-                                e.SuffixText = string.Empty;
+                                if ((!e.Attributes.HasAttribute("link")) || ( e.Attributes.HasAttribute("link") &&
+                                e.Attributes.GetAttribute("link") == "true"))
+                                {
+                                    e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                        userUser.DisplayNameOwnership, userUser.Uri, userUser.Id);
+                                    e.SuffixText = string.Empty;
+                                }
+                                else
+                                {
+                                    e.PrefixText = userUser.DisplayNameOwnership;
+                                    e.SuffixText = string.Empty;
+                                }
                             }
                             else
                             {
-                                e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
-                                    userUser.DisplayName, userUser.Uri, userUser.Id);
-                                e.SuffixText = string.Empty;
+                                if ((!e.Attributes.HasAttribute("link")) || (e.Attributes.HasAttribute("link") &&
+                                e.Attributes.GetAttribute("link") == "true"))
+                                {
+                                    e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                        userUser.DisplayName, userUser.Uri, userUser.Id);
+                                    e.SuffixText = string.Empty;
+                                }
+                                else
+                                {
+                                    e.PrefixText = userUser.DisplayName;
+                                    e.SuffixText = string.Empty;
+                                }
                             }
                         }
                         else
                         {
-                            e.PrefixText = "Anonymous";
+                            e.PrefixText = core.Prose.GetString("ANONYMOUS");
                             e.SuffixText = string.Empty;
                         }
                     }

@@ -263,7 +263,6 @@ namespace BoxSocial.Applications.Mail
 
                 core.Db.Query(uquery);
 
-
             }
 
             if (recipientIds.Count > 0)

@@ -194,6 +194,12 @@ namespace BoxSocial.FrontEnd
             long newestId = core.Functions.RequestLong("newest-id", 0);
             long newerId = 0;
 
+            if (!core.Session.IsLoggedIn)
+            {
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+                core.Ajax.SendDictionary("noNewContent", returnValues);
+            }
+
             if (mode == "query")
             {
                 int count = Feed.GetNewerItemCount(core, core.Session.LoggedInMember, newestId); ;

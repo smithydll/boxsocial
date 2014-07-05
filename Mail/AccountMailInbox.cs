@@ -149,7 +149,14 @@ namespace BoxSocial.Applications.Mail
                 foreach (Message message in messages)
                 {
                     messageIds.Add(message.Id);
-                    lastMessageIds.Add(message.LastId);
+                    if (message.LastId > 0)
+                    {
+                        lastMessageIds.Add(message.LastId);
+                    }
+                    else
+                    {
+                        lastMessageIds.Add(message.Id);
+                    }
                 }
 
                 SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
@@ -171,9 +178,15 @@ namespace BoxSocial.Applications.Mail
 
                 bool isRead = false;
 
-                if (readStatus.ContainsKey(message.LastId))
+                long lastId = message.LastId;
+                if (lastId == 0)
                 {
-                    if (readStatus[message.LastId].IsRead)
+                    lastId = message.Id;
+                }
+
+                if (readStatus.ContainsKey(lastId))
+                {
+                    if (readStatus[lastId].IsRead)
                     {
                         isRead = true;
                     }

@@ -46,7 +46,14 @@
     <!-- IF mail_item.IS_NORMAL_UNREAD -->
     <div style="min-height: 20px; background-image: url('/images/posticon_unread_med.png');">
     <!-- ENDIF -->
-          <a href="{mail_item.URI}">{mail_item.SUBJECT}</a><br />
+          <a href="{mail_item.URI}">
+          <!-- IF mail_item.SUBJECT -->
+          {mail_item.SUBJECT}<br />
+          <!-- ENDIF -->
+          <!-- BEGIN mail_item.recipients -->
+          {mail_item.recipients.DISPLAY_NAME}
+          <!-- END mail_item.recipients -->
+          </a><br />
           </div>
         </dt>
         <dd><div><a href="{mail_item.U_SENDER}">{mail_item.SENDER}</a></div></dd>

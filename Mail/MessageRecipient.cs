@@ -158,9 +158,27 @@ namespace BoxSocial.Applications.Mail
                 new FieldValuePair("sender_id", message.SenderId),
                 new FieldValuePair("user_id", recipient.Id),
                 new FieldValuePair("message_folder_id", folder.Id),
-                new FieldValuePair("recipient_type", (byte)type));
+                new FieldValuePair("recipient_type", (byte)type),
+                new FieldValuePair("is_read", type == RecipientType.Sender));
 
 		}
+
+        public static void Create(Core core, Message message, MessageRecipient recipient, RecipientType type, MailFolder folder)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item.Create(core, typeof(MessageRecipient), true,
+                new FieldValuePair("message_id", message.Id),
+                new FieldValuePair("sender_id", message.SenderId),
+                new FieldValuePair("user_id", recipient.UserId),
+                new FieldValuePair("message_folder_id", folder.Id),
+                new FieldValuePair("recipient_type", (byte)type),
+                new FieldValuePair("is_read", type == RecipientType.Sender));
+
+        }
 
         public void MarkRead()
         {

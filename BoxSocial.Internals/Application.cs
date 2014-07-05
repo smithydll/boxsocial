@@ -537,6 +537,11 @@ namespace BoxSocial.Internals
 
         public static List<ApplicationEntry> GetApplications(Core core, Primitive owner)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
             Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
 
@@ -797,6 +802,11 @@ namespace BoxSocial.Internals
 
         public static void LoadApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
         {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
             if (!core.LoadedApplication(ae))
             {
                 Application newApplication = GetApplication(core, primitive, ae);

@@ -49,5 +49,11 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        // Some actions may want to include a body
+        /*string Body
+        {
+            get;
+        }*/
     }
 }

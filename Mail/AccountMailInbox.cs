@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return core.Prose.GetString("INBOX");
+                return core.Prose.GetString("MESSAGES");
             }
         }
 
@@ -78,7 +78,7 @@ namespace BoxSocial.Applications.Mail
                 core.Template.Parse("UNSEEN_MAIL", "FALSE");
             }
 
-            List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
+            /*List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
 
             foreach (MailFolder f in folders)
             {
@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.Mail
                 modulesVariableCollection.Parse("SUB", Key);
                 modulesVariableCollection.Parse("MODULE", ModuleKey);
                 modulesVariableCollection.Parse("URI", BuildUri(args));
-            }
+            }*/
 
             string folder = "Inbox";
             if (!string.IsNullOrEmpty(core.Http.Query["folder"]))
@@ -138,9 +138,10 @@ namespace BoxSocial.Applications.Mail
                 }
             }
 
-            List<Message> messages = mailFolder.GetMessages(core.TopLevelPageNumber, 20);
+            List<Message> messages = mailFolder.GetThreads(core.TopLevelPageNumber, 20);
 
             List<long> messageIds = new List<long>();
+            List<long> lastMessageIds = new List<long>();
             Dictionary<long, MessageRecipient> readStatus = new Dictionary<long, MessageRecipient>();
 
             if (messages.Count > 0)
@@ -148,11 +149,12 @@ namespace BoxSocial.Applications.Mail
                 foreach (Message message in messages)
                 {
                     messageIds.Add(message.Id);
+                    lastMessageIds.Add(message.LastId);
                 }
 
                 SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
                 query.AddCondition("user_id", core.Session.LoggedInMember.Id);
-                query.AddCondition("message_id", ConditionEquality.In, messageIds);
+                query.AddCondition("message_id", ConditionEquality.In, lastMessageIds);
 
                 DataTable recipientDataTable = db.Query(query);
 
@@ -169,9 +171,9 @@ namespace BoxSocial.Applications.Mail
 
                 bool isRead = false;
 
-                if (readStatus.ContainsKey(message.Id))
+                if (readStatus.ContainsKey(message.LastId))
                 {
-                    if (readStatus[message.Id].IsRead)
+                    if (readStatus[message.LastId].IsRead)
                     {
                         isRead = true;
                     }
@@ -190,6 +192,13 @@ namespace BoxSocial.Applications.Mail
                 messageVariableCollection.Parse("URI", message.Uri);
                 messageVariableCollection.Parse("U_DELETE", BuildUri("message", "delete", message.Id));
 
+                List<MessageRecipient> recipients = message.GetRecipients();
+
+                for (int i = 0; i < recipients.Count; i++)
+                {
+                    core.PrimitiveCache.LoadUserProfile(recipients[i].UserId);
+                }
+
                 switch (mailFolder.FolderType)
                 {
                     case FolderTypes.Inbox:
@@ -200,23 +209,33 @@ namespace BoxSocial.Applications.Mail
                             messageVariableCollection.Parse("SENDER", message.Sender.DisplayName);
                             messageVariableCollection.Parse("U_SENDER", message.Sender.Uri);
                         }
+                        for (int i = 0; i < recipients.Count; i++)
+                        {
+                            if (recipients[i].RecipientType == RecipientType.To)
+                            {
+                                VariableCollection recipientVariableCollection = messageVariableCollection.CreateChild("recipients");
+
+                                recipientVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[recipients[i].UserId].DisplayName);
+                            }
+                        }
+
                         template.Parse("INBOX", "TRUE");
                         break;
                     case FolderTypes.Draft:
                     case FolderTypes.Outbox:
                     case FolderTypes.SentItems:
-                        List<MessageRecipient> recipients = message.GetRecipients();
-                        int i = 0;
-                        while (recipients.Count > i)
                         {
-                            if (recipients[i].RecipientType == RecipientType.To)
+                            int i = 0;
+                            while (recipients.Count > i)
                             {
-                                core.PrimitiveCache.LoadUserProfile(recipients[i].UserId);
-                                messageVariableCollection.Parse("SENDER", core.PrimitiveCache[recipients[i].UserId].DisplayName);
-                                messageVariableCollection.Parse("U_SENDER", core.PrimitiveCache[recipients[i].UserId].Uri);
-                                break;
+                                if (recipients[i].RecipientType == RecipientType.To)
+                                {
+                                    messageVariableCollection.Parse("SENDER", core.PrimitiveCache[recipients[i].UserId].DisplayName);
+                                    messageVariableCollection.Parse("U_SENDER", core.PrimitiveCache[recipients[i].UserId].Uri);
+                                    break;
+                                }
+                                i++;
                             }
-                            i++;
                         }
                         break;
                 }

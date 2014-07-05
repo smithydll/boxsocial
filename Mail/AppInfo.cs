@@ -119,6 +119,23 @@ namespace BoxSocial.Applications.Mail
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        public override bool ExecuteJob(Job job)
+        {
+            if (job.ItemId == 0)
+            {
+                return true;
+            }
+
+            switch (job.Function)
+            {
+                case "notifyMessage":
+                    Message.NotifyMessage(core, job);
+                    return true;
+            }
+
+            return false;
+        }
+
         public override void InitialisePrimitive(Primitive owner)
         {
             if (owner is User)

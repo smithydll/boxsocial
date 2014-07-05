@@ -2115,7 +2115,12 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if ((string.IsNullOrEmpty(domain) || core.IsMobile || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
+                if (core == null) // this should not be NULL, but it is!
+                {
+                    return string.Format("/user/{0}/",
+                            UserName.ToLower());
+                }
+                if ((string.IsNullOrEmpty(domain) || core.IsMobile || (core.Http != null && (core.Http.IsSecure || core.Http.ForceDomain))))
                 {
                     if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
                     {

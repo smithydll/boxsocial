@@ -98,9 +98,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="resources\mail.js" />
     <Content Include="resources\style.css" />
     <Content Include="templates\account_compose.html" />
     <Content Include="templates\account_mailbox.html" />
+    <Content Include="templates\account_view_conversation.html" />
     <Content Include="templates\account_view_message.html" />
   </ItemGroup>
   <ItemGroup>

@@ -219,11 +219,57 @@ namespace BoxSocial.Applications.Mail
             return messages;
         }
 
+        public List<Message> GetThreads(int page, int perPage)
+        {
+            List<Message> messages = new List<Message>();
+
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
+            query.AddCondition("message_thread_start_id", 0);
+            QueryCondition qc1 = query.AddCondition("message_folder_id", folderId);
+            QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, new DataField(typeof(MessageRecipient), "sender_id"), ConditionEquality.Equal, ownerId);
+            qc2.AddCondition(ConditionRelations.And, new DataField(typeof(MessageRecipient), "user_id"), ConditionEquality.Equal, core.LoggedInMemberId);
+            query.AddSort(SortOrder.Descending, "message_time_last_ut");
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
+
+            /*HttpContext.Current.Response.Write(query.ToString());
+            HttpContext.Current.Response.End();*/
+
+            DataTable messagesDataTable = db.Query(query);
+
+            foreach (DataRow row in messagesDataTable.Rows)
+            {
+                messages.Add(new Message(core, row));
+            }
+
+            return messages;
+        }
+
         public static MailFolder GetFolder(Core core, FolderTypes folder, User user)
         {
             SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
             query.AddCondition("folder_type", (byte)folder);
             query.AddCondition("owner_id", user.Id);
+
+            DataTable inboxDataTable = core.Db.Query(query);
+
+            if (inboxDataTable.Rows.Count == 1)
+            {
+                return new MailFolder(core, inboxDataTable.Rows[0]);
+            }
+            else
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
+
+        public static MailFolder GetFolder(Core core, FolderTypes folder, MessageRecipient user)
+        {
+            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            query.AddCondition("folder_type", (byte)folder);
+            query.AddCondition("owner_id", user.UserId);
 
             DataTable inboxDataTable = core.Db.Query(query);
 

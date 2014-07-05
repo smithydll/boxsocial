@@ -29,6 +29,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    public enum NotificationType : byte
+    {
+        None = 0x00,
+        App = 0x01,
+        Email = 0x02,
+        Sms = 0x04,
+    }
+
     [DataTable("notifications")]
     public class Notification : NumberedItem
     {

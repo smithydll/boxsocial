@@ -29,16 +29,38 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            switch (Order)
+            return ToString(false);
+        }
+
+        public string ToString(bool reverse)
+        {
+            if (reverse)
             {
-                case SortOrder.Ascending:
-                    return string.Format("{0} ASC",
-                        Field);
-                case SortOrder.Descending:
-                    return string.Format("{0} DESC",
-                        Field);
-                default:
-                    return String.Empty;
+                switch (Order)
+                {
+                    case SortOrder.Ascending:
+                        return string.Format("{0} DESC",
+                            Field);
+                    case SortOrder.Descending:
+                        return string.Format("{0} ASC",
+                            Field);
+                    default:
+                        return String.Empty;
+                }
+            }
+            else
+            {
+                switch (Order)
+                {
+                    case SortOrder.Ascending:
+                        return string.Format("{0} ASC",
+                            Field);
+                    case SortOrder.Descending:
+                        return string.Format("{0} DESC",
+                            Field);
+                    default:
+                        return String.Empty;
+                }
             }
         }
     }
@@ -215,6 +237,7 @@ namespace BoxSocial.IO
         private List<TableSort> sorts;
         private int limitCount = -1;
         private int limitStart = -1;
+        private SortOrder limitOrder = SortOrder.Ascending;
         private bool isDistinct = false;
 
         public int LimitCount
@@ -238,6 +261,18 @@ namespace BoxSocial.IO
             set
             {
                 limitStart = value;
+            }
+        }
+
+        public SortOrder LimitOrder
+        {
+            get
+            {
+                return limitOrder;
+            }
+            set
+            {
+                limitOrder = value;
             }
         }
 
@@ -693,6 +728,36 @@ namespace BoxSocial.IO
                 {
                     retQuery = retQuery.Insert(insertPoint, newFields);
                 }
+            }
+
+            if (LimitOrder == SortOrder.Descending)
+            {
+                StringBuilder limitQuery = new StringBuilder();
+
+                if (sorts.Count > 0)
+                {
+                    bool first = true;
+                    foreach (TableSort sort in sorts)
+                    {
+                        if (first)
+                        {
+                            /*query = string.Format("{0} ORDER BY {1}",
+                                query, sort.ToString());*/
+                            limitQuery.Append(" ORDER BY ");
+                            limitQuery.Append(sort.ToString(true));
+                            first = false;
+                        }
+                        else
+                        {
+                            /*query = string.Format("{0}, {1}",
+                                query, sort.ToString());*/
+                            limitQuery.Append(", ");
+                            limitQuery.Append(sort.ToString(true));
+                        }
+                    }
+                }
+
+                retQuery = string.Format("({0}) {1}", retQuery.TrimEnd(new char[] { ';', ' ' }), limitQuery.ToString());
             }
 
             return retQuery;

@@ -52,8 +52,16 @@ namespace BoxSocial.Applications.Mail
 		private string text;
 		[DataField("message_time_ut")]
 		private long messageTime;
+        [DataField("message_time_last_ut")]
+        private long messageTimeLast;
 		[DataField("message_ip", 50)]
         private string messageIp;
+        [DataField("message_thread_start_id")]
+        private long messageThreadStartId;
+        [DataField("message_last_id")]
+        private long messagelastId;
+        [DataField("message_replies")]
+        private long messageReplies;
 
         private User sender;
 
@@ -96,6 +104,14 @@ namespace BoxSocial.Applications.Mail
 				return senderId;
 			}
 		}
+
+        public long LastId
+        {
+            get
+            {
+                return messagelastId;
+            }
+        }
 		
 		public string Subject
 		{
@@ -189,6 +205,97 @@ namespace BoxSocial.Applications.Mail
 		void Message_ItemLoad()
 		{
 		}
+
+        public static Message Reply(Core core, User sender, Message threadStart, string text)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            long now = UnixTime.UnixTimeStamp();
+
+            core.Db.BeginTransaction();
+
+            Message newItem = (Message)Item.Create(core, typeof(Message),
+                   new FieldValuePair("sender_id", sender.Id),
+                   new FieldValuePair("message_subject", "RE: " + threadStart.Subject),
+                   new FieldValuePair("message_text", text),
+                   new FieldValuePair("message_time_ut", now),
+                   new FieldValuePair("message_ip", core.Session.IPAddress.ToString()),
+                   new FieldValuePair("message_draft", false),
+                   new FieldValuePair("message_read", false),
+                   new FieldValuePair("message_thread_start_id", threadStart.Id));
+
+            {
+                UpdateQuery uQuery = new UpdateQuery(typeof(Message));
+                uQuery.AddField("message_time_last_ut", now);
+                uQuery.AddField("message_replies", new QueryOperation("message_replies", QueryOperations.Addition, 1));
+                uQuery.AddField("message_last_id", newItem.Id);
+                uQuery.AddCondition("message_id", threadStart.Id);
+
+                core.Db.Query(uQuery);
+            }
+
+            MailFolder folder = null;
+            UpdateQuery uquery = null;
+
+            List<MessageRecipient> recipients  = threadStart.GetRecipients();
+
+            List<long> recipientIds = new List<long>();
+            foreach (MessageRecipient user in recipients)
+            {
+                bool incrementFolderCount = false;
+                switch (user.RecipientType)
+                {
+                    case RecipientType.Sender:
+                        folder = MailFolder.GetFolder(core, FolderTypes.Outbox, user);
+                        MessageRecipient.Create(core, newItem, user, RecipientType.To, folder);
+                        incrementFolderCount = true;
+                        recipientIds.Add(user.UserId);
+                        break;
+                    default:
+                        folder = MailFolder.GetFolder(core, FolderTypes.Inbox, user);
+
+                        if (user.UserId == sender.Id)
+                        {
+                            MessageRecipient.Create(core, newItem, user, RecipientType.Sender, folder);
+                        }
+                        else
+                        {
+                            MessageRecipient.Create(core, newItem, user, user.RecipientType, folder);
+                            recipientIds.Add(user.UserId);
+                        }
+                        incrementFolderCount = true;
+                        break;
+                }
+
+                if (incrementFolderCount)
+                {
+                    uquery = new UpdateQuery(typeof(MailFolder));
+                    uquery.AddCondition("folder_id", folder.Id);
+                    uquery.AddField("folder_messages", new QueryOperation("folder_messages", QueryOperations.Addition, 1));
+
+                    core.Db.Query(uquery);
+
+                }
+            }
+
+            if (recipientIds.Count > 0)
+            {
+                uquery = new UpdateQuery(typeof(UserInfo));
+                uquery.AddField("user_unseen_mail", new QueryOperation("user_unseen_mail", QueryOperations.Addition, 1));
+                uquery.AddCondition("user_id", ConditionEquality.In, recipientIds);
+
+                core.Db.Query(uquery);
+
+                // Send notifications
+            }
+
+            core.CallingApplication.QueueNotifications(core, newItem.ItemKey, "notifyMessage");
+
+            return newItem;
+        }
 		
 		public static Message Create(Core core, bool draft, string subject, string text, Dictionary<User, RecipientType> recipients)
 		{
@@ -211,14 +318,16 @@ namespace BoxSocial.Applications.Mail
                 }
             }
 
-			Item newItem = Item.Create(core, typeof(Message),
+            long now = UnixTime.UnixTimeStamp();
+			Message newItem = (Message)Item.Create(core, typeof(Message),
                    new FieldValuePair("sender_id", senderId),
                    new FieldValuePair("message_subject", subject),
 			       new FieldValuePair("message_text", text),
-			       new FieldValuePair("message_time_ut", UnixTime.UnixTimeStamp()),
+			       new FieldValuePair("message_time_ut", now),
 			       new FieldValuePair("message_ip", core.Session.IPAddress.ToString()),
                    new FieldValuePair("message_draft", draft),
-                   new FieldValuePair("message_read", false));
+                   new FieldValuePair("message_read", false),
+                   new FieldValuePair("message_time_last_ut", now));
 
             MailFolder folder = null;
             UpdateQuery uquery = null;
@@ -233,18 +342,18 @@ namespace BoxSocial.Applications.Mail
                         if (draft)
                         {
                             folder = MailFolder.GetFolder(core, FolderTypes.Draft, user);
-                            MessageRecipient.Create(core, (Message)newItem, user, recipients[user], folder);
+                            MessageRecipient.Create(core, newItem, user, recipients[user], folder);
                         }
                         else
                         {
                             folder = MailFolder.GetFolder(core, FolderTypes.Outbox, user);
-                            MessageRecipient.Create(core, (Message)newItem, user, recipients[user], folder);
+                            MessageRecipient.Create(core, newItem, user, recipients[user], folder);
                         }
                         incrementFolderCount = true;
                         break;
                     default:
                         folder = MailFolder.GetFolder(core, FolderTypes.Inbox, user);
-                        MessageRecipient.Create(core, (Message)newItem, user, recipients[user], folder);
+                        MessageRecipient.Create(core, newItem, user, recipients[user], folder);
 
                         if (!draft)
                         {
@@ -275,8 +384,10 @@ namespace BoxSocial.Applications.Mail
 
                 // Send notifications
             }
+
+            core.CallingApplication.QueueNotifications(core, newItem.ItemKey, "notifyMessage");
 			
-			return (Message)newItem;
+			return newItem;
 		}
 
         public void AddRecipient(User user, RecipientType type)
@@ -389,6 +500,34 @@ namespace BoxSocial.Applications.Mail
             return recipients;
         }
 
+        public List<Message> GetMessages(long lastId)
+        {
+            List<Message> messages = new List<Message>();
+
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
+            query.AddCondition("message_thread_start_id", Id);
+            query.AddCondition("user_id", core.LoggedInMemberId);
+            if (lastId > 0)
+            {
+                query.AddCondition("message_id", ConditionEquality.LessThan, lastId);
+            }
+            query.AddSort(SortOrder.Descending, "message_time_ut");
+            /*query.LimitStart = (page - 1) * perPage;*/
+            query.LimitCount = 10;
+            query.LimitOrder = SortOrder.Descending;
+
+            DataTable messagesDataTable = db.Query(query);
+
+            foreach (DataRow row in messagesDataTable.Rows)
+            {
+                messages.Add(new Message(core, row));
+            }
+
+            return messages;
+        }
+
         public override long Id
         {
             get
@@ -401,7 +540,54 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("mail", "message", messageId);
+                if (messageThreadStartId == 0)
+                {
+                    return core.Hyperlink.BuildAccountSubModuleUri("mail", "message", messageId);
+                }
+                else
+                {
+                    return core.Hyperlink.BuildAccountSubModuleUri("mail", "message", messageThreadStartId) + "#" + messageId.ToString();
+                }
+            }
+        }
+
+        public static void NotifyMessage(Core core, Job job)
+        {
+            Message ev = new Message(core, job.ItemId);
+
+            List<MessageRecipient> recipients = ev.GetRecipients();
+
+            foreach (MessageRecipient recipient in recipients)
+            {
+                core.LoadUserProfile(recipient.UserId);
+            }
+
+            foreach (MessageRecipient recipient in recipients)
+            {
+                // TODO: notify everyone via push notifications
+
+                if (ev.SenderId == recipient.UserId)
+                {
+                    // don't need to notify ourselves via e-mail
+                    continue;
+                }
+
+                User receiver = core.PrimitiveCache[recipient.UserId];
+
+                if (receiver.UserInfo.EmailNotifications)
+                {
+                    string notificationString = string.Format("[user]{0}[/user] [iurl=\"{1}\"]" + core.Prose.GetString("_SENT_YOU_A_MESSAGE") + "[/iurl]",
+                        ev.SenderId, ev.Uri);
+
+                    Template emailTemplate = new Template(core.TemplateEmailPath, "notification.html");
+
+                    emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
+                    emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
+                    emailTemplate.Parse("TO_NAME", receiver.DisplayName);
+                    core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notificationString, receiver, false, string.Empty, string.Empty, true);
+
+                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(notificationString))), emailTemplate);
+                }
             }
         }
     }

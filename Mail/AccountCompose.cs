@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return core.Prose.GetString("COMPOSE");
+                return core.Prose.GetString("NEW_CONVERSATION");
             }
         }
 
@@ -62,13 +62,14 @@ namespace BoxSocial.Applications.Mail
 
         void AccountCompose_Load(object sender, EventArgs e)
         {
+            this.AddModeHandler("reply", AccountCompose_Reply);
         }
 
         void AccountCompose_Show(object sender, EventArgs e)
         {
             SetTemplate("account_compose");
 
-            List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
+            /*List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
 
             foreach (MailFolder f in folders)
             {
@@ -98,7 +99,7 @@ namespace BoxSocial.Applications.Mail
                 modulesVariableCollection.Parse("SUB", Key);
                 modulesVariableCollection.Parse("MODULE", ModuleKey);
                 modulesVariableCollection.Parse("URI", BuildUri(args));
-            }
+            }*/
 
             long messageId = core.Functions.FormLong("id", 0);
             bool edit = false;
@@ -179,6 +180,8 @@ namespace BoxSocial.Applications.Mail
 
         void AccountCompose_Save(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
             try
             {
                 SaveOrSend(true);
@@ -191,6 +194,8 @@ namespace BoxSocial.Applications.Mail
 
         void AccountCompose_Send(object sender, EventArgs e)
         {
+            AuthoriseRequestSid();
+
             try
             {
                 SaveOrSend(false);
@@ -199,6 +204,26 @@ namespace BoxSocial.Applications.Mail
             {
                 DisplayError("Too many recipients selected.");
             }
+        }
+
+        private void AccountCompose_Reply(object sender, ModuleModeEventArgs e)
+        {
+            SaveMode(AccountCompose_ReplySave);
+        }
+
+        void AccountCompose_ReplySave(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long messageId = core.Functions.FormLong("id", 0);
+            string text = core.Http.Form["message"];
+
+            Message threadStart = new Message(core, messageId);
+
+            Message message = Message.Reply(core, LoggedInMember, threadStart, text);
+
+            SetRedirectUri(BuildUri("inbox"));
+            core.Display.ShowMessage("Message sent", "Your mail message has been sent.");
         }
 
         private void SaveOrSend(bool draft)

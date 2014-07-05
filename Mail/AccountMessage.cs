@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Mail
 
             List<MailFolder> folders = MailFolder.GetFolders(core, core.Session.LoggedInMember);
 
-            foreach (MailFolder f in folders)
+            /*foreach (MailFolder f in folders)
             {
                 if (f.FolderType == FolderTypes.Inbox) continue;
 
@@ -94,7 +94,7 @@ namespace BoxSocial.Applications.Mail
                 modulesVariableCollection.Parse("SUB", Key);
                 modulesVariableCollection.Parse("MODULE", ModuleKey);
                 modulesVariableCollection.Parse("URI", BuildUri("inbox", args));
-            }
+            }*/
 
             long messageId = core.Functions.RequestLong("id", 0);
 
@@ -102,50 +102,69 @@ namespace BoxSocial.Applications.Mail
             {
                 MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, messageId);
 
-                // IF NOT DELETED THEN
+                Message threadStart = new Message(core, messageId);
+
+                template.Parse("S_ID", threadStart.Id.ToString());
+
+                List<Message> messages = threadStart.GetMessages(0);
+
+                if (messages.Count < 3)
                 {
-                    Message message = new Message(core, messageId);
-
-                    VariableCollection messageVariableCollection = template.CreateChild("post_list");
-
-                    messageVariableCollection.Parse("SUBJECT", message.Subject);
-                    messageVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(message.GetSentDate(core.Tz)));
-                    messageVariableCollection.Parse("URI", message.Uri);
-                    messageVariableCollection.Parse("ID", message.Id.ToString());
-                    core.Display.ParseBbcode(messageVariableCollection, "MESSAGE", message.Text);
-                    if (message.Sender != null)
-                    {
-                        messageVariableCollection.Parse("U_USER", message.Sender.Uri);
-                        messageVariableCollection.Parse("USER_DISPLAY_NAME", message.Sender.UserInfo.DisplayName);
-                        messageVariableCollection.Parse("USER_TILE", message.Sender.Tile);
-                        messageVariableCollection.Parse("USER_ICON", message.Sender.Icon);
-                        messageVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(message.Sender.UserInfo.GetRegistrationDate(core.Tz)));
-                        messageVariableCollection.Parse("USER_COUNTRY", message.Sender.Profile.Country);
-                        //core.Display.ParseBbcode(messageVariableCollection, "SIGNATURE", postersList[post.UserId].ForumSignature);
-                    }
-                    else
-                    {
-                        messageVariableCollection.Parse("USER_DISPLAY_NAME", "Anonymous");
-                    }
-
-                    if (recipient.IsRead)
-                    {
-                        messageVariableCollection.Parse("IS_READ", "TRUE");
-                    }
-                    else
-                    {
-                        messageVariableCollection.Parse("IS_READ", "FALSE");
-                    }
-
-                    message.MarkRead();
-                    recipient.MarkRead();
+                    RenderMessage(threadStart);
                 }
+
+                // IF NOT DELETED THEN
+                foreach (Message message in messages)
+                {
+                    RenderMessage(message);
+                }
+
+                threadStart.MarkRead();
+
             }
             catch (InvalidMessageRecipientException)
             {
                 // Security, if not a recipeint, cannot see the message.
                 core.Functions.Generate404();
             }
+        }
+
+        private void RenderMessage(Message message)
+        {
+            MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, message.Id);
+
+            VariableCollection messageVariableCollection = template.CreateChild("post_list");
+
+            messageVariableCollection.Parse("SUBJECT", message.Subject);
+            messageVariableCollection.Parse("POST_TIME", core.Tz.DateTimeToString(message.GetSentDate(core.Tz)));
+            messageVariableCollection.Parse("URI", message.Uri);
+            messageVariableCollection.Parse("ID", message.Id.ToString());
+            core.Display.ParseBbcode(messageVariableCollection, "MESSAGE", message.Text);
+            if (message.Sender != null)
+            {
+                messageVariableCollection.Parse("U_USER", message.Sender.Uri);
+                messageVariableCollection.Parse("USER_DISPLAY_NAME", message.Sender.UserInfo.DisplayName);
+                messageVariableCollection.Parse("USER_TILE", message.Sender.Tile);
+                messageVariableCollection.Parse("USER_ICON", message.Sender.Icon);
+                messageVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(message.Sender.UserInfo.GetRegistrationDate(core.Tz)));
+                messageVariableCollection.Parse("USER_COUNTRY", message.Sender.Profile.Country);
+                //core.Display.ParseBbcode(messageVariableCollection, "SIGNATURE", postersList[post.UserId].ForumSignature);
+            }
+            else
+            {
+                messageVariableCollection.Parse("USER_DISPLAY_NAME", "Anonymous");
+            }
+
+            if (recipient.IsRead)
+            {
+                messageVariableCollection.Parse("IS_READ", "TRUE");
+            }
+            else
+            {
+                messageVariableCollection.Parse("IS_READ", "FALSE");
+            }
+
+            recipient.MarkRead();
         }
 
         void AccountMessage_Delete(object sender, EventArgs e)

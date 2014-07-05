@@ -141,8 +141,14 @@
   <data name="MESSAGE" xml:space="preserve">
     <value>Message</value>
   </data>
+  <data name="MESSAGES" xml:space="preserve">
+    <value>Messages</value>
+  </data>
+  <data name="NEW_CONVERSATION" xml:space="preserve">
+    <value>New Conversation</value>
+  </data>
   <data name="NO_MAIL_MESSAGES" xml:space="preserve">
-    <value>This folder has no mail messages.</value>
+    <value>There are no messages.</value>
   </data>
   <data name="OUTBOX" xml:space="preserve">
     <value>Outbox</value>
@@ -152,6 +158,9 @@
   </data>
   <data name="RECIPIENTS" xml:space="preserve">
     <value>Recipients</value>
+  </data>
+  <data name="REPLY" xml:space="preserve">
+    <value>Reply</value>
   </data>
   <data name="SAVE_DRAFT" xml:space="preserve">
     <value>Save Draft</value>
@@ -170,5 +179,8 @@
   </data>
   <data name="TO" xml:space="preserve">
     <value>To</value>
+  </data>
+  <data name="_SENT_YOU_A_MESSAGE" xml:space="preserve">
+    <value>sent you a message</value>
   </data>
 </root>

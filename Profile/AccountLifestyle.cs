@@ -254,12 +254,7 @@ namespace BoxSocial.Applications.Profile
                     {
                         ApplicationEntry ae = core.GetApplication("Profile");
 
-                        RawTemplate atpl = new RawTemplate(core.Http.TemplateEmailPath, "user_relationship_notification.html");
-
-                        atpl.Parse("USER_ID", core.LoggedInMemberId.ToString());
-                        atpl.Parse("U_CONFIRM", core.Hyperlink.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId));
-
-                        ae.SendNotification(core, relation, LoggedInMember.ItemKey, string.Format("[user]{0}[/user] wants to be in a relationship with you", core.LoggedInMemberId), atpl.ToString());
+                        ae.SendNotification(core, LoggedInMember, relation, LoggedInMember.ItemKey, LoggedInMember.ItemKey, "_WANTS_TO_CONFIRM_RELATIONSHIP", LoggedInMember.Uri, "relationship");
 
                         if (existingMaritialWith > 0)
                         {

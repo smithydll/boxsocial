@@ -389,22 +389,6 @@ namespace BoxSocial.Applications.Calendar
 
                     db.Query(uQuery);
 
-                    /*Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
-
-                    emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                    emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-                    emailTemplate.Parse("TO_NAME", invitee.DisplayName);
-                    emailTemplate.Parse("FROM_NAME", user.DisplayName);
-                    emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
-                    emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
-                    emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                    emailTemplate.Parse("U_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventUri(core, this))));
-                    emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
-                    emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
-
-                    core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
-                        user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);*/
-
                     core.CallingApplication.SendNotification(core, user, invitee, OwnerKey, ItemKey, "_INVITED_EVENT", Uri, "invite");
 
                 }
@@ -444,21 +428,6 @@ namespace BoxSocial.Applications.Calendar
                         iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
 
                         long invitationId = db.Query(iQuery);
-
-                        /*Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
-
-                        emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                        emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-                        emailTemplate.Parse("FROM_NAME", user.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", user.UserInfo.PrimaryEmail);
-                        emailTemplate.Parse("FROM_NAMES", user.DisplayNameOwnership);
-                        emailTemplate.Parse("EVENT_SUBJECT", this.Subject);
-                        emailTemplate.Parse("U_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventUri(core, this))));
-                        emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, this))));
-                        emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, this))));
-
-                        core.CallingApplication.SendNotification(core, invitee, ItemKey, string.Format("{0} has invited you to {1}",
-                            user.DisplayName, subject), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] accept the invitation.", Event.BuildEventAcceptUri(core, this)), emailTemplate);*/
 
                         core.CallingApplication.SendNotification(core, user, invitee, OwnerKey, ItemKey, "_INVITED_EVENT", Uri, "invite");
 
@@ -1006,6 +975,14 @@ namespace BoxSocial.Applications.Calendar
             }
 
             return string.Empty;
+        }
+
+        public string Title
+        {
+            get
+            {
+                return Subject;
+            }
         }
     }
 

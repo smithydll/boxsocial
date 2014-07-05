@@ -152,27 +152,18 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId, friendId));
 
             //
-            // send e-mail notifications
+            // send notifications
             //
 
             ApplicationEntry ae = core.GetApplication("Profile");
 
-            Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_notification.html");
-
-            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("TO_NAME", friendProfile.DisplayName);
-            emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
-            emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
-            emailTemplate.Parse("U_ACCEPT_FRIEND_REQUEST", core.Hyperlink.StripSid(core.Hyperlink.AppendCoreSid(core.Hyperlink.BuildAddFriendUri(LoggedInMember.Id, false), false)));
-
             if (!isFriend)
             {
-                ae.SendNotification(core, friendProfile, LoggedInMember.ItemKey, string.Format("[user]{0}[/user] wants to add you as a friend", LoggedInMember.Id), string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.", core.Hyperlink.BuildAddFriendUri(LoggedInMember.Id, false), LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(core, LoggedInMember, friendProfile, LoggedInMember.ItemKey, LoggedInMember.ItemKey, "_WANTS_FRIENDSHIP", LoggedInMember.Uri, "friend");
             }
             else
             {
-                ae.SendNotification(core, friendProfile, LoggedInMember.ItemKey, string.Format("[user]{0}[/user] accepted your friendship", LoggedInMember.Id), string.Format("[user]{0}[/user] has confirmed your friendship. You may now be able to interract with your friend in more ways.", LoggedInMember.Id), emailTemplate);
+                ae.SendNotification(core, LoggedInMember, friendProfile, LoggedInMember.ItemKey, LoggedInMember.ItemKey, "_ACCEPTED_FRIENDSHIP", LoggedInMember.Uri);
             }
 
             db.UpdateQuery(string.Format("UPDATE user_info ui SET ui.user_friends = ui.user_friends + 1 WHERE ui.user_id = {0};",
@@ -371,19 +362,8 @@ namespace BoxSocial.Applications.Profile
             core.LoadUserProfile(job.ItemId);
             User friendProfile = core.PrimitiveCache[job.ItemId];
 
-            Template emailTemplate = new Template(core.Http.TemplateEmailPath, "friend_notification.html");
-
-            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-            emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
-            emailTemplate.Parse("FROM_USERNAME", core.Session.LoggedInMember.UserName);
-            emailTemplate.Parse("U_ACCEPT_FRIEND_REQUEST", core.Hyperlink.StripSid(core.Hyperlink.AppendCoreSid(core.Hyperlink.BuildAddFriendUri(core.LoggedInMemberId, false), false)));
-
             ApplicationEntry ae = core.GetApplication("Profile");
-            ae.SendNotification(core, friendProfile, new ItemKey(job.ItemId, job.ItemTypeId),
-                string.Format("[user]{0}[/user] wants to add you as a friend", core.LoggedInMemberId),
-                string.Format("[iurl=\"{0}\" sid=true]Click Here[/iurl] to add [user]{1}[/user] as a friend.",core.Hyperlink.BuildAddFriendUri(core.LoggedInMemberId, false), core.LoggedInMemberId),
-                emailTemplate);
+            ae.SendNotification(core, core.Session.LoggedInMember, friendProfile, core.LoggedInMemberItemKey, core.LoggedInMemberItemKey, "_WANTS_FRIENDSHIP", core.Session.LoggedInMember.Uri, "friend");
         }
     }
 }

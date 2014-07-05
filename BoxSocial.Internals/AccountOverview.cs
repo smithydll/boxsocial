@@ -85,7 +85,7 @@ namespace BoxSocial.Internals
 
                 db.Query(query);
 
-                core.Template.Parse("U_UNREAD_NOTIFICATIONS", 0);
+                core.Template.Parse("UNREAD_NOTIFICATIONS", 0);
             }
 
             core.LoadUserProfile(core.LoggedInMemberId);

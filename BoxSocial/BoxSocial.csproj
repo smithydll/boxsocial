@@ -188,17 +188,13 @@
     <Content Include="templates\emails\email_activation.html" />
     <Content Include="templates\emails\email_footer.html" />
     <Content Include="templates\emails\email_header.html" />
-    <Content Include="templates\emails\event_invitation.html" />
     <Content Include="templates\emails\friend_invitation.html" />
     <Content Include="templates\emails\friend_notification.html" />
-    <Content Include="templates\emails\group_invitation.html" />
-    <Content Include="templates\emails\guestbook_notification.html" />
     <Content Include="templates\emails\join_network.html" />
     <Content Include="templates\emails\new_password.html" />
     <Content Include="templates\emails\notification.html" />
     <Content Include="templates\emails\notification_footer.html" />
     <Content Include="templates\emails\registration_welcome.html" />
-    <Content Include="templates\emails\user_relationship_notification.html" />
     <Content Include="templates\error.html" />
     <Content Include="templates\help.html" />
     <Content Include="templates\login.html" />

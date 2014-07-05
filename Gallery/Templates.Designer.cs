@@ -206,50 +206,6 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
-        ///
-        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{FROM_NAME} has commented on {GALLERY_OWNER_DISPLAYNAME_OWNERSHIP} gallery.&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
-        ///
-        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_GALLERY}&quot;&gt;View gallery.&lt;/a&gt;&lt;/p&gt;
-        ///
-        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
-        ///
-        ///&lt;!-- INCLUDE notification_footer.html --&gt;
-        ///&lt;!-- INCLUDE email_footer.html --&gt;.
-        /// </summary>
-        internal static string email_gallery_comment {
-            get {
-                return ResourceManager.GetString("email_gallery_comment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
-        ///
-        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{FROM_NAME} has commented on {GALLERY_OWNER_DISPLAYNAME_OWNERSHIP} picture.&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
-        ///
-        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_GALLERY_ITEM}&quot;&gt;View picture.&lt;/a&gt;&lt;/p&gt;
-        ///
-        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
-        ///
-        ///&lt;!-- INCLUDE notification_footer.html --&gt;
-        ///&lt;!-- INCLUDE email_footer.html --&gt;.
-        /// </summary>
-        internal static string email_gallery_item_comment {
-            get {
-                return ResourceManager.GetString("email_gallery_item_comment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
         ///&lt;h2&gt;Upload Photo&lt;/h2&gt;

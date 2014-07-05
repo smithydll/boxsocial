@@ -177,6 +177,9 @@
   <data name="COMMENTS" xml:space="preserve">
     <value>Comments</value>
   </data>
+  <data name="CONFIRM" xml:space="preserve">
+    <value>Confirm</value>
+  </data>
   <data name="CONTACT" xml:space="preserve">
     <value>Contact</value>
   </data>
@@ -1004,8 +1007,14 @@
   <data name="YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="YOU_HAVE_RECEIVED_THE_FOLLOWING_NOTIFICATION" xml:space="preserve">
+    <value>You have received the following notification:</value>
+  </data>
   <data name="_A" xml:space="preserve">
     <value>a</value>
+  </data>
+  <data name="_ACCEPTED_FRIENDSHIP" xml:space="preserve">
+    <value>accepted your friendship</value>
   </data>
   <data name="_AND" xml:space="preserve">
     <value>and</value>
@@ -1019,11 +1028,23 @@
   <data name="_COMMENTED_STATUS_MESSAGE" xml:space="preserve">
     <value>commented on {0} status</value>
   </data>
+  <data name="_HOURS_AGO" xml:space="preserve">
+    <value>{0} hours ago</value>
+  </data>
+  <data name="_HOUR_AGO" xml:space="preserve">
+    <value>{0} hour ago</value>
+  </data>
   <data name="_ITEM" xml:space="preserve">
     <value>{0} item</value>
   </data>
   <data name="_ITEMS" xml:space="preserve">
     <value>{0} items</value>
+  </data>
+  <data name="_MINUTES_AGO" xml:space="preserve">
+    <value>{0} minutes ago</value>
+  </data>
+  <data name="_MINUTE_AGO" xml:space="preserve">
+    <value>{0} minute ago</value>
   </data>
   <data name="_NOTIFICATION_PHRASE" xml:space="preserve">
     <value>{0} {1}</value>
@@ -1038,8 +1059,20 @@
   <data name="_POSTED" xml:space="preserve">
     <value>posted</value>
   </data>
+  <data name="_SECONDS_AGO" xml:space="preserve">
+    <value>{0} seconds ago</value>
+  </data>
+  <data name="_SECOND_AGO" xml:space="preserve">
+    <value>{0} second ago</value>
+  </data>
   <data name="_SHOW_COMMENT" xml:space="preserve">
     <value>show comment</value>
+  </data>
+  <data name="_WANTS_FRIENDSHIP" xml:space="preserve">
+    <value>wants to add you as a friend</value>
+  </data>
+  <data name="_WANTS_TO_CONFIRM_RELATIONSHIP" xml:space="preserve">
+    <value>wants you to confirm your relationship with them</value>
   </data>
   <data name="_YOUR" xml:space="preserve">
     <value>your</value>

@@ -135,6 +135,9 @@
   <data name="GROUP_MEMBERS" xml:space="preserve">
     <value>Group Members</value>
   </data>
+  <data name="JOIN" xml:space="preserve">
+    <value>Join</value>
+  </data>
   <data name="LEADER" xml:space="preserve">
     <value>Leader</value>
   </data>
@@ -167,5 +170,8 @@
   </data>
   <data name="TYPE" xml:space="preserve">
     <value>Type</value>
+  </data>
+  <data name="_INVITED_YOU_TO_JOIN_A_GROUP" xml:space="preserve">
+    <value>has invited you to join a group: {1}</value>
   </data>
 </root>

@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
     [Permission("VIEW_FAMILY", "Can see your family", PermissionTypes.View)]
     [Permission("VIEW_COLLEAGUES", "Can see your colleagues", PermissionTypes.View)]
     [PermissionGroup]
-    public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem, ISubscribeableItem
+    public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem, ISubscribeableItem, INotifiableItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]
         protected long userId;
@@ -3084,6 +3084,43 @@ namespace BoxSocial.Internals
             get
             {
                 return Info.Subscribers;
+            }
+        }
+
+
+        public Dictionary<string, string> GetNotificationActions(string verb)
+        {
+            Dictionary<string, string> actions = new Dictionary<string, string>();
+            switch (verb)
+            {
+                case "relationship":
+                    actions.Add("confirm-relationship", core.Prose.GetString("CONFIRM"));
+                    break;
+                case "friendship":
+                    actions.Add("confirm-friendship", core.Prose.GetString("ADD_FRIEND"));
+                    break;
+            }
+            return actions;
+        }
+
+        public string GetNotificationActionUrl(string action)
+        {
+            switch (action)
+            {
+                case "confirm-relationship":
+                    return core.Hyperlink.BuildAccountSubModuleUri("profile", "lifestyle", "confirm-relationship", core.LoggedInMemberId);
+                case "confirm-friendship":
+                    return core.Hyperlink.BuildAddFriendUri(Id, false);
+            }
+
+            return string.Empty;
+        }
+
+        public string Title
+        {
+            get
+            {
+                return DisplayName;
             }
         }
     }

@@ -22,6 +22,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.Security.Cryptography;
 using System.Text;
 using System.Web;
 using BoxSocial.IO;
@@ -36,9 +37,9 @@ namespace BoxSocial.Internals
         [DataField("notification_id", DataFieldKeys.Primary)]
         private long notificationId;
         // TODO: remove
-        [DataField("notification_title", NOTIFICATION_MAX_BODY)]
+        [DataField("notification_title", NOTIFICATION_MAX_BODY)] // Legacy
         private string title;
-        [DataField("notification_body", NOTIFICATION_MAX_BODY)]
+        [DataField("notification_body", NOTIFICATION_MAX_BODY)] // Legacy
         private string body;
         // end remove
         [DataField("notification_application", typeof(ApplicationEntry))]
@@ -61,11 +62,11 @@ namespace BoxSocial.Internals
         private bool seen;
         [DataField("notification_verb", 31)]
         private string verb;
-        [DataField("notification_action", 15)]
+        [DataField("notification_action", 31)]
         private string action;
         [DataField("notification_url", 255)]
         private string url;
-        [DataField("notification_verification_string", 32)] // TODO: verify account links sent via e-mail (nvid)
+        [DataField("notification_verification_string", 32)]
         private string verificationString;
 
         private Primitive recipient;
@@ -140,9 +141,17 @@ namespace BoxSocial.Internals
                 }
 
                 // Force the prose to load
+                string itemTitle = string.Empty;
                 if (itemKey.Id > 0)
                 {
                     NumberedItem item = notifiedItem;
+
+                    if (item is INotifiableItem)
+                    {
+                        INotifiableItem nitem = (INotifiableItem)item;
+
+                        itemTitle = nitem.Title;
+                    }
                 }
 
                 string fragment = core.Prose.GetString(verb);
@@ -152,11 +161,11 @@ namespace BoxSocial.Internals
                     {
                         if (itemOwnerKey.Id == ownerKey.Id)
                         {
-                            fragment = string.Format(fragment, core.Prose.GetString("_YOUR"));
+                            fragment = string.Format(fragment, core.Prose.GetString("_YOUR"), itemTitle);
                         }
                         else
                         {
-                            fragment = string.Format(fragment, string.Format("[user ownership=true link=false]{0}[/user]", itemOwnerKey.Id));
+                            fragment = string.Format(fragment, string.Format("[user ownership=true link=false]{0}[/user]", itemOwnerKey.Id), itemTitle);
                         }
                     }
                     else
@@ -166,15 +175,20 @@ namespace BoxSocial.Internals
                         {
                             Primitive primitive = core.PrimitiveCache[itemOwnerKey];
 
-                            fragment = string.Format(fragment, primitive.DisplayNameOwnership);
+                            fragment = string.Format(fragment, primitive.DisplayNameOwnership, itemTitle);
                         }
                         catch
                         {
                             // the code should NEVER fall back to this
-                            fragment = string.Format(fragment, core.Prose.GetString("_A"));
+                            fragment = string.Format(fragment, core.Prose.GetString("_A"), itemTitle);
                         }
                     }
                 }
+                else
+                {
+                    fragment = string.Format(fragment, string.Empty, itemTitle);
+                }
+
                 if (userCount <= 1)
                 {
                     return string.Format(core.Prose.GetString("_NOTIFICATION_PHRASE"),
@@ -284,6 +298,15 @@ namespace BoxSocial.Internals
             }
         }
 
+
+        public string VerificationString
+        {
+            get
+            {
+                return verificationString;
+            }
+        }
+
         public Notification(Core core, Primitive owner, DataRow notificationRow)
             : base(core)
         {
@@ -388,6 +411,13 @@ namespace BoxSocial.Internals
                 applicationId = (int)application.Id;
             }
 
+            RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider();
+            byte[] randomNumber = new byte[16];
+            rng.GetBytes(randomNumber);
+
+            string rand = SessionState.HexRNG(randomNumber);
+            string verificationString = SessionState.SessionMd5(rand + "bsseed" + DateTime.Now.Ticks.ToString() + core.Session.IPAddress.ToString()).ToLower();
+
             InsertQuery iQuery = new InsertQuery("notifications");
             iQuery.AddField("notification_primitive_id", receiver.Id);
             iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
@@ -410,6 +440,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("notification_read", false);
             iQuery.AddField("notification_seen", false);
             iQuery.AddField("notification_application", applicationId);
+            iQuery.AddField("notification_verification_string", verificationString);
 
             long notificationId = core.Db.Query(iQuery);
 
@@ -428,6 +459,7 @@ namespace BoxSocial.Internals
             notification.url = url;
             notification.itemKey = itemKey;
             notification.itemOwnerKey = itemOwnerKey;
+            notification.verificationString = verificationString;
 
             return notification;
         }

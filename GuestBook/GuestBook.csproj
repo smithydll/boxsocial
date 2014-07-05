@@ -108,7 +108,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="templates\email_user_guestbook_comment.html" />
     <Content Include="templates\viewguestbook.html" />
     <Content Include="templates\viewprofileguestbook.html" />
   </ItemGroup>
@@ -129,7 +128,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\guestbook.svg" />
-    <Content Include="templates\user_guestbook_notification.html" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

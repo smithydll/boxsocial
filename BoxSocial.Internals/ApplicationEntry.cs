@@ -1044,7 +1044,6 @@ namespace BoxSocial.Internals
             core.Queue.PushJob(new Job(core.Settings.QueueNotifications, Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
         }
 
-        // Keep
         public void SendNotification(Core core, ItemKey donotNotify, User actionBy, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)
         {
             long userTypeId = ItemType.GetTypeId(typeof(User));
@@ -1067,13 +1066,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        // Keep
         public void SendNotification(Core core, User actionBy, User receiver, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)
         {
             SendNotification(core, actionBy, receiver, itemOwnerKey, itemKey, verb, url, string.Empty);
         }
 
-        // Keep
         public void SendNotification(Core core, User actionBy, User receiver, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url, string action)
         {
             if (canNotify(core, receiver))
@@ -1088,7 +1085,7 @@ namespace BoxSocial.Internals
                     emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
                     emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
-                    core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notification.NotificationString);
+                    core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notification.NotificationString, receiver, false, string.Empty, string.Empty, true);
 
                     // TODO parse action links
                     if (itemKey.ImplementsNotifiable)
@@ -1100,47 +1097,11 @@ namespace BoxSocial.Internals
                             VariableCollection actionsVariableCollection = emailTemplate.CreateChild("actions_list");
 
                             actionsVariableCollection.Parse("ACTION", actions[a]);
-                            actionsVariableCollection.Parse("U_ACTION", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(notification.NotifiedItem.GetNotificationActionUrl(a))));
+                            actionsVariableCollection.Parse("U_ACTION", core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.AppendNvid(notification.NotifiedItem.GetNotificationActionUrl(a), notification.VerificationString)));
                         }
                     }
 
                     core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(notification.NotificationString))), emailTemplate);
-                }
-            }
-        }
-
-        public void SendNotification(Core core, User receiver, ItemKey itemKey, string subject, string body, Template emailBody)
-        {
-            if (canNotify(core, receiver))
-            {
-                Notification.Create(core, this, receiver, itemKey, subject, body);
-
-                if (receiver.UserInfo.EmailNotifications)
-                {
-                    // Header so we can use the same emailBody for multiple subscribers
-                    emailBody.Parse("TO_NAME", receiver.DisplayName);
-
-                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(subject))), emailBody);
-                }
-            }
-        }
-
-        public void SendNotification(Core core, User receiver, ItemKey itemKey, string subject, string body)
-        {
-            if (canNotify(core, receiver))
-            {
-                Notification.Create(core, this, receiver, itemKey, subject, body);
-
-                if (receiver.UserInfo.EmailNotifications)
-                {
-                    Template emailTemplate = new Template(core.TemplateEmailPath, "notification.html");
-
-                    emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                    emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-                    emailTemplate.Parse("TO_NAME", receiver.DisplayName);
-                    core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", body);
-
-                    core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(subject))), emailTemplate);
                 }
             }
         }

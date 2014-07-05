@@ -443,6 +443,25 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string AppendNvid(string uri, string verificationString)
+        {
+            if (string.IsNullOrEmpty(verificationString) || verificationString.Length < 32)
+            {
+                throw new FormatException("Verification string too short");
+            }
+
+            if (uri.Contains("?"))
+            {
+                return string.Format("{0}&nvid={1}",
+                    StripSid(uri), verificationString);
+            }
+            else
+            {
+                return string.Format("{0}?nvid={1}",
+                    StripSid(uri), verificationString);
+            }
+        }
+
         public string AppendCoreSid(string uri)
         {
             return AppendCoreSid(uri, false);

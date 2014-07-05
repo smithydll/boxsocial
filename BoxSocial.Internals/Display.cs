@@ -1238,13 +1238,18 @@ namespace BoxSocial.Internals
 
         public void ParseBbcode(Template template, string templateVar, string input, Primitive owner, bool appendP, string id, string styleClass)
         {
+            ParseBbcode(template, templateVar, input, owner, appendP, id, styleClass, false);
+        }
+
+        public void ParseBbcode(Template template, string templateVar, string input, Primitive owner, bool appendP, string id, string styleClass, bool fullInternalUrls)
+        {
             if (owner != null)
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner, appendP, id, styleClass));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner, appendP, id, styleClass, fullInternalUrls));
             }
             else
             {
-                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, appendP, id, styleClass));
+                template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, appendP, id, styleClass, fullInternalUrls));
             }
         }
 
@@ -1265,27 +1270,32 @@ namespace BoxSocial.Internals
 
         public void ParseBbcode(VariableCollection template, string templateVar, string input, Primitive owner, bool appendP, string id, string styleClass)
         {
+            ParseBbcode(template, templateVar, input, owner, false, string.Empty, string.Empty, false);
+        }
+
+        public void ParseBbcode(VariableCollection template, string templateVar, string input, Primitive owner, bool appendP, string id, string styleClass, bool fullInternalUrls)
+        {
             if (core.Session.LoggedInMember == null)
             {
 
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), null, owner, appendP, id, styleClass));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), null, owner, appendP, id, styleClass, fullInternalUrls));
                 }
                 else
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), appendP, id, styleClass));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), appendP, id, styleClass, fullInternalUrls));
                 }
             }
             else
             {
                 if (owner != null)
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner, appendP, id, styleClass));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, owner, appendP, id, styleClass, fullInternalUrls));
                 }
                 else
                 {
-                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, appendP, id, styleClass));
+                    template.ParseRaw(templateVar, core.Bbcode.Parse(HttpUtility.HtmlEncode(input), core.Session.LoggedInMember, appendP, id, styleClass, fullInternalUrls));
                 }
             }
         }

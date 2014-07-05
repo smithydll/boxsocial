@@ -9,10 +9,14 @@
 <h4>Notifications</h4>
 <table class="account-table" style="width: 100%">
 <!-- BEGIN notifications_list -->
+<!-- IF notifications_list.SEEN -->
 <!-- IF notifications_list.$_INDEX_EVEN -->
 <tr class="even">
 <!-- ELSE -->
 <tr class="odd">
+<!-- ENDIF -->
+<!-- ELSE -->
+<tr class="unseen">
 <!-- ENDIF -->
     <td>{notifications_list.ACTION}
      <p class="time">{notifications_list.DATE}</p>
@@ -20,7 +24,7 @@
      {notifications_list.DESCRIPTION}
      <!-- ENDIF -->
          <!-- IF notifications_list.actions_list -->
-        <p>
+        <p class="action-buttons">
         <!-- BEGIN notifications_list.actions_list -->
         <span class="post-button"><a href="{notifications_list.actions_list.U_ACTION}">{notifications_list.actions_list.ACTION}</a></span>
         <!-- END notifications_list.actions_list -->

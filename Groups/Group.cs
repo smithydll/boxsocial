@@ -50,7 +50,7 @@ namespace BoxSocial.Groups
     [Permission("COMMENT", "Can write on the guest book", PermissionTypes.Interact)]
     [Permission("VIEW_MEMBERS", "Can view the group members", PermissionTypes.View)]
     [Permission("DELETE_COMMENTS", "Can delete comments from the guest book", PermissionTypes.Delete)]
-    public class UserGroup : Primitive, ICommentableItem, IPermissibleItem
+    public class UserGroup : Primitive, ICommentableItem, IPermissibleItem, INotifiableItem
     {
         public static int GROUPS_PER_PAGE = 10;
 
@@ -2330,6 +2330,38 @@ namespace BoxSocial.Groups
                     groupCoverPhotoUri = "FALSE";
                     return "FALSE";
                 }
+            }
+        }
+
+
+        public Dictionary<string, string> GetNotificationActions(string verb)
+        {
+            Dictionary<string, string> actions = new Dictionary<string, string>();
+            switch (verb)
+            {
+                case "invite":
+                    actions.Add("invite-join", core.Prose.GetString("JOIN"));
+                    break;
+            }
+            return actions;
+        }
+
+        public string GetNotificationActionUrl(string action)
+        {
+            switch (action)
+            {
+                case "invite-join":
+                    return JoinUri;
+            }
+
+            return string.Empty;
+        }
+
+        public string Title
+        {
+            get
+            {
+                return DisplayName;
             }
         }
     }

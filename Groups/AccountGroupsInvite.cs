@@ -143,20 +143,8 @@ namespace BoxSocial.Groups
 
                         if (friendsTable.Rows.Count > 0)
                         {
-                            Template emailTemplate = new Template(core.Http.TemplateEmailPath, "group_invitation.html");
-
-                            emailTemplate.Parse("SITE_TITLE", core.Settings.SiteTitle);
-                            emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
-                            emailTemplate.Parse("TO_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("FROM_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("FROM_USERNAME", LoggedInMember.UserName);
-                            emailTemplate.Parse("GROUP_NAME", LoggedInMember.DisplayName);
-                            emailTemplate.Parse("U_GROUP", core.Hyperlink.StripSid(thisGroup.UriStubAbsolute));
-                            emailTemplate.Parse("U_JOIN", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(thisGroup.JoinUri)));
-
                             ApplicationEntry ae = Application.GetExecutingApplication(core, LoggedInMember);
-                            ae.SendNotification(core, inviteMember, thisGroup.ItemKey, string.Format("[user]{0}[/user] invited you to join a group", core.LoggedInMemberId), string.Format("[url=\"{0}\" sid=true]Join {1}[/url]",
-                                core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(thisGroup.JoinUri)), thisGroup.TitleName), emailTemplate);
+                            ae.SendNotification(core, LoggedInMember, inviteMember, thisGroup.ItemKey, thisGroup.ItemKey, "_INVITED_YOU_TO_JOIN_A_GROUP", thisGroup.Uri, "invite");
 
                             SetRedirectUri(thisGroup.Uri);
                             core.Display.ShowMessage("Invited Friend", "You have invited a friend to the group.");

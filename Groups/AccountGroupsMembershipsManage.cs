@@ -174,7 +174,7 @@ namespace BoxSocial.Groups
             long groupId = core.Functions.RequestLong("id", 0);
             UserGroup thisGroup;
 
-            if (core.Http.Query["sid"] == core.Session.SessionId)
+            if (AuthorisedRequest())
             {
                 AccountGroupsMembershipsManage_Join_Save(sender, new EventArgs());
             }

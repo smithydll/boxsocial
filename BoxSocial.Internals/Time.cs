@@ -677,7 +677,7 @@ namespace BoxSocial.Internals
 
                 if (ts.TotalHours <= 24)
                 {
-                    return "Today";
+                    return core.Prose.GetString("TODAY");
                 }
                 else
                 {
@@ -727,19 +727,19 @@ namespace BoxSocial.Internals
                 }
                 if (ts.TotalSeconds < 60 && (int)ts.TotalSeconds != 1)
                 {
-                    return string.Format("{0} seconds ago", (int)ts.TotalSeconds);
+                    return string.Format(core.Prose.GetString("_SECONDS_AGO"), (int)ts.TotalSeconds);
                 }
                 else if ((int)ts.TotalSeconds == 1)
                 {
-                    return "1 second ago";
+                    return string.Format(core.Prose.GetString("_SECOND_AGO"), (int)ts.TotalSeconds);
                 }
                 else if (ts.TotalMinutes < 60 && (int)ts.TotalMinutes != 1)
                 {
-                    return string.Format("{0} minutes ago", (int)ts.TotalMinutes);
+                    return string.Format(core.Prose.GetString("_MINUTES_AGO"), (int)ts.TotalMinutes);
                 }
                 else if ((int)ts.TotalMinutes == 1)
                 {
-                    return "1 minute ago";
+                    return string.Format(core.Prose.GetString("_MINUTE_AGO"), (int)ts.TotalMinutes);
                 }
                 else if (ts.TotalDays > 1 && ts.TotalDays <= 2)
                 {
@@ -747,11 +747,11 @@ namespace BoxSocial.Internals
                 }
                 else if (ts.TotalHours < 12 && (ts.TotalHours >= 2 || ts.TotalHours < 1))
                 {
-                    return string.Format("{0} hours ago", (int)ts.TotalHours);
+                    return string.Format(core.Prose.GetString("_HOURS_AGO"), (int)ts.TotalHours);
                 }
                 else if (ts.TotalHours < 2 && ts.TotalHours >= 1)
                 {
-                    return string.Format("{0} hour ago", (int)ts.TotalHours);
+                    return string.Format(core.Prose.GetString("_HOUR_AGO"), (int)ts.TotalHours);
                 }
                 else if (ts.TotalHours <= 24)
                 {

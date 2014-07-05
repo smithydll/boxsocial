@@ -518,23 +518,43 @@ namespace BoxSocial.Internals
             core.Template.Parse("INFO", informationString);
         }
 
-        /// <summary>
-        /// Authorises a request ensuring the SID is present in the URL to
-        /// prevent undesired operation of the account panel for users.
-        /// </summary>
-        public static void AuthoriseRequestSid(Core core)
+        public static bool AuthorisedRequest(Core core)
         {
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
+            if (!core.Session.IsLoggedIn)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrEmpty(core.Http.Query["nvid"]))
+            {
+                SelectQuery query = new SelectQuery(typeof(Notification));
+                query.AddFields("notification_primitive_id");
+                query.AddFields("notification_primitive_type_id");
+                query.AddCondition("notification_verification_string", core.Http.Query["nvid"]);
+                query.AddCondition("notification_primitive_id", core.Session.LoggedInMember.Id);
+                query.AddCondition("notification_primitive_type_id", ItemType.GetTypeId(typeof(User)));
+
+                if (core.Db.Query(query).Rows.Count == 0)
+                {
+                    return false;
+                }
+                else
+                {
+                    // This is OK
+                    return true;
+                }
+            }
+
             if (core.Http.Query["sid"] != core.Session.SessionId)
             {
                 if (string.IsNullOrEmpty(core.Http.Query["sid"]))
                 {
-                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
-                    return;
+                    return false;
                 }
 
                 SelectQuery query = new SelectQuery("user_sessions");
@@ -546,9 +566,27 @@ namespace BoxSocial.Internals
 
                 if (core.Db.Query(query).Rows.Count == 0)
                 {
-                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
-                    return;
+                    return false;
                 }
+            }
+
+            return true;
+        }
+
+        public bool AuthorisedRequest()
+        {
+            return AuthorisedRequest(core);
+        }
+
+        /// <summary>
+        /// Authorises a request ensuring the SID is present in the URL to
+        /// prevent undesired operation of the account panel for users.
+        /// </summary>
+        public static void AuthoriseRequestSid(Core core)
+        {
+            if (!AuthorisedRequest(core))
+            {
+                core.Display.ShowMessage("Unauthorised", "You are unauthorised to do this action.");
             }
         }
 

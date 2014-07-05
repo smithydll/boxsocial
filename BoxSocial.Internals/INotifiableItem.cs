@@ -44,5 +44,10 @@ namespace BoxSocial.Internals
         Dictionary<string, string> GetNotificationActions(string verb);
 
         string GetNotificationActionUrl(string action);
+
+        string Title
+        {
+            get;
+        }
     }
 }

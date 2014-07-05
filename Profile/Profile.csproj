@@ -153,7 +153,6 @@
     </Content>
     <Content Include="templates\account_cover_photo.html" />
     <Content Include="templates\account_group_cover_photo.html" />
-    <Content Include="templates\email_status_comment.html" />
     <Content Include="templates\poststatusmessage.html" />
     <Content Include="templates\todayfriendpanel.html" />
     <Content Include="templates\viewfeed.html" />

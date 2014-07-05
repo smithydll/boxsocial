@@ -551,28 +551,6 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE email_header.html --&gt;
-        ///
-        ///&lt;p&gt;Hello {TO_NAME},&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{FROM_NAME} has commented on an event you&apos;re subscribed to.&lt;/p&gt;
-        ///
-        ///&lt;p&gt;{COMMENT}&lt;/p&gt;
-        ///
-        ///&lt;p&gt;&lt;a href=&quot;{U_VIEW_EVENT}&quot;&gt;View event.&lt;/a&gt;&lt;/p&gt;
-        ///
-        ///&lt;p&gt;The {SITE_TITLE} Team&lt;/p&gt;
-        ///
-        ///&lt;!-- INCLUDE notification_footer.html --&gt;
-        ///&lt;!-- INCLUDE email_footer.html --&gt;.
-        /// </summary>
-        internal static string email_status_comment {
-            get {
-                return ResourceManager.GetString("email_status_comment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;script type=&quot;text/javascript&quot;&gt;
         ///&lt;!--
         ///    $(document).ready(function () {

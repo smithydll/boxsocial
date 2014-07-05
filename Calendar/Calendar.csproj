@@ -132,7 +132,6 @@
     <Content Include="templates\account_calendar_event_new.html" />
     <Content Include="templates\account_calendar_manage.html" />
     <Content Include="templates\account_calendar_task_new.html" />
-    <Content Include="templates\email_event_comment.html" />
     <Content Include="templates\postevent.html" />
     <Content Include="templates\todayupcommingevents.mobile.html" />
     <Content Include="templates\todaymonthpanel.html" />
@@ -167,7 +166,6 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="resources\calendar.svg" />
-    <Content Include="templates\email_event_invite.html" />
     <Content Include="templates\user_event_notification.html" />
   </ItemGroup>
   <ItemGroup>

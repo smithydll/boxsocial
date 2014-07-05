@@ -72,7 +72,6 @@ namespace BoxSocial.Applications.Calendar
 
         void AccountCalendarEventInvite_StatusChanged(object sender, ModuleModeEventArgs e)
         {
-            //RedirectSid();
             AuthoriseRequestSid();
 
             long eventId = core.Functions.RequestLong("id", 0);
@@ -143,7 +142,18 @@ namespace BoxSocial.Applications.Calendar
                 db.Query(uEventQuery);
 
                 SetRedirectUri(calendarEvent.Uri);
-                core.Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");
+                switch (e.Mode)
+                {
+                    case "accept":
+                        core.Display.ShowMessage("Invitation Accepted", "You have accepted the invitation to this event.");
+                        break;
+                    case "maybe":
+                        core.Display.ShowMessage("Invitation Acknowledged", "You have indicated you may go to this event.");
+                        break;
+                    case "reject":
+                        core.Display.ShowMessage("Invitation Accepted", "You have rejected the invitation to this event.");
+                        break;
+                }
                 return;
             }
             else

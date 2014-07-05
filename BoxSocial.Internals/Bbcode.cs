@@ -44,6 +44,7 @@ namespace BoxSocial.Internals
         ShowFlash = 0x02,
         ShowVideo = 0x04,
         ShowAudio = 0x08,
+        FullInternalUris = 0x10,
     }
 
     public enum BbcodeParseMode : byte
@@ -677,30 +678,55 @@ namespace BoxSocial.Internals
 
         public string Parse(string input, bool appendP, string id, string styleClass)
         {
-            return Parse(input, null, appendP, id, styleClass);
+            return Parse(input, null, appendP, id, styleClass, false);
+        }
+
+        public string Parse(string input, bool appendP, string id, string styleClass, bool fullInternalUrls)
+        {
+            return Parse(input, null, appendP, id, styleClass, fullInternalUrls);
         }
 
         public string Parse(string input, User viewer)
         {
-            return Parse(input, viewer, null);
+            return Parse(input, viewer, null, false);
         }
 
         public string Parse(string input, User viewer, bool appendP, string id, string styleClass)
         {
-            return Parse(input, viewer, null, appendP, id, styleClass);
+            return Parse(input, viewer, null, appendP, id, styleClass, false);
+        }
+
+        public string Parse(string input, User viewer, bool appendP, string id, string styleClass, bool fullInternalUrls)
+        {
+            return Parse(input, viewer, null, appendP, id, styleClass, fullInternalUrls);
         }
 
         public string Parse(string input, User viewer, Primitive postOwner)
         {
-            return Parse(input, viewer, postOwner, false, string.Empty, string.Empty, BbcodeParseMode.Normal);
+            return Parse(input, viewer, postOwner, false, string.Empty, string.Empty, BbcodeParseMode.Normal, false);
+        }
+
+        public string Parse(string input, User viewer, Primitive postOwner, bool fullInternalUrls)
+        {
+            return Parse(input, viewer, postOwner, false, string.Empty, string.Empty, BbcodeParseMode.Normal, fullInternalUrls);
         }
 
         public string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass)
         {
-            return Parse(input, viewer, postOwner, appendP, id, styleClass, BbcodeParseMode.Normal);
+            return Parse(input, viewer, postOwner, appendP, id, styleClass, BbcodeParseMode.Normal, false);
+        }
+
+        public string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass, bool fullInternalUrls)
+        {
+            return Parse(input, viewer, postOwner, appendP, id, styleClass, BbcodeParseMode.Normal, fullInternalUrls);
         }
 
         private string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass, BbcodeParseMode mode)
+        {
+            return Parse(input, viewer, postOwner, appendP, id, styleClass, mode, false);
+        }
+
+        private string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass, BbcodeParseMode mode, bool fullInternalUrls)
         {
             if (string.IsNullOrEmpty(input))
             {
@@ -720,6 +746,11 @@ namespace BoxSocial.Internals
             if (viewer != null)
             {
                 options = viewer.UserInfo.GetUserBbcodeOptions;
+            }
+
+            if (fullInternalUrls)
+            {
+                options = options | BbcodeOptions.FullInternalUris;
             }
 
             long start = DateTime.Now.Ticks;
@@ -1846,19 +1877,33 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (e.Attributes.HasAttributes())
                     {
-                        if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
+                        if ((e.Options & BbcodeOptions.FullInternalUris) == BbcodeOptions.FullInternalUris)
                         {
-                            e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                            e.PrefixText = "<a href=\"" + core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(e.Attributes.GetAttribute("default"))) + "\">";
                         }
                         else
                         {
-                            e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                            if (e.Attributes.HasAttribute("sid") && e.Attributes.GetAttribute("sid").ToLower() == "true")
+                            {
+                                e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default"), true) + "\">";
+                            }
+                            else
+                            {
+                                e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Attributes.GetAttribute("default")) + "\">";
+                            }
                         }
                         e.SuffixText = "</a>";
                     }
                     else
                     {
-                        e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Contents) + "\">";
+                        if ((e.Options & BbcodeOptions.FullInternalUris) == BbcodeOptions.FullInternalUris)
+                        {
+                            e.PrefixText = "<a href=\"" + core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(e.Contents)) + "\">";
+                        }
+                        else
+                        {
+                            e.PrefixText = "<a href=\"" + core.Hyperlink.AppendSid(e.Contents) + "\">";
+                        }
                         e.SuffixText = "</a>";
                     }
                     break;
@@ -2617,8 +2662,16 @@ namespace BoxSocial.Internals
                                 if ((!e.Attributes.HasAttribute("link")) || ( e.Attributes.HasAttribute("link") &&
                                 e.Attributes.GetAttribute("link") == "true"))
                                 {
-                                    e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
-                                        userUser.DisplayNameOwnership, userUser.Uri, userUser.Id);
+                                    if ((e.Options & BbcodeOptions.FullInternalUris) == BbcodeOptions.FullInternalUris)
+                                    {
+                                        e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                            userUser.DisplayNameOwnership, core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(userUser.Uri)), userUser.Id);
+                                    }
+                                    else
+                                    {
+                                        e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                            userUser.DisplayNameOwnership, userUser.Uri, userUser.Id);
+                                    }
                                     e.SuffixText = string.Empty;
                                 }
                                 else
@@ -2632,8 +2685,16 @@ namespace BoxSocial.Internals
                                 if ((!e.Attributes.HasAttribute("link")) || (e.Attributes.HasAttribute("link") &&
                                 e.Attributes.GetAttribute("link") == "true"))
                                 {
-                                    e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
-                                        userUser.DisplayName, userUser.Uri, userUser.Id);
+                                    if ((e.Options & BbcodeOptions.FullInternalUris) == BbcodeOptions.FullInternalUris)
+                                    {
+                                        e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                            userUser.DisplayName, core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(userUser.Uri)), userUser.Id);
+                                    }
+                                    else
+                                    {
+                                        e.PrefixText = string.Format("<a href=\"{1}\" class=\"username-card\" bs-uid=\"{2}\">{0}</a>",
+                                            userUser.DisplayName, userUser.Uri, userUser.Id);
+                                    }
                                     e.SuffixText = string.Empty;
                                 }
                                 else
@@ -2655,47 +2716,47 @@ namespace BoxSocial.Internals
 
         public string Flatten(string input)
         {
-            return Parse(input, null, null, false, null, null, BbcodeParseMode.Flatten);
+            return Parse(input, null, null, false, null, null, BbcodeParseMode.Flatten, true);
         }
 
         public string Flatten(string input, User viewer)
         {
-            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.Flatten);
+            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.Flatten, true);
         }
 
         public string Flatten(string input, User viewer, Primitive postOwner)
         {
-            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.Flatten);
+            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.Flatten, true);
         }
 
         public string StripTags(string input)
         {
-            return Parse(input, null, null, false, null, null, BbcodeParseMode.StripTags);
+            return Parse(input, null, null, false, null, null, BbcodeParseMode.StripTags, true);
         }
 
         public string StripTags(string input, User viewer)
         {
-            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.StripTags);
+            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.StripTags, true);
         }
 
         public string StripTags(string input, User viewer, Primitive postOwner)
         {
-            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.StripTags);
+            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.StripTags, true);
         }
 
         public string Tldr(string input)
         {
-            return Parse(input, null, null, false, null, null, BbcodeParseMode.Tldr);
+            return Parse(input, null, null, false, null, null, BbcodeParseMode.Tldr, false);
         }
 
         public string Tldr(string input, User viewer)
         {
-            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.Tldr);
+            return Parse(input, viewer, null, false, null, null, BbcodeParseMode.Tldr, false);
         }
 
         public string Tldr(string input, User viewer, Primitive postOwner)
         {
-            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.Tldr);
+            return Parse(input, viewer, postOwner, false, null, null, BbcodeParseMode.Tldr, false);
         }
     }
 

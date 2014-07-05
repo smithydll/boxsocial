@@ -245,40 +245,25 @@ namespace BoxSocial.Applications.Mail
             List<long> recipientIds = new List<long>();
             foreach (MessageRecipient user in recipients)
             {
-                bool incrementFolderCount = false;
-                switch (user.RecipientType)
+                if (user.UserId == sender.Id)
                 {
-                    case RecipientType.Sender:
-                        folder = MailFolder.GetFolder(core, FolderTypes.Outbox, user);
-                        MessageRecipient.Create(core, newItem, user, RecipientType.To, folder);
-                        incrementFolderCount = true;
-                        recipientIds.Add(user.UserId);
-                        break;
-                    default:
-                        folder = MailFolder.GetFolder(core, FolderTypes.Inbox, user);
-
-                        if (user.UserId == sender.Id)
-                        {
-                            MessageRecipient.Create(core, newItem, user, RecipientType.Sender, folder);
-                        }
-                        else
-                        {
-                            MessageRecipient.Create(core, newItem, user, user.RecipientType, folder);
-                            recipientIds.Add(user.UserId);
-                        }
-                        incrementFolderCount = true;
-                        break;
+                    folder = MailFolder.GetFolder(core, FolderTypes.Outbox, user);
+                    MessageRecipient.Create(core, newItem, user, RecipientType.Sender, folder);
+                }
+                else
+                {
+                    folder = MailFolder.GetFolder(core, FolderTypes.Inbox, user);
+                    MessageRecipient.Create(core, newItem, user, RecipientType.To, folder);
+                    recipientIds.Add(user.UserId);
                 }
 
-                if (incrementFolderCount)
-                {
-                    uquery = new UpdateQuery(typeof(MailFolder));
-                    uquery.AddCondition("folder_id", folder.Id);
-                    uquery.AddField("folder_messages", new QueryOperation("folder_messages", QueryOperations.Addition, 1));
+                uquery = new UpdateQuery(typeof(MailFolder));
+                uquery.AddCondition("folder_id", folder.Id);
+                uquery.AddField("folder_messages", new QueryOperation("folder_messages", QueryOperations.Addition, 1));
 
-                    core.Db.Query(uquery);
+                core.Db.Query(uquery);
 
-                }
+
             }
 
             if (recipientIds.Count > 0)

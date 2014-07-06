@@ -45,7 +45,9 @@ namespace BoxSocial.Applications.Calendar
         [DataField("event_views")]
         protected long views;
         [DataField("event_attendees")]
-        protected long attendees;
+        protected long attendeeCount;
+        [DataField("event_maybes")]
+        protected long maybeCount;
         [DataField("event_item", DataFieldKeys.Index)]
         protected ItemKey ownerKey;
         [DataField("user_id")]
@@ -115,7 +117,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return attendees;
+                return attendeeCount;
             }
         }
 

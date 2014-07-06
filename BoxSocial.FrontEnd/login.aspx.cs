@@ -56,7 +56,7 @@ namespace BoxSocial.FrontEnd
 					{
 						record = new DnsRecord(core, domain);
 					}
-                    if (Request.QueryString["mode"] == "sign-out")
+                    if (core.Http["mode"] == "sign-out")
                     {
 						if (record != null)
 						{
@@ -97,7 +97,7 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            if (Request.QueryString["mode"] == "sign-out")
+            if (core.Http["mode"] == "sign-out")
             {
                 string sessionId = Request.QueryString["sid"];
 
@@ -118,7 +118,7 @@ namespace BoxSocial.FrontEnd
             }
             if (Request.Form["submit"] != null)
             {
-                if (Request.QueryString["mode"] == "reset-password")
+                if (core.Http["mode"] == "reset-password")
                 {
                     string email = Request.Form["email"];
 
@@ -349,7 +349,7 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            if (Request.QueryString["mode"] == "reset-password")
+            if (core.Http["mode"] == "reset-password")
             {
                 template.Parse("S_POST", core.Hyperlink.AppendSid("/sign-in/?mode=reset-password", true));
 

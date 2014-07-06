@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Calendar
                 UpdateQuery uQuery = new UpdateQuery(typeof(EventInvite));
 
                 UpdateQuery uEventQuery = new UpdateQuery(typeof(Event));
-                uEventQuery.AddCondition("event_id", calendarEvent.EventId);
+                uEventQuery.AddCondition("event_id", eventId);
 
                 switch (e.Mode)
                 {
@@ -96,9 +96,15 @@ namespace BoxSocial.Applications.Calendar
                         {
                             case EventAttendance.Yes:
                                 break;
-                            default:
-                                uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Addition, 1));
+                            case EventAttendance.Maybe:
+                                uEventQuery.AddField("event_maybes", new QueryOperation("event_maybes", QueryOperations.Subtraction, 1));
                                 break;
+                            default:
+                                break;
+                        }
+                        if (invite.InviteStatus != EventAttendance.Yes)
+                        {
+                            uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Addition, 1));
                         }
                         break;
                     case "reject":
@@ -109,6 +115,9 @@ namespace BoxSocial.Applications.Calendar
                         {
                             case EventAttendance.Yes:
                                 uEventQuery.AddField("event_attendees", new QueryOperation("event_attendees", QueryOperations.Subtraction, 1));
+                                break;
+                            case EventAttendance.Maybe:
+                                uEventQuery.AddField("event_maybes", new QueryOperation("event_maybes", QueryOperations.Subtraction, 1));
                                 break;
                             default:
                                 break;
@@ -125,6 +134,10 @@ namespace BoxSocial.Applications.Calendar
                                 break;
                             default:
                                 break;
+                        }
+                        if (invite.InviteStatus != EventAttendance.Maybe)
+                        {
+                            uEventQuery.AddField("event_maybes", new QueryOperation("event_maybes", QueryOperations.Addition, 1));
                         }
                         break;
                     default:
@@ -151,7 +164,7 @@ namespace BoxSocial.Applications.Calendar
                         core.Display.ShowMessage("Invitation Acknowledged", "You have indicated you may go to this event.");
                         break;
                     case "reject":
-                        core.Display.ShowMessage("Invitation Accepted", "You have rejected the invitation to this event.");
+                        core.Display.ShowMessage("Invitation Rejected", "You have rejected the invitation to this event.");
                         break;
                 }
                 return;

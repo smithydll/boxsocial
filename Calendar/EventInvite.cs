@@ -31,10 +31,10 @@ namespace BoxSocial.Applications.Calendar
 {
     public enum EventAttendance : byte
     {
-        Unknown = 0,
-        Yes = 1,
-        Maybe = 2,
-        No = 3,
+        Unknown = 0x00,
+        Yes = 0x01,
+        Maybe = 0x02,
+        No = 0x03,
     }
 
     [DataTable("event_invites")]
@@ -149,7 +149,7 @@ namespace BoxSocial.Applications.Calendar
             try
             {
                 SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
-                query.AddCondition("event_id", EventId);
+                query.AddCondition("event_id", eventId);
                 query.AddCondition("item_id", invitee.Id);
                 query.AddCondition("item_type_id", invitee.TypeId);
 

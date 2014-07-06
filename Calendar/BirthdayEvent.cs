@@ -59,7 +59,7 @@ namespace BoxSocial.Applications.Calendar
             this.subject = user.TitleNameOwnership + " birthday";
             this.description = string.Empty;
             this.views = 0;
-            this.attendees = 0;
+            this.attendeeCount = 0;
             this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.userId = user.Id;
             this.startTimeRaw =  tz.GetUnixTimeStamp(new DateTime(year, user.Profile.DateOfBirth.Month, user.Profile.DateOfBirth.Day, 0, 0, 0));

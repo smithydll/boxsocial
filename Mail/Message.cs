@@ -150,6 +150,11 @@ namespace BoxSocial.Applications.Mail
             return tz.DateTimeFromMysql(messageTime);
         }
 
+        public DateTime GetLastMessageDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(messageTimeLast);
+        }
+
         public User Sender
         {
             get

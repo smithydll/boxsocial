@@ -11,56 +11,14 @@
 <!--
     $(document).ready(function () {
         $('#posts').css("overflow-y", "scroll").css("float", "none").css("height", $(window).height() - $('#posts').offset().top - $('#foot').outerHeight(true) - $('.mail-reply-form').outerHeight(true) - 10).scrollTop($('#posts').prop("scrollHeight"));
+
+
     });
 -->
 </script>
 
 <ul id="posts">
-  <!-- BEGIN post_list -->
-  <li>
-  	<div class="post">
-      <div class="postbody">
-        <!-- IF post_list.SUBJECT -->
-  	    <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
-        <!-- ENDIF -->
-  	<p>
-    <!-- IF post_list.IS_READ -->
-    <img src="/images/posticon_read_sml.png" alt="Read" />
-    <!-- ELSE -->
-    <img src="/images/posticon_unread_sml.png" alt="New" />
-    <!-- ENDIF -->
-    by <strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong> on {post_list.POST_TIME}</p>
-      <div class="inner">
-      	<p>{post_list.MESSAGE}</p>
-      	<!-- IF post_list.SIGNATURE -->
-      	<p>____________________<br/>{post_list.SIGNATURE}</p>
-      	<!-- ENDIF -->
-      </div>
-      </div>
-    <dl class="profile">
-      <dt>
-      	<p><strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong></p>
-      	<!-- IF post_list.USER_RANK -->
-      	<p>{post_list.USER_RANK}</p>
-      	<!-- ENDIF -->
-        <!-- IF $_IS_MOBILE -->
-        <!-- IF post_list.USER_ICON -->
-        <div class="comment-disp-pic">
-          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
-        </div>
-        <!-- ENDIF -->
-        <!-- ELSE -->
-        <!-- IF post_list.USER_ICON -->
-        <div class="comment-disp-pic">
-          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
-        </div>
-        <!-- ENDIF -->
-        <!-- ENDIF -->
-      </dt>
-    </dl>
-    </div>
-  </li>
-  <!-- END post_list -->
+<!-- INCLUDE pane_message -->
 </ul>
 
 <form action="{U_ACCOUNT}" method="post" class="mail-reply-form">
@@ -75,8 +33,8 @@
 		</div>
 		<!-- ENDIF -->
         <div class="comment-text">
-	        <textarea id="comment-text-{ITEM_ID}" class="comment-textarea" name="message" style="width: 100%; height: 56px;" rows="3" cols="75" onfocus="$(this).css('height', '78px'); $(this).siblings('.comment-buttons').show(); /*$(this).siblings('.comment-buttons')[0].scrollIntoView();*/"></textarea>
-	        <p style="text-align: right; display: none;" class="comment-buttons"><input type="submit" id="save" name="save" value="Reply" id="comment-submit-{ITEM_ID}" class="comment-submit" /> <!--onclick="return SubmitComment({ITEM_ID},{ITEM_TYPE},0,'{COMMENT_SORT}', $(this).parent().siblings('.comment-textarea').val());"--> 
+	        <textarea id="message-text" class="comment-textarea" name="message" style="width: 100%; height: 56px;" rows="3" cols="75" onfocus="$(this).css('height', '78px'); $(this).siblings('.comment-buttons').show(); /*$(this).siblings('.comment-buttons')[0].scrollIntoView();*/"></textarea>
+	        <p style="text-align: right; display: none;" class="comment-buttons"><input type="submit" id="save" name="save" value="Reply" id="comment-submit-{ITEM_ID}" class="comment-submit" onclick="return SendMessage({S_ID}, $(this).parent().siblings('.comment-textarea').val());" />
             <input type="reset" value="Cancel" onclick="$(this).parent().hide(); $(this).parent().siblings('.comment-textarea').css('height', '56px');" /></p>
 		<input type="hidden" name="module" value="mail" />
 		<input type="hidden" name="sub" value="compose" />

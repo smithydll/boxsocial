@@ -61,7 +61,21 @@ namespace BoxSocial.Applications.Mail.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to 
+        ///function SendMessage(id, text) {
+        ///    csort = sort;
+        ///    cid = id;
+        ///    if (text == null) {
+        ///        text = $(&quot;#comment-text-&quot; + id).val();
+        ///    }
+        ///    return PostToPage(SubmitedMessage, &quot;account/mail/compose&quot;, $(&apos;.comments-for-&apos; + type + &apos;-&apos; + id), { ajax: &quot;true&quot;, item: id, type: type, comment: text });
+        ///}
+        ///
+        ///function SubmitedMessage(r, e) {
+        ///    var nli = $(&apos;&lt;div&gt;&apos;).html(r[&apos;message&apos;]);
+        ///    var n = e.children(&quot;.comment-list&quot;);
+        ///    if (csort == &apos;desc&apos; &amp;&amp; n.children().length &gt; 0) {
+        ///        nli.insertBef [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string script {
             get {

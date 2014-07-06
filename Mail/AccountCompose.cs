@@ -215,6 +215,14 @@ namespace BoxSocial.Applications.Mail
         {
             AuthoriseRequestSid();
 
+            bool ajax = false;
+
+            try
+            {
+                ajax = bool.Parse(core.Http["ajax"]);
+            }
+            catch { }
+
             long messageId = core.Functions.FormLong("id", 0);
             string text = core.Http.Form["message"];
 
@@ -222,8 +230,28 @@ namespace BoxSocial.Applications.Mail
 
             Message message = Message.Reply(core, LoggedInMember, threadStart, text);
 
-            SetRedirectUri(BuildUri("inbox"));
-            core.Display.ShowMessage("Message sent", "Your mail message has been sent.");
+            if (ajax)
+            {
+                Template template = new Template(core.CallingApplication.Assembly, "pane_message");
+
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
+
+                AccountMessage.RenderMessage(core, template, message);
+
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                returnValues.Add("update", "true");
+                returnValues.Add("message", message.Text);
+                returnValues.Add("template", template.ToString());
+
+                core.Ajax.SendDictionary("replySent", returnValues);
+            }
+            else
+            {
+                SetRedirectUri(BuildUri("inbox"));
+                core.Display.ShowMessage("Message sent", "Your mail message has been sent.");
+            }
         }
 
         private void SaveOrSend(bool draft)

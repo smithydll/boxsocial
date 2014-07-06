@@ -110,13 +110,13 @@ namespace BoxSocial.Applications.Mail
 
                 if (messages.Count < 3)
                 {
-                    RenderMessage(threadStart);
+                    RenderMessage(core, template, threadStart);
                 }
 
                 // IF NOT DELETED THEN
                 foreach (Message message in messages)
                 {
-                    RenderMessage(message);
+                    RenderMessage(core, template, message);
                 }
 
                 threadStart.MarkRead();
@@ -129,7 +129,7 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
-        private void RenderMessage(Message message)
+        internal static void RenderMessage(Core core, Template template, Message message)
         {
             MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, message.Id);
 

@@ -224,7 +224,7 @@ namespace BoxSocial.Applications.Mail
                         }
                         for (int i = 0; i < recipients.Count; i++)
                         {
-                            if (recipients[i].RecipientType == RecipientType.To)
+                            if (recipients[i].UserId != LoggedInMember.Id)
                             {
                                 VariableCollection recipientVariableCollection = messageVariableCollection.CreateChild("recipients");
 
@@ -253,6 +253,7 @@ namespace BoxSocial.Applications.Mail
                         break;
                 }
                 messageVariableCollection.Parse("DATE", core.Tz.DateTimeToString(message.GetSentDate(core.Tz)));
+                messageVariableCollection.Parse("LAST_DATE", core.Tz.DateTimeToString(message.GetLastMessageDate(core.Tz)));
             }
 
             Dictionary<string, string> a = new Dictionary<string,string>();

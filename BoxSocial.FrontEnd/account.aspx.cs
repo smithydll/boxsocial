@@ -251,9 +251,9 @@ namespace BoxSocial.FrontEnd
                     parentModulesVariableCollection = modulesVariableCollection;
                     if (ae != null && ae.HasJavascript)
                     {
-                        VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+                        //VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
 
-                        javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
+                        //javaScriptVariableCollection.Parse("URI", @"/scripts/" + ae.Key + @".js");
                     }
                 }
             }

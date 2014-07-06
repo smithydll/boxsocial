@@ -28,11 +28,6 @@
     <li id="inbox-head">
 					<dl class="title-row">
 						<dt><div>&nbsp;</div></dt>
-                        <!-- IF INBOX -->
-						<dd><div>{L_SENDER}</div></dd>
-                        <!-- ELSE -->
-                        <dd><div>{L_TO}</div></dd>
-                        <!-- ENDIF -->
 						<dd><div>{L_DATE}</div></dd>
       </dl>
     </li>
@@ -56,8 +51,7 @@
           </a><br />
           </div>
         </dt>
-        <dd><div><a href="{mail_item.U_SENDER}">{mail_item.SENDER}</a></div></dd>
-        <dd><div>{mail_item.DATE}</div></dd>
+        <dd><div>{mail_item.LAST_DATE}</div></dd>
       </dl>
     </li>
 <!-- END mail_item -->

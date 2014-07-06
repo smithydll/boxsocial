@@ -1,0 +1,180 @@
+﻿ul#inbox-messages dd div {
+	border-left: 1px solid #CCCCCC;
+}
+
+ul#inbox-messages li#inbox-head dd div {
+	border: none !important;
+}
+
+ul#inbox-messages {
+	list-style: none;
+	padding: 0px;
+	margin: 5px;
+	border: solid 2px #333333;
+}
+
+ul#inbox-messages li {
+	display: block;
+	list-style-type: none;
+	margin: 0;
+	border-bottom: 1px solid #CCCCCC;
+}
+
+ul#inbox-messages li div {
+	margin: 5px;
+}
+
+ul#inbox-messages li#inbox-head {
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #333333;
+}
+
+ul#inbox-messages dl {
+	position: relative;
+	padding: 0;
+	margin: 0;
+}
+
+ul#inbox-messages dl dt {
+	display: block;
+	float: left;
+	width: 68%;
+	padding: 0;
+	margin: 0;
+}
+
+ul#inbox-messages dl dd {
+	display: block;
+	float: left;
+	width: 16%;
+	text-align: center;
+	padding: 0;
+	margin: 0;
+}
+
+/* Simple fix so forum and topic lists always have a min-height set, even in IE6
+	From http://www.dustindiaz.com/min-height-fast-hack */
+dl.icon {
+	min-height: 35px;
+	height: auto !important;
+	height: 35px;
+	height: 1%;
+	overflow: hidden;
+
+}
+
+dl.icon dt div {
+	padding-left: 45px;		
+	background-repeat: no-repeat;
+	background-position: 10px 50%;
+	font-weight: normal;
+	text-align: left;
+}
+
+dl.title-row {
+	min-height: 0px;
+	height: auto !important;
+	height: 0px;
+	height: 1%;
+	overflow: hidden;
+}
+
+ul#posts {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	float: left;
+	width: 100%;
+}
+
+ul#posts li {
+	/*border: solid 2px #333333;*/
+	list-style: none;
+	margin: 0px;
+	margin-bottom: 3px;
+	
+}
+
+ul#posts li h3 {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1.2em;
+}
+
+.post {
+	background-color: #ffffff;
+	padding: 5px;
+	border-radius: 5px;
+}
+
+.postbody {
+	float: left;
+	clear: both;
+	width: 75%;
+}
+
+.postbody .inner {
+	padding: 5px;
+}
+
+ul#posts dl.profile {
+	float: right;
+	display: inline;
+	width: 25%;
+	border-left: solid 1px #FFFFFF;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+ul#posts dl.profile p {
+    padding-top: 0;
+}
+
+ul#posts dl.profile dd {
+	margin: 0;
+	padding: 0;
+}
+
+ul#posts div.top {
+	clear: both;
+	text-align: right;
+}
+
+/* colours */
+ul#posts .corners-top, ul#posts .corners-top > span {
+    background-image: url('/images/corners-top-eeeeee-18-9.png');
+}
+
+ul#posts .corners-top > span + span, ul#posts .corners-bottom > span + span {
+    background-color: #EEEEEE;
+}
+
+ul#posts .corners-bottom, ul#posts .corners-bottom > span {
+    background-image: url('/images/corners-bottom-eeeeee-18-9.png');
+}
+
+ul#posts div.post {
+    background-color: #EEEEEE;
+}
+
+ul.list li.list-item.mail > a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+ul.list li.list-item.mail count {
+    line-height: 35px;
+}
+
+ul.list li.list-item.mail {
+    padding-left: 30px;
+}
+
+ul.list li.list-item.mail img {
+    position: absolute;
+    left: 5px;
+    top: 10px;
+}

@@ -58,7 +58,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return "Internal Mail Application";
+                return "Internal Messaging Application";
             }
         }
 
@@ -106,8 +106,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                //return Properties.Resources.script;
-				return null;
+                return Properties.Resources.script;
             }
         }
 

@@ -98,12 +98,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="resources\mail.js" />
+    <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
     <Content Include="templates\account_compose.html" />
     <Content Include="templates\account_mailbox.html" />
-    <Content Include="templates\account_view_conversation.html" />
     <Content Include="templates\account_view_message.html" />
+    <Content Include="templates\pane.message.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="languages\Mail.en.resx" />

@@ -280,7 +280,14 @@ namespace BoxSocial.IO
         {
             get
             {
-                return current.Request.IsSecureConnection;
+                if (current != null && current.Request != null)
+                {
+                    return current.Request.IsSecureConnection;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

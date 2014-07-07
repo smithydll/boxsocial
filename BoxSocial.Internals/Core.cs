@@ -277,7 +277,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (HttpContext.Current != null && http == null)
+                if (HttpContext.Current != null && HttpContext.Current.Request != null && http == null)
                 {
                     http = new Http();
                 }
@@ -921,7 +921,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return page.IsMobile;
+                if (page != null)
+                {
+                    return page.IsMobile;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

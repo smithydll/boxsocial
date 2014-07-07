@@ -39,6 +39,7 @@ namespace BoxSocial.FrontEnd
 {
     public partial class Global : System.Web.HttpApplication
     {
+        private static Object workerLock = new object();
         protected static BackgroundWorker worker = new BackgroundWorker();
 
         private static Object queueLock = new object();
@@ -96,16 +97,30 @@ namespace BoxSocial.FrontEnd
                 }
 
                 // Starts the queue processor
-                worker.WorkerReportsProgress = true;
+                worker.WorkerReportsProgress = false;
                 worker.WorkerSupportsCancellation = true;
                 worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                 worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-                worker.RunWorkerAsync();
+                worker.RunWorkerAsync(HttpContext.Current);
             }
         }
 
         protected void worker_DoWork(object sender, DoWorkEventArgs e)
         {
+            int wait = 15;
+            for (int i = 0; i < wait * 10; i++)
+            {
+                // The sleep should happen on the worker thread rather than the application thread
+                System.Threading.Thread.Sleep(100);
+                if (e.Cancel)
+                {
+                    // Poll the thread every [wait] seconds to work out if the worker should be cancelled
+                    return;
+                }
+            }
+
+            HttpContext.Current = (HttpContext)e.Argument;
+
             Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
                 WebConfigurationManager.AppSettings["mysql-password"],
                 WebConfigurationManager.AppSettings["mysql-database"],
@@ -198,9 +213,8 @@ namespace BoxSocial.FrontEnd
 
             if (worker != null)
             {
-                if (!worker.CancellationPending)
+                if ((!worker.CancellationPending) && (!e.Cancelled))
                 {
-                    System.Threading.Thread.Sleep(15000);
                     worker.RunWorkerAsync();
                 }
                 else
@@ -213,9 +227,12 @@ namespace BoxSocial.FrontEnd
 
         protected void Application_End(object sender, EventArgs e)
         {
-            if (worker != null)
+            lock (workerLock)
             {
-                worker.CancelAsync();
+                if (worker != null && (!worker.CancellationPending))
+                {
+                    worker.CancelAsync();
+                }
             }
         }
 

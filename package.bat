@@ -80,7 +80,7 @@ copy "%1"BoxSocial.Install\bin\Debug\BoxSocial.Install.pdb "%1"Package\
 
 md "%1"Package\GDK
 
-copy "%1"BoxSocial\GDK "%1"Package\GDK
+copy "%1"GDK\*.svg "%1"Package\GDK
 
 md "%1"Package\templates
 

@@ -158,8 +158,11 @@ namespace BoxSocial.FrontEnd
                             core.CreateNewSession(core.PrimitiveCache[job.UserId]);
 
                             // Load Application
-                            ApplicationEntry ae = core.GetApplication(job.ApplicationId);
-                            BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                            if (job.ApplicationId > 0)
+                            {
+                                ApplicationEntry ae = core.GetApplication(job.ApplicationId);
+                                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                            }
 
                             // Execute Job
                             if (core.InvokeJob(job))

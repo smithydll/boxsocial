@@ -143,6 +143,7 @@ namespace BoxSocial.IO
             long.TryParse(strings["item_type_id"], out this.itemTypeId);
             long.TryParse(strings["item_id"], out this.itemId);
             this.function = strings["function"];
+            this.body = strings["body"];
         }
 
         internal Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function)

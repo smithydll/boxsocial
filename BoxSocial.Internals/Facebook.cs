@@ -31,6 +31,7 @@ using System.Web;
 using System.Web.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -390,6 +391,67 @@ namespace BoxSocial.Internals
 
                 string responseString = sr.ReadToEnd();
             }
+        }
+
+        public static bool PublishPost(Core core, Job job)
+        {
+            core.LoadUserProfile(job.UserId);
+            User owner = core.PrimitiveCache[job.UserId];
+            ItemKey sharedItemKey = new ItemKey(job.ItemId, job.ItemTypeId);
+            IActionableItem sharedItem = null;
+
+            core.ItemCache.RequestItem(sharedItemKey);
+            try
+            {
+                sharedItem = (IActionableItem)core.ItemCache[sharedItemKey];
+            }
+            catch
+            {
+                try
+                {
+                    sharedItem = (IActionableItem)NumberedItem.Reflect(core, sharedItemKey);
+                    HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + sharedItemKey.ToString());
+                }
+                catch
+                {
+                    return true; // Item is probably deleted, report success to delete from queue
+                }
+            }
+
+            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+            uQuery.AddCondition("info_item_id", sharedItemKey.Id);
+            uQuery.AddCondition("info_item_type_id", sharedItemKey.TypeId);
+
+            try
+            {
+                if (owner.UserInfo.FacebookAuthenticated) // are we still authenticated
+                {
+                    string postDescription = job.Body;
+
+                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
+
+                    FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
+                    FacebookPost post = fb.StatusesUpdate(token, postDescription, sharedItem.Info.ShareUri, owner.UserInfo.FacebookSharePermissions);
+
+                    if (post != null)
+                    {
+                        uQuery.AddField("info_facebook_post_id", post.PostId);
+                    }
+
+                    core.Db.Query(uQuery);
+                }
+            }
+            catch (System.Net.WebException ex)
+            {
+                HttpWebResponse response = (HttpWebResponse)ex.Response;
+                if (response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    return true; // This request cannot succeed, so remove it from the queue
+                }
+                return false; // Failed for other reasons, retry
+            }
+
+            return true; // success
         }
     }
 }

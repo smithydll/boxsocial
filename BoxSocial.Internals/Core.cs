@@ -936,7 +936,14 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return page.Medium;
+                if (page != null)
+                {
+                    return page.Medium;
+                }
+                else
+                {
+                    return Forms.DisplayMedium.Desktop;
+                }
             }
         }
 
@@ -1076,13 +1083,28 @@ namespace BoxSocial.Internals
 
         public bool InvokeJob(Job job)
         {
-            ApplicationEntry ae = GetApplication(job.ApplicationId);
-
-            Application jobApplication = Application.GetApplication(this, AppPrimitives.Any, ae);
-
-            if (jobApplication != null)
+            if (job.ApplicationId == 0)
             {
-                return jobApplication.ExecuteJob(job);
+                switch (job.Function)
+                {
+                    case "publishTweet":
+                        return Twitter.PublishTweet(this, job);
+                    case "publishTumblr":
+                        return Tumblr.PublishPost(this, job);
+                    case "publishFacebook":
+                        return Facebook.PublishPost(this, job);
+                }
+            }
+            else
+            {
+                ApplicationEntry ae = GetApplication(job.ApplicationId);
+
+                Application jobApplication = Application.GetApplication(this, AppPrimitives.Any, ae);
+
+                if (jobApplication != null)
+                {
+                    return jobApplication.ExecuteJob(job);
+                }
             }
 
             return false;

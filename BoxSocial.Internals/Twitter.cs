@@ -31,6 +31,7 @@ using System.Web;
 using System.Web.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -536,6 +537,66 @@ namespace BoxSocial.Internals
             {
                 // ignore response
             }
+        }
+
+        public static bool PublishTweet(Core core, Job job)
+        {
+            core.LoadUserProfile(job.UserId);
+            User owner = core.PrimitiveCache[job.UserId];
+            ItemKey sharedItemKey = new ItemKey(job.ItemId, job.ItemTypeId);
+            IActionableItem sharedItem = null;
+
+            core.ItemCache.RequestItem(sharedItemKey);
+            try
+            {
+                sharedItem = (IActionableItem)core.ItemCache[sharedItemKey];
+            }
+            catch
+            {
+                try
+                {
+                    sharedItem = (IActionableItem)NumberedItem.Reflect(core, sharedItemKey);
+                    HttpContext.Current.Response.Write("<br />Fallback, had to reflect: " + sharedItemKey.ToString());
+                }
+                catch
+                {
+                    return true; // Item is probably deleted, report success to delete from queue
+                }
+            }
+            
+            UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
+            uQuery.AddCondition("info_item_id", sharedItemKey.Id);
+            uQuery.AddCondition("info_item_type_id", sharedItemKey.TypeId);
+
+            try
+            {
+                if (owner.UserInfo.TwitterAuthenticated) // are we still authenticated
+                {
+                    string twitterDescription = job.Body;
+
+                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
+                    Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), sharedItem.PostType, (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + sharedItem.Info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
+
+                    if (tweet != null)
+                    {
+                        uQuery.AddField("info_tweet_id", tweet.Id);
+                        uQuery.AddField("info_tweet_uri", tweet.Uri);
+                    }
+
+                    core.Db.Query(uQuery);
+                }
+            }
+            catch (System.Net.WebException ex)
+            {
+                HttpWebResponse response = (HttpWebResponse)ex.Response;
+                if (response.StatusCode == HttpStatusCode.Forbidden) // https://dev.twitter.com/docs/api/1.1/post/statuses/update
+                {
+                    return true; // This request cannot succeed, so remove it from the queue
+                }
+                return false; // Failed for other reasons, retry
+            }
+
+            return true; // success
         }
     }
 }

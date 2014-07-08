@@ -1205,77 +1205,22 @@ namespace BoxSocial.Internals
 
                         if (publicItem)
                         {
-                            try
+                            if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
                             {
-                                UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
-                                uQuery.AddCondition("info_item_id", sharedItemKey.Id);
-                                uQuery.AddCondition("info_item_type_id", sharedItemKey.TypeId);
-                                if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
-                                {
-                                    string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
+                                string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
-                                    //core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.TypeId, "publish_tweet", twitterDescription));
-
-                                    Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
-                                    Tweet tweet = t.StatusesUpdate(new TwitterAccessToken(owner.UserInfo.TwitterToken, owner.UserInfo.TwitterTokenSecret), sharedItem.PostType, (!string.IsNullOrEmpty(twitterDescription) ? twitterDescription + " " : string.Empty) + info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
-
-                                    if (tweet != null)
-                                    {
-                                        uQuery.AddField("info_tweet_id", tweet.Id);
-                                        uQuery.AddField("info_tweet_uri", tweet.Uri);
-                                    }
-                                }
-
-                                if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
-                                {
-                                    Uri shareUri = new Uri(info.ShareUri);
-                                    Tumblr t = new Tumblr(core.Settings.TumblrApiKey, core.Settings.TumblrApiSecret);
-                                    TumblrPost post = t.StatusesUpdate(new TumblrAccessToken(owner.UserInfo.TumblrToken, owner.UserInfo.TumblrTokenSecret), owner.UserInfo.TumblrHostname, sharedItem.PostType, string.Empty, core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>", info.ShareUri, sharedItem.Data, sharedItem.DataContentType);
-
-                                    if (post != null)
-                                    {
-                                        uQuery.AddField("info_tumblr_post_id", post.Id);
-                                    }
-                                }
-
-                                if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
-                                {
-                                    Facebook fb = new Facebook(core.Settings.FacebookApiAppid, core.Settings.FacebookApiSecret);
-
-                                    FacebookAccessToken token = fb.OAuthAppAccessToken(core, owner.UserInfo.FacebookUserId);
-                                    FacebookPost post = fb.StatusesUpdate(token, description, info.ShareUri, owner.UserInfo.FacebookSharePermissions);
-
-                                    if (post != null)
-                                    {
-                                        uQuery.AddField("info_facebook_post_id", post.PostId);
-                                    }
-                                    
-                                }
-
-                                core.Db.Query(uQuery);
+                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.TypeId, "publishTweet", twitterDescription));
                             }
-                            catch (System.Net.WebException ex)
+
+                            if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
                             {
-                                // If Twitter, Tumblr, or Facebook are overloaded then we can't update twitter
-                                Encoding encode = Encoding.GetEncoding("utf-8");
-                                StreamReader sr = new StreamReader(ex.Response.GetResponseStream(), encode);
+                                Uri shareUri = new Uri(info.ShareUri);
+                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.TypeId, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
+                            }
 
-                                string responseString = sr.ReadToEnd();
-
-                                try
-                                {
-                                    core.Email.SendEmail(System.Web.Configuration.WebConfigurationManager.AppSettings["error-email"], "An HTTP Error occured at " + Hyperlink.Domain, "URL: " + core.Http.RawUrl + "\nLOGGED IN:" + (core.LoggedInMemberId > 0).ToString() + "\nHTTP RESPONSE:\n" + responseString + "\nEXCEPTION THROWN:\n" + ex.ToString());
-                                }
-                                catch
-                                {
-                                    try
-                                    {
-                                        core.Email.SendEmail(System.Web.Configuration.WebConfigurationManager.AppSettings["error-email"], "An HTTP Error occured at " + Hyperlink.Domain, "HTTP RESPONSE:\n" + responseString + "\nEXCEPTION THROWN:\n" + ex.ToString());
-                                    }
-                                    catch
-                                    {
-                                    }
-                                }
+                            if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
+                            {
+                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.TypeId, "publishFacebook", description));
                             }
                         }
                     }

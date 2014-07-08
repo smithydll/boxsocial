@@ -452,6 +452,7 @@ namespace BoxSocial.Internals
 
             long notificationId = core.Db.Query(iQuery);
 
+            core.Db.BeginTransaction();
             UpdateQuery query = new UpdateQuery(typeof(UserInfo));
             query.AddField("user_unread_notifications", new QueryOperation("user_unread_notifications", QueryOperations.Addition, 1));
             query.AddCondition("user_id", receiver.Id);

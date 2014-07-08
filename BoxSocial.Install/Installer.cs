@@ -353,6 +353,7 @@ namespace BoxSocial.Install
             menuItems.Add(new MenuOption("Exit", DoExit));
             menuItems.Add(new MenuOption("Upgrade Permissions", EnterUpgradePermissions));
             menuItems.Add(new MenuOption("Upgrade Pages", EnterUpgradePages));
+            menuItems.Add(new MenuOption("Update Image Resources", EnterUpdateGDK));
 
             ExecuteMenu(menuItems);
         }
@@ -393,6 +394,7 @@ namespace BoxSocial.Install
             Installer.mysqlRootPassword = settings.DatabaseRootPassword;
             Installer.root = settings.RootDirectory;
             Installer.languageRoot = Path.Combine(Installer.root, "language");
+            Installer.imagesRoot = Path.Combine(Installer.root, "images");
         }
 
         static void UpdateBlog()
@@ -498,6 +500,12 @@ namespace BoxSocial.Install
             loadUpdateOptions();
             doUpdate("EnterpriseResourcePlanning");
             InstallLanguage("en", @"EnterpriseResourcePlanning");
+        }
+
+        static void EnterUpdateGDK()
+        {
+            loadUpdateOptions();
+            InstallGDK();
         }
 
         static void EnterUpgradePages()
@@ -1880,6 +1888,7 @@ namespace BoxSocial.Install
             images.Add("background-top-left");
             images.Add("background-top-right");
             images.Add("block-user");
+            images.Add("delete");
             images.Add("move-down");
             images.Add("move-up");
             images.Add("no_picture");

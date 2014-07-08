@@ -72,6 +72,7 @@ namespace BoxSocial.FrontEnd
                     ReturnPermissionGroupList();
                     return;
                 case "embed":
+
                     return;
                 case "twitter":
                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);

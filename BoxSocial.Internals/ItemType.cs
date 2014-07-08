@@ -52,6 +52,8 @@ namespace BoxSocial.Internals
         private bool typeImplementsIViewable;
         [DataField("type_notifiable")]
         private bool typeImplementsINotifiable;
+        [DataField("type_embeddable")]
+        private bool typeImplementsIEmbeddable;
 			
 		public long TypeId
 		{
@@ -138,6 +140,14 @@ namespace BoxSocial.Internals
             get
             {
                 return typeImplementsINotifiable;
+            }
+        }
+
+        public bool Embeddable
+        {
+            get
+            {
+                return typeImplementsIEmbeddable;
             }
         }
 

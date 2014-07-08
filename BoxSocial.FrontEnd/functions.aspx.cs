@@ -20,12 +20,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using BoxSocial.Forms;
 using BoxSocial.Groups;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace BoxSocial.FrontEnd
 {
@@ -72,7 +78,7 @@ namespace BoxSocial.FrontEnd
                     ReturnPermissionGroupList();
                     return;
                 case "embed":
-
+                    ReturnItemEmbedCode();
                     return;
                 case "twitter":
                     Twitter t = new Twitter(core.Settings.TwitterApiKey, core.Settings.TwitterApiSecret);
@@ -186,6 +192,107 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidUserException)
             {
+            }
+        }
+
+        private void ReturnItemEmbedCode()
+        {
+            string key = core.Http["key"]; // TODO: retrieve
+            string format = core.Http["format"];
+
+            ItemInfo info = new ItemInfo(core, key);
+            IEmbeddableItem item = null;
+
+            if (info.InfoKey.ImplementsEmbeddable)
+            {
+                core.ItemCache.RequestItem(info.InfoKey);
+                try
+                {
+                    item = (IEmbeddableItem)core.ItemCache[info.InfoKey];
+                }
+                catch
+                {
+                    try
+                    {
+                        item = (IEmbeddableItem)NumberedItem.Reflect(core, info.InfoKey);
+                    }
+                    catch
+                    {
+                        core.Functions.Generate404();
+                    }
+                }
+
+                Embed embed = null;
+
+                switch (item.EmbedType)
+                {
+                    case EmbedType.Link:
+                        embed = new Embed();
+                        break;
+                    case EmbedType.Photo:
+                        embed = new Embed(info.ShareUri, item.EmbedWidth, item.EmbedHeight);
+                        break;
+                    case EmbedType.Rich:
+                        embed = new Embed(EmbedType.Rich, item.EmbedHtml, item.EmbedWidth, item.EmbedHeight);
+                        break;
+                    case EmbedType.Video:
+                        embed = new Embed(EmbedType.Video, item.EmbedHtml, item.EmbedWidth, item.EmbedHeight);
+                        break;
+                }
+
+                if (embed != null)
+                {
+                    embed.ProviderName = core.Settings.SiteTitle;
+                    embed.ProviderUrl = core.Hyperlink.StripSid(core.Hyperlink.Uri);
+                    embed.CacheAge = (365 * 24 * 60 * 60).ToString(); // recommend to cache for a year
+
+                    switch (format)
+                    {
+                        case "xml":
+                            XmlSerializer xs;
+                            StringWriter stw;
+
+                            xs = new XmlSerializer(typeof(Embed));
+                            stw = new StringWriter();
+
+                            core.Http.WriteXml(xs, embed);
+
+                            if (core.Db != null)
+                            {
+                                core.Db.CloseConnection();
+                            }
+
+                            core.Http.End();
+                            break;
+                        case "json":
+                        default:
+                            JsonSerializer js;
+                            StringWriter jstw;
+                            JsonWriter jtw;
+
+                            js = new JsonSerializer();
+                            jstw = new StringWriter();
+                            jtw = new JsonTextWriter(jstw);
+
+                            core.Http.WriteJson(js, embed);
+
+                            if (core.Db != null)
+                            {
+                                core.Db.CloseConnection();
+                            }
+
+                            core.Http.End();
+                            break;
+                    }
+                }
+                else
+                {
+                    core.Functions.Generate404();
+                }
+            }
+            else
+            {
+                core.Functions.Generate404();
             }
         }
 

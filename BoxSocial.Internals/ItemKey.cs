@@ -192,6 +192,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool ImplementsEmbeddable
+        {
+            get
+            {
+                if (typeRow != null)
+                {
+                    return typeRow.Embeddable;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+
         public bool InheritsPrimitive
         {
             get

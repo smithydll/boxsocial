@@ -27,6 +27,9 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 
 namespace BoxSocial.IO
 {
@@ -69,6 +72,18 @@ namespace BoxSocial.IO
             serializer.Serialize(sw, obj);
             
             Write(sw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
+        }
+
+        public void WriteJson(JsonSerializer serializer, object obj)
+        {
+            SwitchContextType("application/json");
+            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
+
+            StringWriter sw = new StringWriter();
+
+            serializer.Serialize(sw, obj);
+
+            Write(sw.ToString());
         }
         
         public void TransmitFile(string fileName)

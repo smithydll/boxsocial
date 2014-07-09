@@ -9,14 +9,30 @@
 
 <script type="text/javascript">
 <!--
+    nid = {NEWEST_ID};
+    var tid = {S_ID};
+
     $(document).ready(function () {
-        $('#posts').css("overflow-y", "scroll").css("float", "none").css("height", $(window).height() - $('#posts').offset().top - $('#foot').outerHeight(true) - $('.mail-reply-form').outerHeight(true) - 10).scrollTop($('#posts').prop("scrollHeight"));
+        resize();
 
-
+        setInterval(checkNewMessagesInThread, 20000);
     });
+
+    $(window).resize(function () {
+        resize();
+    });
+
+    function resize() {
+        $('#posts').css("overflow-y", "scroll").css("float", "none").css("height", $(window).height() - $('#posts').offset().top - $('#footer').outerHeight(true) - $('.mail-reply-form').outerHeight(true) - 40).scrollTop($('#posts').prop("scrollHeight"));
+    }
 -->
 </script>
 
+<h2>
+  <!-- BEGIN recipients -->
+  {recipients.DISPLAY_NAME}
+  <!-- END recipients -->
+</h2>
 <ul id="posts">
 <!-- INCLUDE pane_message -->
 </ul>

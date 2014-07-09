@@ -1,7 +1,31 @@
 ﻿  <!-- BEGIN post_list -->
   <li>
   	<div class="post">
-      <div class="postbody">
+    <dl class="profile">
+      <dt>
+        <!-- IF NOT $_IS_MOBILE -->
+      	<p><strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong></p>
+        <!-- ENDIF -->
+        <!-- IF $_IS_MOBILE -->
+        <!-- IF post_list.USER_ICON -->
+        <div class="message-disp-pic">
+          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
+        </div>
+        <!-- ENDIF -->
+        <!-- ELSE -->
+        <!-- IF post_list.USER_ICON -->
+        <div class="message-disp-pic">
+          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
+        </div>
+        <!-- ENDIF -->
+        <!-- ENDIF -->
+      </dt>
+    </dl>
+    <!-- IF post_list.OWNER -->
+      <div class="triangle-border right orange">
+    <!-- ELSE -->
+      <div class="triangle-border right">
+    <!-- ENDIF -->
         <!-- IF post_list.SUBJECT -->
   	    <h3 id="p{post_list.ID}"><a href="{post_list.URI}">{post_list.SUBJECT}</a></h3>
         <!-- ENDIF -->
@@ -19,27 +43,6 @@
       	<!-- ENDIF -->
       </div>
       </div>
-    <dl class="profile">
-      <dt>
-      	<p><strong><a href="{post_list.U_USER}">{post_list.USER_DISPLAY_NAME}</a></strong></p>
-      	<!-- IF post_list.USER_RANK -->
-      	<p>{post_list.USER_RANK}</p>
-      	<!-- ENDIF -->
-        <!-- IF $_IS_MOBILE -->
-        <!-- IF post_list.USER_ICON -->
-        <div class="comment-disp-pic">
-          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
-        </div>
-        <!-- ENDIF -->
-        <!-- ELSE -->
-        <!-- IF post_list.USER_ICON -->
-        <div class="comment-disp-pic">
-          <img src="{post_list.USER_ICON}" alt="{post_list.USER_DISPLAY_NAME}" width="50" height="50" />
-        </div>
-        <!-- ENDIF -->
-        <!-- ENDIF -->
-      </dt>
-    </dl>
     </div>
   </li>
   <!-- END post_list -->

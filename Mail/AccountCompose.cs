@@ -244,6 +244,7 @@ namespace BoxSocial.Applications.Mail
                 returnValues.Add("update", "true");
                 returnValues.Add("message", message.Text);
                 returnValues.Add("template", template.ToString());
+                returnValues.Add("newest-id", message.Id.ToString());
 
                 core.Ajax.SendDictionary("replySent", returnValues);
             }

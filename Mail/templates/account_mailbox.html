@@ -16,7 +16,11 @@
         <img src="/images/posticon_unread_med.png" />
         <!-- ENDIF -->
         <p>{mail_item.SUBJECT}</p>
-        <p><em>{mail_item.SENDER}</em></p>
+        <p><em>
+          <!-- BEGIN mail_item.recipients -->
+          {mail_item.recipients.DISPLAY_NAME}
+          <!-- END mail_item.recipients -->
+        </em></p>
     </a>
     <span class="action delete"><a href="{mail_item.U_DELETE}">{L_DELETE}</a></span>
 </li>

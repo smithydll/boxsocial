@@ -31,25 +31,7 @@ namespace BoxSocial.Internals
 {
     public interface IEmbeddableItem
     {
-        EmbedType EmbedType
-        {
-            get;
-        }
-
-        string EmbedHtml
-        {
-            get;
-        }
-
-        int EmbedWidth
-        {
-            get;
-        }
-
-        int EmbedHeight
-        {
-            get;
-        }
+        Embed GetEmbedObject(int maxWidth, int maxHeight);
 
         string Uri
         {

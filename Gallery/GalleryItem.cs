@@ -66,7 +66,7 @@ namespace BoxSocial.Applications.Gallery
     /// Represents a gallery photo
     /// </summary>
     [DataTable("gallery_items", "PHOTO")]
-    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, ISearchableItem, IShareableItem, IActionableItem
+    public class GalleryItem : NumberedItem, ICommentableItem, ILikeableItem, IPermissibleSubItem, IActionableSubItem, ISearchableItem, IShareableItem, IActionableItem, IEmbeddableItem
     {
         // Square
         public static string IconPrefix = "_icon"; // 50
@@ -3681,6 +3681,13 @@ namespace BoxSocial.Applications.Gallery
             {
                 return ItemAbstract;
             }
+        }
+
+        public Embed GetEmbedObject(int maxWidth, int maxHeight)
+        {
+            Embed embed = new Embed(EmbedType.Photo);
+
+            return embed;
         }
     }
 

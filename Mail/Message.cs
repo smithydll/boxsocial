@@ -489,7 +489,12 @@ namespace BoxSocial.Applications.Mail
             return recipients;
         }
 
-        public List<Message> GetMessages(long lastId)
+        public List<Message> GetMessages()
+        {
+            return GetMessages(0, false);
+        }
+
+        public List<Message> GetMessages(long lastId, bool newer)
         {
             List<Message> messages = new List<Message>();
 
@@ -500,7 +505,7 @@ namespace BoxSocial.Applications.Mail
             query.AddCondition("user_id", core.LoggedInMemberId);
             if (lastId > 0)
             {
-                query.AddCondition("message_id", ConditionEquality.LessThan, lastId);
+                query.AddCondition(new DataField(typeof(Message), "message_id"), (newer ? ConditionEquality.GreaterThan : ConditionEquality.LessThan), lastId);
             }
             query.AddSort(SortOrder.Descending, "message_time_ut");
             /*query.LimitStart = (page - 1) * perPage;*/

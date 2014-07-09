@@ -103,30 +103,30 @@ ul#posts li h3 {
 }
 
 .post {
-	background-color: #ffffff;
 	padding: 5px;
-	border-radius: 5px;
 }
 
-.postbody {
-	float: left;
-	clear: both;
-	width: 75%;
-}
-
-.postbody .inner {
-	padding: 5px;
+.post .inner {
+	-ms-word-break: break-all;
+    word-wrap: break-all;
+    word-break: break-word;
 }
 
 ul#posts dl.profile {
 	float: right;
-	display: inline;
-	width: 25%;
-	border-left: solid 1px #FFFFFF;
-	-webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
     margin: 0;
+}
+
+ul#posts dl.profile dt {
+    margin-top: 5px;
+}
+
+ul#posts dl.profile .message-disp-pic img {
+    padding: 2px;
+    background-color: white;
+    border: solid 1px #999999;
+    width: 50px;
+    height: 50px;
 }
 
 ul#posts dl.profile p {
@@ -156,10 +156,6 @@ ul#posts .corners-bottom, ul#posts .corners-bottom > span {
     background-image: url('/images/corners-bottom-eeeeee-18-9.png');
 }
 
-ul#posts div.post {
-    background-color: #EEEEEE;
-}
-
 ul.list li.list-item.mail > a {
     padding-top: 5px;
     padding-bottom: 5px;
@@ -177,4 +173,120 @@ ul.list li.list-item.mail img {
     position: absolute;
     left: 5px;
     top: 10px;
+}
+
+.triangle-border.right {
+    margin-right: 85px;
+    padding: 5px;
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+.triangle-border.orange {
+    background: #ffebdd;
+}
+
+.triangle-border.right.orange:after {
+    border-color: transparent #ffebdd;
+}
+
+.triangle-border:hover {
+    background: #ffffff;
+}
+
+.triangle-border.right:hover:after {
+    border-color: transparent #ffffff;
+}
+
+.triangle-border.orange:hover {
+    background: #ffefe5;
+}
+
+.triangle-border.right.orange:hover:after {
+    border-color: transparent #ffefe5;
+}
+
+/* ------------------------------------------
+PURE CSS SPEECH BUBBLES
+by Nicolas Gallagher
+- http://nicolasgallagher.com/pure-css-speech-bubbles/
+
+http://nicolasgallagher.com
+http://twitter.com/necolas
+
+Created: 02 March 2010
+Version: 1.2 (03 March 2011)
+
+Dual licensed under MIT and GNU GPLv2 Nicolas Gallagher
+------------------------------------------ */
+
+/* ============================================================================================================================
+== BUBBLE WITH A BORDER AND TRIANGLE
+** ============================================================================================================================ */
+
+/* THE SPEECH BUBBLE
+------------------------------------------------------------------------------------------------------------------------------- */
+
+.triangle-border {
+  position:relative;
+  padding:15px;
+  margin:1em 0 3em;
+  color:#333;
+  background:#F2F2F2;
+  /* css3 */
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+}
+
+/* THE TRIANGLE
+------------------------------------------------------------------------------------------------------------------------------- */
+
+.triangle-border:before {
+  content:"";
+  position:absolute;
+  bottom:-20px; /* value = - border-top-width - border-bottom-width */
+  left:40px; /* controls horizontal position */
+  border-width:20px 20px 0;
+  border-style:solid;
+  border-color:transparent transparent;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
+}
+
+/* creates the smaller  triangle */
+.triangle-border:after {
+  content:"";
+  position:absolute;
+  bottom:-13px; /* value = - border-top-width - border-bottom-width */
+  left:47px; /* value = (:before left) + (:before border-left) - (:after border-left) */
+  border-width:13px 13px 0;
+  border-style:solid;
+  border-color:#F2F2F2 transparent;
+  /* reduce the damage in FF3.0 */
+  display:block;
+  width:0;
+}
+
+/* Variant : right
+------------------------------------------ */
+
+/* creates the larger triangle */
+.triangle-border.right:before {
+  top:10px; /* controls vertical position */
+  bottom:auto;
+  left:auto;
+  right:-30px; /* value = - border-left-width - border-right-width */
+  border-width:15px 0 15px 30px;
+  border-color:transparent transparent;
+}
+
+/* creates the smaller  triangle */
+.triangle-border.right:after {
+  top:10px; /* value = (:before top) + (:before border-top) - (:after border-top) */
+  bottom:auto;
+  left:auto;
+  right:-21px; /* value = - border-left-width - border-right-width */
+  border-width:9px 0 9px 21px;
+  border-color:transparent #F2F2F2;
 }

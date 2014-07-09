@@ -58,6 +58,7 @@ namespace BoxSocial.Applications.Mail
         void AccountMessage_Load(object sender, EventArgs e)
         {
             AddModeHandler("delete", new ModuleModeHandler(AccountMessage_Delete));
+            AddModeHandler("poll", new ModuleModeHandler(AccountMessage_Poll));
         }
 
         void AccountMessage_Show(object sender, EventArgs e)
@@ -98,6 +99,7 @@ namespace BoxSocial.Applications.Mail
 
             long messageId = core.Functions.RequestLong("id", 0);
 
+            long newestId = 0;
             try
             {
                 MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, messageId);
@@ -106,7 +108,7 @@ namespace BoxSocial.Applications.Mail
 
                 template.Parse("S_ID", threadStart.Id.ToString());
 
-                List<Message> messages = threadStart.GetMessages(0);
+                List<Message> messages = threadStart.GetMessages();
 
                 if (messages.Count < 3)
                 {
@@ -117,9 +119,26 @@ namespace BoxSocial.Applications.Mail
                 foreach (Message message in messages)
                 {
                     RenderMessage(core, template, message);
+                    newestId = message.Id;
                 }
 
                 threadStart.MarkRead();
+
+                List<MessageRecipient> recipients = threadStart.GetRecipients();
+
+                for (int i = 0; i < recipients.Count; i++)
+                {
+                    core.PrimitiveCache.LoadUserProfile(recipients[i].UserId);
+                }
+
+                for (int i = 0; i < recipients.Count; i++)
+                {
+                    VariableCollection recipientVariableCollection = template.CreateChild("recipients");
+
+                    recipientVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[recipients[i].UserId].DisplayName);
+                }
+
+                template.Parse("NEWEST_ID", newestId);
 
             }
             catch (InvalidMessageRecipientException)
@@ -149,6 +168,11 @@ namespace BoxSocial.Applications.Mail
                 messageVariableCollection.Parse("USER_JOINED", core.Tz.DateTimeToString(message.Sender.UserInfo.GetRegistrationDate(core.Tz)));
                 messageVariableCollection.Parse("USER_COUNTRY", message.Sender.Profile.Country);
                 //core.Display.ParseBbcode(messageVariableCollection, "SIGNATURE", postersList[post.UserId].ForumSignature);
+
+                if (message.Sender.Id == core.LoggedInMemberId)
+                {
+                    messageVariableCollection.Parse("OWNER", "TRUE");
+                }
             }
             else
             {
@@ -198,6 +222,53 @@ namespace BoxSocial.Applications.Mail
             {
                 core.Display.ShowMessage("Cannot Delete Message", "An Error occured while trying to delete the message.");
                 return;
+            }
+        }
+
+        void AccountMessage_Poll(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long messageId = core.Functions.RequestLong("id", 0);
+
+            long newestId = core.Functions.RequestLong("newest-id", 0);
+            try
+            {
+                Template template = new Template(core.CallingApplication.Assembly, "pane_message");
+
+                template.Medium = core.Template.Medium;
+                template.SetProse(core.Prose);
+
+                MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, messageId);
+
+                Message threadStart = new Message(core, messageId);
+
+                template.Parse("S_ID", threadStart.Id.ToString());
+
+                List<Message> messages = threadStart.GetMessages(newestId, true);
+
+                // IF NOT DELETED THEN
+                foreach (Message message in messages)
+                {
+                    RenderMessage(core, template, message);
+                    newestId = message.Id;
+                }
+
+                threadStart.MarkRead();
+
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
+
+                returnValues.Add("update", "true");
+                returnValues.Add("template", template.ToString());
+                returnValues.Add("newest-id", newestId.ToString());
+
+                core.Ajax.SendDictionary("newMessages", returnValues);
+
+            }
+            catch (InvalidMessageRecipientException)
+            {
+                // Security, if not a recipeint, cannot see the message.
+                core.Functions.Generate404();
             }
         }
     }

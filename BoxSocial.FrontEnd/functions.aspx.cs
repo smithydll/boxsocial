@@ -197,11 +197,33 @@ namespace BoxSocial.FrontEnd
 
         private void ReturnItemEmbedCode()
         {
-            string key = core.Http["key"]; // TODO: retrieve
-            string format = core.Http["format"];
+            string url = core.Http.Query["url"];
+            string format = core.Http.Query["format"];
+            string key = string.Empty;
+            int maxWidth = core.Functions.RequestInt("maxwidth", 0);
+            int maxHeight = core.Functions.RequestInt("maxheight", 0);
 
-            ItemInfo info = new ItemInfo(core, key);
+            string shareUrlStub = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/"));
+            if ((!string.IsNullOrEmpty(url)) && url.StartsWith(shareUrlStub))
+            {
+                key = url.Substring(shareUrlStub.Length).Trim(new char[] { '/' });
+            }
+            else
+            {
+                core.Functions.Generate404();
+            }
+
+            ItemInfo info = null;
             IEmbeddableItem item = null;
+
+            try
+            {
+                info = new ItemInfo(core, key);
+            }
+            catch (InvalidIteminfoException)
+            {
+                core.Functions.Generate404();
+            }
 
             if (info.InfoKey.ImplementsEmbeddable)
             {
@@ -222,23 +244,7 @@ namespace BoxSocial.FrontEnd
                     }
                 }
 
-                Embed embed = null;
-
-                switch (item.EmbedType)
-                {
-                    case EmbedType.Link:
-                        embed = new Embed();
-                        break;
-                    case EmbedType.Photo:
-                        embed = new Embed(info.ShareUri, item.EmbedWidth, item.EmbedHeight);
-                        break;
-                    case EmbedType.Rich:
-                        embed = new Embed(EmbedType.Rich, item.EmbedHtml, item.EmbedWidth, item.EmbedHeight);
-                        break;
-                    case EmbedType.Video:
-                        embed = new Embed(EmbedType.Video, item.EmbedHtml, item.EmbedWidth, item.EmbedHeight);
-                        break;
-                }
+                Embed embed = item.GetEmbedObject(maxWidth, maxHeight);
 
                 if (embed != null)
                 {

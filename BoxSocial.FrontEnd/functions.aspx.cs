@@ -197,13 +197,15 @@ namespace BoxSocial.FrontEnd
 
         private void ReturnItemEmbedCode()
         {
-            string url = core.Http.Query["url"];
+            string url = core.Hyperlink.StripScheme(core.Http.Query["url"]);
             string format = core.Http.Query["format"];
             string key = string.Empty;
-            int maxWidth = core.Functions.RequestInt("maxwidth", 0);
-            int maxHeight = core.Functions.RequestInt("maxheight", 0);
+            int maxWidth = core.Functions.RequestInt("maxwidth", 640);
+            int maxHeight = core.Functions.RequestInt("maxheight", 640);
 
-            string shareUrlStub = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/"));
+            core.Session.SetBot();
+
+            string shareUrlStub = core.Hyperlink.StripScheme(core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/")));
             if ((!string.IsNullOrEmpty(url)) && url.StartsWith(shareUrlStub))
             {
                 key = url.Substring(shareUrlStub.Length).Trim(new char[] { '/' });

@@ -530,6 +530,12 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string StripScheme(string uri)
+        {
+            Uri u = new Uri(uri);
+            return uri.Substring(u.Scheme.Length + 3);
+        }
+
         public string BuildHomeUri()
         {
             return AppendCoreSid("/");

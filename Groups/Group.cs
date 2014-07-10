@@ -1260,7 +1260,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                if (string.IsNullOrEmpty(domain))
+                if ((string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
                 {
                     if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
                     {
@@ -1291,7 +1291,7 @@ namespace BoxSocial.Groups
         {
             get
             {
-                if (string.IsNullOrEmpty(domain))
+                if (string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile)
                 {
                     return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }

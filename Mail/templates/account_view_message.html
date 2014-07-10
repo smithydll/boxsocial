@@ -23,13 +23,20 @@
     });
 
     function resize() {
+        <!-- IF $_IS_MOBILE -->
+        $('#posts').css("height", $(window).height() - $('#posts').offset().top - $('.mail-reply-form').outerHeight(true) - 40).scrollTop($('#posts').prop("scrollHeight"));
+        <!-- ELSE -->
         $('#posts').css("overflow-y", "scroll").css("float", "none").css("height", $(window).height() - $('#posts').offset().top - $('#footer').outerHeight(true) - $('.mail-reply-form').outerHeight(true) - 40).scrollTop($('#posts').prop("scrollHeight"));
+        <!-- ENDIF -->
     }
 -->
 </script>
 
 <h2>
   <!-- BEGIN recipients -->
+  <!-- IF recipients.IS_ONLINE -->
+  <span class="online"></span>
+  <!-- ENDIF -->
   {recipients.DISPLAY_NAME}
   <!-- END recipients -->
 </h2>

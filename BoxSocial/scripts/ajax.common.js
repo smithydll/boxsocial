@@ -85,7 +85,7 @@ function SentStatus(r, e, a) {
 
 function SendAction(u, f) {
     f = typeof f !== 'undefined' ? f : SentAction;
-    return PostToAccount(f, "profile", "status", -1, { message: $('#message').val(), action: 'true', 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
+    return PostToAccount(f, "profile", "status", -1, { 'newest-id': nid, message: $('#message').val(), action: 'true', 'permissions-ids': $('#permissions-ids').val(), 'permissions-text': $('#permissions-text').val() }, u);
 }
 
 function SentAction(r, e, a) {

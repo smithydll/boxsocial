@@ -1620,6 +1620,20 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("TYPEID", galleryItem.ItemKey.TypeId.ToString());
                 //template.Parse("U_EDIT", ZzUri.BuildPhotoEditUri((long)photoTable.Rows[0]["gallery_item_id"])));
 
+                if (gallery.Access.IsPublic())
+                {
+                    e.Template.Parse("IS_PUBLIC", "TRUE");
+
+                    if (galleryItem.Info.SharedTimes > 0)
+                    {
+                        e.Template.Parse("SHARES", string.Format(" {0:d}", galleryItem.Info.SharedTimes));
+                    }
+                }
+                else
+                {
+                    e.Template.Parse("IS_PUBLIC", "FALSE");
+                }
+
                 if (gallery.Access.Can("COMMENT_ITEMS"))
                 {
                     e.Template.Parse("CAN_COMMENT", "TRUE");
@@ -3686,6 +3700,63 @@ namespace BoxSocial.Applications.Gallery
         public Embed GetEmbedObject(int maxWidth, int maxHeight)
         {
             Embed embed = new Embed(EmbedType.Photo);
+
+            Size newSize = new Size();
+            if (maxWidth <= (int)PictureScale.Tiny && maxHeight <= (int)PictureScale.Tiny)
+            {
+                newSize = GetSize(new Size(ItemWidth, ItemHeight), new Size((int)PictureScale.Tiny, (int)PictureScale.Tiny));
+
+                // We do not want an embed consumer caching sizes that are queued for creation in the CDN
+                bool flag = tinyExists;
+                tinyExists = true;
+
+                embed.Url = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(TinyUri));
+
+                tinyExists = flag;
+            }
+            else if (maxWidth <= (int)PictureScale.Thumbnail && maxHeight <= (int)PictureScale.Thumbnail)
+            {
+                newSize = GetSize(new Size(ItemWidth, ItemHeight), new Size((int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail));
+
+                // We do not want an embed consumer caching sizes that are queued for creation in the CDN
+                bool flag = thumbnailExists;
+                thumbnailExists = true;
+
+                embed.Url = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(ThumbnailUri));
+
+                thumbnailExists = flag;
+            }
+            else if (maxWidth <= (int)PictureScale.Mobile && maxHeight <= (int)PictureScale.Mobile)
+            {
+                newSize = GetSize(new Size(ItemWidth, ItemHeight), new Size((int)PictureScale.Mobile, (int)PictureScale.Mobile));
+
+                // We do not want an embed consumer caching sizes that are queued for creation in the CDN
+                bool flag = mobileExists;
+                mobileExists = true;
+
+                embed.Url = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(MobileUri));
+
+                mobileExists = flag;
+            }
+            else
+            {
+                newSize = GetSize(new Size(ItemWidth, ItemHeight), new Size((int)PictureScale.Display, (int)PictureScale.Display));
+
+                // We do not want an embed consumer caching sizes that are queued for creation in the CDN
+                bool flag = displayExists;
+                displayExists = true;
+
+                embed.Url = core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(DisplayUri));
+
+                displayExists = flag;
+            }
+
+            embed.Width = newSize.Width.ToString();
+            embed.Height = newSize.Height.ToString();
+            embed.Title = Functions.SingleLine(core.Bbcode.Flatten(ItemAbstract));
+            embed.AuthorName = Owner.DisplayName;
+            embed.AuthorUrl = core.Hyperlink.StripSid(Owner.UriStubAbsolute);
+
 
             return embed;
         }

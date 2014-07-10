@@ -89,59 +89,72 @@ namespace BoxSocial.Applications.Profile
             AccessControlLists acl = new AccessControlLists(core, newMessage);
             acl.SaveNewItemPermissions();
 
+            long newestId = core.Functions.FormLong("newest-id", 0);
+            long newerId = 0;
+
             if (action)
             {
-                VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
+                List<BoxSocial.Internals.Action> feedActions = Feed.GetNewerItems(core, core.Session.LoggedInMember, newestId);
 
-                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", BoxSocial.Internals.Action.GetTitle(newMessage.OwnerKey, newMessage.Action, core.Hyperlink.StripSid(newMessage.Uri)));
-                core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", newMessage.GetActionBody(null), newMessage.Owner, true, string.Empty, string.Empty);
-
-                feedItemVariableCollection.Parse("USER_DISPLAY_NAME", newMessage.Owner.DisplayName);
-
-                feedItemVariableCollection.Parse("ID", newMessage.ItemKey.Id);
-                feedItemVariableCollection.Parse("TYPE_ID", newMessage.ItemKey.TypeId);
-
-                if (newMessage.ItemKey.ImplementsLikeable)
+                foreach (BoxSocial.Internals.Action feedAction in feedActions)
                 {
-                    feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
+                    VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
 
-                    if (newMessage.Info.Likes > 0)
+                    if (feedAction.Id > newerId)
                     {
-                        feedItemVariableCollection.Parse("LIKES", string.Format(" {0:d}", newMessage.Info.Likes));
-                        feedItemVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", newMessage.Info.Dislikes));
+                        newerId = feedAction.Id;
                     }
-                }
 
-                if (newMessage.ItemKey.ImplementsCommentable)
-                {
-                    feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
 
-                    if (newMessage.Info.Comments > 0)
+                    feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
+
+                    feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
+                    feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
+
+                    if (feedAction.ActionItemKey.ImplementsLikeable)
                     {
-                        feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", newMessage.Info.Comments));
-                    }
-                }
+                        feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
 
-                //Access access = new Access(core, feedAction.ActionItemKey, true);
-                if (newMessage.Access.IsPublic())
-                {
-                    feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    if (newMessage.ItemKey.ImplementsShareable)
-                    {
-                        feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
-                        //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
-
-                        if (newMessage.Info.SharedTimes > 0)
+                        if (feedAction.Info.Likes > 0)
                         {
-                            feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", newMessage.Info.SharedTimes));
+                            feedItemVariableCollection.Parse("LIKES", string.Format(" {0:d}", feedAction.Info.Likes));
+                            feedItemVariableCollection.Parse("DISLIKES", string.Format(" {0:d}", feedAction.Info.Dislikes));
                         }
                     }
-                }
 
-                if (newMessage.Owner is User)
-                {
-                    feedItemVariableCollection.Parse("USER_TILE", ((User)newMessage.Owner).Tile);
-                    feedItemVariableCollection.Parse("USER_ICON", ((User)newMessage.Owner).Icon);
+                    if (feedAction.ActionItemKey.ImplementsCommentable)
+                    {
+                        feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
+
+                        if (feedAction.Info.Comments > 0)
+                        {
+                            feedItemVariableCollection.Parse("COMMENTS", string.Format(" ({0:d})", feedAction.Info.Comments));
+                        }
+                    }
+
+                    //Access access = new Access(core, feedAction.ActionItemKey, true);
+                    if (feedAction.PermissiveParent.Access.IsPublic())
+                    {
+                        feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
+                        if (feedAction.ActionItemKey.ImplementsShareable)
+                        {
+                            feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
+                            //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
+
+                            if (feedAction.Info.SharedTimes > 0)
+                            {
+                                feedItemVariableCollection.Parse("SHARES", string.Format(" {0:d}", feedAction.Info.SharedTimes));
+                            }
+                        }
+                    }
+
+                    if (feedAction.Owner is User)
+                    {
+                        feedItemVariableCollection.Parse("USER_TILE", ((User)feedAction.Owner).Tile);
+                        feedItemVariableCollection.Parse("USER_ICON", ((User)feedAction.Owner).Icon);
+                    }
                 }
             }
             else
@@ -180,6 +193,11 @@ namespace BoxSocial.Applications.Profile
             returnValues.Add("update", "true");
             returnValues.Add("message", message);
             returnValues.Add("template", template.ToString());
+
+            if (newestId > 0)
+            {
+                returnValues.Add("newest-id", newerId.ToString());
+            }
 
             core.Ajax.SendDictionary("statusPosted", returnValues);
         }

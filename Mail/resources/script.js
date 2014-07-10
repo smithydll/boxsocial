@@ -1,6 +1,8 @@
 ﻿
+var sendingMessage = false;
 function SendMessage(id, text) {
-    return PostToPage(SubmitedMessage, "account", null, { ajax: "true", id: id, module: "mail", sub: "compose", mode: "reply", message: text, save: 'true' });
+    sendingMessage = true;
+    return PostToPage(SubmitedMessage, "account", null, { ajax: "true", id: id, module: "mail", sub: "compose", mode: "reply", message: text, 'newest-id': nid, save: 'true' });
 }
 
 function SubmitedMessage(r, e) {
@@ -10,6 +12,7 @@ function SubmitedMessage(r, e) {
     if (r['newest-id'] > 0) {
         nid = r['newest-id'];
     }
+    sendingMessage = false;
 }
 
 function checkNewMessagesInThread() {
@@ -20,11 +23,13 @@ function checkNewMessagesInThread() {
 }
 
 function loadNewMessagesInThread(mode) {
+    if (sendingMessage) return false;
     PostToAccount(LoadedNewMessages, "mail", "message", tid, { mode: 'poll', 'newest-id': nid });
     return false;
 }
 
 function LoadedNewMessages(r, e, a, c) {
+    if (sendingMessage) return;
     if (c == 'noNewContent') {
     }
     else if (c == 'newMessages') {

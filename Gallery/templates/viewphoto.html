@@ -172,6 +172,11 @@
       <span id="rotate-left" class="img-button"><a href="{U_ROTATE_LEFT}" title="{L_ROTATE_LEFT}"><span class="font-sprite">&#8634;</span></a></span><span id="rotate-right" class="img-button"><a href="{U_ROTATE_RIGHT}" title="{L_ROTATE_RIGHT}"><span class="font-sprite">&#8635;</span></a></span><span id="delete" class="img-button"><a href="{U_DELETE}" title="{L_DELETE}"><span class="sprite delete-sprite"></span></a></span><!--span id="tag" class="img-button"><a href="{U_TAG}" title="Tag Photo"><span class="sprite tag-sprite"></span></a></span-->
     </div>
     <!-- ENDIF -->
+    <div class="r-stuff light">
+        <!-- IF IS_PUBLIC -->
+        <span class="img-button share-item"><a href="{U_SHARE}" onclick="return ShareItem({ID},{TYPEID});" title="Share"><span class="sprite share-sprite"></span><span class="shares">{SHARES}</span></a></span>
+        <!-- ENDIF -->
+    </div>
     <div class="comment-pane" style="margin: 0 auto; width: 640px;">
       <!-- INCLUDE pane.comments.html -->
     </div>

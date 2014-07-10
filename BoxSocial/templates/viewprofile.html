@@ -91,7 +91,11 @@
 		    <dt>{L_JOINED}:</dt>
 		    <dd>{USER_JOINED}</dd>
 		    <dt>{L_LAST_SEEN}:</dt>
-		    <dd>{USER_LAST_SEEN}</dd>
+		    <dd>
+              <!-- IF IS_ONLINE -->
+              <span class="online"></span>
+              <!-- ENDIF -->
+            {USER_LAST_SEEN}</dd>
 		    <dt>{L_PROFILE_VIEWS}:</dt>
 		    <dd>{USER_PROFILE_VIEWS}</dd>
 		    <dt>{L_SUBSCRIPTIONS}:</dt>

@@ -1090,6 +1090,7 @@ namespace BoxSocial.Internals
                 input = input.Replace("<br /></ol>", "</ol>");
                 input = input.Replace("<blockquote></blockquote>", "<blockquote>&nbsp;</blockquote>");
                 //input = Regex.Replace(input, @"\<p\>(\s+)\<\/p\>", string.Empty, RegexOptions.Compiled);
+                input = input.Replace("<p></p>", string.Empty); 
                 input = input.Replace("<p> </p>", string.Empty);
                 input = input.Replace("<p>\n</p>", string.Empty);
                 input = input.Replace("<p>\r\n</p>", string.Empty);
@@ -1456,6 +1457,7 @@ namespace BoxSocial.Internals
                     break;
                 case BbcodeParseMode.Normal:
                     bool hasColour = e.Attributes.HasAttribute("color");
+                    string caption = (e.Attributes.HasAttribute("caption") ? e.Attributes.GetAttribute("caption") : "Code");
 
                     if (hasColour)
                     {
@@ -1463,15 +1465,25 @@ namespace BoxSocial.Internals
                         catch { e.AbortParse(); }
                     }
 
+                    if (!string.IsNullOrEmpty(caption))
+                    {
+                        caption = string.Format("<strong>{0}</strong>", caption);
+                    }
+
                     if (!e.InList)
                     {
-                        e.PrefixText = string.Format("<strong>Code</strong></p><p><code{0}>", hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
+                        e.PrefixText = string.Format("{0}</p><p><code{0}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
                         e.SuffixText = "</code></p><p>";
                         e.RemoveContents();
                     }
                     else
                     {
-                        e.PrefixText = string.Format("<strong>Code</strong><br /><code{0}>", hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
+                        if (!string.IsNullOrEmpty(caption))
+                        {
+                            caption = string.Format("<strong>{0}</strong><br />", caption);
+                        }
+
+                        e.PrefixText = string.Format("{0}<br /><code{0}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
                         e.SuffixText = "</code>";
                         e.RemoveContents();
                     }

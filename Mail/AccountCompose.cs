@@ -224,11 +224,12 @@ namespace BoxSocial.Applications.Mail
             catch { }
 
             long messageId = core.Functions.FormLong("id", 0);
+            long newestId = core.Functions.FormLong("newest-id", 0);
             string text = core.Http.Form["message"];
 
             Message threadStart = new Message(core, messageId);
 
-            Message message = Message.Reply(core, LoggedInMember, threadStart, text);
+            Message newMessage = Message.Reply(core, LoggedInMember, threadStart, text);
 
             if (ajax)
             {
@@ -237,14 +238,27 @@ namespace BoxSocial.Applications.Mail
                 template.Medium = core.Template.Medium;
                 template.SetProse(core.Prose);
 
-                AccountMessage.RenderMessage(core, template, message);
+                MessageRecipient recipient = new MessageRecipient(core, core.Session.LoggedInMember, messageId);
+
+                template.Parse("S_ID", threadStart.Id.ToString());
+
+                List<Message> messages = threadStart.GetMessages(newestId, true);
+
+                // IF NOT DELETED THEN
+                foreach (Message message in messages)
+                {
+                    AccountMessage.RenderMessage(core, template, message);
+                    newestId = message.Id;
+                }
+
+                threadStart.MarkRead();
 
                 Dictionary<string, string> returnValues = new Dictionary<string, string>();
 
                 returnValues.Add("update", "true");
-                returnValues.Add("message", message.Text);
+                returnValues.Add("message", newMessage.Text);
                 returnValues.Add("template", template.ToString());
-                returnValues.Add("newest-id", message.Id.ToString());
+                returnValues.Add("newest-id", newestId.ToString());
 
                 core.Ajax.SendDictionary("replySent", returnValues);
             }

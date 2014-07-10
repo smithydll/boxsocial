@@ -686,6 +686,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long LastVisitDateRaw
+        {
+            get
+            {
+                return lastVisitDateRaw;
+            }
+        }
+
         /// <summary>
         /// Gets the user's last visit date
         /// </summary>

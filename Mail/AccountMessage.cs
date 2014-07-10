@@ -136,6 +136,14 @@ namespace BoxSocial.Applications.Mail
                     VariableCollection recipientVariableCollection = template.CreateChild("recipients");
 
                     recipientVariableCollection.Parse("DISPLAY_NAME", core.PrimitiveCache[recipients[i].UserId].DisplayName);
+                    if (core.PrimitiveCache[recipients[i].UserId].IsOnline)
+                    {
+                        recipientVariableCollection.Parse("IS_ONLINE", "TRUE");
+                    }
+                    else
+                    {
+                        recipientVariableCollection.Parse("IS_ONLINE", "FALSE");
+                    }
                 }
 
                 template.Parse("NEWEST_ID", newestId);

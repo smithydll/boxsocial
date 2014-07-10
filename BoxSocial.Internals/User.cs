@@ -2115,7 +2115,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if ((string.IsNullOrEmpty(domain) || core.IsMobile || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
+                if ((string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
                 {
                     if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
                     {
@@ -2146,7 +2146,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain) || core.IsMobile)
+                if (string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile)
                 {
                     return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }
@@ -2263,6 +2263,15 @@ namespace BoxSocial.Internals
             core.Template.Parse("U_FRIENDS", core.Hyperlink.BuildFriendsUri(page.User));
 
             core.Template.Parse("IS_PROFILE", "TRUE");
+
+            if (page.User.IsOnline)
+            {
+                core.Template.Parse("IS_ONLINE", "TRUE");
+            }
+            else
+            {
+                core.Template.Parse("IS_ONLINE", "FALSE");
+            }
 
             hasProfileInfo = true;
 
@@ -2689,6 +2698,14 @@ namespace BoxSocial.Internals
             //throw new Exception("Cannot update user key table.");
             // we will pretend we did, but we didn't
             return 1;
+        }
+
+        public bool IsOnline
+        {
+            get
+            {
+                return (UserInfo.LastVisitDateRaw > UnixTime.UnixTimeStamp() - 90);
+            }
         }
 
         public override Access Access

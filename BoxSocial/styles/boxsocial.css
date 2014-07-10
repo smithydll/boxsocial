@@ -378,6 +378,13 @@ li.empty {
 	/*font-size: 140%;*/
 }
 
+#profile div.pane h4 {
+	/*padding: 1px 5px;*/
+	margin: 0.3em 0 0 0;
+	color: #333333;
+	/*font-size: 140%;*/
+}
+
 #profile div#profile-group-info-pane h4 {
 	padding: 3px 5px;
 	margin: 0px;
@@ -546,10 +553,6 @@ hr {
 
 #page-body {
 	padding: 0 15px;
-}
-
-#page-body p {
-	text-align: justify;
 }
 
 p.blog-date {
@@ -2045,4 +2048,21 @@ div#today-feed li.today-feed h4.today-day {
 
 code {
     line-height: 100%;
+    overflow-x: auto;
+    width: 100%;
+    background-color: #eeeeee;
+    display: block;
+    height: auto;
+    padding: 5px;
+    font-size: 110%;
+    white-space: nowrap;
+}
+
+span.online {
+    width: 0.4em;
+    height: 0.4em;
+    background-color: LimeGreen;
+    display: inline-block;
+    margin-bottom: 0.2em;
+    border-radius: 0.2em;
 }

@@ -332,12 +332,28 @@ namespace BoxSocial.Internals
             }
         }
 
+        /// <summary>
+        /// Sets the signed in state to bot
+        /// </summary>
+        public void SetBot()
+        {
+            signInState = SessionSignInState.Bot;
+        }
+
         [Obsolete("IsLoggedIn is deprecated, please use SignedIn or SignedInState")]
         public bool IsLoggedIn
         {
             get
             {
                 return SignedIn;
+            }
+        }
+
+        public bool IsBot
+        {
+            get
+            {
+                return signInState == SessionSignInState.Bot;
             }
         }
 
@@ -832,7 +848,7 @@ namespace BoxSocial.Internals
                 {
                     TimeSpan ts = DateTime.Now - loggedInMember.UserInfo.LastOnlineTime;
 
-                    if (ts.TotalMinutes >= 5)
+                    if (ts.TotalMinutes >= 1)
                     {
                         db.UpdateQuery(string.Format("UPDATE user_info SET user_last_visit_ut = UNIX_TIMESTAMP() where user_id = {0}",
                             loggedInMember.UserId));
@@ -1059,7 +1075,7 @@ namespace BoxSocial.Internals
                             {
                                 TimeSpan ts = DateTime.Now - loggedInMember.UserInfo.LastOnlineTime;
 
-                                if (ts.TotalMinutes >= 5)
+                                if (ts.TotalMinutes >= 1)
                                 {
                                     db.UpdateQuery(string.Format("UPDATE user_info SET user_last_visit_ut = UNIX_TIMESTAMP() where user_id = {0}",
                                         loggedInMember.UserId));

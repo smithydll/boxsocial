@@ -277,8 +277,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("width", NullValueHandling = NullValueHandling.Ignore)]
-        [XmlElement("width", IsNullable = false)]
+        [JsonProperty("width", NullValueHandling = NullValueHandling.Include)]
+        [XmlElement("width", IsNullable = true)]
         public string Width
         {
             get
@@ -291,8 +291,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("height", NullValueHandling = NullValueHandling.Ignore)]
-        [XmlElement("height", IsNullable = false)]
+        [JsonProperty("height", NullValueHandling = NullValueHandling.Include)]
+        [XmlElement("height", IsNullable = true)]
         public string Height
         {
             get

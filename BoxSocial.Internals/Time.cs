@@ -677,11 +677,11 @@ namespace BoxSocial.Internals
                 DateTime then = new DateTime(dt.Year, dt.Month, dt.Day);
                 TimeSpan ts = then.Subtract(now);
 
-                if (ts.TotalHours <= 24)
+                if (ts.TotalHours <= 24 && ts.Ticks >= 0)
                 {
                     return core.Prose.GetString("TODAY");
                 }
-                else if (ts.TotalDays < 7)
+                else if (ts.TotalDays < 7 && ts.Ticks > 0)
                 {
                     switch (dt.DayOfWeek)
                     {
@@ -724,7 +724,7 @@ namespace BoxSocial.Internals
         {
             DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
             DateTime then = new DateTime(dt.Year, dt.Month, dt.Day);
-            TimeSpan ts = then.Subtract(now);
+            TimeSpan ts = now.Subtract(then);
 
             if (today)
             {

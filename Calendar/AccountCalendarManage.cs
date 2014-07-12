@@ -70,7 +70,16 @@ namespace BoxSocial.Applications.Calendar
             template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true));
             template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true));
 
-            Calendar calendar = new Calendar(core);
+            Calendar calendar = null;
+            try
+            {
+                calendar = new Calendar(core, Owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                calendar = Calendar.Create(core, Owner);
+            }
+
             List<Event> events = calendar.GetEvents(core, Owner, UnixTime.UnixTimeStamp() - 24 * 60 * 60, UnixTime.UnixTimeStamp() + 30 * 24 * 60 * 60);
 
             foreach (Event ev in events)

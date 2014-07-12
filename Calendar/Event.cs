@@ -596,7 +596,16 @@ namespace BoxSocial.Applications.Calendar
             long startTime = e.Core.Tz.GetUnixTimeStamp(new DateTime(e.Core.Tz.Now.Year, e.Core.Tz.Now.Month, e.Core.Tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 30; // skip ahead one month into the future
 
-            Calendar cal = new Calendar(e.Core);
+            Calendar cal = null;
+            try
+            {
+                cal = new Calendar(e.Core, e.Page.Owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(e.Core, e.Page.Owner);
+            }
+
             List<Event> events = cal.GetEvents(e.Core, e.Page.Owner, startTime, endTime);
 
             VariableCollection appointmentDaysVariableCollection = null;

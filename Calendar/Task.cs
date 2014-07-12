@@ -295,18 +295,26 @@ namespace BoxSocial.Applications.Calendar
         {
             core.Template.SetTemplate("Calendar", "viewcalendartasks");
 
-            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
+            long startTime = core.Tz.GetUnixTimeStamp(new DateTime(core.Tz.Now.Year, core.Tz.Now.Month, core.Tz.Now.Day, 0, 0, 0)) - 60 * 60 * 24 * 7; // show tasks completed over the last week
+            long endTime = startTime + 60 * 60 * 24 * 7 * (8 + 1); // skip ahead eight weeks into the future
+
+            Calendar cal = null;
+            try
             {
-                core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
+                cal = new Calendar(core, owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(core, owner);
+            }
+
+            if (cal.Access.Can("CREATE_TASKS"))
+            {
+                core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri(owner, "calendar", "new-task", true,
                     string.Format("year={0}", core.Tz.Now.Year),
                     string.Format("month={0}", core.Tz.Now.Month),
                     string.Format("day={0}", core.Tz.Now.Day)));
             }
-
-            long startTime = core.Tz.GetUnixTimeStamp(new DateTime(core.Tz.Now.Year, core.Tz.Now.Month, core.Tz.Now.Day, 0, 0, 0)) - 60 * 60 * 24 * 7; // show tasks completed over the last week
-            long endTime = startTime + 60 * 60 * 24 * 7 * (8 + 1); // skip ahead eight weeks into the future
-
-            Calendar cal = new Calendar(core);
 
             List<Task> tasks = cal.GetTasks(core, owner, startTime, endTime, true);
 

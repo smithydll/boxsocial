@@ -339,7 +339,16 @@ namespace BoxSocial.Applications.Calendar
             long startTime = e.core.Tz.GetUnixTimeStamp(new DateTime(e.core.Tz.Now.Year, e.core.Tz.Now.Month, e.core.Tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 7; // skip ahead one week into the future
 
-            Calendar cal = new Calendar(e.core);
+            Calendar cal = null;
+            try
+            {
+                cal = new Calendar(core, core.Session.LoggedInMember);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(core, core.Session.LoggedInMember);
+            }
+
             List<Event> events = cal.GetEvents(core, e.core.Session.LoggedInMember, startTime, endTime);
 
             template.Parse("U_NEW_EVENT", core.Hyperlink.AppendSid(string.Format("{0}calendar/new-event",
@@ -366,7 +375,7 @@ namespace BoxSocial.Applications.Calendar
                     lastDay = eventDay;
                     appointmentDaysVariableCollection = template.CreateChild("appointment_days_list");
 
-                    appointmentDaysVariableCollection.Parse("DAY", eventDay.DayOfWeek.ToString());
+                    appointmentDaysVariableCollection.Parse("DAY", core.Tz.DateTimeToDateString(eventDay));
                 }
 
                 VariableCollection appointmentVariableCollection = appointmentDaysVariableCollection.CreateChild("appointments_list");

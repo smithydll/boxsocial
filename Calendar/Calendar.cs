@@ -26,18 +26,156 @@ using System.Text;
 using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Groups;
 
 namespace BoxSocial.Applications.Calendar
 {
-    public class Calendar
+    [DataTable("calendar")]
+    [Permission("VIEW", "Can view your calendar", PermissionTypes.View)]
+    [Permission("CREATE_EVENTS", "Can create events", PermissionTypes.CreateAndEdit)]
+    [Permission("CREATE_TASKS", "Can create tasks", PermissionTypes.CreateAndEdit)]
+    [Permission("ASSIGN_TASKS", "Can assign tasks to people", PermissionTypes.CreateAndEdit)]
+    public class Calendar : NumberedItem, IPermissibleItem
     {
-        private Core core;
-        private Mysql db;
+        [DataField("calendar_id", DataFieldKeys.Primary)]
+        private long calendarId;
+        [DataField("calendar_item", DataFieldKeys.Unique)]
+        private ItemKey ownerKey;
+        [DataField("calendar_events")]
+        private long eventCount;
+        [DataField("calendar_tasks")]
+        private bool taskCount;
+        [DataField("calendar_simple_permissions")]
+        private bool simplePermissions;
 
-        public Calendar(Core core)
+        private Primitive owner;
+        private Access access;
+
+        public override long Id
         {
-            this.core = core;
-            this.db = core.Db;
+            get
+            {
+                return calendarId;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (access == null)
+                {
+                    access = new Access(core, this);
+                }
+                return access;
+            }
+        }
+
+        public bool IsSimplePermissions
+        {
+            get
+            {
+                return simplePermissions;
+            }
+            set
+            {
+                SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
+        public Primitive Owner
+        {
+            get
+            {
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeId != owner.TypeId)
+                {
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
+                    return owner;
+                }
+                else
+                {
+                    return owner;
+                }
+            }
+        }
+
+        public Calendar(Core core, Primitive owner)
+            : base(core)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            if (owner == null)
+            {
+                throw new InvalidUserException();
+            }
+
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(Calendar_ItemLoad);
+
+            try
+            {
+                LoadItem("calendar_item_id", "calendar_item_type_id", owner);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidCalendarException();
+            }
+        }
+
+        public Calendar(Core core, DataRow calendarRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Calendar_ItemLoad);
+
+            loadItemInfo(calendarRow);
+        }
+
+        /// <summary>
+        /// ItemLoad event
+        /// </summary>
+        private void Calendar_ItemLoad()
+        {
+        }
+
+        /// <summary>
+        /// Creates a new blog for the logged in user.
+        /// </summary>
+        /// <param name="core"></param>
+        /// <returns></returns>
+        public static Calendar Create(Core core, Primitive owner)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+
+            InsertQuery iQuery = new InsertQuery(GetTable(typeof(Calendar)));
+            iQuery.AddField("calendar_item_id", owner.Id);
+            iQuery.AddField("calendar_item_type_id", owner.TypeId);
+            iQuery.AddField("calendar_simple_permissions", true);
+
+            long calendarId = core.Db.Query(iQuery);
+
+            Calendar newCalendar = new Calendar(core, owner);
+
+            Access.CreateAllGrantsForOwner(core, newCalendar);
+            if (owner is User)
+            {
+                newCalendar.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW");
+            }
+            if (owner is UserGroup)
+            {
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOperatorsGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOfficersGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+            }
+
+            return newCalendar;
         }
 
         public List<Event> GetEvents(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
@@ -445,7 +583,16 @@ namespace BoxSocial.Applications.Calendar
             // the whole month including exit days
             long endTime = startTime + 60 * 60 * 24 * weeks * 7;
 
-            Calendar cal = new Calendar(core);
+            Calendar cal = null;
+            try
+            {
+                cal = new Calendar(core, owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(core, owner);
+            }
+
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
             /*if (startTime == -8885289600 || startTime == 11404281600 || endTime == -8885289600 || endTime == 11404281600)
@@ -557,7 +704,16 @@ namespace BoxSocial.Applications.Calendar
             long startTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24;
 
-            Calendar cal = new Calendar(core);
+            Calendar cal = null;
+            try
+            {
+                cal = new Calendar(core, owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(core, owner);
+            }
+
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
             bool hasAllDaysEvents = false;
@@ -790,5 +946,59 @@ namespace BoxSocial.Applications.Calendar
                 events.Remove(calendarEvent);
             }
         }
+
+        public override string Uri
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+
+        public List<AccessControlPermission> AclPermissions
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
+        {
+            return false;
+        }
+
+        public IPermissibleItem PermissiveParent
+        {
+            get
+            {
+                return Owner;
+            }
+        }
+
+        public ItemKey PermissiveParentKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
+        public string DisplayTitle
+        {
+            get
+            {
+                return "Calendar: " + Owner.DisplayName + " (" + Owner.Key + ")";
+            }
+        }
+
+        public bool GetDefaultCan(string permission, ItemKey viewer)
+        {
+            return false;
+        }
+
+        public string ParentPermissionKey(Type parentType, string permission)
+        {
+            return permission;
+        }
+    }
+
+    public class InvalidCalendarException : Exception
+    {
     }
 }

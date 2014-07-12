@@ -30,7 +30,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    [AccountSubModule("calendar", "new-event")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "new-event")]
     public class AccountCalendarEventNew : AccountSubModule
     {
         public override string Title

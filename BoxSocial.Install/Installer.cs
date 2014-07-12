@@ -354,6 +354,7 @@ namespace BoxSocial.Install
             menuItems.Add(new MenuOption("Upgrade Permissions", EnterUpgradePermissions));
             menuItems.Add(new MenuOption("Upgrade Pages", EnterUpgradePages));
             menuItems.Add(new MenuOption("Update Image Resources", EnterUpdateGDK));
+            menuItems.Add(new MenuOption("Update Emoticons", EnterInstallEmoticons));
 
             ExecuteMenu(menuItems);
         }
@@ -502,6 +503,18 @@ namespace BoxSocial.Install
             InstallLanguage("en", @"EnterpriseResourcePlanning");
         }
 
+        static void EnterInstallEmoticons()
+        {
+            loadUpdateOptions();
+
+            Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+            Template template = new Template(Path.Combine(root, "templates"), "default.html");
+            Core core = new Core(null, db, template);
+            UnixTime tz = new UnixTime(core, 0);
+
+            InstallEmoticons(core);
+        }
+
         static void EnterUpdateGDK()
         {
             loadUpdateOptions();
@@ -556,6 +569,8 @@ namespace BoxSocial.Install
                     }
                 }
             }
+
+            // TODO: groups
 
             Console.WriteLine("Pages Upgraded");
             if (interactive)

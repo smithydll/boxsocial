@@ -11,9 +11,29 @@
 <!--
     nid = {NEWEST_ID};
     var tid = {S_ID};
+    lang['SEND_A_MESSAGE'] = '{L_SEND_A_MESSAGE}';
 
     $(document).ready(function () {
         resize();
+        $('#message-text').keydown(function(event) {
+            if (event.keyCode == 13) {
+                if (!event.shiftKey && !event.altKey) {
+                    $(this.form).submit();
+                    return false;
+                }
+            }
+        }).focus(function(){
+            if ($(this).hasClass('blur')) {
+                $(this).val('');
+                $(this).removeClass('blur');
+            }
+        }).blur(function(){
+            if ($(this).val() == '') {
+                $(this).addClass('blur');
+                $(this).val(lang['SEND_A_MESSAGE']);
+            }
+        }).trigger('blur');
+        $('.comment-buttons').hide();
 
         setInterval(checkNewMessagesInThread, 20000);
     });
@@ -24,7 +44,7 @@
 
     function resize() {
         <!-- IF $_IS_MOBILE -->
-        $('#posts').css("height", $(window).height() - $('#posts').offset().top - $('.mail-reply-form').outerHeight(true) - 40).scrollTop($('#posts').prop("scrollHeight"));
+        $(document).scrollTop($('#posts').prop("scrollHeight"));
         <!-- ELSE -->
         $('#posts').css("overflow-y", "scroll").css("float", "none").css("height", $(window).height() - $('#posts').offset().top - $('#footer').outerHeight(true) - $('.mail-reply-form').outerHeight(true) - 40).scrollTop($('#posts').prop("scrollHeight"));
         <!-- ENDIF -->
@@ -44,27 +64,16 @@
 <!-- INCLUDE pane_message -->
 </ul>
 
-<form action="{U_ACCOUNT}" method="post" class="mail-reply-form">
+<form action="{U_ACCOUNT}" method="post" class="mail-reply-form" onsubmit="return SendMessage({S_ID}, $(this).find('.comment-textarea').val());">
 <fieldset>
-	<legend style="display: none;">{L_REPLY}</legend>
-    <ul class="comment-list">
-    <li>
-        <h4 class="owner">{L_REPLY}</h4>
-		<!-- IF USER_ICON -->
-		<div class="comment-disp-pic">
-			<img src="{USER_ICON}" data-at2x="{USER_TILE}" alt="{USER_DISPLAY_NAME}" />
-		</div>
-		<!-- ENDIF -->
-        <div class="comment-text">
-	        <textarea id="message-text" class="comment-textarea" name="message" style="width: 100%; height: 56px;" rows="3" cols="75" onfocus="$(this).css('height', '78px'); $(this).siblings('.comment-buttons').show(); /*$(this).siblings('.comment-buttons')[0].scrollIntoView();*/"></textarea>
-	        <p style="text-align: right; display: none;" class="comment-buttons"><input type="submit" id="save" name="save" value="Reply" id="comment-submit-{ITEM_ID}" class="comment-submit" onclick="return SendMessage({S_ID}, $(this).parent().siblings('.comment-textarea').val());" />
-            <input type="reset" value="Cancel" onclick="$(this).parent().hide(); $(this).parent().siblings('.comment-textarea').css('height', '56px');" /></p>
+        <div class="message-text">
+	        <textarea id="message-text" class="comment-textarea blur" name="message" style="width: 100%; height: 56px;" rows="3" cols="75"></textarea>
+	        <p style="text-align: right;" class="comment-buttons"><input type="submit" id="save" name="save" value="Reply" class="comment-submit" onclick="return SendMessage({S_ID}, $(this).parent().siblings('.comment-textarea').val());" />
+            <input type="reset" value="Cancel" /></p>
 		<input type="hidden" name="module" value="mail" />
 		<input type="hidden" name="sub" value="compose" />
         <input type="hidden" name="mode" value="reply" />
 		<input type="hidden" name="id" value="{S_ID}" />
         </div>
-    </li>
-    </ul>
 </fieldset>
 </form>

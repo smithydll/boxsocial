@@ -171,6 +171,9 @@
   <data name="SENDER" xml:space="preserve">
     <value>Sender</value>
   </data>
+  <data name="SEND_A_MESSAGE" xml:space="preserve">
+    <value>Send a message...</value>
+  </data>
   <data name="SENT_ITEMS" xml:space="preserve">
     <value>Sent Items</value>
   </data>

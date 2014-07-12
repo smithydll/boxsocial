@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    [AccountSubModule("calendar", "delete-event")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "delete-event")]
     public class AccountCalendarEventDelete : AccountSubModule
     {
         public override string Title

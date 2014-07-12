@@ -689,11 +689,6 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public override ushort GetAccessLevel(User viewer)
-        {
-            return 0x0001;
-        }
-
         public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             if (viewer != null)
@@ -722,14 +717,14 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool HasInstalled(Core core, Primitive viewer)
+        public bool HasInstalled(Core core, Primitive owner)
         {
-            if (viewer != null)
+            if (owner != null)
             {
                 SelectQuery query = PrimitiveApplicationInfo.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
                 query.AddCondition("application_id", Id);
-                query.AddCondition("item_id", viewer.Id);
-                query.AddCondition("item_type_id", viewer.TypeId);
+                query.AddCondition("item_id", owner.Id);
+                query.AddCondition("item_type_id", owner.TypeId);
 
                 DataTable viewerTable = core.Db.Query(query);
 
@@ -950,12 +945,12 @@ namespace BoxSocial.Internals
             return false;
         }
 
-        public bool Uninstall(Core core, Primitive viewer)
+        public bool Uninstall(Core core, Primitive viewer, Primitive owner)
         {
-            return Uninstall(core, viewer, false);
+            return Uninstall(core, viewer, owner, false);
         }
 
-        public bool Uninstall(Core core, Primitive viewer, bool force)
+        public bool Uninstall(Core core, Primitive viewer, Primitive owner, bool force)
         {
             if (!force)
             {
@@ -971,28 +966,33 @@ namespace BoxSocial.Internals
                     case "networks":
                     case "groups":
                     case "gallery":
-                    case "calendar":
                     case "mail":
                         return false;
+                    case "calendar":
+                        if (owner.ItemKey.Equals(viewer.ItemKey))
+                        {
+                            return false;
+                        }
+                        break;
                 }
             }
 
-            if (HasInstalled(core, viewer))
+            if (HasInstalled(core, owner))
             {
-                Application newApplication = Application.GetApplication(core, AppPrimitives.Member, this);
+                Application newApplication = Application.GetApplication(core, owner.AppPrimitive, this);
 
-                Dictionary<string, PageSlugAttribute> slugs = newApplication.GetPageSlugs(viewer.AppPrimitive);
+                Dictionary<string, PageSlugAttribute> slugs = newApplication.GetPageSlugs(owner.AppPrimitive);
 
                 foreach (string slug in slugs.Keys)
                 {
-                    Page page = new Page(core, viewer, slug, string.Empty);
+                    Page page = new Page(core, owner, slug, string.Empty);
                     page.Delete();
                 }
 
-                DeleteQuery dQuery = new DeleteQuery("primitive_apps");
-                dQuery.AddCondition("application_id", applicationId);
-                dQuery.AddCondition("item_id", viewer.Id);
-                dQuery.AddCondition("item_type_id", viewer.TypeId);
+                DeleteQuery dQuery = new DeleteQuery(typeof(PrimitiveApplicationInfo));
+                dQuery.AddCondition("application_id", Id);
+                dQuery.AddCondition("item_id", owner.Id);
+                dQuery.AddCondition("item_type_id", owner.TypeId);
 
                 if (core.Db.Query(dQuery) > 0)
                 {
@@ -1042,6 +1042,11 @@ namespace BoxSocial.Internals
         public void QueueNotifications(Core core, ItemKey itemKey, string notifyFunction)
         {
             core.Queue.PushJob(new Job(core.Settings.QueueNotifications, Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction));
+        }
+
+        public void QueueNotifications(Core core, ItemKey itemKey, string notifyFunction, string body)
+        {
+            core.Queue.PushJob(new Job(core.Settings.QueueNotifications, Id, core.LoggedInMemberId, itemKey.TypeId, itemKey.Id, notifyFunction, body));
         }
 
         public void SendNotification(Core core, ItemKey donotNotify, User actionBy, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)

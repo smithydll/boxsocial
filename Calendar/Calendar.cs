@@ -43,23 +43,6 @@ namespace BoxSocial.Applications.Calendar
         public List<Event> GetEvents(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
         {
             List<Event> events = new List<Event>();
-
-            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
-            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
-			
-			string[] fields = Event.GetFieldsPrefixed(typeof(Event));
-			StringBuilder fieldsSb = new StringBuilder();
-			bool first = true;
-			
-			foreach (string field in fields)
-			{
-				if (!first)
-				{
-					fieldsSb.Append(", ");
-				}
-				fieldsSb.Append(field);
-				first = false;
-			}
 			
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(Event));
             sQuery.AddCondition("event_item_id", owner.Id);
@@ -85,7 +68,7 @@ namespace BoxSocial.Applications.Calendar
                 SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
                 query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
                 query.AddJoin(JoinTypes.Left, new DataField(typeof(Event), "event_id"), new DataField("event_invites", "event_id"));
-                query.AddCondition("item_id", loggedIdUid);
+                query.AddCondition("item_id", core.LoggedInMemberId);
                 query.AddCondition("item_type_id", ItemKey.GetTypeId(typeof(User)));
                 QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
                 qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
@@ -132,9 +115,6 @@ namespace BoxSocial.Applications.Calendar
         {
             List<Task> tasks = new List<Task>();
 
-            long loggedIdUid = core.LoggedInMemberId;
-            ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
-
             SelectQuery query = Item.GetSelectQueryStub(typeof(Task));
             query.AddCondition("task_item_id", owner.Id);
             query.AddCondition("task_item_type_id", owner.TypeId);
@@ -144,7 +124,7 @@ namespace BoxSocial.Applications.Calendar
 			
             if (overdueTasks)
             {
-                QueryCondition qc2 = query.AddCondition(ConditionRelations.Or, "task_due_date_ut", ConditionEquality.LessThan, UnixTime.UnixTimeStamp());
+                QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "task_due_date_ut", ConditionEquality.LessThan, UnixTime.UnixTimeStamp());
                 qc2.AddCondition("task_percent_complete", ConditionEquality.LessThan, 100);
 
                 DataTable tasksTable = db.Query(query);

@@ -990,7 +990,17 @@ namespace BoxSocial.Internals
             return friends;
         }
 
+        public List<Friend> GetFriends(int page, int perPage, bool sortOnline)
+        {
+            return GetFriends(page, perPage, null, sortOnline);
+        }
+
         public List<Friend> GetFriends(int page, int perPage, string filter)
+        {
+            return GetFriends(page, perPage, filter, false);
+        }
+
+        public List<Friend> GetFriends(int page, int perPage, string filter, bool sortOnline)
         {
             List<Friend> friends = new List<Friend>();
 
@@ -1013,9 +1023,21 @@ namespace BoxSocial.Internals
             {
                 query.AddCondition(new DataField(typeof(User), "user_name_first"), filter);
             }
-            query.AddSort(SortOrder.Ascending, "relation_order");
+            if (sortOnline)
+            {
+                query.AddSort(SortOrder.Descending, "user_last_visit_ut");
+                query.AddSort(SortOrder.Ascending, new QueryCondition("relation_order", ConditionEquality.Equal, 0));
+            }
+            else
+            {
+                query.AddSort(SortOrder.Ascending, new QueryCondition("relation_order", ConditionEquality.Equal, 0));
+            }
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
+            if (sortOnline)
+            {
+                query.LimitOrder = SortOrder.Descending;
+            }
 
             DataTable friendsTable = db.Query(query);
 
@@ -1943,49 +1965,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public override ushort GetAccessLevel(User viewer)
-        {
-            Relation viewerRelation;
-            if (!sessionRelationsSet)
-            {
-                if (viewer == null)
-                {
-                    viewerRelation = Relation.None;
-                }
-                else
-                {
-                    viewerRelation = GetRelations(viewer.ItemKey);
-                }
-                sessionRelations = viewerRelation;
-                sessionRelationsSet = true;
-            }
-            else
-            {
-                viewerRelation = sessionRelations;
-            }
-
-            if (viewer == null)
-            {
-                return 0x0001;
-            }
-            else if ((viewerRelation & Relation.Blocked) == Relation.Blocked)
-            {
-                return 0x0000;
-            }
-            else if ((viewerRelation & Relation.Family) == Relation.Family)
-            {
-                return 0x0100;
-            }
-            else if ((viewerRelation & Relation.Friend) == Relation.Friend)
-            {
-                return 0x1000;
-            }
-            else // registered, but not a relation
-            {
-                return 0x0001;
-            }
-        }
-
         /// <summary>
         /// 
         /// </summary>
@@ -2306,9 +2285,6 @@ namespace BoxSocial.Internals
                     friendVariableCollection.Parse("SQUARE", friend.UserSquare);
                 }
             }
-
-            ushort readAccessLevel = page.User.GetAccessLevel(core.Session.LoggedInMember);
-            long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
 
             /* pages */
             core.Display.ParsePageList(page.User, true);

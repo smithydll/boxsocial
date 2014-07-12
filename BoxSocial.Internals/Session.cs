@@ -846,9 +846,9 @@ namespace BoxSocial.Internals
 
                 if (userId != 0)
                 {
-                    TimeSpan ts = DateTime.Now - loggedInMember.UserInfo.LastOnlineTime;
+                    long ts = UnixTime.UnixTimeStamp() - loggedInMember.UserInfo.LastVisitDateRaw;
 
-                    if (ts.TotalMinutes >= 1)
+                    if (ts >= 60)
                     {
                         db.UpdateQuery(string.Format("UPDATE user_info SET user_last_visit_ut = UNIX_TIMESTAMP() where user_id = {0}",
                             loggedInMember.UserId));
@@ -1073,9 +1073,9 @@ namespace BoxSocial.Internals
 
                             if (SignedIn)
                             {
-                                TimeSpan ts = DateTime.Now - loggedInMember.UserInfo.LastOnlineTime;
+                                long ts = UnixTime.UnixTimeStamp() - loggedInMember.UserInfo.LastVisitDateRaw;
 
-                                if (ts.TotalMinutes >= 1)
+                                if (ts >= 60)
                                 {
                                     db.UpdateQuery(string.Format("UPDATE user_info SET user_last_visit_ut = UNIX_TIMESTAMP() where user_id = {0}",
                                         loggedInMember.UserId));

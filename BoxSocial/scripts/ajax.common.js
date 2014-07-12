@@ -140,7 +140,10 @@ function SubmitComment(id, type, zero, sort, text) {
     if (text == null) {
         text = $("#comment-text-" + id).val();
     }
-    return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", item: id, type: type, comment: text });
+    if (!$("#comment-text-" + id).hasClass('blur')) {
+        return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", item: id, type: type, comment: text });
+    }
+    return false;
 }
 
 function SubmitedComment(r, e) {
@@ -204,6 +207,7 @@ function LoadComments(id, type, node) {
 function LoadedComments(r, e) {
     e.show();
     e.html(r['message']);
+    attachCommentHandler();
 }
 
 function PostToAccount(onPost, module, sub, id, params, a) {
@@ -564,4 +568,27 @@ function LoadedNew(r, e, a, c) {
         $('#mail-notifications-tile').show();
         //$('.mail-notifications').text(mail);
     } 
+}
+
+$(document).ready(function () {
+    attachCommentHandler();
+});
+
+function attachCommentHandler() {
+    $('.comment-textarea').keydown(function (event) {
+        if (event.keyCode == 13) {
+            if (!event.shiftKey && !event.altKey) {
+                $(this.form).submit();
+                return false;
+            }
+        }
+    }).focus(function () {
+        if ($(this).hasClass('blur')) {
+            $(this).removeClass('blur').val('');
+        }
+    }).blur(function () {
+        if ($(this).val() == '') {
+            $(this).addClass('blur').val(lang['POST_A_COMMENT']);
+        }
+    }).trigger('blur');
 }

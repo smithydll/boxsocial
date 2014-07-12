@@ -316,7 +316,7 @@ namespace BoxSocial.Applications.Profile
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
-            List<Friend> friends = e.core.Session.LoggedInMember.GetFriends(1, 9, null);
+            List<Friend> friends = e.core.Session.LoggedInMember.GetFriends(1, 10, true);
 
             foreach (UserRelation friend in friends)
             {
@@ -327,6 +327,8 @@ namespace BoxSocial.Applications.Profile
                 friendVariableCollection.Parse("ICON", friend.Icon);
                 friendVariableCollection.Parse("TILE", friend.Tile);
                 friendVariableCollection.Parse("SQUARE", friend.UserSquare);
+                friendVariableCollection.Parse("SUBSCRIBERS", friend.Info.Subscribers);
+                friendVariableCollection.Parse("IS_ONLINE", friend.IsOnline ? "TRUE" : "FALSE");
             }
 
             e.core.AddSidePanel(template);

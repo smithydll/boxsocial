@@ -1472,7 +1472,7 @@ namespace BoxSocial.Internals
 
                     if (!e.InList)
                     {
-                        e.PrefixText = string.Format("{0}</p><p><code{0}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
+                        e.PrefixText = string.Format("{0}</p><p><code{1}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Trim(new char[] { '\n' }).Replace(" ", "&nbsp;");
                         e.SuffixText = "</code></p><p>";
                         e.RemoveContents();
                     }
@@ -1483,7 +1483,7 @@ namespace BoxSocial.Internals
                             caption = string.Format("<strong>{0}</strong><br />", caption);
                         }
 
-                        e.PrefixText = string.Format("{0}<br /><code{0}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Replace(" ", "&nbsp;");
+                        e.PrefixText = string.Format("{0}<br /><code{1}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Trim(new char[] { '\n' }).Replace(" ", "&nbsp;");
                         e.SuffixText = "</code>";
                         e.RemoveContents();
                     }

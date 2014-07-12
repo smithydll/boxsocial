@@ -1020,11 +1020,6 @@ namespace BoxSocial.Musician
             throw new NotImplementedException();
         }
 
-        public override ushort GetAccessLevel(User viewer)
-        {
-            throw new NotImplementedException();
-        }
-
         public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             throw new NotImplementedException();

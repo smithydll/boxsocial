@@ -1185,25 +1185,6 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override ushort GetAccessLevel(User viewer)
-        {
-            switch (GroupType)
-            {
-                case "OPEN":
-                case "REQUEST":
-                case "CLOSED":
-                    return 0x0001;
-                case "PRIVATE":
-                    if (IsGroupMember(viewer.ItemKey))
-                    {
-                        return 0x0001;
-                    }
-                    break;
-            }
-
-            return 0x0000;
-        }
-
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = string.Empty;
@@ -1437,6 +1418,9 @@ namespace BoxSocial.Groups
 
             core.Template.Parse("U_GROUP", page.Group.Uri);
             core.Template.Parse("GROUP_DISPLAY_NAME", page.Group.DisplayName);
+
+            /* pages */
+            core.Display.ParsePageList(page.Owner, true);
 
             core.Template.Parse("PRIMITIVE_THUMB", page.Owner.Thumbnail);
             core.Template.Parse("USER_ICON", page.Owner.Thumbnail);

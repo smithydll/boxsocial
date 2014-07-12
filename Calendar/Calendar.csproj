@@ -139,6 +139,7 @@
     <Content Include="templates\todayupcommingevents.html" />
     <Content Include="templates\viewcalendarday.html" />
     <Content Include="templates\viewcalendarevent.html" />
+    <Content Include="templates\viewcalendarevents.html" />
     <Content Include="templates\viewcalendarmonth.html">
       <SubType>Designer</SubType>
     </Content>

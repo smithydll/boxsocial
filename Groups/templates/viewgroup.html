@@ -65,6 +65,16 @@
     </ul>
     <!-- ENDIF -->
 	<div id="pane-profile">
+  		<div id="pane-pages" class="pane">
+            <!-- IF $_IS_MOBILE -->
+            <h3 onclick="ShowPages()">{L_PAGES}</h3>
+            <!-- ELSE -->
+			<h3>{L_PAGES}</h3>
+            <!-- ENDIF -->
+			<ul class="page-tiles">
+				{PAGE_LIST}
+			</ul>
+		</div>
     <!-- IF NOT $_IS_MOBILE -->
 		<div id="pane-profile-overview" class="pane">
 			<h3><a href="{U_GROUP}">{GROUP_DISPLAY_NAME}</a></h3>
@@ -125,8 +135,10 @@
 	<div id="profile-group-info-pane" class="pane">
 	<h3>Group Information</h3>
 	<dl>
-		<dt>Category:</dt>
+		<!-- IF CATEGORY -->
+    <dt>Category:</dt>
 		<dd>{CATEGORY}</dd>
+    <!-- ENDIF -->
 		<!-- IF DESCRIPTION -->
 		<dt>Description:</dt>
 		<dd>{DESCRIPTION}</dd>

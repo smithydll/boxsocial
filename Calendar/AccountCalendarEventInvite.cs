@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    [AccountSubModule("calendar", "invite-event")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "invite-event")]
     public class AccountCalendarEventInvite : AccountSubModule
     {
         public override string Title

@@ -320,25 +320,6 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public override ushort GetAccessLevel(User viewer)
-        {
-            switch (SubGroupType)
-            {
-                case "OPEN":
-                case "REQUEST":
-                case "CLOSED":
-                    return 0x0001;
-                case "PRIVATE":
-                    if (IsSubGroupMember(viewer.ItemKey))
-                    {
-                        return 0x0001;
-                    }
-                    break;
-            }
-
-            return 0x0000;
-        }
-
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = string.Empty;

@@ -8,8 +8,6 @@
 <!-- ELSE -->
 <!-- IF U_VIEW_ALL -->
 <h3>{L_COMMENTS} <a href="{U_VIEW_ALL}">(<span class="comment-count">{COMMENTS}</span>)</a></h3>
-<!-- ELSE -->
-<h3>{L_COMMENTS} (<span class="comment-count">{COMMENTS}</span>)</h3>
 <!-- ENDIF -->
 <!-- ENDIF -->
 <!-- IF COMMENTS_DESC -->
@@ -23,8 +21,7 @@
 <!-- ENDIF -->
 <ul class="comment-list">
 	<!-- INCLUDE pane.comment.html -->
-	<!-- IF COMMENTS -->
-	<!-- ELSE -->
+	<!-- IF NOT COMMENTS -->
 	<li class="no-comments"><p>{L_NO_COMMENTS_POSTED}</p></li>
 	<!-- ENDIF -->
 </ul>

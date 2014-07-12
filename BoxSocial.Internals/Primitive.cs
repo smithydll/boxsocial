@@ -245,8 +245,6 @@ namespace BoxSocial.Internals
 
         public abstract bool IsItemOwner(User member);
 
-        public abstract ushort GetAccessLevel(User viewer);
-
         public void ParseBreadCrumbs(List<string[]> parts)
         {
             ParseBreadCrumbs("BREADCRUMBS", parts);

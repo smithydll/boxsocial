@@ -752,6 +752,9 @@
   <data name="POSTED_BY" xml:space="preserve">
     <value>Posted By</value>
   </data>
+  <data name="POST_A_COMMENT" xml:space="preserve">
+    <value>Post a comment...</value>
+  </data>
   <data name="POST_COMMENT" xml:space="preserve">
     <value>Post Comment</value>
   </data>
@@ -880,6 +883,9 @@
   </data>
   <data name="SUBSCRIBE" xml:space="preserve">
     <value>Subscribe</value>
+  </data>
+  <data name="SUBSCRIBERS" xml:space="preserve">
+    <value>Subscribers</value>
   </data>
   <data name="SUBSCRIPTIONS" xml:space="preserve">
     <value>Subscriptions</value>

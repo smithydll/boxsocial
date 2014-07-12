@@ -582,6 +582,56 @@ namespace BoxSocial.Applications.Calendar
             return core.Hyperlink.BuildAccountSubModuleUri("calendar", "invite-event", "reject", calendarEvent.Id, true);
         }
 
+        public static void ShowAll(object sender, ShowPPageEventArgs e)
+        {
+            e.Template.SetTemplate("Calendar", "viewcalendarevents");
+
+            /* pages */
+            e.Core.Display.ParsePageList(e.Page.Owner, true);
+
+            e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
+            long startTime = e.Core.Tz.GetUnixTimeStamp(new DateTime(e.Core.Tz.Now.Year, e.Core.Tz.Now.Month, e.Core.Tz.Now.Day, 0, 0, 0));
+            long endTime = startTime + 60 * 60 * 24 * 30; // skip ahead one month into the future
+
+            Calendar cal = new Calendar(e.Core);
+            List<Event> events = cal.GetEvents(e.Core, e.Page.Owner, startTime, endTime);
+
+            VariableCollection appointmentDaysVariableCollection = null;
+            DateTime lastDay = e.Core.Tz.Now;
+
+            e.Template.Parse("U_NEW_EVENT", e.Core.Hyperlink.AppendSid(string.Format("{0}calendar/new-event",
+                e.Page.Owner.AccountUriStub)));
+
+            if (events.Count > 0)
+            {
+                e.Template.Parse("HAS_EVENTS", "TRUE");
+            }
+
+            foreach (Event calendarEvent in events)
+            {
+                DateTime eventDay = calendarEvent.GetStartTime(e.Core.Tz);
+                DateTime eventEnd = calendarEvent.GetEndTime(e.Core.Tz);
+
+                if (appointmentDaysVariableCollection == null || lastDay.Day != eventDay.Day)
+                {
+                    lastDay = eventDay;
+                    appointmentDaysVariableCollection = e.Template.CreateChild("appointment_days_list");
+
+                    appointmentDaysVariableCollection.Parse("DAY", e.Core.Tz.DateTimeToDateString(eventDay, true));
+                }
+
+                VariableCollection appointmentVariableCollection = appointmentDaysVariableCollection.CreateChild("appointments_list");
+
+                appointmentVariableCollection.Parse("TIME", eventDay.ToShortTimeString() + " - " + eventEnd.ToShortTimeString());
+                appointmentVariableCollection.Parse("SUBJECT", calendarEvent.Subject);
+                appointmentVariableCollection.Parse("LOCATION", calendarEvent.Location);
+                appointmentVariableCollection.Parse("URI", Event.BuildEventUri(e.Core, calendarEvent));
+            }
+        }
+
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             e.Template.SetTemplate("Calendar", "viewcalendarevent");

@@ -673,11 +673,35 @@ namespace BoxSocial.Internals
         {
             if (today)
             {
-                TimeSpan ts = DateTime.UtcNow.Subtract(dt.Subtract(new TimeSpan(0, 0, UnixTime.GetUtcOffset(timeZoneCode))));
+                DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
+                DateTime then = new DateTime(dt.Year, dt.Month, dt.Day);
+                TimeSpan ts = then.Subtract(now);
 
                 if (ts.TotalHours <= 24)
                 {
                     return core.Prose.GetString("TODAY");
+                }
+                else if (ts.TotalDays < 7)
+                {
+                    switch (dt.DayOfWeek)
+                    {
+                        case DayOfWeek.Monday:
+                            return core.Prose.GetString("MONDAY");
+                        case DayOfWeek.Tuesday:
+                            return core.Prose.GetString("TUESDAY");
+                        case DayOfWeek.Wednesday:
+                            return core.Prose.GetString("WEDNESDAY");
+                        case DayOfWeek.Thursday:
+                            return core.Prose.GetString("THURSDAY");
+                        case DayOfWeek.Friday:
+                            return core.Prose.GetString("FRIDAY");
+                        case DayOfWeek.Saturday:
+                            return core.Prose.GetString("SATURDAY");
+                        case DayOfWeek.Sunday:
+                            return core.Prose.GetString("SUNDAY");
+                        default:
+                            return dt.DayOfWeek.ToString();
+                    }
                 }
                 else
                 {
@@ -698,7 +722,9 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public string DateTimeToString(DateTime dt, bool today)
         {
-            TimeSpan ts = DateTime.UtcNow.Subtract(dt.Subtract(new TimeSpan(0, 0, UnixTime.GetUtcOffset(timeZoneCode))));
+            DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
+            DateTime then = new DateTime(dt.Year, dt.Month, dt.Day);
+            TimeSpan ts = then.Subtract(now);
 
             if (today)
             {

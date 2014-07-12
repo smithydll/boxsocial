@@ -1,8 +1,10 @@
 ﻿
 var sendingMessage = false;
 function SendMessage(id, text) {
-    sendingMessage = true;
-    return PostToPage(SubmitedMessage, "account", null, { ajax: "true", id: id, module: "mail", sub: "compose", mode: "reply", message: text, 'newest-id': nid, save: 'true' });
+    if (text != '') {
+        sendingMessage = true;
+        return PostToPage(SubmitedMessage, "account", null, { ajax: "true", id: id, module: "mail", sub: "compose", mode: "reply", message: text, 'newest-id': nid, save: 'true' });
+    }
 }
 
 function SubmitedMessage(r, e) {

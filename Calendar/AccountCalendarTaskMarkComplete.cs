@@ -29,7 +29,7 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Calendar
 {
-    [AccountSubModule("calendar", "task-complete")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "task-complete")]
     public class AccountCalendarTaskMarkComplete : AccountSubModule
     {
         public override string Title

@@ -17,13 +17,11 @@
 <!-- ELSE -->
 <tr class="odd">
 <!-- ENDIF -->
-	<td>{application_list.NAME}</td>
+	<td><a href="{application_list.U_APPLICATION}">{application_list.NAME}</a></td>
 	<td><a href="{application_list.U_SETTINGS}">Settings</a></td>
 	<td>
 		<!-- IF application_list.U_UNINSTALL -->
 		<a href="{application_list.U_UNINSTALL}">Uninstall</a>
-		<!-- ELSE -->
-		<span title="Cannot uninstall this application">Uninstall</span>
 		<!-- ENDIF -->
 	</td>
 </tr>

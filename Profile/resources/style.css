@@ -49,14 +49,17 @@ ul#small-friends dl {
 }
 
 ul#small-friends li {
-	float: left;
-	width: 80px;
 	margin-right: 2px;
-	height: 82px;
-	display: inline;
+	height: 42px;
 }
 
 ul#small-friends li img {
-    width: 80px;
-	height: 80px;
+    float: left;
+    width: 40px;
+	height: 40px;
+}
+
+ul#small-friends .small-friend-info {
+    margin-left: 42px;
+    padding: 3px;
 }

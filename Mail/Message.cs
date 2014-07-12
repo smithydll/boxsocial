@@ -281,7 +281,7 @@ namespace BoxSocial.Applications.Mail
                 // Send notifications
             }
 
-            core.CallingApplication.QueueNotifications(core, newItem.ItemKey, "notifyMessage");
+            core.CallingApplication.QueueNotifications(core, newItem.ItemKey, "notifyMessage", Functions.TrimStringWithExtension(core.Bbcode.Flatten(text), 160));
 
             return newItem;
         }
@@ -579,6 +579,7 @@ namespace BoxSocial.Applications.Mail
                     emailTemplate.Parse("U_SITE", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(core.Hyperlink.BuildHomeUri())));
                     emailTemplate.Parse("TO_NAME", receiver.DisplayName);
                     core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notificationString, receiver, false, string.Empty, string.Empty, true);
+                    emailTemplate.Parse("NOTIFICATION_BODY", job.Body);
 
                     core.Email.SendEmail(receiver.UserInfo.PrimaryEmail, HttpUtility.HtmlDecode(core.Bbcode.Flatten(HttpUtility.HtmlEncode(notificationString))), emailTemplate);
                 }

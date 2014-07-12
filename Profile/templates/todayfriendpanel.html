@@ -5,12 +5,18 @@
 	<!-- BEGIN friend_list -->
 		<li>
 			<a href="{friend_list.U_PROFILE}">
-				<!-- IF friend_list.TILE -->
-				<img src="{friend_list.TILE}" data-at2x="{friend_list.SQUARE}" alt="{friend_list.USER_DISPLAY_NAME}" title="{friend_list.USER_DISPLAY_NAME}" />
+				<!-- IF friend_list.ICON -->
+				<img src="{friend_list.ICON}" data-at2x="{friend_list.TILE}" alt="{friend_list.USER_DISPLAY_NAME}" title="{friend_list.USER_DISPLAY_NAME}" width="40" height="40" />
 				<!-- ELSE -->
 				<img src="/images/no_picture_100.png" alt="{friend_list.USER_DISPLAY_NAME}" title="{friend_list.USER_DISPLAY_NAME}" />
 				<!-- ENDIF -->
 			</a>
+            <div class="small-friend-info">
+                <!-- IF IS_ONLINE -->
+                <span class="online"></span>
+                <!-- ENDIF -->
+                <a href="{friend_list.U_PROFILE}">{friend_list.USER_DISPLAY_NAME}</a><br />{friend_list.SUBSCRIBERS} {L_SUBSCRIBERS}
+            </div>
 		</li>
 	<!-- END friend_list -->
 	</ul>

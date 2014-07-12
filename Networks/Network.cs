@@ -743,31 +743,6 @@ namespace BoxSocial.Networks
             return false;
         }
 
-        public override ushort GetAccessLevel(User member)
-        {
-            switch (NetworkType)
-            {
-                case NetworkTypes.Country:
-                case NetworkTypes.Global:
-                    // can view the network and all it's photos
-                    return 0x0001;
-                case NetworkTypes.University:
-                case NetworkTypes.School:
-                case NetworkTypes.Workplace:
-                    if (IsNetworkMember(member.ItemKey))
-                    {
-                        return 0x0001;
-                    }
-                    else
-                    {
-                        // TODO: !!!!
-                        return 0x0001;
-                    }
-            }
-
-            return 0x0000;
-        }
-
         public void GetCan(ushort accessBits, User viewer, out bool canRead, out bool canComment, out bool canCreate, out bool canChange)
         {
             bool isNetworkMember = IsNetworkMember(viewer.ItemKey);

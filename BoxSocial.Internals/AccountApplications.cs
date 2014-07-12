@@ -82,13 +82,14 @@ namespace BoxSocial.Internals
                 args.Add("mode", "settings");
                 args.Add("id", ae.ApplicationId.ToString());
                 applicationsVariableCollection.Parse("U_SETTINGS", BuildUri(args));
+                applicationsVariableCollection.Parse("U_APPLICATION", ae.Uri);
 
-                if (ae.AssemblyName != "Profile" && ae.AssemblyName != "GuestBook" && !ae.IsPrimitive)
+                if (ae.AssemblyName != "Gallery" && ae.AssemblyName != "Mail" && ae.AssemblyName != "Profile" && ae.AssemblyName != "GuestBook" && !ae.IsPrimitive)
                 {
                     args = new Dictionary<string, string>();
                     args.Add("mode", "uninstall");
                     args.Add("id", ae.ApplicationId.ToString());
-                    applicationsVariableCollection.Parse("U_UNINSTALL", BuildUri(args));
+                    applicationsVariableCollection.Parse("U_UNINSTALL", core.Hyperlink.AppendSid(BuildUri(args), true));
                 }
             }
 
@@ -252,7 +253,29 @@ namespace BoxSocial.Internals
             try
             {
                 ApplicationEntry ae = new ApplicationEntry(core, id);
-                ae.Uninstall(core, Owner);
+
+                bool uninstalled = false;
+                switch (ae.AssemblyName)
+                {
+                    case "Profile":
+                    case "Mail":
+                    case "Gallery":
+                    case "GuestBook":
+                        break;
+                    default:
+                        if (!ae.IsPrimitive)
+                        {
+                            ae.Uninstall(core, core.Session.LoggedInMember, Owner);
+                            uninstalled = true;
+                        }
+                        break;
+                }
+
+                if (!uninstalled)
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Application cannot be uninstalled", "This application cannot be uninstalled from your profile.");
+                }
             }
             catch
             {

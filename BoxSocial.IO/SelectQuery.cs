@@ -14,17 +14,20 @@ namespace BoxSocial.IO
     {
         public SortOrder Order;
         public string Field;
+        public QueryCondition SortLast;
 
-        public TableSort(SortOrder order, string field)
+        public TableSort(SortOrder order, string field, QueryCondition sortLast)
         {
             Order = order;
             Field = field;
+            SortLast = sortLast;
         }
 
-        public TableSort(SortOrder order, DataField field)
+        public TableSort(SortOrder order, DataField field, QueryCondition sortLast)
         {
             Order = order;
             Field = field.ToString();
+            SortLast = sortLast;
         }
 
         public override string ToString()
@@ -39,11 +42,13 @@ namespace BoxSocial.IO
                 switch (Order)
                 {
                     case SortOrder.Ascending:
-                        return string.Format("{0} DESC",
-                            Field);
+                        return string.Format("{0}{1} DESC",
+                            Field,
+                            SortLast != null ? SortLast.ToString() : string.Empty);
                     case SortOrder.Descending:
-                        return string.Format("{0} ASC",
-                            Field);
+                        return string.Format("{0}{1} ASC",
+                            Field,
+                            SortLast != null ? SortLast.ToString() : string.Empty);
                     default:
                         return String.Empty;
                 }
@@ -53,11 +58,13 @@ namespace BoxSocial.IO
                 switch (Order)
                 {
                     case SortOrder.Ascending:
-                        return string.Format("{0} ASC",
-                            Field);
+                        return string.Format("{0}{1} ASC",
+                            Field,
+                            SortLast != null ? SortLast.ToString() : string.Empty);
                     case SortOrder.Descending:
-                        return string.Format("{0} DESC",
-                            Field);
+                        return string.Format("{0}{1} DESC",
+                            Field,
+                            SortLast != null ? SortLast.ToString() : string.Empty);
                     default:
                         return String.Empty;
                 }
@@ -360,12 +367,17 @@ namespace BoxSocial.IO
 
         public void AddSort(SortOrder order, string field)
         {
-            sorts.Add(new TableSort(order, field));
+            sorts.Add(new TableSort(order, field, null));
         }
 
         public void AddSort(SortOrder order, DataField field)
         {
-            sorts.Add(new TableSort(order, field));
+            sorts.Add(new TableSort(order, field, null));
+        }
+
+        public void AddSort(SortOrder order, QueryCondition lastSort)
+        {
+            sorts.Add(new TableSort(order, string.Empty, lastSort));
         }
 
         public void AddGrouping(params string[] fields)
@@ -737,22 +749,24 @@ namespace BoxSocial.IO
                 if (sorts.Count > 0)
                 {
                     bool first = true;
-                    foreach (TableSort sort in sorts)
+                    for (int i = sorts.Count - 1; i >= 0; i--)
                     {
                         if (first)
                         {
-                            /*query = string.Format("{0} ORDER BY {1}",
-                                query, sort.ToString());*/
                             limitQuery.Append(" ORDER BY ");
-                            limitQuery.Append(sort.ToString(true));
                             first = false;
                         }
                         else
                         {
-                            /*query = string.Format("{0}, {1}",
-                                query, sort.ToString());*/
                             limitQuery.Append(", ");
-                            limitQuery.Append(sort.ToString(true));
+                        }
+                        if (i == 0)
+                        {
+                            limitQuery.Append(sorts[i].ToString(true));
+                        }
+                        else
+                        {
+                            limitQuery.Append(sorts[i].ToString(false));
                         }
                     }
                 }

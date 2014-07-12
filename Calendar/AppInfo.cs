@@ -154,7 +154,9 @@ namespace BoxSocial.Applications.Calendar
             get
             {
                 Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
-                slugs.Add("calendar", new PageSlugAttribute("Calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network));
+                //slugs.Add("calendar", new PageSlugAttribute("Calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network));
+                slugs.Add("calendar/events", new PageSlugAttribute("Events", AppPrimitives.Group | AppPrimitives.Network));
+                slugs.Add("calendar/tasks", new PageSlugAttribute("Tasks", AppPrimitives.Group | AppPrimitives.Network));
                 return slugs;
             }
         }
@@ -167,69 +169,80 @@ namespace BoxSocial.Applications.Calendar
         [Show(@"calendar", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendar(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.User);
+                PPage page = (PPage)sender;
+                Calendar.Show(core, page, page.Owner);
             }
         }
 
         [Show(@"calendar/([0-9]{4})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarYear(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value));
+                PPage page = (PPage)sender;
+                Calendar.Show(core, page, page.Owner, int.Parse(core.PagePathParts[1].Value));
             }
         }
 
         [Show(@"calendar/([0-9]{4})/([0-9]{1,2})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarMonth(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
+                PPage page = (PPage)sender;
+                Calendar.Show(core, page, page.Owner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value));
             }
         }
 
         [Show(@"calendar/([0-9]{4})/([0-9]{1,2})/([0-9]{1,2})", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showCalendarDay(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Calendar.Show(core, page, page.User, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
+                PPage page = (PPage)sender;
+                Calendar.Show(core, page, page.Owner, int.Parse(core.PagePathParts[1].Value), int.Parse(core.PagePathParts[2].Value), int.Parse(core.PagePathParts[3].Value));
             }
         }
 
         [Show(@"calendar/event/([\-0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showEvent(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                Event.Show(sender, new ShowPPageEventArgs((PPage)sender, long.Parse(core.PagePathParts[1].Value)));
+                PPage page = (PPage)sender;
+                Event.Show(sender, new ShowPPageEventArgs(page, long.Parse(core.PagePathParts[1].Value)));
+            }
+        }
+
+        [Show(@"calendar/events", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
+        private void showEvents(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                PPage page = (PPage)sender;
+                Event.ShowAll(core, new ShowPPageEventArgs(page));
             }
         }
 
         [Show(@"calendar/task/([0-9]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTask(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Task.Show(core, page, page.User, long.Parse(core.PagePathParts[1].Value));
+                PPage page = (PPage)sender;
+                Task.Show(core, page, page.Owner, long.Parse(core.PagePathParts[1].Value));
             }
         }
 
         [Show(@"calendar/tasks", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network)]
         private void showTasks(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                UPage page = (UPage)sender;
-                Task.ShowAll(core, page, page.User);
+                PPage page = (PPage)sender;
+                Task.ShowAll(core, page, page.Owner);
             }
         }
 

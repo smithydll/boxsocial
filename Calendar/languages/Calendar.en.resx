@@ -141,6 +141,9 @@
   <data name="END_TIME" xml:space="preserve">
     <value>End Time</value>
   </data>
+  <data name="EVENTS" xml:space="preserve">
+    <value>Events</value>
+  </data>
   <data name="HAVE_NOT_RESPONDED" xml:space="preserve">
     <value>Have not Responded</value>
   </data>

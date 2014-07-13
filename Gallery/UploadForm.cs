@@ -35,71 +35,51 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Applications.Gallery
 {
-    /// <summary>
-    /// Account sub module for uploading photos.
-    /// </summary>
-    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "upload")]
-    public class AccountGalleriesUpload : AccountSubModule, IPermissibleControlPanelSubModule
+    public class UploadForm
     {
-        private Gallery gallery;
+        private Core core;
+        private PPage page;
+        private Template template;
+        private Primitive Owner;
+        private Mysql db;
+        private User LoggedInMember;
 
-        /// <summary>
-        /// Sub module title.
-        /// </summary>
-        public override string Title
+        public UploadForm(Core core, PPage page)
         {
-            get
-            {
-                return null;
-            }
+            this.core = core;
+            this.page = page;
+            this.db = core.Db;
+            this.template = core.Template;
+            this.Owner = page.Owner;
+            this.LoggedInMember = core.Session.LoggedInMember;
         }
 
-        /// <summary>
-        /// Sub module order.
-        /// </summary>
-        public override int Order
+        public static void Show(object sender, ShowPPageEventArgs e)
         {
-            get
-            {
-                return -1;
-            }
+            UploadForm uploader = new UploadForm(e.Core, e.Page);
+
+            e.Template.SetTemplate("Gallery", "gallery_upload");
+
+            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
+            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
+            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+
+            e.Template.Parse("S_UPLOAD", e.Core.Hyperlink.AppendSid(e.Page.Owner.UriStub + "gallery/upload", true));
+
+            uploader.AccountGalleriesUpload_Show(sender, e);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the AccountGalleriesUpload class. 
-        /// </summary>
-        /// <param name="core">The Core token.</param>
-        public AccountGalleriesUpload(Core core, Primitive owner)
-            : base(core, owner)
-        {
-            this.Load += new EventHandler(AccountGalleriesUpload_Load);
-            this.Show += new EventHandler(AccountGalleriesUpload_Show);
-        }
-
-        /// <summary>
-        /// Load procedure for account sub module.
-        /// </summary>
-        /// <param name="sender">Object calling load event</param>
-        /// <param name="e">Load EventArgs</param>
-        void AccountGalleriesUpload_Load(object sender, EventArgs e)
-        {
-        }
-
-        /// <summary>
-        /// Default show procedure for account sub module.
-        /// </summary>
-        /// <param name="sender">Object calling load event</param>
-        /// <param name="e">Load EventArgs</param>
         void AccountGalleriesUpload_Show(object sender, EventArgs e)
         {
-            SetTemplate("account_galleries_upload");
-
             long galleryId = core.Functions.RequestLong("gallery-id", 0);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
 
             if (galleryId == 0)
             {
                 // Invalid gallery
-                DisplayGenericError();
+                core.Display.ShowMessage("An error occured", "An error occured");
                 return;
             }
 
@@ -107,12 +87,20 @@ namespace BoxSocial.Applications.Gallery
             {
                 Gallery gallery = new Gallery(core, Owner, galleryId);
 
+                if (!gallery.Access.Can("CREATE_ITEMS"))
+                {
+                    core.Functions.Generate403();
+                    return;
+                }
+
+                breadCrumbParts.Add(new string[] { "!" + gallery.Uri, gallery.GalleryTitle });
+
                 CheckBox publishToFeedCheckBox = new CheckBox("publish-feed");
                 publishToFeedCheckBox.IsChecked = true;
 
                 CheckBox highQualityCheckBox = new CheckBox("high-quality");
                 highQualityCheckBox.IsChecked = false;
-                
+
                 core.Display.ParseLicensingBox(template, "S_GALLERY_LICENSE", 0);
 
                 template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
@@ -120,24 +108,26 @@ namespace BoxSocial.Applications.Gallery
                 template.Parse("S_GALLERY_ID", galleryId.ToString());
 
                 core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
+
+                breadCrumbParts.Add(new string[] { "upload?gallery-id=" + galleryId.ToString(), "Upload" });
+
+                page.Owner.ParseBreadCrumbs(breadCrumbParts);
             }
             catch (InvalidGalleryException)
             {
-                DisplayGenericError();
+                core.Display.ShowMessage("An error occured", "An error occured");
                 return;
             }
 
-            Save(new EventHandler(AccountGalleriesUpload_Save));
+            if (core.Http.Form["save"] != null)
+            {
+                AccountGalleriesUpload_Save(sender, e);
+            }
         }
 
-        /// <summary>
-        /// Save procedure for uploading photos.
-        /// </summary>
-        /// <param name="sender">Object calling load event</param>
-        /// <param name="e">Load EventArgs</param>
         void AccountGalleriesUpload_Save(object sender, EventArgs e)
         {
-            AuthoriseRequestSid();
+            ControlPanelSubModule.AuthoriseRequestSid(core);
 
             long galleryId = core.Functions.FormLong("gallery-id", 0);
             string title = core.Http.Form["title"];
@@ -217,7 +207,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch (GallerySlugNotUniqueException)
                     {
-                         core.Ajax.ShowMessage(core.IsAjax, "error", "Gallery not unique", "Please give a different name to the gallery");
+                        core.Ajax.ShowMessage(core.IsAjax, "error", "Gallery not unique", "Please give a different name to the gallery");
                     }
 
                     AccessControlLists acl = new AccessControlLists(core, parent);
@@ -343,11 +333,11 @@ namespace BoxSocial.Applications.Gallery
                     {
                         if (filesUploaded == 1)
                         {
-                            SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
+                            template.Parse("REDIRECT_URI", Gallery.BuildPhotoUri(core, Owner, parent.FullPath, slug));
                         }
                         else
                         {
-                            SetRedirectUri(parent.Uri);
+                            template.Parse("REDIRECT_URI", parent.Uri);
                         }
                         core.Display.ShowMessage("Photo Uploaded", "You have successfully uploaded a photo.");
                     }
@@ -385,27 +375,6 @@ namespace BoxSocial.Applications.Gallery
                 core.Ajax.ShowMessage(core.IsAjax, "error", "Submission failed", "Submission failed, Invalid Gallery.");
                 return;
 
-            }
-        }
-
-        public Access Access
-        {
-            get
-            {
-                if (gallery == null)
-                {
-                    gallery = new Gallery(core, core.Functions.RequestLong("gallery-id", 0));
-                }
-
-                return gallery.Access;
-            }
-        }
-
-        public string AccessPermission
-        {
-            get
-            {
-                return "CREATE_ITEMS";
             }
         }
     }

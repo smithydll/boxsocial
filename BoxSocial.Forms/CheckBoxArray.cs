@@ -33,6 +33,14 @@ namespace BoxSocial.Forms
         private int columns;
         private Layout layout;
 
+        public int Count
+        {
+            get
+            {
+                return itemKeys.Count;
+            }
+        }
+
         public Layout Layout
         {
             get

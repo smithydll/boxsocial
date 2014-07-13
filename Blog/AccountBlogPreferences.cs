@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Blog
         /// Initializes a new instance of the AccountBlogPreferences class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountBlogPreferences(Core core)
-            : base(core)
+        public AccountBlogPreferences(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlogPreferences_Load);
             this.Show += new EventHandler(AccountBlogPreferences_Show);

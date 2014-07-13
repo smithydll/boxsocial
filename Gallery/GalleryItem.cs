@@ -3229,10 +3229,10 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 string size = "_display";
-                if (ItemWidth <= 640 && ItemHeight <= 640)
+                /*if (ItemWidth <= 640 && ItemHeight <= 640)
                 {
                     return UltraUri;
-                }
+                }*/
 
                 if (core.Settings.UseCdn && DisplayExists)
                 {

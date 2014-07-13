@@ -2047,15 +2047,23 @@ namespace BoxSocial.Internals
             {
                 if (parts.Count > 1)
                 {
-                    for (int i = 0; i < parts.Count - 2; i++)
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    if (!lastAbsolute)
                     {
-                        if (!parts[i][0].StartsWith("*"))
+                        for (int i = 0; i < parts.Count - 2; i++)
                         {
-                            path += parts[i][0] + "/";
+                            bool absolute = parts[i][0].StartsWith("!");
+                            bool ignore = parts[i][0].StartsWith("*");
+
+                            if ((!ignore) && (!absolute))
+                            {
+                                path += parts[i][0] + "/";
+                            }
                         }
                     }
+
                     output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
-                        parts[parts.Count - 2][1], core.Hyperlink.AppendSid(path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' })));
+                        parts[parts.Count - 2][1], core.Hyperlink.AppendSid((!lastAbsolute ? path : string.Empty) + parts[parts.Count - 2][0].TrimStart(new char[] { '*', '!' })));
                 }
                 if (parts.Count == 1)
                 {
@@ -2077,9 +2085,12 @@ namespace BoxSocial.Internals
                 {
                     if (parts[i][0] != "")
                     {
+                        bool absolute = parts[i][0].StartsWith("!");
+                        bool ignore = parts[i][0].StartsWith("*");
+
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                            parts[i][1], core.Hyperlink.AppendSid(path + parts[i][0].TrimStart(new char[] { '*' })));
-                        if (!parts[i][0].StartsWith("*"))
+                            parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));
+                        if ((!ignore) && (!absolute))
                         {
                             path += parts[i][0] + "/";
                         }

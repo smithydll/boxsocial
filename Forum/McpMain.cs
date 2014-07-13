@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Forum
         /// Initializes a new instance of the McpMain class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public McpMain(Core core)
-            : base(core)
+        public McpMain(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(McpMain_Load);
             this.Show += new EventHandler(McpMain_Show);

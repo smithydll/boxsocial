@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Pages
         /// Initializes a new instance of the AccountPagesDrafts class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountPagesDrafts(Core core)
-            : base(core)
+        public AccountPagesDrafts(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountPagesDrafts_Load);
             this.Show += new EventHandler(AccountPagesDrafts_Show);

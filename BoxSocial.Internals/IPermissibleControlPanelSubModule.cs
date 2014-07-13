@@ -25,29 +25,19 @@ using System.Text;
 using System.Web;
 using BoxSocial.IO;
 using BoxSocial.Forms;
-using BoxSocial.Internals;
 
 namespace BoxSocial.Internals
 {
-    public abstract class AccountSubModule : ControlPanelSubModule
+    public interface IPermissibleControlPanelSubModule
     {
-        public abstract override string Title
+        Access Access
         {
             get;
         }
 
-        public abstract override int Order
+        string AccessPermission
         {
             get;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the AccountSubModule class. 
-        /// </summary>
-        /// <param name="core">The Core token.</param>
-        public AccountSubModule(Core core, Primitive owner)
-            : base(core, owner)
-        {
         }
     }
 }

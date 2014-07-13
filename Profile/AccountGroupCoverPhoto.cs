@@ -56,8 +56,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountDisplayPic class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGroupCoverPhoto(Core core)
-            : base(core)
+        public AccountGroupCoverPhoto(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGroupCoverPhoto_Load);
             this.Show += new EventHandler(AccountGroupCoverPhoto_Show);

@@ -139,8 +139,8 @@
   <data name="account_galleries_upload" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\account_galleries_upload.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
-  <data name="groupgalleryupload" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>templates\groupgalleryupload.html;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  <data name="gallery_upload" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>templates\gallery_upload.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="pane_photo" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>templates\pane.photo.html;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>

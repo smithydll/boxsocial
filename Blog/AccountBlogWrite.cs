@@ -64,8 +64,8 @@ namespace BoxSocial.Applications.Blog
         /// Initializes a new instance of the AccountBlogWrite class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountBlogWrite(Core core)
-            : base(core)
+        public AccountBlogWrite(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlogWrite_Load);
             this.Show += new EventHandler(AccountBlogWrite_Show);

@@ -62,8 +62,8 @@ namespace BoxSocial.Applications.Gallery
         /// Initializes a new instance of the AccountGalleriesManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGalleriesManage(Core core)
-            : base(core)
+        public AccountGalleriesManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGalleriesManage_Load);
             this.Show += new EventHandler(AccountGalleriesManage_Show);
@@ -97,7 +97,7 @@ namespace BoxSocial.Applications.Gallery
                     pg = new Gallery(core, Owner, parentGalleryId);
 
                     template.Parse("U_NEW_GALLERY", BuildUri("galleries", "new", pg.Id));
-                    template.Parse("U_UPLOAD_PHOTO", BuildUri("upload", new Dictionary<string, string> { { "gallery-id", pg.Id.ToString() } }));
+                    template.Parse("U_UPLOAD_PHOTO", pg.PhotoUploadUri);
                     template.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", pg.Id, ItemType.GetTypeId(typeof(Gallery))), true));
 
                     galleryParentPath = pg.FullPath;

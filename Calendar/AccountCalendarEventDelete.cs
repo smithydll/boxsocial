@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarEventDelete class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarEventDelete(Core core)
-            : base(core)
+        public AccountCalendarEventDelete(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarEventDelete_Load);
             this.Show += new EventHandler(AccountCalendarEventDelete_Show);

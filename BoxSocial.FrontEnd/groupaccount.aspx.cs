@@ -133,7 +133,7 @@ namespace BoxSocial.FrontEnd
             {
                 if (type.IsSubclassOf(typeof(AccountSubModule)))
                 {
-                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core }) as AccountSubModule;
+                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core, (Primitive)Group }) as AccountSubModule;
 
                     if (newModule != null)
                     {
@@ -160,10 +160,7 @@ namespace BoxSocial.FrontEnd
                 SessionState.RedirectAuthenticate();
             }
 
-            if (!Group.IsGroupOperator(loggedInMember.ItemKey))
-            {
-                core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
-            }
+            VariableCollection parentModulesVariableCollection = null;
 
             template.Parse("ACCOUNT_TITLE", "Group Control Panel");
             template.Parse("PRIMITIVE_TITLE", Group.DisplayName);
@@ -184,22 +181,51 @@ namespace BoxSocial.FrontEnd
 
             accountModules.Sort();
 
-            VariableCollection parentModulesVariableCollection = null;
+            bool singleModule = false;
+            if (!Group.IsGroupOperator(loggedInMember.ItemKey))
+            {
+                bool can = false;
+                foreach (AccountSubModule asm in accountSubModules)
+                {
+                    if (asm is IPermissibleControlPanelSubModule)
+                    {
+                        if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                        {
+                            IPermissibleControlPanelSubModule pasm = (IPermissibleControlPanelSubModule)asm;
+                            can = pasm.Access.Can(pasm.AccessPermission);
+                            singleModule = true;
+                        }
+                    }
+                }
+
+                if (!can)
+                {
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to manage this group.");
+                }
+            }
 
             foreach (AccountModule accountModule in accountModules)
             {
                 if ((accountModule.Primitives & AppPrimitives.Group) == AppPrimitives.Group)
                 {
+                    if (singleModule && accountModule.Key != module)
+                    {
+                        continue;
+                    }
+
                     VariableCollection modulesVariableCollection = template.CreateChild("module_list");
 
                     modulesVariableCollection.Parse("NAME", accountModule.Name);
-                    if (string.IsNullOrEmpty(accountModule.Key))
+                    if (!singleModule)
                     {
-                        modulesVariableCollection.Parse("URI", Group.AccountUriStub);
-                    }
-                    else
-                    {
-                        modulesVariableCollection.Parse("URI", Group.AccountUriStub + accountModule.Key);
+                        if (string.IsNullOrEmpty(accountModule.Key))
+                        {
+                            modulesVariableCollection.Parse("URI", Group.AccountUriStub);
+                        }
+                        else
+                        {
+                            modulesVariableCollection.Parse("URI", Group.AccountUriStub + accountModule.Key);
+                        }
                     }
 
                     if (module == accountModule.Key)
@@ -251,22 +277,26 @@ namespace BoxSocial.FrontEnd
             {
                 if (!string.IsNullOrEmpty(asm.Key) && asm.Order >= 0)
                 {
-                    VariableCollection modulesVariableCollection = template.CreateChild("account_links");
-                    if (parentModulesVariableCollection != null)
+                    if (!singleModule)
                     {
-                        parentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
-                    }
+                        VariableCollection modulesVariableCollection = template.CreateChild("account_links");
+                        if (parentModulesVariableCollection != null)
+                        {
+                            parentModulesVariableCollection.CreateChild("account_links", modulesVariableCollection);
+                        }
 
-                    asm.SetOwner = Group;
+                        asm.SetOwner = Group;
 
-                    modulesVariableCollection.Parse("TITLE", asm.Title);
-                    modulesVariableCollection.Parse("SUB", asm.Key);
-                    modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
-                    modulesVariableCollection.Parse("URI", asm.BuildUri(core));
+                        modulesVariableCollection.Parse("TITLE", asm.Title);
+                        modulesVariableCollection.Parse("SUB", asm.Key);
+                        modulesVariableCollection.Parse("MODULE", asm.ModuleKey);
+                        modulesVariableCollection.Parse("URI", asm.BuildUri(core));
 
-                    if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
-                    {
-                        modulesVariableCollection.Parse("CURRENT", "TRUE");
+
+                        if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                        {
+                            modulesVariableCollection.Parse("CURRENT", "TRUE");
+                        }
                     }
                 }
 

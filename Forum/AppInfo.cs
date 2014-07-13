@@ -202,7 +202,7 @@ namespace BoxSocial.Applications.Forum
         {
             if (sender is PPage)
             {
-                Poster.Show(sender, new ShowPPageEventArgs((PPage)sender));
+                PostForm.Show(sender, new ShowPPageEventArgs((PPage)sender));
             }
         }
 

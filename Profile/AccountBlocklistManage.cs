@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountBlocklistManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountBlocklistManage(Core core)
-            : base(core)
+        public AccountBlocklistManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlocklistManage_Load);
             this.Show += new EventHandler(AccountBlocklistManage_Show);

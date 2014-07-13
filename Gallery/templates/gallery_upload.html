@@ -1,6 +1,41 @@
-<h3>{L_UPLOAD_PHOTO}</h3>
+<!-- INCLUDE page_header.html -->
 
-<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+<!-- IF $_IS_DESKTOP -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<!-- IF $_IS_MOBILE -->
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{L_UPLOAD_PHOTO}</h2>
+        </div>
+    </div>
+<!-- ENDIF -->
+
+<div id="content">
+<!-- IF $_IS_DESKTOP -->
+	<div id="overview-profile" class="pane">
+        <!-- IF USER_COVER_PHOTO -->
+		<div class="info" style="height: 100px; background-image: url('{USER_COVER_PHOTO}'); background-position: 0 -50px;">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+        <h2>{L_UPLOAD_PHOTO}</h2>
+    </div>
+    </div>
+<!-- ENDIF -->
+
+<div id="page-body">
+
+<!-- IF ERROR -->
+<p class="error">{ERROR}</p>
+<!-- ENDIF -->
+
+<form id="gallery-upload-form" class="account-pane" action="{S_UPLOAD}" method="post" enctype="multipart/form-data">
 	<fieldset>
 		<legend>{L_UPLOAD_PHOTO}</legend>
 		<dl>
@@ -17,8 +52,8 @@
 			<dt class="advanced-field"><label>Photo Classification</label></dt>
 			<dd class="advanced-field">{S_PHOTO_CLASSIFICATION}</dd>
 			<dt class="advanced-field"><label for="license">Photo License</label></dt>
-			<dd class="advanced-field">{S_GALLERY_LICENSE} <a href="">Learn More...</a></dd>
-			<dt class="advanced-field"><label for="high-quality">High Quality <a href="">Learn More...</a></label></dt>
+			<dd class="advanced-field">{S_GALLERY_LICENSE} <a href="/help/licensing">Learn More...</a></dd>
+			<dt class="advanced-field"><label for="high-quality">High Quality <a href="/help/high-quality-images">Learn More...</a></label></dt>
 			<dd class="advanced-field">
 				{S_HIGH_QUALITY}
 			</dd>
@@ -36,3 +71,8 @@
 		<input type="hidden" name="gallery-id" value="{S_GALLERY_ID}" />
 	</fieldset>
 </form>
+
+</div>
+</div>
+
+<!-- INCLUDE page_footer.html -->

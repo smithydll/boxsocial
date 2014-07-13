@@ -1412,6 +1412,7 @@ namespace BoxSocial.Applications.Gallery
             int matches = 0;
 
             List<string> disallowedNames = new List<string>();
+            disallowedNames.Add("upload");
             disallowedNames.Add("comments");
             disallowedNames.Add("page");
             disallowedNames.Add("favourites");
@@ -2172,7 +2173,7 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 //return core.Uri.BuildAccountSubModuleUri("galleries", "upload", galleryId, true);
-                return core.Hyperlink.AppendSid(Owner.AccountUriStub + "galleries/upload?gallery-id=" + Id.ToString(), true);
+                return core.Hyperlink.AppendSid(Owner.UriStub + "gallery/upload?gallery-id=" + Id.ToString(), true);
             }
         }
         

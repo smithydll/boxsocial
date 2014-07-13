@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountFamilyManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountFamilyManage(Core core)
-            : base(core)
+        public AccountFamilyManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountFamilyManage_Load);
             this.Show += new EventHandler(AccountFamilyManage_Show);

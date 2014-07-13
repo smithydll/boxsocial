@@ -51,8 +51,8 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the AccountPassword class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountPassword(Core core)
-            : base(core)
+        public AccountPassword(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountPassword_Load);
             this.Show += new EventHandler(AccountPassword_Show);

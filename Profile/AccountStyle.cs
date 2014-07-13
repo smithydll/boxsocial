@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountStyle class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountStyle(Core core)
-            : base(core)
+        public AccountStyle(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountStyle_Load);
             this.Show += new EventHandler(AccountStyle_Show);

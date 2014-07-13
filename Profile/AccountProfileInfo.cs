@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountProfileInfo class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountProfileInfo(Core core)
-            : base(core)
+        public AccountProfileInfo(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountProfileInfo_Load);
             this.Show += new EventHandler(AccountProfileInfo_Show);

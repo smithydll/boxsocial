@@ -56,8 +56,8 @@ namespace BoxSocial.Groups
         /// Initializes a new instance of the AccountGroupsInvite class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGroupsInvite(Core core)
-            : base(core)
+        public AccountGroupsInvite(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGroupsInvite_Load);
             this.Show += new EventHandler(AccountGroupsInvite_Show);

@@ -32,6 +32,8 @@ namespace BoxSocial.Applications.Calendar
     [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "new-task")]
     public class AccountCalendarTaskNew : AccountSubModule
     {
+        Calendar calendar;
+
         public override string Title
         {
             get
@@ -52,8 +54,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarTaskNew class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarTaskNew(Core core)
-            : base(core)
+        public AccountCalendarTaskNew(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarTaskNew_Load);
             this.Show += new EventHandler(AccountCalendarTaskNew_Show);
@@ -230,6 +232,26 @@ namespace BoxSocial.Applications.Calendar
 
                 SetRedirectUri(Task.BuildTaskUri(core, calendarTask));
                 core.Display.ShowMessage("Task Saved", "You have successfully saved your changes to the task.");
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (calendar == null)
+                {
+                    calendar = new Calendar(core, Owner);
+                }
+                return calendar.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "CREATE_EVENTS";
             }
         }
     }

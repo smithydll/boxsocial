@@ -48,8 +48,8 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        public AccountBlogTrackback(Core core)
-            : base (core)
+        public AccountBlogTrackback(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlogTrackback_Load);
             this.Show += new EventHandler(AccountBlogTrackback_Show);

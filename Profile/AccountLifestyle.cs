@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountLifestyle class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountLifestyle(Core core)
-            : base(core)
+        public AccountLifestyle(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountLifestyle_Load);
             this.Show += new EventHandler(AccountLifestyle_Show);

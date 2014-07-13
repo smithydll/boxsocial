@@ -1005,33 +1005,59 @@ namespace BoxSocial.Internals
         public override string GenerateBreadCrumbs(List<string[]> parts)
         {
             string output = string.Empty;
-            string path = string.Format("/application/{0}", assemblyName);
+            string path = this.UriStub;
 
             if (core.IsMobile)
             {
                 if (parts.Count > 1)
                 {
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    if (!lastAbsolute)
+                    {
+                        for (int i = 0; i < parts.Count - 2; i++)
+                        {
+                            bool absolute = parts[i][0].StartsWith("!");
+                            bool ignore = parts[i][0].StartsWith("*");
+
+                            if ((!ignore) && (!absolute))
+                            {
+                                path += parts[i][0] + "/";
+                            }
+                        }
+                    }
+
                     output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
-                        parts[parts.Count - 2][1], path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' }));
+                        parts[parts.Count - 2][1], core.Hyperlink.AppendSid((!lastAbsolute ? path : string.Empty) + parts[parts.Count - 2][0].TrimStart(new char[] { '*', '!' })));
                 }
                 if (parts.Count == 1)
                 {
                     output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
-                        Hyperlink.Domain, core.Hyperlink.AppendSid(path));
+                        DisplayName, core.Hyperlink.AppendSid(path));
+                }
+                if (parts.Count == 0)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        core.Prose.GetString("HOME"), core.Hyperlink.AppendCoreSid("/"));
                 }
             }
             else
             {
                 output = string.Format("<a href=\"{1}\">{0}</a>",
-                        title, core.Hyperlink.AppendSid(path));
+                        DisplayName, core.Hyperlink.AppendSid(path));
 
                 for (int i = 0; i < parts.Count; i++)
                 {
                     if (parts[i][0] != string.Empty)
                     {
-                        path += "/" + parts[i][0];
+                        bool absolute = parts[i][0].StartsWith("!");
+                        bool ignore = parts[i][0].StartsWith("*");
+
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                            parts[i][1], core.Hyperlink.AppendSid(path));
+                            parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));
+                        if ((!ignore) && (!absolute))
+                        {
+                            path += parts[i][0] + "/";
+                        }
                     }
                 }
             }
@@ -1214,18 +1240,28 @@ namespace BoxSocial.Internals
                             {
                                 string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
-                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription));
+                                if (core.Http.Form["share"] == null || (core.Http.Form["share"] == "form" && core.Http.Form["share-twitter"] != null))
+                                {
+                                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription));
+                                }
                             }
 
                             if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
                             {
                                 Uri shareUri = new Uri(info.ShareUri);
-                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
+
+                                if (core.Http.Form["share"] == null || (core.Http.Form["share"] == "form" && core.Http.Form["share-tumblr"] != null))
+                                {
+                                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
+                                }
                             }
 
                             if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
                             {
-                                core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishFacebook", description));
+                                if (core.Http.Form["share"] == null || (core.Http.Form["share"] == "form" && core.Http.Form["share-facebook"] != null))
+                                {
+                                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishFacebook", description));
+                                }
                             }
                         }
                     }

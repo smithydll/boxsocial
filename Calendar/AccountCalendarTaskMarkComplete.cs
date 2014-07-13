@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarTaskMarkComplete class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarTaskMarkComplete(Core core)
-            : base(core)
+        public AccountCalendarTaskMarkComplete(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarTaskMarkComplete_Load);
             this.Show += new EventHandler(AccountCalendarTaskMarkComplete_Show);

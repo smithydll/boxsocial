@@ -280,3 +280,15 @@ function CheckRelationship(a, b) {
             break;
     }
 }
+
+$(document).ready(function () {
+    $('#message').focus(function () {
+        if ($(this).hasClass('blur')) {
+            $(this).removeClass('blur').val('');
+        }
+    }).blur(function () {
+        if ($(this).val() == '') {
+            $(this).addClass('blur').val(lang['SHARE_SOMETHING_INTERESTING']);
+        }
+    }).trigger('blur');
+});

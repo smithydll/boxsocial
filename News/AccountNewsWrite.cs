@@ -54,8 +54,8 @@ namespace BoxSocial.Applications.News
         /// Initializes a new instance of the AccountNewsWrite class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountNewsWrite(Core core)
-            : base(core)
+        public AccountNewsWrite(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountNewsWrite_Load);
             this.Show += new EventHandler(AccountNewsWrite_Show);

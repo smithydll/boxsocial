@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Blog
         /// Initializes a new instance of the AccountBlogDrafts class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountBlogDrafts(Core core)
-            : base(core)
+        public AccountBlogDrafts(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlogDrafts_Load);
             this.Show += new EventHandler(AccountBlogDrafts_Show);

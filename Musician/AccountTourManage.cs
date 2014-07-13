@@ -53,8 +53,8 @@ namespace BoxSocial.Musician
         /// Initializes a new instance of the AccountTourManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountTourManage(Core core)
-            : base(core)
+        public AccountTourManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountTourManage_Load);
             this.Show += new EventHandler(AccountTourManage_Show);

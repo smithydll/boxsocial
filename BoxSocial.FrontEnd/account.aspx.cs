@@ -38,7 +38,7 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.FrontEnd
 {
-    public partial class account : TPage
+    public partial class account : UPage
     {
 
         private List<AccountModule> accountModules = new List<AccountModule>();
@@ -132,7 +132,7 @@ namespace BoxSocial.FrontEnd
             {
                 if (type.IsSubclassOf(typeof(AccountSubModule)))
                 {
-                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core }) as AccountSubModule;
+                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core, User }) as AccountSubModule;
 
                     if (newModule != null)
                     {

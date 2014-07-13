@@ -1,20 +1,27 @@
-﻿<script type="text/javascript">
-<!--
-    $(document).ready(function () {
-        $('#message').focus().val('is ').outerWidth($('#status-div').width() - $('#status-submit').outerWidth(true));
-    });
--->
-</script>
-
-	<div id="compose-status">
-        <h3>Post Status</h3>
+﻿	<div id="compose-status">
         <div id="status-div">
 		<form action="{S_ACCOUNT}" method="post" id="status-form" onsubmit="return SendAction('{USER_DISPLAY_NAME}');">
-			<p><input type="text" id="message" name="message" value="is " style="border: 1px solid #082; border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0; outline: none;"/><input type="submit" id="status-submit" value="Post" style="border-left: none; margin-left: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;" />
+			<p><textarea id="message" name="message" class="blur" style="width: 100%; height: 24px; overflow-y: hidden;" rows="1" cols="75" onfocus="$(this).css('height', '78px').css('overflow-y', 'auto'); $(this).parent().siblings('.status-buttons').show();">{L_SHARE_SOMETHING_INTERESTING}</textarea>
             <input type="hidden" name="aclmode" value="simple" />
 			<input type="hidden" name="module" value="profile" />
 			<input type="hidden" name="sub" value="status" /></p>
-            {S_STATUS_PERMISSIONS}
+            <p>{S_STATUS_PERMISSIONS}</p>
+            <p class="status-buttons" style="display: none; text-align: right;">
+            <!-- IF S_SHARE -->
+            <!-- IF S_SHARE_TWITTER -->
+              <img src="https://g.twimg.com/twitter-bird-16x16.png" alt="Twitter" /> {S_SHARE_TWITTER}
+              <!-- ENDIF -->
+              <!-- IF S_SHARE_TUMBLR -->
+              <img src="https://platform.tumblr.com/v1/share_4.png" alt="Tumblr" /> {S_SHARE_TUMBLR}
+              <!-- ENDIF -->
+              <!-- IF S_SHARE_FACEBOOK -->
+              <span style="height: 18px; display: inline-block; background: #4c69ba; background: -webkit-gradient(linear, center top, center bottom, from(#4c69ba), to(#3b55a0)); background: -webkit-linear-gradient(#4c69ba, #3b55a0); border-color: #4c69ba; -webkit-border-radius: 2px;"><img src="https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png" alt="Link Facebook account" /></span> {S_SHARE_FACEBOOK}
+              <!-- ENDIF -->
+              <input type="hidden" name="share" value="form" />
+              <br />
+            <!-- ENDIF -->
+            <input type="submit" id="status-submit" value="{L_POST}" />
+            <input type="reset" value="{L_CANCEL}" onclick="$(this).parent().hide(); $(this).parent().parent().find('#message').css('height', '24px').css('overflow-y', 'hidden').addClass('blur');" /></p>
 		</form>
         </div>
 	</div>

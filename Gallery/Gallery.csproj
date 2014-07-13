@@ -95,6 +95,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Templates.resx</DependentUpon>
     </Compile>
+    <Compile Include="UploadForm.cs" />
     <Compile Include="UserTag.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -135,6 +136,7 @@
     <Content Include="templates\account_galleries_photo_edit.html" />
     <Content Include="templates\account_galleries_settings.html" />
     <Content Include="templates\account_galleries_upload.html" />
+    <Content Include="templates\gallery_upload.html" />
     <Content Include="templates\pane.photo.html" />
     <Content Include="templates\pane.photo.mobile.html" />
     <Content Include="templates\postphoto.html" />
@@ -143,7 +145,6 @@
     <Content Include="templates\viewgallery.mobile.html">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="templates\groupgalleryupload.html" />
     <Content Include="templates\viewgallery.html">
       <SubType>Designer</SubType>
     </Content>

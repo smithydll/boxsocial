@@ -52,8 +52,8 @@ namespace BoxSocial.Groups
         /// Initializes a new instance of the AccountGroupStyle class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGroupStyle(Core core)
-            : base(core)
+        public AccountGroupStyle(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGroupStyle_Load);
             this.Show += new EventHandler(AccountGroupStyle_Show);

@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.News
         /// Initializes a new instance of the AccountNewsIconManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountNewsIconManage(Core core)
-            : base(core)
+        public AccountNewsIconManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountNewsIconManage_Load);
             this.Show += new EventHandler(AccountNewsIconManage_Show);

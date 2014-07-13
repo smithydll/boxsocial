@@ -53,8 +53,8 @@ namespace BoxSocial.Musician
         /// Initializes a new instance of the AccountDiscographyManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountDiscographyManage(Core core)
-            : base(core)
+        public AccountDiscographyManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountDiscographyManage_Load);
             this.Show += new EventHandler(AccountDiscographyManage_Show);

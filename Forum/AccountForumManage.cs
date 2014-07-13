@@ -56,8 +56,8 @@ namespace BoxSocial.Applications.Forum
         /// Initializes a new instance of the AccountForumManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountForumManage(Core core)
-            : base(core)
+        public AccountForumManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountForumManage_Load);
             this.Show += new EventHandler(AccountForumManage_Show);

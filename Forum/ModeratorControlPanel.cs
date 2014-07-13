@@ -84,7 +84,7 @@ namespace BoxSocial.Applications.Forum
             {
                 if (type.IsSubclassOf(typeof(ModeratorControlPanelSubModule)))
                 {
-                    ModeratorControlPanelSubModule newModule = System.Activator.CreateInstance(type, new object[] { core }) as ModeratorControlPanelSubModule;
+                    ModeratorControlPanelSubModule newModule = System.Activator.CreateInstance(type, new object[] { core, this.page.Owner }) as ModeratorControlPanelSubModule;
 
                     if (newModule != null)
                     {

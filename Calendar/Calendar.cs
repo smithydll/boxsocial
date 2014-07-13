@@ -134,6 +134,21 @@ namespace BoxSocial.Applications.Calendar
             loadItemInfo(calendarRow);
         }
 
+        public Calendar(Core core, long calendarId)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Calendar_ItemLoad);
+
+            try
+            {
+                LoadItem(typeof(Calendar), calendarId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidCalendarException();
+            }
+        }
+
         /// <summary>
         /// ItemLoad event
         /// </summary>
@@ -163,9 +178,9 @@ namespace BoxSocial.Applications.Calendar
 
             Calendar newCalendar = new Calendar(core, owner);
 
-            Access.CreateAllGrantsForOwner(core, newCalendar);
             if (owner is User)
             {
+                Access.CreateAllGrantsForOwner(core, newCalendar);
                 newCalendar.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW");
             }
             if (owner is UserGroup)
@@ -554,9 +569,19 @@ namespace BoxSocial.Applications.Calendar
             core.Template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
             core.Template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(core, owner, YearOfNextMonth(year, month), NextMonth(month)));
 
-            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
+            Calendar cal = null;
+            try
             {
-                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
+                cal = new Calendar(core, owner);
+            }
+            catch (InvalidCalendarException)
+            {
+                cal = Calendar.Create(core, owner);
+            }
+
+            if (cal.Access.Can("CREATE_EVENTS"))
+            {
+                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri(owner, "calendar", "new-event", true,
                     string.Format("year={0}", year),
                     string.Format("month={0}", month),
                     string.Format("day={0}", ((month == core.Tz.Now.Month) ? core.Tz.Now.Day : 1))));
@@ -582,16 +607,6 @@ namespace BoxSocial.Applications.Calendar
 
             // the whole month including exit days
             long endTime = startTime + 60 * 60 * 24 * weeks * 7;
-
-            Calendar cal = null;
-            try
-            {
-                cal = new Calendar(core, owner);
-            }
-            catch (InvalidCalendarException)
-            {
-                cal = Calendar.Create(core, owner);
-            }
 
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);
 
@@ -693,14 +708,6 @@ namespace BoxSocial.Applications.Calendar
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
             core.Template.Parse("CURRENT_YEAR", year.ToString());
 
-            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
-            {
-                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true,
-                    string.Format("year={0}", year),
-                    string.Format("month={0}", month),
-                    string.Format("day={0}", day)));
-            }
-
             long startTime = core.Tz.GetUnixTimeStamp(new DateTime(year, month, day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24;
 
@@ -712,6 +719,14 @@ namespace BoxSocial.Applications.Calendar
             catch (InvalidCalendarException)
             {
                 cal = Calendar.Create(core, owner);
+            }
+
+            if (cal.Access.Can("CREATE_EVENTS"))
+            {
+                core.Template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri(owner, "calendar", "new-event", true,
+                    string.Format("year={0}", year),
+                    string.Format("month={0}", month),
+                    string.Format("day={0}", day)));
             }
 
             List<Event> events = cal.GetEvents(core, owner, startTime, endTime);

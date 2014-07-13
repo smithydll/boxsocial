@@ -55,8 +55,8 @@ namespace BoxSocial.Groups
         /// Initializes a new instance of the AccountGroupsManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGroupsManage(Core core)
-            : base(core)
+        public AccountGroupsManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGroupsManage_Load);
             this.Show += new EventHandler(AccountGroupsManage_Show);

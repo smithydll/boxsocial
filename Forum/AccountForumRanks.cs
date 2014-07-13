@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Forum
         /// Initializes a new instance of the AccountForumRanks class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountForumRanks(Core core)
-            : base(core)
+        public AccountForumRanks(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountForumRanks_Load);
             this.Show += new EventHandler(AccountForumRanks_Show);

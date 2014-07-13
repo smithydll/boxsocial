@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountProfilePermissions class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountProfilePermissions(Core core)
-            : base(core)
+        public AccountProfilePermissions(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountProfilePermissions_Load);
             this.Show += new EventHandler(AccountProfilePermissions_Show);

@@ -31,12 +31,12 @@ using BoxSocial.Networks;
 
 namespace BoxSocial.Applications.Forum
 {
-    public class Poster
+    public class PostForm
     {
         private Core core;
         private PPage page;
 
-        public Poster(Core core, PPage page)
+        public PostForm(Core core, PPage page)
         {
             this.core = core;
             this.page = page;
@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Forum
 
         public static void Show(object sender, ShowPPageEventArgs e)
         {
-            Poster poster = new Poster(e.Core, e.Page);
+            PostForm poster = new PostForm(e.Core, e.Page);
 
             e.Template.SetTemplate("Forum", "post");
             ForumSettings.ShowForumHeader(e.Core, e.Page);

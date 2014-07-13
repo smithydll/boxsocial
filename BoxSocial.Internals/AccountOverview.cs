@@ -51,8 +51,8 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the AccountOverview class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountOverview(Core core)
-            : base(core)
+        public AccountOverview(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountOverview_Load);
             this.Show += new EventHandler(AccountOverview_Show);

@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Mail
         /// Initializes a new instance of the AccountCompose class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCompose(Core core)
-            : base(core)
+        public AccountCompose(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCompose_Load);
             this.Show += new EventHandler(AccountCompose_Show);

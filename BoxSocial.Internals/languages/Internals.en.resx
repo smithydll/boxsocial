@@ -860,6 +860,9 @@
   <data name="SHARE" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="SHARE_SOMETHING_INTERESTING" xml:space="preserve">
+    <value>Share something interesting...</value>
+  </data>
   <data name="SIGNIN" xml:space="preserve">
     <value>Sign in</value>
   </data>

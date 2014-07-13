@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountFriendManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountFriendManage(Core core)
-            : base(core)
+        public AccountFriendManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountFriendManage_Load);
             this.Show += new EventHandler(AccountFriendManage_Show);

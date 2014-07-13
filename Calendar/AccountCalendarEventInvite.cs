@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarEventInvite class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarEventInvite(Core core)
-            : base(core)
+        public AccountCalendarEventInvite(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarEventInvite_Load);
             this.Show += new EventHandler(AccountCalendarEventInvite_Show);

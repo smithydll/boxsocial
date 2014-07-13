@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Gallery
         /// Initializes a new instance of the AccountGalleriesPhotoRotate class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGalleriesPhotoRotate(Core core)
-            : base(core)
+        public AccountGalleriesPhotoRotate(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoRotate_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoRotate_Show);

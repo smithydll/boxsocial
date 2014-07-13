@@ -23,11 +23,15 @@
 <div id="tabs">
 	<ul>
 		<!-- BEGIN module_list -->
+      <!-- IF module_list.URI -->
         <!-- IF module_list.CURRENT -->
-		<li class="current"><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
+		    <li class="current"><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
         <!-- ELSE -->
         <li><a href="{module_list.URI}"><span>{module_list.NAME}</span></a></li>
         <!-- ENDIF -->
+      <!-- ELSE -->
+        <li class="current"><span>{module_list.NAME}</span></li>
+      <!-- ENDIF -->
 		<!-- END module_list -->
 	</ul>
 </div>

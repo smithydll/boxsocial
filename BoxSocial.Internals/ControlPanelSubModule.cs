@@ -78,13 +78,14 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the ControlPanelSubModule class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public ControlPanelSubModule(Core core)
+        public ControlPanelSubModule(Core core, Primitive owner)
         {
             this.core = core;
             this.db = core.Db;
             this.session = core.Session;
             this.tz = core.Tz;
             this.LoggedInMember = session.LoggedInMember;
+            this.Owner = owner;
 
             core.Prose.AddApplication(Assembly.GetAssembly(this.GetType()).GetName().Name);
         }

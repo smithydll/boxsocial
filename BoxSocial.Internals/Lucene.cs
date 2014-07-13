@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Web;
 using System.Web.Configuration;
@@ -36,7 +37,7 @@ namespace BoxSocial.Internals
 {
     public class LuceneSearch : Search
     {
-        Directory directory;
+        Lucene.Net.Store.Directory directory;
         Analyzer analyzer;
         IndexWriter writer;
 
@@ -49,7 +50,21 @@ namespace BoxSocial.Internals
         {
             if (!initialised)
             {
-                directory = FSDirectory.Open(HttpContext.Current.Server.MapPath("./lucene/"));
+                if (HttpContext.Current != null)
+                {
+                    directory = FSDirectory.Open(HttpContext.Current.Server.MapPath("./lucene/"));
+                }
+                else
+                {
+                    if (System.IO.Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lucene")))
+                    {
+                        directory = FSDirectory.Open(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "lucene"));
+                    }
+                    else
+                    {
+                        directory = FSDirectory.Open(Path.Combine(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory).Parent.FullName, "lucene"));
+                    }
+                }
                 analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30);
 
                 IndexReader red = IndexReader.Open(directory, true);

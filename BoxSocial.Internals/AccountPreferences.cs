@@ -53,8 +53,8 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the AccountPreferences class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountPreferences(Core core)
-            : base(core)
+        public AccountPreferences(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountPreferences_Load);
             this.Show += new EventHandler(AccountPreferences_Show);

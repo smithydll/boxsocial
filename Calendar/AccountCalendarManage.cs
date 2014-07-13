@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarManage(Core core)
-            : base(core)
+        public AccountCalendarManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarManage_Load);
             this.Show += new EventHandler(AccountCalendarManage_Show);
@@ -67,9 +67,6 @@ namespace BoxSocial.Applications.Calendar
         {
             SetTemplate("account_calendar_manage");
 
-            template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true));
-            template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true));
-
             Calendar calendar = null;
             try
             {
@@ -79,6 +76,10 @@ namespace BoxSocial.Applications.Calendar
             {
                 calendar = Calendar.Create(core, Owner);
             }
+
+            template.Parse("U_NEW_EVENT", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-event", true));
+            template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true));
+            template.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", calendar.Id, ItemType.GetTypeId(typeof(Calendar))), true));
 
             List<Event> events = calendar.GetEvents(core, Owner, UnixTime.UnixTimeStamp() - 24 * 60 * 60, UnixTime.UnixTimeStamp() + 30 * 24 * 60 * 60);
 

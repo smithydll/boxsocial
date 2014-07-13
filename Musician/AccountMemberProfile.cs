@@ -53,8 +53,8 @@ namespace BoxSocial.Musician
         /// Initializes a new instance of the AccountMemberProfile class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountMemberProfile(Core core)
-            : base(core)
+        public AccountMemberProfile(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountMemberProfile_Load);
             this.Show += new EventHandler(AccountMemberProfile_Show);

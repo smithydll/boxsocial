@@ -52,8 +52,8 @@ namespace BoxSocial.Musician
         /// Initializes a new instance of the AccountReleasesManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountReleasesManage(Core core)
-            : base(core)
+        public AccountReleasesManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountReleasesManage_Load);
             this.Show += new EventHandler(AccountReleasesManage_Show);

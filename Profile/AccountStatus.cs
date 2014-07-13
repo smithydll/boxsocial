@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Profile
         /// Initializes a new instance of the AccountStatus class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountStatus(Core core)
-            : base(core)
+        public AccountStatus(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountStatus_Load);
             this.Show += new EventHandler(AccountStatus_Show);

@@ -445,7 +445,16 @@ namespace BoxSocial.Internals
                     }
                     else*/
                     {
-                        core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
+                        Primitive itemOwner = core.PrimitiveCache[feedAction.OwnerId];
+                        if (feedAction.InteractItem is IActionableItem)
+                        {
+                            itemOwner = ((IActionableItem)feedAction.InteractItem).Owner;
+                        }
+                        else if (feedAction.InteractItem is IActionableSubItem)
+                        {
+                            itemOwner = ((IActionableItem)feedAction.ActionedItem).Owner;
+                        }
+                        core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, itemOwner, true, string.Empty, string.Empty);
                     }
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);

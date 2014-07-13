@@ -52,8 +52,8 @@ namespace BoxSocial.Networks
         /// Initializes a new instance of the AccountNetworksMemberships class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountNetworksMemberships(Core core)
-            : base(core)
+        public AccountNetworksMemberships(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountNetworksMemberships_Load);
             this.Show += new EventHandler(AccountNetworksMemberships_Show);

@@ -48,8 +48,8 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
-        public AccountMessage(Core core)
-            : base(core)
+        public AccountMessage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountMessage_Load);
             this.Show += new EventHandler(AccountMessage_Show);

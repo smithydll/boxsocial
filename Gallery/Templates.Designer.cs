@@ -185,19 +185,18 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Upload Photo&lt;/h3&gt;
+        ///   Looks up a localized string similar to &lt;h3&gt;{L_UPLOAD_PHOTO}&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
         ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Upload Photo&lt;/legend&gt;
+        ///		&lt;legend&gt;{L_UPLOAD_PHOTO}&lt;/legend&gt;
         ///		&lt;dl&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;photo-file&quot;&gt;Select File&lt;/label&gt;&lt;/dt&gt;
         ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-files[]&quot; multiple=&quot;multiple&quot; /&gt;&lt;/dd&gt;
         ///			&lt;dt&gt;&lt;label for=&quot;description&quot;&gt;Description&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///	 [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_galleries_upload {
             get {
@@ -208,21 +207,24 @@ namespace BoxSocial.Applications.Gallery {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;h2&gt;Upload Photo&lt;/h2&gt;
+        ///&lt;!-- IF $_IS_DESKTOP AND BREADCRUMBS --&gt;
+        ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
+        ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;form action=&quot;{S_FORM_ACTION}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
-        ///	&lt;fieldset&gt;
-        ///		&lt;legend&gt;Upload Photo&lt;/legend&gt;
-        ///		&lt;dl&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;title&quot;&gt;Title&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;text&quot; id=&quot;title&quot; name=&quot;title&quot; value=&quot;{S_TITLE}&quot; style=&quot;width: 100%;&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;photo-file&quot;&gt;Select File&lt;/label&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;file&quot; id=&quot;photo-file&quot; name=&quot;photo-file&quot; /&gt;&lt;/dd&gt;
-        ///			&lt;dt&gt;&lt;label for=&quot;description&quot;&gt;Description&lt;/labe [rest of string was truncated]&quot;;.
+        ///&lt;div id=&quot;content&quot;&gt;
+        ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
+        ///        &lt;!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;); background-position: 0 -50px;&quot;&gt;
+        ///        &lt;!-- ELSE --&gt;
+        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;!-- ENDIF --&gt;
+        ///  &lt;h2&gt;{L_UPLOAD_PHOTO}&lt;/h2&gt;
+        ///        &lt;/div&gt;
+        ///     [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string groupgalleryupload {
+        internal static string gallery_upload {
             get {
-                return ResourceManager.GetString("groupgalleryupload", resourceCulture);
+                return ResourceManager.GetString("gallery_upload", resourceCulture);
             }
         }
         

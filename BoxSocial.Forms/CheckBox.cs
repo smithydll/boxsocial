@@ -33,6 +33,7 @@ namespace BoxSocial.Forms
         private bool disabled;
         private StyleLength width;
         private ScriptProperty script;
+        private string icon;
 
         public string Caption
         {
@@ -43,6 +44,18 @@ namespace BoxSocial.Forms
             set
             {
                 caption = value;
+            }
+        }
+
+        public string Icon
+        {
+            get
+            {
+                return icon;
+            }
+            set
+            {
+                icon = value;
             }
         }
 

@@ -53,8 +53,8 @@ namespace BoxSocial.Applications.Pages
         /// Initializes a new instance of the AccountPagesWrite class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountPagesWrite(Core core)
-            : base(core)
+        public AccountPagesWrite(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountPagesWrite_Load);
             this.Show += new EventHandler(AccountPagesWrite_Show);

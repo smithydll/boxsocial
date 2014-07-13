@@ -55,8 +55,8 @@ namespace BoxSocial.Applications.Blog
         /// Initializes a new instance of the AccountBlogManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountBlogManage(Core core)
-            : base (core)
+        public AccountBlogManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountBlogManage_Load);
             this.Show += new EventHandler(AccountBlogManage_Show);

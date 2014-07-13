@@ -56,8 +56,8 @@ namespace BoxSocial.Groups
         /// Initializes a new instance of the AccountGroupsEdit class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGroupsEdit(Core core)
-            : base(core)
+        public AccountGroupsEdit(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGroupsEdit_Load);
             this.Show += new EventHandler(AccountGroupsEdit_Show);

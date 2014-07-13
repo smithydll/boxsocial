@@ -390,6 +390,15 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [Show(@"gallery/upload", AppPrimitives.Member | AppPrimitives.Musician | AppPrimitives.Group | AppPrimitives.Network)]
+        private void showUpload(Core core, object sender)
+        {
+            if (sender is PPage)
+            {
+                UploadForm.Show(sender, new ShowPPageEventArgs((PPage)sender));
+            }
+        }
+
         /// <summary>
         /// Show a gallery
         /// </summary>

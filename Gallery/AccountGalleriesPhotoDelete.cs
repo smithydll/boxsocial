@@ -62,8 +62,8 @@ namespace BoxSocial.Applications.Gallery
         /// Initializes a new instance of the AccountGalleriesPhotoDelete class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGalleriesPhotoDelete(Core core)
-            : base(core)
+        public AccountGalleriesPhotoDelete(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoDelete_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoDelete_Show);

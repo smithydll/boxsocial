@@ -53,8 +53,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public AccountSecurity(Core core)
-            : base(core)
+        public AccountSecurity(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountSecurity_Load);
             this.Show += new EventHandler(AccountSecurity_Show);

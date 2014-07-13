@@ -46,8 +46,8 @@ namespace BoxSocial.Applications.Forum
         /// Initializes a new instance of the ModeratorControlPanelSubModule class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public ModeratorControlPanelSubModule(Core core)
-            : base(core)
+        public ModeratorControlPanelSubModule(Core core, Primitive owner)
+            : base(core, owner)
         {
         }
 

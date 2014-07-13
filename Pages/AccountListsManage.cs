@@ -56,8 +56,8 @@ namespace BoxSocial.Applications.Pages
         /// Initializes a new instance of the AccountListsManage class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountListsManage(Core core)
-            : base(core)
+        public AccountListsManage(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountListsManage_Load);
             this.Show += new EventHandler(AccountListsManage_Show);

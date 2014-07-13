@@ -127,7 +127,7 @@ namespace BoxSocial.FrontEnd
             {
                 if (type.IsSubclassOf(typeof(AccountSubModule)))
                 {
-                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core }) as AccountSubModule;
+                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core, Musician }) as AccountSubModule;
 
                     if (newModule != null)
                     {

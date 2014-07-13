@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Gallery
         /// Initializes a new instance of the AccountGalleriesPhotoDisplayPic class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGalleriesPhotoDisplayPic(Core core)
-            : base(core)
+        public AccountGalleriesPhotoDisplayPic(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoDisplayPic_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoDisplayPic_Show);

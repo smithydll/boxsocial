@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Gallery
         /// Initializes a new instance of the AccountGalleriesPhotoEdit class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountGalleriesPhotoEdit(Core core)
-            : base(core)
+        public AccountGalleriesPhotoEdit(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountGalleriesPhotoEdit_Load);
             this.Show += new EventHandler(AccountGalleriesPhotoEdit_Show);

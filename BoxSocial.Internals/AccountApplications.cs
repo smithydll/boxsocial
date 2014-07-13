@@ -51,8 +51,8 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the AccountApplications class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountApplications(Core core)
-            : base(core)
+        public AccountApplications(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountApplications_Load);
             this.Show += new EventHandler(AccountApplications_Show);

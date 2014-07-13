@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Mail
         /// Initializes a new instance of the AccountMailInbox class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountMailInbox(Core core)
-            : base(core)
+        public AccountMailInbox(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountMailInbox_Load);
             this.Show += new EventHandler(AccountMailInbox_Show);

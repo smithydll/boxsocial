@@ -31,8 +31,10 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Calendar
 {
     [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "new-event")]
-    public class AccountCalendarEventNew : AccountSubModule
+    public class AccountCalendarEventNew : AccountSubModule, IPermissibleControlPanelSubModule
     {
+        Calendar calendar;
+
         public override string Title
         {
             get
@@ -53,8 +55,8 @@ namespace BoxSocial.Applications.Calendar
         /// Initializes a new instance of the AccountCalendarEventNew class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountCalendarEventNew(Core core)
-            : base(core)
+        public AccountCalendarEventNew(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountCalendarEventNew_Load);
             this.Show += new EventHandler(AccountCalendarEventNew_Show);
@@ -348,23 +350,6 @@ namespace BoxSocial.Applications.Calendar
                         iQuery.AddField("invite_status", (byte)EventAttendance.Unknown);
 
                         core.Db.Query(iQuery);
-
-                        /* TODO: this functionality */
-                        /* TODO: EMAIL KEY PERMS */
-                        /*
-                        Template emailTemplate = new Template(core.Http.TemplateEmailPath, "event_invitation.html");
-
-                        emailTemplate.Parse("FROM_NAME", core.Session.LoggedInMember.DisplayName);
-                        emailTemplate.Parse("FROM_EMAIL", core.Session.LoggedInMember.UserInfo.PrimaryEmail);
-                        emailTemplate.Parse("FROM_NAMES", core.Session.LoggedInMember.DisplayNameOwnership);
-                        emailTemplate.Parse("EVENT_SUBJECT", calendarEvent.Subject);
-                        
-                        emailTemplate.Parse("U_EVENT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventUri(core, calendarEvent))));
-                        emailTemplate.Parse("U_ACCEPT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventAcceptUri(core, calendarEvent))));
-                        emailTemplate.Parse("U_REJECT", core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid(Event.BuildEventRejectUri(core, calendarEvent))));
-
-                        core.Email.SendEmail(email, string.Format("{0} has invited you to {1}.",
-                            core.Session.LoggedInMember.DisplayName, calendarEvent.Subject), emailTemplate);*/
                     }
                     catch (CouldNotInviteEventException)
                     {
@@ -373,6 +358,26 @@ namespace BoxSocial.Applications.Calendar
 
                 SetRedirectUri(Event.BuildEventUri(core, calendarEvent));
                 core.Display.ShowMessage("Event Saved", "You have successfully saved your changes to the event.");
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (calendar == null)
+                {
+                    calendar = new Calendar(core, Owner);
+                }
+                return calendar.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "CREATE_EVENTS";
             }
         }
     }

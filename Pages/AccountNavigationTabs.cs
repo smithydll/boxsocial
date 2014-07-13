@@ -52,8 +52,8 @@ namespace BoxSocial.Applications.Pages
         /// Initializes a new instance of the AccountNavigationTabs class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountNavigationTabs(Core core)
-            : base(core)
+        public AccountNavigationTabs(Core core, Primitive owner)
+            : base(core, owner)
         {
             this.Load += new EventHandler(AccountNavigationTabs_Load);
             this.Show += new EventHandler(AccountNavigationTabs_Show);

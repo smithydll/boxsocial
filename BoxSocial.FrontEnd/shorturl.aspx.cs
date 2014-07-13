@@ -1,5 +1,5 @@
 ﻿ /* http://boxsocial.net/
-  * Copyright © 2007, David Smith
+ * Copyright © 2007, David Smith
  * 
  * $Id:$
  * 

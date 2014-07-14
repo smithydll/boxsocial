@@ -2527,10 +2527,6 @@ namespace BoxSocial.Internals
 
             string filter = e.Core.Http["filter"];
 
-            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
-
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);
 
@@ -2564,7 +2560,7 @@ namespace BoxSocial.Internals
             e.Template.Parse("U_FILTER_BEGINS_Y", GenerateFriendsUri(e.Core, e.Page.User, "y"));
             e.Template.Parse("U_FILTER_BEGINS_Z", GenerateFriendsUri(e.Core, e.Page.User, "z"));
 
-            e.Template.Parse("FRIENDS_TITLE", string.Format("{0} Friends", e.Page.User.DisplayNameOwnership));
+            e.Template.Parse("PAGE_TITLE", string.Format("{0} Friends", e.Page.User.DisplayNameOwnership));
 
             e.Template.Parse("FRIENDS", e.Page.User.UserInfo.Friends.ToString());
             e.Template.Parse("L_FRIENDS", langFriends);

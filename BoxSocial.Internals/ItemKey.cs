@@ -472,24 +472,6 @@ namespace BoxSocial.Internals
             return TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
-        /*public static bool operator ==(ItemKey ik1, ItemKey ik2)
-        {
-			if ((ik1.Equals(null) || ik2.Equals(null)))
-				return false;
-            return ik1.Equals(ik2);
-        }
-
-        public static bool operator !=(ItemKey ik1, ItemKey ik2)
-        {
-			if ((ik1.Equals(null) && ik2.Equals(null)))
-				return false;
-			if (ik1.Equals(null))
-				return true;
-			if (ik2.Equals(null))
-				return true;
-			return (!ik1.Equals(ik2));
-        }*/
-
         public int CompareTo(object obj)
         {
             ItemKey ik = obj as ItemKey;

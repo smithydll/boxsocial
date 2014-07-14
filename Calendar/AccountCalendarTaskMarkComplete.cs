@@ -30,8 +30,10 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Calendar
 {
     [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "task-complete")]
-    public class AccountCalendarTaskMarkComplete : AccountSubModule
+    public class AccountCalendarTaskMarkComplete : AccountSubModule, IPermissibleControlPanelSubModule
     {
+        private Task task;
+
         public override string Title
         {
             get
@@ -98,6 +100,26 @@ namespace BoxSocial.Applications.Calendar
             catch (InvalidTaskException)
             {
                 core.Ajax.ShowMessage(isAjax, "error", "Error", "An error occured while marking the task as complete, go back");
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (task == null)
+                {
+                    task = new Task(core, core.Functions.RequestLong("id", 0));
+                }
+                return task.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "EDIT";
             }
         }
     }

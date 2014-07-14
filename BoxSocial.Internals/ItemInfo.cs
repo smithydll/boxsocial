@@ -200,11 +200,6 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            /*Item.Create(core, typeof(ItemInfo), true,
-                new FieldValuePair("info_item_id", itemKey.Id),
-                new FieldValuePair("info_item_type_id", itemKey.TypeId),
-                new FieldValuePair("info_item_time_ut", UnixTime.UnixTimeStamp()));*/
-
             byte[] encryptBytes = { 0x44, 0x33, 0x22, 0x11, 0x00, 0x99, 0x88, 0x77 };
             string encryptKey = "boxsocia";
 

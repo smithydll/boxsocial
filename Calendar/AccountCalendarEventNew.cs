@@ -88,7 +88,6 @@ namespace BoxSocial.Applications.Calendar
             SelectBox timezoneSelectBox = UnixTime.BuildTimeZoneSelectBox("timezone");
 
             bool edit = false;
-            ushort eventAccess = 0;
 
             if (core.Http.Query["mode"] == "edit")
             {

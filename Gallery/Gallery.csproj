@@ -131,7 +131,6 @@
     <Content Include="resources\style.css" />
     <Content Include="templates\account_galleries.html" />
     <Content Include="templates\account_galleries_add.html" />
-    <Content Include="templates\account_galleries_group.html" />
     <Content Include="templates\account_galleries_photo_tag.html" />
     <Content Include="templates\account_galleries_photo_edit.html" />
     <Content Include="templates\account_galleries_settings.html" />
@@ -148,7 +147,6 @@
     <Content Include="templates\viewgallery.html">
       <SubType>Designer</SubType>
     </Content>
-    <Content Include="templates\viewgroupgallery.html" />
     <Content Include="templates\viewphoto.html" />
     <Content Include="templates\viewprofilegallery.html" />
   </ItemGroup>

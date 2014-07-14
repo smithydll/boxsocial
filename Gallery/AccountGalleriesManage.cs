@@ -78,12 +78,6 @@ namespace BoxSocial.Applications.Gallery
 
         void AccountGalleriesManage_Show(object sender, EventArgs e)
         {
-            /*if (Owner.Type == "GROUP")
-            {
-                SetTemplate("account_galleries_group");
-                return;
-            }*/
-
             SetTemplate("account_galleries");
 
             long parentGalleryId = core.Functions.RequestLong("id", 0);

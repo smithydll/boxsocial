@@ -416,53 +416,6 @@ namespace BoxSocial.Internals
             return dateTimeSelectBox;
         }
 
-        /*public static string BuildTimeZoneSelectBox(string selectedItem)
-        {
-            
-
-            return Functions.BuildSelectBox("timezone", timeZones, selectedItem);
-        }*/
-
-        /*public bool IsDst(ushort timeZone)
-        {
-            // timezones are not fun
-            switch (timeZone)
-            {
-                case 76:
-                    // +10:00 AEST
-                    if (DateTime.Now.Month == 10)
-                    {
-                    }
-                    break;
-            }
-        }
-
-        private int GetLastSunday()
-        {
-            //DateTime firstDayOfMonth = new DateTime(DateTime.Now, 10, 1);
-        }
-
-        private int GetOffsetToSunday(DayOfWeek dow)
-        {
-            switch (dow)
-            {
-                case DayOfWeek.Sunday:
-                    return 0;
-                case DayOfWeek.Monday:
-                    return 6;
-                case DayOfWeek.Tuesday:
-                    return 5;
-                case DayOfWeek.Wednesday:
-                    return 4;
-                case DayOfWeek.Thursday:
-                    return 3;
-                case DayOfWeek.Friday:
-                    return 2;
-                case DayOfWeek.Saturday:
-                    return 1;
-            }
-        }*/
-
         public DateTime Now
         {
             get

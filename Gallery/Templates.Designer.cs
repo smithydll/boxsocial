@@ -106,17 +106,6 @@ namespace BoxSocial.Applications.Gallery {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;h3&gt;Manage Galleries&lt;/h3&gt;
-        ///
-        ///&lt;p&gt;Gallery management for a group gallery is performed through the gallery provided, not through the group account panel.&lt;/p&gt;.
-        /// </summary>
-        internal static string account_galleries_group {
-            get {
-                return ResourceManager.GetString("account_galleries_group", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;Upload Photo&lt;/h3&gt;
         ///
         ///&lt;form action=&quot;{S_FORM_ACTION}&quot; method=&quot;post&quot; enctype=&quot;multipart/form-data&quot;&gt;
@@ -207,20 +196,21 @@ namespace BoxSocial.Applications.Gallery {
         /// <summary>
         ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
         ///
-        ///&lt;!-- IF $_IS_DESKTOP AND BREADCRUMBS --&gt;
+        ///&lt;!-- IF $_IS_DESKTOP --&gt;
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;div id=&quot;content&quot;&gt;
+        ///&lt;!-- IF $_IS_MOBILE --&gt;
         ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
-        ///        &lt;!-- IF $_IS_DESKTOP AND USER_COVER_PHOTO --&gt;
-        ///		&lt;div class=&quot;info&quot; style=&quot;height: 100px; background-image: url(&apos;{USER_COVER_PHOTO}&apos;); background-position: 0 -50px;&quot;&gt;
+        ///        &lt;!-- IF USER_MOBILE_COVER_PHOTO --&gt;
+        ///		&lt;div class=&quot;info no-icon&quot; style=&quot;height: 90px; background-image: url(&apos;{USER_MOBILE_COVER_PHOTO}&apos;);&quot;&gt;
         ///        &lt;!-- ELSE --&gt;
-        ///        &lt;div class=&quot;info&quot;&gt;
+        ///        &lt;div class=&quot;info no-icon&quot;&gt;
         ///        &lt;!-- ENDIF --&gt;
-        ///  &lt;h2&gt;{L_UPLOAD_PHOTO}&lt;/h2&gt;
+        ///        &lt;h2&gt;{L_UPLOAD_PHOTO}&lt;/h2&gt;
         ///        &lt;/div&gt;
-        ///     [rest of string was truncated]&quot;;.
+        ///    &lt;/div&gt;
+        ///&lt;!-- ENDIF --&gt;        /// [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string gallery_upload {
             get {
@@ -356,31 +346,6 @@ namespace BoxSocial.Applications.Gallery {
         internal static string viewgallery_mobile {
             get {
                 return ResourceManager.GetString("viewgallery_mobile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;!-- INCLUDE page_header.html --&gt;
-        ///	&lt;h2&gt;{USER_DISPLAY_NAME_OWNERSHIP} Gallery&lt;/h2&gt;
-        ///	&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;
-        ///	&lt;!-- IF U_UPLOAD_PHOTO --&gt;
-        ///	&lt;div id=&quot;new-stuff&quot;&gt;
-        ///		&lt;span id=&quot;new-photo&quot; class=&quot;post-button&quot;&gt;&lt;a href=&quot;{U_UPLOAD_PHOTO}&quot;&gt;Upload Photo&lt;/a&gt;&lt;/span&gt;
-        ///	&lt;/div&gt;
-        ///	&lt;!-- ENDIF --&gt;
-        ///	&lt;!-- IF PAGINATION --&gt;
-        ///	&lt;p&gt;&lt;strong&gt;Go to page:&lt;/strong&gt; {PAGINATION}&lt;/p&gt;
-        ///	&lt;!-- ENDIF --&gt;
-        ///	&lt;!-- IF PHOTOS --&gt;
-        ///	&lt;ul id=&quot;photo-list&quot;&gt;
-        ///		&lt;!-- BEGIN photo_list --&gt;
-        ///		&lt;li&gt;
-        ///			&lt;dl&gt;
-        ///				&lt;dt&gt;&lt;a href=&quot;{photo_list.PHOTO_URI}&quot;&gt;&lt;img src [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string viewgroupgallery {
-            get {
-                return ResourceManager.GetString("viewgroupgallery", resourceCulture);
             }
         }
         

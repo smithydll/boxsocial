@@ -42,8 +42,6 @@ namespace BoxSocial.Internals
         [DataField("dns_owner_key", 31)]
         private string ownerKey;
 
-        private Primitive owner;
-
         public string Domain
         {
             get
@@ -55,24 +53,6 @@ namespace BoxSocial.Internals
                 SetProperty("domain", value);
             }
         }
-
-        // TODO: 
-        /*public Primitive Owner
-        {
-            get
-            {
-                if (owner == null || ownerId != owner.Id)
-                {
-                    core.UserProfiles.LoadPrimitiveProfile(ownerType, ownerId);
-                    owner = core.UserProfiles[ownerType, ownerId];
-                    return owner;
-                }
-                else
-                {
-                    return owner;
-                }
-            }
-        }*/
 
         public DnsRecord(Core core, string domain)
             : base (core)

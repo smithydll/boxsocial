@@ -830,10 +830,6 @@ namespace BoxSocial.Internals
                     break;
             }
 
-            /*if (template != null)
-            {
-                loopVars = new Dictionary<string, string>();
-            }*/
             Dictionary<string, string> loopVars = new Dictionary<string, string>(StringComparer.Ordinal);
 
             loopVars.Add("STAR_ONE", one);
@@ -1359,16 +1355,6 @@ namespace BoxSocial.Internals
         {
             template.ParseRaw(templateVar, Classification.BuildClassificationBox(core, classification));
         }
-
-        /*public void ParseTimeZoneBox(string templateVar, string timeZone)
-        {
-            ParseTimeZoneBox(core.Template, templateVar, timeZone);
-        }*/
-
-        /*public void ParseTimeZoneBox(Template template, string templateVar, string timeZone)
-        {
-            template.ParseRaw(templateVar, UnixTime.BuildTimeZoneSelectBox(timeZone));
-        }*/
 
         /// <summary>
         /// Algorithm from http://en.wikipedia.org/wiki/HSL_and_HSV

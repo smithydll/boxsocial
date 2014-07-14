@@ -1548,6 +1548,7 @@ namespace BoxSocial.Groups
         {
             core.Template.SetTemplate("Groups", "viewgroupmemberlist");
 
+            core.Template.Parse("PAGE_TITLE", "Member list for " + page.Group.DisplayName);
             core.Template.Parse("MEMBERS_TITLE", "Member list for " + page.Group.DisplayName);
             core.Template.Parse("MEMBERS", ((ulong)page.Group.Members).ToString());
 
@@ -1943,6 +1944,7 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
+            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null, string.Empty));
             ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null, string.Empty));
             ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null, string.Empty));
             ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOperatorsGroupKey, "OPERATORS", null, string.Empty));

@@ -30,9 +30,10 @@ using BoxSocial.IO;
 namespace BoxSocial.Applications.Calendar
 {
     [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network, "calendar", "new-task")]
-    public class AccountCalendarTaskNew : AccountSubModule
+    public class AccountCalendarTaskNew : AccountSubModule, IPermissibleControlPanelSubModule
     {
-        Calendar calendar;
+        private Calendar calendar;
+        private Task task;
 
         public override string Title
         {
@@ -209,6 +210,11 @@ namespace BoxSocial.Applications.Calendar
             }
             else
             {
+                if (!Access.Can("EDIT_TASKS"))
+                {
+                    core.Display.ShowMessage("Unauthorised", "You are unauthorised to edit this task.");
+                }
+
                 TaskStatus status = TaskStatus.Future;
 
                 if (percentComplete == 100)
@@ -239,11 +245,21 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                if (calendar == null)
+                switch (core.Http.Form["mode"])
                 {
-                    calendar = new Calendar(core, Owner);
+                    case "edit":
+                        if (task == null)
+                        {
+                            task = new Task(core, core.Functions.RequestLong("id", 0));
+                        }
+                        return task.Access;
+                    default:
+                        if (calendar == null)
+                        {
+                            calendar = new Calendar(core, Owner);
+                        }
+                        return calendar.Access;
                 }
-                return calendar.Access;
             }
         }
 
@@ -251,7 +267,13 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return "CREATE_EVENTS";
+                switch (core.Http.Form["mode"])
+                {
+                    case "edit":
+                        return "EDIT";
+                    default:
+                        return "CREATE_TASKS";
+                }
             }
         }
     }

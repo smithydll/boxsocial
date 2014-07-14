@@ -1277,14 +1277,7 @@ namespace BoxSocial.Internals
             BoxSocial.Internals.Classification.ApplyRestrictions(core, thePage.Classification);
 
             core.Template.Parse("PAGE_TITLE", thePage.Title);
-            /*if (owner is User)
-            {
-                core.Display.ParseBbcode("PAGE_BODY", thePage.Body, (User)owner);
-            }
-            else
-            {
-                core.Display.ParseBbcode("PAGE_BODY", thePage.Body);
-            }*/
+
             if (!string.IsNullOrEmpty(thePage.BodyCache))
             {
                 core.Display.ParseBbcodeCache("PAGE_BODY", thePage.BodyCache);

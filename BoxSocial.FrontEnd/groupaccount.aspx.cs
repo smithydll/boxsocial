@@ -187,14 +187,16 @@ namespace BoxSocial.FrontEnd
                 bool can = false;
                 foreach (AccountSubModule asm in accountSubModules)
                 {
-                    if (asm is IPermissibleControlPanelSubModule)
+                    if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
                     {
-                        if ((asm.Key == submodule || (string.IsNullOrEmpty(submodule) && asm.IsDefault)) && asm.ModuleKey == module)
+                        if (asm is IPermissibleControlPanelSubModule)
                         {
                             IPermissibleControlPanelSubModule pasm = (IPermissibleControlPanelSubModule)asm;
                             can = pasm.Access.Can(pasm.AccessPermission);
                             singleModule = true;
+
                         }
+                        break;
                     }
                 }
 

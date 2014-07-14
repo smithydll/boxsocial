@@ -152,12 +152,12 @@ namespace BoxSocial.Install
 
                         InstallEmoticons(core);*/
 
-                        Process p1 = new Process();
+                        /*Process p1 = new Process();
                         p1.StartInfo.FileName = "/etc/init.d/apache2";
                         p1.StartInfo.Arguments = "force-reload";
                         p1.Start();
 
-                        p1.WaitForExit();
+                        p1.WaitForExit();*/
                     }
                     else
                     {
@@ -2702,7 +2702,15 @@ namespace BoxSocial.Install
             {
                 File.Delete(filePath);
             }
+            if (File.Exists(filePath + ".mdb"))
+            {
+                File.Delete(filePath + ".mdb");
+            }
             File.Copy(repo + ".dll", filePath);
+            if (File.Exists(repo + ".dll.mdb"))
+            {
+                File.Copy(repo + ".dll.mdb", filePath + ".mdb");
+            }
         }
 
         private static void InstallApplication(string repo)

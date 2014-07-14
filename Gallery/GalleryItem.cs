@@ -914,11 +914,6 @@ namespace BoxSocial.Applications.Gallery
             return;
         }
 
-        /*public static GalleryItem Create(TPage page, Member owner, Gallery parent, string title, ref string slug, string fileName, string storageName, string contentType, ulong bytes, string description, ushort permissions, byte license)
-        {
-            return GalleryItem.Create(page, (Primitive)owner, parent, title, ref slug, fileName, storageName, contentType, bytes, description, permissions, license);
-        }*/
-
         /// <summary>
         /// Delete the gallery item
         /// </summary>
@@ -1061,18 +1056,6 @@ namespace BoxSocial.Applications.Gallery
             bool fullExists = false;
             bool ultraExists = false;
 
-            /*if (width > (int)PictureScale.Ultra || height > (int)PictureScale.Ultra)
-            {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, UltraPrefix, (int)PictureScale.Ultra, (int)PictureScale.Ultra);
-                ultraExists = true;
-            }
-
-            if (width > (int)PictureScale.Full || height > (int)PictureScale.Full)
-            {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, FullPrefix, (int)PictureScale.Full, (int)PictureScale.Full);
-                fullExists = true;
-            }*/
-
             switch (core.Medium)
             {
                 case Forms.DisplayMedium.Desktop:
@@ -1093,23 +1076,6 @@ namespace BoxSocial.Applications.Gallery
                     }
                     break;
             }
-
-            /*if (width > (int)PictureScale.Thumbnail || height > (int)PictureScale.Thumbnail)
-            {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, ThumbnailPrefix, (int)PictureScale.Thumbnail, (int)PictureScale.Thumbnail);
-                thumbExists = true;
-            }*/
-
-            /*if (width > (int)PictureScale.Tiny || height > (int)PictureScale.Tiny)
-            {
-                CreateScaleWithRatioPreserved(core, contentType, stream, storageName, TinyPrefix, (int)PictureScale.Tiny, (int)PictureScale.Tiny);
-                tinyExists = true;
-            }*/
-
-            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, HighPrefix, (int)PictureScale.High, (int)PictureScale.High);
-            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, SquarePrefix, (int)PictureScale.Square, (int)PictureScale.Square);
-            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, TilePrefix, (int)PictureScale.Tile, (int)PictureScale.Tile);
-            //CreateScaleWithSquareRatio(core, contentType, stream, storageName, IconPrefix, (int)PictureScale.Icon, (int)PictureScale.Icon);
 
             if (!string.IsNullOrEmpty(storageFilePath))
             {

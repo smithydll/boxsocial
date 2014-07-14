@@ -49,6 +49,7 @@ namespace BoxSocial.Applications.Calendar
     [DataTable("tasks")]
     [Permission("VIEW", "Can view the task", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on the task", PermissionTypes.Interact)]
+    [Permission("EDIT", "Can edit the task", PermissionTypes.CreateAndEdit)]
     public class Task : NumberedItem, ICommentableItem, IPermissibleItem
     {
         #region Data Fields
@@ -63,7 +64,7 @@ namespace BoxSocial.Applications.Calendar
         [DataField("task_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("user_id")]
-        private int userId; // creator
+        private long userId; // creator
         [DataField("task_due_date_ut")]
         private long dueTimeRaw;
         [DataField("task_time_completed_ut")]
@@ -78,10 +79,13 @@ namespace BoxSocial.Applications.Calendar
         private byte priority;
         [DataField("task_simple_permissions")]
         private bool simplePermissions;
+        [DataField("task_assignee_id")]
+        private long assigneeId; // person assigned to complete the task
         #endregion
 
         private Access access;
         private Primitive owner;
+        protected Calendar calendar;
 
         public event CommentHandler OnCommentPosted;
 
@@ -282,11 +286,15 @@ namespace BoxSocial.Applications.Calendar
 
             Task myTask = new Task(core, owner, taskId);
 
+            //Access.CreateGrantForPrimitive(core, myTask, creator.ItemKey, "EDIT");
+
             /*if (Access.FriendsCanRead(myTask.Permissions))
             {
                 core.CallingApplication.PublishToFeed(creator, "created a new task", string.Format("[iurl={0}]{1}[/iurl]",
                     Task.BuildTaskUri(core, myTask), myTask.Topic));
             }*/
+
+            Access.CreateGrantForPrimitive(core, myTask, Task.AssigneeGroupKey, "EDIT");
 
             return myTask;
         }
@@ -321,9 +329,7 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            core.Template.Parse("USER_ICON", owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", core.Prose.GetString("TASKS"));
 
             VariableCollection taskDaysVariableCollection = null;
             string lastDay = core.Tz.ToStringPast(core.Tz.Now);
@@ -389,15 +395,6 @@ namespace BoxSocial.Applications.Calendar
         {
             core.Template.SetTemplate("Calendar", "viewcalendartask");
 
-            if (core.LoggedInMemberId == owner.Id && owner.Type == "USER")
-            {
-                core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", true,
-                    string.Format("year={0}", core.Tz.Now.Year),
-                    string.Format("month={0}", core.Tz.Now.Month),
-                    string.Format("day={0}", core.Tz.Now.Day)));
-                core.Template.Parse("U_EDIT_TASK", core.Hyperlink.BuildAccountSubModuleUri("calendar", "new-task", "edit", taskId, true));
-            }
-
             try
             {
                 Task calendarTask = new Task(core, owner, taskId);
@@ -408,12 +405,23 @@ namespace BoxSocial.Applications.Calendar
                     return;
                 }
 
+                if (calendarTask.Calendar.Access.Can("CREATE_TASKS"))
+                {
+                    core.Template.Parse("U_NEW_TASK", core.Hyperlink.BuildAccountSubModuleUri(owner, "calendar", "new-task", true,
+                        string.Format("year={0}", core.Tz.Now.Year),
+                        string.Format("month={0}", core.Tz.Now.Month),
+                        string.Format("day={0}", core.Tz.Now.Day)));
+                }
+
+                if (calendarTask.Access.Can("EDIT"))
+                {
+                    core.Template.Parse("U_EDIT_TASK", core.Hyperlink.BuildAccountSubModuleUri(owner, "calendar", "new-task", "edit", taskId, true));
+                }
+
                 /* pages */
                 core.Display.ParsePageList(owner, true);
 
-                core.Template.Parse("USER_ICON", owner.Thumbnail);
-                core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
-                core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
+                core.Template.Parse("PAGE_TITLE", calendarTask.Topic);
 
                 core.Template.Parse("TOPIC", calendarTask.Topic);
                 core.Template.Parse("DESCRIPTION", calendarTask.Description);
@@ -504,6 +512,22 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public Calendar Calendar
+        {
+            get
+            {
+                if (calendar == null)
+                {
+                    calendar = new Calendar(core, Owner);
+                    return calendar;
+                }
+                else
+                {
+                    return calendar;
+                }
+            }
+        }
+
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -514,14 +538,40 @@ namespace BoxSocial.Applications.Calendar
 
         public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
+            if (key == Task.AssigneeGroupKey)
+            {
+                if (IsAssignee(viewer))
+                {
+                    return true;
+                }
+            }
             return false;
+        }
+
+        public bool IsAssignee(ItemKey member)
+        {
+            if (member != null)
+            {
+                if (member.Id == assigneeId)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public IPermissibleItem PermissiveParent
         {
             get
             {
-                return Owner;
+                return Calendar;
             }
         }
 
@@ -529,7 +579,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return ownerKey;
+                return Calendar.ItemKey;
             }
         }
 
@@ -548,7 +598,29 @@ namespace BoxSocial.Applications.Calendar
 
         public string ParentPermissionKey(Type parentType, string permission)
         {
+            switch (permission)
+            {
+                case "EDIT":
+                    return "EDIT_EVENTS";
+            }
             return permission;
+        }
+
+        public static List<PrimitivePermissionGroup> Task_GetItemGroups(Core core)
+        {
+            List<PrimitivePermissionGroup> itemGroups = new List<PrimitivePermissionGroup>();
+
+            itemGroups.Add(new PrimitivePermissionGroup(Task.AssigneeGroupKey, "Task assignee", string.Empty));
+
+            return itemGroups;
+        }
+
+        public static ItemKey AssigneeGroupKey
+        {
+            get
+            {
+                return new ItemKey(-1, ItemType.GetTypeId(typeof(Task)));
+            }
         }
 
         public string Noun

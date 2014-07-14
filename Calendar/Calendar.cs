@@ -32,8 +32,11 @@ namespace BoxSocial.Applications.Calendar
 {
     [DataTable("calendar")]
     [Permission("VIEW", "Can view your calendar", PermissionTypes.View)]
+    [Permission("INVITE_EVENTS", "Can invite people to events", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_EVENTS", "Can create events", PermissionTypes.CreateAndEdit)]
+    [Permission("EDIT_EVENTS", "Can edit events", PermissionTypes.CreateAndEdit)]
     [Permission("CREATE_TASKS", "Can create tasks", PermissionTypes.CreateAndEdit)]
+    [Permission("EDIT_TASKS", "Can edit tasks", PermissionTypes.CreateAndEdit)]
     [Permission("ASSIGN_TASKS", "Can assign tasks to people", PermissionTypes.CreateAndEdit)]
     public class Calendar : NumberedItem, IPermissibleItem
     {
@@ -185,9 +188,10 @@ namespace BoxSocial.Applications.Calendar
             }
             if (owner is UserGroup)
             {
-                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOperatorsGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS");
-                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOfficersGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOperatorsGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOfficersGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
                 newCalendar.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+                newCalendar.Access.CreateGrantForPrimitive(User.CreatorKey, "EDIT_EVENTS", "EDIT_TASKS");
             }
 
             return newCalendar;
@@ -516,9 +520,7 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            core.Template.Parse("USER_ICON", owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", year.ToString());
 
             core.Template.Parse("CURRENT_YEAR", year.ToString());
 
@@ -560,12 +562,11 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            core.Template.Parse("USER_ICON", owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", core.Functions.IntToMonth(month) + " " + year.ToString());
 
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));
             core.Template.Parse("CURRENT_YEAR", year.ToString());
+
             core.Template.Parse("U_PREVIOUS_MONTH", Calendar.BuildMonthUri(core, owner, YearOfPreviousMonth(year, month), PreviousMonth(month)));
             core.Template.Parse("U_NEXT_MONTH", Calendar.BuildMonthUri(core, owner, YearOfNextMonth(year, month), NextMonth(month)));
 
@@ -700,9 +701,7 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             core.Display.ParsePageList(owner, true);
 
-            core.Template.Parse("USER_THUMB", owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", day.ToString() + " " + core.Functions.IntToMonth(month) + " " + year.ToString());
 
             core.Template.Parse("CURRENT_DAY", day.ToString());
             core.Template.Parse("CURRENT_MONTH", core.Functions.IntToMonth(month));

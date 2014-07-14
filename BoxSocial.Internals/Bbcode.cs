@@ -657,16 +657,7 @@ namespace BoxSocial.Internals
 
         public string ParseUrls(string input)
         {
-            //MatchCollection matches = 
-
             input = Regex.Replace(input, "(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", "$1[url]$2[/url]", RegexOptions.IgnoreCase);
-
-            /*int offset = 0;
-            foreach (Match match in matches)
-            {
-                output = output.Insert(match.Groups[1].Index + offset, "[url]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 5,"[/url]");
-                offset += 11;
-            }*/
 
             return input;
         }

@@ -70,6 +70,7 @@ namespace BoxSocial.Applications.Calendar
 
         protected Access access;
         protected Primitive owner;
+        protected Calendar calendar;
 
         public event CommentHandler OnCommentPosted;
 
@@ -158,6 +159,22 @@ namespace BoxSocial.Applications.Calendar
                 else
                 {
                     return owner;
+                }
+            }
+        }
+
+        public Calendar Calendar
+        {
+            get
+            {
+                if (calendar == null)
+                {
+                    calendar = new Calendar(core, Owner);
+                    return calendar;
+                }
+                else
+                {
+                    return calendar;
                 }
             }
         }
@@ -266,11 +283,6 @@ namespace BoxSocial.Applications.Calendar
             if (Owner is User)
             {
                 core.CallingApplication.QueueNotifications(core, e.Comment.ItemKey, "notifyEventComment");
-                /*if (!e.Comment.OwnerKey.Equals(ownerKey)) // do not notify me when commenting on my own item
-                {
-                    core.CallingApplication.SendNotification(core, (User)Owner, e.Comment.ItemKey, string.Format("[user]{0}[/user] commented on your event.", e.Poster.Id), string.Format("[quote=\"[iurl={0}]{1}[/iurl]\"]{2}[/quote]",
-                        e.Comment.BuildUri(this), e.Poster.DisplayName, e.Comment.Body));
-                }*/
             }
 
             return true;
@@ -326,11 +338,6 @@ namespace BoxSocial.Applications.Calendar
 
             newEvent.IsSimplePermissions = true;
             newEvent.Update();
-
-            /*if (isPublicEvent)
-            {
-                Access.CreateGrantForPrimitive(core, newEvent, Friend.FriendsGroupKey, "VIEW");
-            }*/
 
             return newEvent;
         }
@@ -589,9 +596,7 @@ namespace BoxSocial.Applications.Calendar
             /* pages */
             e.Core.Display.ParsePageList(e.Page.Owner, true);
 
-            e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("EVENTS"));
 
             long startTime = e.Core.Tz.GetUnixTimeStamp(new DateTime(e.Core.Tz.Now.Year, e.Core.Tz.Now.Month, e.Core.Tz.Now.Day, 0, 0, 0));
             long endTime = startTime + 60 * 60 * 24 * 30; // skip ahead one month into the future
@@ -647,10 +652,6 @@ namespace BoxSocial.Applications.Calendar
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.Owner, true);
-
-            e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
 
             Event calendarEvent = null;
 
@@ -709,6 +710,7 @@ namespace BoxSocial.Applications.Calendar
                 }
             }
 
+            e.Template.Parse("PAGE_TITLE", calendarEvent.Subject);
             e.Template.Parse("SUBJECT", calendarEvent.Subject);
             e.Template.Parse("LOCATION", calendarEvent.Location);
             e.Template.Parse("DESCRIPTION", calendarEvent.Description);
@@ -924,7 +926,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return Owner;
+                return Calendar;
             }
         }
 
@@ -932,7 +934,7 @@ namespace BoxSocial.Applications.Calendar
         {
             get
             {
-                return ownerKey;
+                return Calendar.ItemKey;
             }
         }
 
@@ -963,6 +965,13 @@ namespace BoxSocial.Applications.Calendar
 
         public string ParentPermissionKey(Type parentType, string permission)
         {
+            switch (permission)
+            {
+                case "INVITE":
+                    return "INVITE_EVENTS";
+                case "EDIT":
+                    return "EDIT_EVENTS";
+            }
             return permission;
         }
 

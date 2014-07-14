@@ -179,8 +179,11 @@
     <Content Include="templates\account_security.html" />
     <Content Include="templates\acl.html" />
     <Content Include="templates\help_topic.html" />
+    <Content Include="templates\mobile\primitive_footer.html" />
+    <Content Include="templates\mobile\primitive_header.html" />
     <Content Include="templates\mobile\viewsubscriptions.html" />
     <Content Include="templates\mobile\viewsubscribers.html" />
+    <Content Include="templates\primitive_footer.html" />
     <Content Include="templates\viewsubscriptions.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />

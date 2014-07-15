@@ -531,7 +531,8 @@ namespace BoxSocial.Internals
         {
             List<string> permissions = new List<string>();
             bool attributeFound = false;
-            foreach (Attribute attr in type.GetCustomAttributes(typeof(PermissionAttribute), false))
+            object[] attrs = type.GetCustomAttributes(typeof(PermissionAttribute), false);
+            foreach (Attribute attr in attrs)
             {
                 PermissionAttribute pattr = (PermissionAttribute)attr;
                 if (pattr != null)
@@ -551,7 +552,8 @@ namespace BoxSocial.Internals
         {
             List<PermissionInfo> permissions = new List<PermissionInfo>();
             bool attributeFound = false;
-            foreach (Attribute attr in type.GetCustomAttributes(typeof(PermissionAttribute), false))
+            object[] attrs = type.GetCustomAttributes(typeof(PermissionAttribute), false);
+            foreach (Attribute attr in attrs)
             {
                 PermissionAttribute pattr = (PermissionAttribute)attr;
                 if (pattr != null)

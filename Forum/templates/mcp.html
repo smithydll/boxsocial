@@ -1,6 +1,13 @@
 ﻿<!-- INCLUDE page_header.html -->
+
+<!-- IF $_IS_DESKTOP AND BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+<!-- INCLUDE primitive_header.html -->
+
+<div id="page-body">
 <!-- INCLUDE forum_header -->
-<p>{BREADCRUMBS}</p>
 <h2>{ACCOUNT_TITLE}</h2>
 <!-- IF ERROR -->
 <p class="error">{ERROR}</p>
@@ -47,4 +54,6 @@
   <div class="cheat-clear"></div>
 </div>
 
+</div>
+<!-- INCLUDE primitive_footer.html -->
 <!-- INCLUDE page_footer.html -->

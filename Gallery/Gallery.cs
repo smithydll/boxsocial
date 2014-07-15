@@ -1807,16 +1807,14 @@ namespace BoxSocial.Applications.Gallery
             /* pages */
             e.Core.Display.ParsePageList(e.Page.Owner, true);
 
-            e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
-
             if (gallery.Id == 0)
             {
+                e.Template.Parse("PAGE_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
                 e.Template.Parse("GALLERY_TITLE", gallery.owner.DisplayNameOwnership + " Gallery");
             }
             else
             {
+                e.Template.Parse("PAGE_TITLE", gallery.GalleryTitle);
                 e.Template.Parse("GALLERY_TITLE", gallery.GalleryTitle);
             }
 

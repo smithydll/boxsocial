@@ -1468,10 +1468,6 @@ namespace BoxSocial.Applications.Gallery
                 /* pages */
                 e.Core.Display.ParsePageList(e.Page.Owner, true);
 
-                e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
-                e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-                e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
-
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
 
                 /* check gallery item has width and height information saved */
@@ -1511,6 +1507,7 @@ namespace BoxSocial.Applications.Gallery
 
                 e.Page.CanonicalUri = galleryItem.Uri;
 
+                e.Template.Parse("PAGE_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
                 e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);

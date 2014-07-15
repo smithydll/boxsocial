@@ -258,12 +258,10 @@ namespace BoxSocial.Internals
 
             if (e.Core.Session.IsLoggedIn && e.Page.Owner == e.Core.Session.LoggedInMember)
             {
-                e.Core.Template.Parse("OWNER", "TRUE");
+                e.Template.Parse("OWNER", "TRUE");
             }
 
-            e.Template.Parse("U_PROFILE", e.Page.User.ProfileUri);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", ((User)e.Page.Owner).MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("STATUS_FEED"));
 
             try
             {

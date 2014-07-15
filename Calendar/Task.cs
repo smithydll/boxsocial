@@ -386,8 +386,8 @@ namespace BoxSocial.Applications.Calendar
             }
 
             List<string[]> calendarPath = new List<string[]>();
-            calendarPath.Add(new string[] { "calendar", "Calendar" });
-            calendarPath.Add(new string[] { "*tasks", "Tasks" });
+            calendarPath.Add(new string[] { "calendar", core.Prose.GetString("CALENDAR") });
+            calendarPath.Add(new string[] { "*tasks", core.Prose.GetString("TASKS") });
             owner.ParseBreadCrumbs(calendarPath);
         }
 
@@ -429,8 +429,8 @@ namespace BoxSocial.Applications.Calendar
 
                 List<string[]> calendarPath = new List<string[]>();
 
-                calendarPath.Add(new string[] { "calendar", "Calendar" });
-                calendarPath.Add(new string[] { "*tasks", "Tasks" });
+                calendarPath.Add(new string[] { "calendar", core.Prose.GetString("CALENDAR") });
+                calendarPath.Add(new string[] { "*tasks", core.Prose.GetString("TASKS") });
                 calendarPath.Add(new string[] { "task/" + calendarTask.TaskId.ToString(), calendarTask.Topic });
 
                 owner.ParseBreadCrumbs(calendarPath);

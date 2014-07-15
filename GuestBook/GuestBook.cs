@@ -79,9 +79,7 @@ namespace BoxSocial.Applications.GuestBook
             /* pages */
             core.Display.ParsePageList(page.Owner, true);
 
-            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
 
             if (core.Session.IsLoggedIn)
             {
@@ -94,11 +92,10 @@ namespace BoxSocial.Applications.GuestBook
             core.Template.Parse("IS_USER_GUESTBOOK", "TRUE");
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "profile", "Profile" });
-            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
+            breadCrumbParts.Add(new string[] { "profile", core.Prose.GetString("PROFILE") });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("GUEST_BOOK") });
 
             core.Display.DisplayComments(core.Template, page.User, page.User, UserGuestBookHook);
-            core.Template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", core.Hyperlink.BuildGuestBookUri(page.User), 10, page.User.Comments);
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -119,8 +116,7 @@ namespace BoxSocial.Applications.GuestBook
             /* pages */
             core.Display.ParsePageList(page.Owner, true);
 
-            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
 
             if (core.Session.IsLoggedIn)
             {
@@ -139,8 +135,8 @@ namespace BoxSocial.Applications.GuestBook
             commenters.Add(core.PrimitiveCache[userId]);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] {"profile", "Profile"});
-            breadCrumbParts.Add(new string[] {"comments", "Comments"});
+            breadCrumbParts.Add(new string[] { "profile", core.Prose.GetString("PROFILE") });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("COMMENTS") });
             breadCrumbParts.Add(new string[] {core.PrimitiveCache[userId].Key, core.PrimitiveCache[userId].DisplayName});
 
             // Load the comment count
@@ -167,7 +163,6 @@ namespace BoxSocial.Applications.GuestBook
 
             core.Display.DisplayComments(core.Template, page.User, page.User, commenters, comments, UserGuestBookHook);
 
-            core.Template.Parse("L_GUESTBOOK", page.User.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", core.Hyperlink.BuildGuestBookUri(page.User, core.PrimitiveCache[userId]), 10, comments);
             page.User.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -201,17 +196,14 @@ namespace BoxSocial.Applications.GuestBook
             /* Pages */
             core.Display.ParsePageList(page.Owner, true);
 
-            core.Template.Parse("USER_THUMB", page.Owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
 
             core.Display.DisplayComments(core.Template, page.Group, page.Group);
-            core.Template.Parse("L_GUESTBOOK", page.Group.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", GuestBook.Uri(core, page.Group), 10, page.Group.Comments);
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("GUEST_BOOK") });
 
             page.Group.ParseBreadCrumbs(breadCrumbParts);
             //Prose.GetString("GuestBook");
@@ -229,13 +221,14 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
+
             core.Display.DisplayComments(core.Template, page.Network, page.Network);
-            core.Template.Parse("L_GUESTBOOK", page.Network.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", GuestBook.Uri(core, page.Network), 10,page.Network.Comments);
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("GUEST_BOOK") });
 
             page.Network.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -249,13 +242,15 @@ namespace BoxSocial.Applications.GuestBook
                 core.Template.Parse("CAN_COMMENT", "TRUE");
             }
 
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
+
             core.Display.DisplayComments(core.Template, page.AnApplication, page.AnApplication);
             core.Template.Parse("L_GUESTBOOK", page.AnApplication.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", GuestBook.Uri(core, page.AnApplication), 10, page.AnApplication.Comments);
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("GUEST_BOOK") });
 
             page.AnApplication.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -272,14 +267,15 @@ namespace BoxSocial.Applications.GuestBook
                 }
             }
 
+            core.Template.Parse("PAGE_TITLE", string.Format(core.Prose.GetString("USERS_GUEST_BOOK"), page.Owner.DisplayNameOwnership));
+
             core.Display.DisplayComments(core.Template, page.Musician, page.Musician);
-            core.Template.Parse("L_GUESTBOOK", page.Musician.DisplayNameOwnership + " Guest Book");
             core.Display.ParsePagination("COMMENT_PAGINATION", GuestBook.Uri(core, page.Musician), 10, page.Musician.Comments);
 
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "comments", "Guest Book" });
+            breadCrumbParts.Add(new string[] { "comments", core.Prose.GetString("GUEST_BOOK") });
 
             page.Musician.ParseBreadCrumbs(breadCrumbParts);
 

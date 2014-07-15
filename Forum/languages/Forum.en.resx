@@ -195,6 +195,9 @@
   <data name="MARK_TOPICS_READ" xml:space="preserve">
     <value>Mark topics read</value>
   </data>
+  <data name="MEMBERLIST" xml:space="preserve">
+    <value>Memberlist</value>
+  </data>
   <data name="MINIMUM_POSTS" xml:space="preserve">
     <value>Minimum Posts</value>
   </data>
@@ -257,6 +260,9 @@
   </data>
   <data name="TOPIC_STATE" xml:space="preserve">
     <value>Topic State</value>
+  </data>
+  <data name="USER_CONTROL_PANEL" xml:space="preserve">
+    <value>User Control Panel</value>
   </data>
   <data name="VIEWS" xml:space="preserve">
     <value>Views</value>

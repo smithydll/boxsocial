@@ -108,7 +108,23 @@ namespace BoxSocial.Internals
             {
                 if (infoTable.Rows.Count == 1)
                 {
-                    loadItemInfo(infoTable.Rows[0]);
+                    //loadItemInfo(infoTable.Rows[0]);
+                    DataRow itemRow = infoTable.Rows[0];
+                    loadItemKey(itemRow, "info_item", out itemKey);
+                    loadString(itemRow, "info_shortkey", out shortUrlKey);
+                    comments = (long)itemRow["info_comments"];
+                    likes = (long)itemRow["info_likes"];
+                    dislikes = (long)itemRow["info_dislikes"];
+                    rating = (float)itemRow["info_rating"];
+                    subscribers = (long)itemRow["info_subscribers"];
+                    tags = (long)itemRow["info_tags"];
+                    sharedTimes = (long)itemRow["info_shared_times"];
+                    viewedTimes = (long)itemRow["info_viewed_times"];
+                    tweetId = (long)itemRow["info_tweet_id"];
+                    loadString(itemRow, "info_tweet_uri", out tweetUri);
+                    loadString(itemRow, "info_facebook_post_id", out facebookPostId);
+                    tumblrPostId = (long)itemRow["info_tumblr_post_id"];
+                    timeRaw = (long)itemRow["info_item_time_ut"];
                 }
                 else
                 {
@@ -136,7 +152,23 @@ namespace BoxSocial.Internals
             {
                 if (infoTable.Rows.Count == 1)
                 {
-                    loadItemInfo(infoTable.Rows[0]);
+                    //loadItemInfo(infoTable.Rows[0]);
+                    DataRow itemRow = infoTable.Rows[0];
+                    loadItemKey(itemRow, "info_item", out itemKey);
+                    loadString(itemRow, "info_shortkey", out shortUrlKey);
+                    comments = (long)itemRow["info_comments"];
+                    likes = (long)itemRow["info_likes"];
+                    dislikes = (long)itemRow["info_dislikes"];
+                    rating = (float)itemRow["info_rating"];
+                    subscribers = (long)itemRow["info_subscribers"];
+                    tags = (long)itemRow["info_tags"];
+                    sharedTimes = (long)itemRow["info_shared_times"];
+                    viewedTimes = (long)itemRow["info_viewed_times"];
+                    tweetId = (long)itemRow["info_tweet_id"];
+                    loadString(itemRow, "info_tweet_uri", out tweetUri);
+                    loadString(itemRow, "info_facebook_post_id", out facebookPostId);
+                    tumblrPostId = (long)itemRow["info_tumblr_post_id"];
+                    timeRaw = (long)itemRow["info_item_time_ut"];
                 }
                 else
                 {
@@ -156,7 +188,22 @@ namespace BoxSocial.Internals
 
             try
             {
-                loadItemInfo(itemRow);
+                //loadItemInfo(itemRow);
+                loadItemKey(itemRow, "info_item", out itemKey);
+                loadString(itemRow, "info_shortkey", out shortUrlKey);
+                comments = (long)itemRow["info_comments"];
+                likes = (long)itemRow["info_likes"];
+                dislikes = (long)itemRow["info_dislikes"];
+                rating = (float)itemRow["info_rating"];
+                subscribers = (long)itemRow["info_subscribers"];
+                tags = (long)itemRow["info_tags"];
+                sharedTimes = (long)itemRow["info_shared_times"];
+                viewedTimes = (long)itemRow["info_viewed_times"];
+                tweetId = (long)itemRow["info_tweet_id"];
+                loadString(itemRow, "info_tweet_uri", out tweetUri);
+                loadString(itemRow, "info_facebook_post_id", out facebookPostId);
+                tumblrPostId = (long)itemRow["info_tumblr_post_id"];
+                timeRaw = (long)itemRow["info_item_time_ut"];
             }
             catch (InvalidItemException)
             {

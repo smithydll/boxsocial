@@ -942,6 +942,14 @@ namespace BoxSocial.Groups
             }
         }
 
+        public override string Square
+        {
+            get
+            {
+                return string.Empty;
+            }
+        }
+
         public override string CoverPhoto
         {
             get

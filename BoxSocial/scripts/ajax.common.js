@@ -436,7 +436,7 @@ $(document).ready(function () {
 
         if (infiniteLoading == false && loadCount < 2) {
             if ($(window).scrollTop() != lastScrollPosn) {
-                console.log($(window).scrollTop());
+                /*console.log($(window).scrollTop());*/
                 $(".infinite").each(function () {
                     if ($(window).scrollTop() + $(window).height() > ($(this).offset().top + $(this).height() - trigger)) {
                         if ($(this).children("p").children(".infinite-more").is(":visible")) {

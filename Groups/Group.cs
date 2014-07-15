@@ -2232,7 +2232,7 @@ namespace BoxSocial.Groups
         /// <summary>
         /// 200x200 display tile
         /// </summary>
-        public string GroupSquare
+        public override string Square
         {
             get
             {

@@ -539,7 +539,7 @@ namespace BoxSocial.Applications.Calendar
             }
 
             List<string[]> calendarPath = new List<string[]>();
-            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { "calendar", core.Prose.GetString("CALENDAR") });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             owner.ParseBreadCrumbs(calendarPath);
         }
@@ -672,7 +672,7 @@ namespace BoxSocial.Applications.Calendar
             }
 
             List<string[]> calendarPath = new List<string[]>();
-            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { "calendar", core.Prose.GetString("CALENDAR") });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), core.Functions.IntToMonth(month) });
             owner.ParseBreadCrumbs(calendarPath);
@@ -764,7 +764,7 @@ namespace BoxSocial.Applications.Calendar
             showHourEvents(core, owner, year, month, day, hours, events);
 
             List<string[]> calendarPath = new List<string[]>();
-            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { "calendar", core.Prose.GetString("CALENDAR") });
             calendarPath.Add(new string[] { year.ToString(), year.ToString() });
             calendarPath.Add(new string[] { month.ToString(), core.Functions.IntToMonth(month) });
             calendarPath.Add(new string[] { day.ToString(), day.ToString() });

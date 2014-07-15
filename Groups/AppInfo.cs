@@ -236,7 +236,7 @@ namespace BoxSocial.Groups
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
                 groupVariableCollection.Parse("ICON", group.Icon);
                 groupVariableCollection.Parse("TILE", group.Tile);
-                groupVariableCollection.Parse("SQUARE", group.GroupSquare);
+                groupVariableCollection.Parse("SQUARE", group.Square);
             }
 
             e.core.AddSidePanel(template);
@@ -263,7 +263,7 @@ namespace BoxSocial.Groups
                 groupVariableCollection.Parse("U_GROUP", group.Uri);
                 groupVariableCollection.Parse("ICON", group.Icon);
                 groupVariableCollection.Parse("TILE", group.Tile);
-                groupVariableCollection.Parse("SQUARE", group.GroupSquare);
+                groupVariableCollection.Parse("SQUARE", group.Square);
             }
 
             e.core.AddSidePanel(template);

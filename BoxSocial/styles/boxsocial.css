@@ -17,7 +17,7 @@ body {
 	min-height: 100%;
         height: auto !important;
         height: 100%;
-        margin: 0 auto -11em;
+        margin: 0 auto -13em;
 }
 
 #page {
@@ -162,7 +162,7 @@ div#rc-bottom {
 	/*clear: both;*/
 	background-color: #e0e0e0;
 	/*background-image: url('/images/footer-gradient.png');*/
-	height: 11em;
+	height: 13em;
 }
 
 #footer {
@@ -170,7 +170,7 @@ div#rc-bottom {
 }
 
 #clear-space {
-	height: 11em;
+	height: 13em;
 }
 
 #foot * {
@@ -428,6 +428,17 @@ li.empty {
 div.img-fl {
 	float: left;
 	display: inline;
+}
+
+div.img-circ {
+	padding: 0px;
+	border: none;
+	font-size: 0px;
+}
+
+div.img-circ img {
+    border-radius: 50%;
+    width: 80px;
 }
 
 div.img-wb {
@@ -1323,6 +1334,10 @@ ul#group-members li.member div.frame ul.actions li, div.listing div.frame ul.act
     box-shadow: 0 3px 6px #666666;
 }
 
+#overview-profile div.info.parallax {
+    background-position: 0 -70px;
+}
+
 #overview-profile div.info a {
 	color: #FFFFFF;
 	text-decoration: none;
@@ -1344,6 +1359,10 @@ ul#group-members li.member div.frame ul.actions li, div.listing div.frame ul.act
 #overview-profile div.img-wb {
 	margin: 5px;
 	z-index: 2;
+}
+
+#overview-profile div.img-circ {
+    margin: 15px;
 }
 
 #overview-profile dl {

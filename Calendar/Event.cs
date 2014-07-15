@@ -718,7 +718,7 @@ namespace BoxSocial.Applications.Calendar
             e.Template.Parse("END_TIME", calendarEvent.GetEndTime(e.Core.Tz).ToString());
 
             List<string[]> calendarPath = new List<string[]>();
-            calendarPath.Add(new string[] { "calendar", "Calendar" });
+            calendarPath.Add(new string[] { "calendar", e.Core.Prose.GetString("CALENDAR") });
             //calendarPath.Add(new string[] { "events", "Events" });
             calendarPath.Add(new string[] { "event/" + calendarEvent.EventId.ToString(), calendarEvent.Subject });
             e.Page.Owner.ParseBreadCrumbs(calendarPath);

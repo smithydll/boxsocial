@@ -60,9 +60,7 @@ namespace BoxSocial.Applications.Gallery
 
             e.Template.SetTemplate("Gallery", "gallery_upload");
 
-            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("UPLOAD_PHOTO"));
 
             e.Template.Parse("S_UPLOAD", e.Core.Hyperlink.AppendSid(e.Page.Owner.UriStub + "gallery/upload", true));
 

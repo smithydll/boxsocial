@@ -153,7 +153,12 @@ namespace BoxSocial.Internals
             this.item = null;
             ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
 
-            loadItemInfo(grantRow);
+            //loadItemInfo(grantRow);
+            loadItemKey(grantRow, "grant_primitive", out primitiveKey);
+            itemId = (long)grantRow["grant_item_id"];
+            itemTypeId = (long)grantRow["grant_item_type_id"];
+            permissionId = (long)grantRow["grant_permission_id"];
+            grantAllow = (sbyte)grantRow["grant_allow"];
         }
 		
 		internal AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
@@ -162,7 +167,12 @@ namespace BoxSocial.Internals
 			this.item = item;
 			ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
 
-            loadItemInfo(grantRow);
+            //loadItemInfo(grantRow);
+            loadItemKey(grantRow, "grant_primitive", out primitiveKey);
+            itemId = (long)grantRow["grant_item_id"];
+            itemTypeId = (long)grantRow["grant_item_type_id"];
+            permissionId = (long)grantRow["grant_permission_id"];
+            grantAllow = (sbyte)grantRow["grant_allow"];
 		}
         
         internal AccessControlGrant(Core core, ItemKey primitive, ItemKey itemKey, long permissionId)
@@ -184,7 +194,14 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    loadItemInfo(grantDataTable.Rows[0]);
+                    //loadItemInfo(grantDataTable.Rows[0]);
+                    DataRow grantRow = grantDataTable.Rows[0];
+
+                    loadItemKey(grantRow, "grant_primitive", out primitiveKey);
+                    itemId = (long)grantRow["grant_item_id"];
+                    itemTypeId = (long)grantRow["grant_item_type_id"];
+                    permissionId = (long)grantRow["grant_permission_id"];
+                    grantAllow = (sbyte)grantRow["grant_allow"];
                 }
                 catch (InvalidItemException)
                 {

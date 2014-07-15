@@ -126,13 +126,16 @@ namespace BoxSocial.Groups
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
                 HookEventArgs e = new HookEventArgs(core, AppPrimitives.Group, Group);
                 core.InvokeHeadHooks(e);
+                core.InvokePrimitiveHeadHooks(e);
                 core.InvokeFootHooks(e);
             }
 
             PageTitle = Group.DisplayName;
 
             core.Template.Parse("PRIMITIVE_THUMB", Owner.Thumbnail);
-            core.Template.Parse("PRIMITIVE_ICON", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_ICON", Owner.Icon);
+            core.Template.Parse("PRIMITIVE_TILE", Owner.Tile);
+            core.Template.Parse("PRIMITIVE_SQUARE", Owner.Square);
             core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
             core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
         }

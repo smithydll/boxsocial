@@ -371,9 +371,7 @@ namespace BoxSocial.Applications.Forum
             e.Template.SetTemplate("Forum", "ucp");
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
-            e.Template.Parse("USER_ICON", e.Page.Owner.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("USER_CONTROL_PANEL"));
 
             if (e.Core.Session.IsLoggedIn && e.Core.Session.LoggedInMember != null)
             {
@@ -415,9 +413,7 @@ namespace BoxSocial.Applications.Forum
             ForumSettings.ShowForumHeader(core, page);
             ForumSettings settings = new ForumSettings(core, page.Owner);
 
-            core.Template.Parse("USER_ICON", page.Owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
+            core.Template.Parse("PAGE_TITLE", core.Prose.GetString("MEMBERLIST"));
 
             core.Template.Parse("U_FILTER_ALL", GenerateMemberlistUri(core, page.Group));
             core.Template.Parse("U_FILTER_BEGINS_A", GenerateMemberlistUri(core, page.Owner, "a"));

@@ -72,6 +72,7 @@ namespace BoxSocial.Internals
         public delegate List<PrimitivePermissionGroup> PermissionGroupHandler(Core core, Primitive owner);
 
         public event HookHandler HeadHooks;
+        public event HookHandler PrimitiveHeadHooks;
         public event HookHandler FootHooks;
         public event HookHandler PageHooks;
         public event HookHandler PostHooks;
@@ -423,6 +424,35 @@ namespace BoxSocial.Internals
             {
                 if (emoticons == null)
                 {
+                    object o = null;
+                    System.Web.Caching.Cache cache;
+
+                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                    {
+                        cache = HttpContext.Current.Cache;
+                    }
+                    else
+                    {
+                        cache = new System.Web.Caching.Cache();
+                    }
+
+                    try
+                    {
+                        if (cache != null)
+                        {
+                            o = cache.Get("Emoticons");
+                        }
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
+
+                    if (o != null && o is List<Emoticon>)
+                    {
+                        emoticons = (List<Emoticon>)o;
+                        return emoticons;
+                    }
+
                     emoticons = new List<Emoticon>();
 
                     SelectQuery query = Emoticon.GetSelectQueryStub(typeof(Emoticon));
@@ -431,6 +461,14 @@ namespace BoxSocial.Internals
                     foreach (DataRow emoticonRow in emoticonsTable.Rows)
                     {
                         emoticons.Add(new Emoticon(this, emoticonRow));
+                    }
+
+                    try
+                    {
+                        cache.Add("Emoticons", emoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                    }
+                    catch (NullReferenceException)
+                    {
                     }
                 }
                 return emoticons;
@@ -959,6 +997,7 @@ namespace BoxSocial.Internals
         public Core(TPage page, Mysql db, Template template)
         {
             HeadHooks += new HookHandler(Core_HeadHooks);
+            PrimitiveHeadHooks += new HookHandler(Core_PrimitiveHeadHooks);
             FootHooks +=new HookHandler(Core_FootHooks);
             PageHooks += new HookHandler(Core_Hooks);
             PostHooks += new HookHandler(Core_PostHooks);
@@ -1009,6 +1048,11 @@ namespace BoxSocial.Internals
 
         }
 
+        void Core_PrimitiveHeadHooks(HookEventArgs eventArgs)
+        {
+
+        }
+
         void Core_FootHooks(HookEventArgs eventArgs)
         {
 
@@ -1027,6 +1071,11 @@ namespace BoxSocial.Internals
         public void InvokeHeadHooks(HookEventArgs eventArgs)
         {
             HeadHooks(eventArgs);
+        }
+
+        public void InvokePrimitiveHeadHooks(HookEventArgs eventArgs)
+        {
+            PrimitiveHeadHooks(eventArgs);
         }
 
         public void InvokeFootHooks(HookEventArgs eventArgs)
@@ -1191,6 +1240,11 @@ namespace BoxSocial.Internals
             return template.CreateChild("head_hook");
         }
 
+        private VariableCollection createPrimitiveHeadPanel()
+        {
+            return template.CreateChild("primitive_head_hook");
+        }
+
         private VariableCollection createFootPanel()
         {
             return template.CreateChild("foot_hook");
@@ -1214,6 +1268,13 @@ namespace BoxSocial.Internals
         public void AddHeadPanel(Template t)
         {
             VariableCollection panelVariableCollection = createHeadPanel();
+
+            panelVariableCollection.ParseRaw("BODY", t.ToString());
+        }
+
+        public void AddPrimitiveHeadPanel(Template t)
+        {
+            VariableCollection panelVariableCollection = createPrimitiveHeadPanel();
 
             panelVariableCollection.ParseRaw("BODY", t.ToString());
         }

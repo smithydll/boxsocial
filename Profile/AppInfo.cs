@@ -390,7 +390,7 @@ namespace BoxSocial.Applications.Profile
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.Icon);
                 friendVariableCollection.Parse("TILE", friend.Tile);
-                friendVariableCollection.Parse("SQUARE", friend.UserSquare);
+                friendVariableCollection.Parse("SQUARE", friend.Square);
                 friendVariableCollection.Parse("SUBSCRIBERS", userInfo.Subscribers);
                 friendVariableCollection.Parse("IS_ONLINE", friend.IsOnline ? "TRUE" : "FALSE");
             }

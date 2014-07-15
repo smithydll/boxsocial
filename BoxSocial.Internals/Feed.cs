@@ -52,7 +52,7 @@ namespace BoxSocial.Internals
             List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
             List<Action> tempActions = new List<Action>(10);
 
-            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+            /*System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
             if (!feedReader.HasRows)
             {
@@ -68,7 +68,15 @@ namespace BoxSocial.Internals
             }
 
             feedReader.Close();
-            feedReader.Dispose();
+            feedReader.Dispose();*/
+
+            DataTable feedDataTable = core.Db.Query(query);
+
+            foreach (DataRow feedRow in feedDataTable.Rows)
+            {
+                Action action = new Action(core, owner, feedRow);
+                tempActions.Add(action);
+            }
 
             foreach (Action action in tempActions)
             {
@@ -129,7 +137,7 @@ namespace BoxSocial.Internals
             List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
             List<Action> tempActions = new List<Action>(10);
 
-            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+            /*System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
             if (!feedReader.HasRows)
             {
@@ -145,7 +153,15 @@ namespace BoxSocial.Internals
             }
 
             feedReader.Close();
-            feedReader.Dispose();
+            feedReader.Dispose();*/
+
+            DataTable feedDataTable = core.Db.Query(query);
+
+            foreach (DataRow feedRow in feedDataTable.Rows)
+            {
+                Action action = new Action(core, owner, feedRow);
+                tempActions.Add(action);
+            }
 
             foreach (Action action in tempActions)
             {
@@ -247,7 +263,7 @@ namespace BoxSocial.Internals
                             core.ItemCache.RequestItem(action.ActionItemKey);
                         }*/
 
-                        System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+                        /*System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
                         if (!feedReader.HasRows)
                         {
@@ -263,10 +279,16 @@ namespace BoxSocial.Internals
                         }
 
                         feedReader.Close();
-                        feedReader.Dispose();
+                        feedReader.Dispose();*/
 
                         /**/
+                        DataTable feedDataTable = core.Db.Query(query);
 
+                        foreach (DataRow feedRow in feedDataTable.Rows)
+                        {
+                            Action action = new Action(core, owner, feedRow);
+                            tempActions.Add(action);
+                        }
                         
                         foreach (Action action in tempActions)
                         {

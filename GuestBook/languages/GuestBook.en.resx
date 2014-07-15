@@ -118,6 +118,12 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="GUEST_BOOK" xml:space="preserve">
+    <value>Guest Book</value>
+  </data>
+  <data name="PROFILE" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="USERS_GUEST_BOOK" xml:space="preserve">
     <value>{0} Guest Book</value>
   </data>
   <data name="_COMMENTED_GUEST_BOOK" xml:space="preserve">

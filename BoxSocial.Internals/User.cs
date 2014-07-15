@@ -382,7 +382,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 200x200 display tile
         /// </summary>
-        public string UserSquare
+        public override string Square
         {
             get
             {
@@ -2293,7 +2293,7 @@ namespace BoxSocial.Internals
                     friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                     friendVariableCollection.Parse("ICON", friend.Icon);
                     friendVariableCollection.Parse("TILE", friend.Tile);
-                    friendVariableCollection.Parse("SQUARE", friend.UserSquare);
+                    friendVariableCollection.Parse("SQUARE", friend.Square);
                 }
             }
 
@@ -2412,9 +2412,7 @@ namespace BoxSocial.Internals
         {
             e.Template.SetTemplate("viewsubscriptions.html");
 
-            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("SUBSCRIPTIONS"));
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);
@@ -2466,9 +2464,7 @@ namespace BoxSocial.Internals
         {
             e.Template.SetTemplate("viewsubscribers.html");
 
-            e.Template.Parse("USER_THUMB", e.Page.User.Thumbnail);
-            e.Template.Parse("USER_COVER_PHOTO", e.Page.User.CoverPhoto);
-            e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.User.MobileCoverPhoto);
+            e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("SUBSCRIBERS"));
 
             /* pages */
             e.Core.Display.ParsePageList(e.Page.User, true);

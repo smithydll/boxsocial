@@ -68,6 +68,8 @@ namespace BoxSocial.Internals
         private string applicationThumb;
         [DataField("application_tile", 63)]
         private string applicationTile;
+        [DataField("application_square", 63)]
+        private string applicationSquare;
         [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
         private string assemblyName;
         [DataField("application_primitive")]
@@ -387,6 +389,18 @@ namespace BoxSocial.Internals
             /*set
             {
                 SetProperty("applicationTile", value);
+            }*/
+        }
+
+        public override string Square
+        {
+            get
+            {
+                return applicationSquare;
+            }
+            /*set
+            {
+                SetProperty("applicationSquare", value);
             }*/
         }
 
@@ -794,7 +808,6 @@ namespace BoxSocial.Internals
                                         }
                                         catch (UnauthorisedToUpdateItemException)
                                         {
-                                            Console.WriteLine("Unauthorised");
                                         }
                                     }
                                 }
@@ -873,7 +886,6 @@ namespace BoxSocial.Internals
                                         }
                                         catch (UnauthorisedToUpdateItemException)
                                         {
-                                            Console.WriteLine("Unauthorised");
                                         }
                                     }
                                 }

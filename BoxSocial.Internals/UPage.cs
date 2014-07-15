@@ -99,6 +99,7 @@ namespace BoxSocial.Internals
 
             HookEventArgs e = new HookEventArgs(core, AppPrimitives.Member, User);
             core.InvokeHeadHooks(e);
+            core.InvokePrimitiveHeadHooks(e);
 
             PageTitle = User.DisplayName;
 
@@ -149,8 +150,11 @@ namespace BoxSocial.Internals
             template.Parse("USER_ID", User.Id.ToString());
             template.Parse("USER_TYPE_ID", User.TypeId.ToString());
 
+            core.Template.Parse("PRIMITIVE_DISPLAY_NAME", Owner.DisplayName);
             core.Template.Parse("PRIMITIVE_THUMB", Owner.Thumbnail);
-            core.Template.Parse("PRIMITIVE_ICON", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_ICON", Owner.Icon);
+            core.Template.Parse("PRIMITIVE_TILE", Owner.Tile);
+            core.Template.Parse("PRIMITIVE_SQUARE", Owner.Square);
             core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
             core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
         }

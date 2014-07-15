@@ -1395,8 +1395,6 @@ namespace BoxSocial.Internals
             }
 
             byte[] hash = SessionState.phpBBMd5(ASCIIEncoding.ASCII.GetBytes(salt + password));
-			
-			//Console.WriteLine(hash.Length);
 
             do
             {
@@ -1428,9 +1426,6 @@ namespace BoxSocial.Internals
 
             do
             {
-				/*Console.WriteLine(UTF7Encoding.UTF7.GetBytes(input[i].ToString()).Length);
-				Console.WriteLine(Convert.ToChar(Convert.ToByte(input[i])));
-				Console.WriteLine(input[i].ToString());*/
                 int val = Convert.ToByte(input[i++]);
                 output += itoa64[val & 0x3f];
 

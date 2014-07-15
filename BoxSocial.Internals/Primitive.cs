@@ -196,6 +196,11 @@ namespace BoxSocial.Internals
             get;
         }
 
+        public abstract string Square
+        {
+            get;
+        }
+
         public abstract string CoverPhoto
         {
             get;

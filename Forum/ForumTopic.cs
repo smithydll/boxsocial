@@ -852,10 +852,6 @@ namespace BoxSocial.Applications.Forum
             core.Template.SetTemplate("Forum", "viewtopic");
             ForumSettings.ShowForumHeader(core, page);
 
-            core.Template.Parse("USER_ICON", page.Owner.Thumbnail);
-            core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
-            core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
-
             ForumSettings settings = new ForumSettings(core, page.Owner);
 
             try
@@ -897,6 +893,7 @@ namespace BoxSocial.Applications.Forum
                     }
                 }
 
+                core.Template.Parse("PAGE_TITLE", thisTopic.Title);
                 core.Template.Parse("TOPIC_TITLE", thisTopic.Title);
 
                 List<TopicPost> posts;

@@ -1,17 +1,8 @@
 <!-- INCLUDE page_header.html -->
 <script type="text/javascript" src="/scripts/jquery.history.js"></script>
 
-	<div id="overview-profile" class="pane">
-        <!-- IF USER_MOBILE_COVER_PHOTO -->
-		<div class="info no-icon" style="height: 90px; background-image: url('{USER_MOBILE_COVER_PHOTO}');">
-        <!-- ELSE -->
-        <div class="info no-icon">
-        <!-- ENDIF -->
-        <h2>{PHOTO_TITLE}</h2>
-        </div>
-    </div>
+<!-- INCLUDE primitive_header.html -->
 
-<div id="content">
     <p class="action-buttons">{BREADCRUMBS}<span class="actions-menu"><a onclick="return showPopupMenu(event, 'actions-menu');"><span></span></a></span></p>
     <ul id="actions-menu" class="popup-menu">
         <!-- IF U_UPLOAD_PHOTO -->
@@ -189,5 +180,5 @@
     </p>
     <!-- ENDIF -->
   </div>
-</div>
+<!-- INCLUDE primitive_footer.html -->
 <!-- INCLUDE page_footer.html -->

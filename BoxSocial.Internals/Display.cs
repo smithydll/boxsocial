@@ -653,7 +653,7 @@ namespace BoxSocial.Internals
                 template.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
                 template.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
                 template.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
-                template.Parse("USER_SQUARE", core.Session.LoggedInMember.UserSquare);
+                template.Parse("USER_SQUARE", core.Session.LoggedInMember.Square);
             }
 
             List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, page, item.CommentsPerPage, commenters);
@@ -726,7 +726,7 @@ namespace BoxSocial.Internals
                     commentsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(comment.GetTime(core.Tz)));
                     commentsVariableCollection.Parse("USER_ICON", commentPoster.Icon);
                     commentsVariableCollection.Parse("USER_TILE", commentPoster.Tile);
-                    commentsVariableCollection.Parse("USER_SQUARE", commentPoster.UserSquare);
+                    commentsVariableCollection.Parse("USER_SQUARE", commentPoster.Square);
 
                     if (comment.Info.Likes > 0)
                     {

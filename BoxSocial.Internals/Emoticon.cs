@@ -23,6 +23,7 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Web;
@@ -102,7 +103,23 @@ namespace BoxSocial.Internals
 
             try
             {
-                loadItemInfo(emoticonRow);
+                // Profile this method
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+
+                //loadItemInfo(emoticonRow);
+                emoticonId = (long)emoticonRow["emoticon_id"];
+                loadString(emoticonRow, "emoticon_title", out title);
+                loadString(emoticonRow, "emoticon_code", out code);
+                loadString(emoticonRow, "emoticon_file", out file);
+                loadString(emoticonRow, "emoticon_category", out category);
+
+                long timerElapsed = timer.ElapsedTicks;
+                timer.Stop();
+                if (HttpContext.Current != null)
+                {
+                    HttpContext.Current.Response.Write("<!-- Time loading " + this.GetType().Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                }
             }
             catch (InvalidItemException)
             {

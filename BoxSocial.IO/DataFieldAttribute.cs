@@ -369,9 +369,20 @@ namespace BoxSocial.IO
                 return parentFieldName;
             }
         }
+
+        private static Object tableNameCacheLock = new Object();
+        private static Dictionary<Type, string> tableNamesCache = new Dictionary<Type, string>();
         
         public static string GetTable(Type type)
         {
+            lock (tableNameCacheLock)
+            {
+                string tableName = string.Empty;
+                if (tableNamesCache.TryGetValue(type, out tableName))
+                {
+                    return tableName;
+                }
+            }
             bool attributeFound = false;
             foreach (Attribute attr in type.GetCustomAttributes(typeof(DataTableAttribute), false))
             {
@@ -380,6 +391,13 @@ namespace BoxSocial.IO
                 {
                     if (dtattr.TableName != null)
                     {
+                        lock (tableNameCacheLock)
+                        {
+                            if (!tableNamesCache.ContainsKey(type))
+                            {
+                                tableNamesCache.Add(type, dtattr.TableName);
+                            }
+                        }
                         return dtattr.TableName;
                     }
                     attributeFound = true;
@@ -396,6 +414,13 @@ namespace BoxSocial.IO
                     {
                         if (tvattr.TableName != null)
                         {
+                            lock (tableNameCacheLock)
+                            {
+                                if (!tableNamesCache.ContainsKey(type))
+                                {
+                                    tableNamesCache.Add(type, tvattr.TableName);
+                                }
+                            }
                             return tvattr.TableName;
                         }
                         attributeFound = true;
@@ -405,6 +430,13 @@ namespace BoxSocial.IO
 
             if (attributeFound)
             {
+                lock (tableNameCacheLock)
+                {
+                    if (!tableNamesCache.ContainsKey(type))
+                    {
+                        tableNamesCache.Add(type, type.Name);
+                    }
+                }
                 return type.Name;
             }
             else

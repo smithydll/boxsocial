@@ -451,7 +451,6 @@ namespace BoxSocial.Internals
                 try
                 {
                     Type thisType = this.GetType();
-                    /*FieldInfo[] fis = thisType.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);*/
                     FieldInfo[] fis = getFieldInfo(thisType);
 
                     foreach (FieldInfo fi in fis)
@@ -466,7 +465,6 @@ namespace BoxSocial.Internals
                 }
                 catch (Exception ex)
                 {
-                    //Console.WriteLine(ex.ToString());
                 }
 
                 if (!string.IsNullOrEmpty(key))
@@ -500,7 +498,6 @@ namespace BoxSocial.Internals
             }
             catch (Exception ex)
             {
-                //Console.WriteLine(ex.ToString());
             }
         }
 
@@ -1617,6 +1614,10 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
+            // Profile this method
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             FieldInfo[] ffields = getFieldInfo(type);
 
             int fieldsLoaded = 0;
@@ -1820,6 +1821,13 @@ namespace BoxSocial.Internals
             {
                 ItemLoad();
             }
+
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+            }
         }
 
         protected void loadItemInfo(DataRow itemRow)
@@ -1829,6 +1837,10 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, DataRow itemRow)
         {
+            // Profile this method
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             FieldInfo[] fields = getFieldInfo(type);
 
             //List<string> columns = new List<string>();
@@ -1987,6 +1999,13 @@ namespace BoxSocial.Internals
                     core.ItemCache.RegisterItem((NumberedItem)this);
                 }
             }
+
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+            }
         }
 
         protected void MoveUp(string orderField)
@@ -2035,6 +2054,23 @@ namespace BoxSocial.Internals
             uQuery.AddCondition(GetPrimaryKey(type), id);
 
             core.Db.Query(uQuery);
+        }
+
+        protected static void loadString(DataRow row, string field, out string value)
+        {
+            if (!(row[field] is DBNull))
+            {
+                value = (string)row[field];
+            }
+            else
+            {
+                value = null;
+            }
+        }
+
+        protected static void loadItemKey(DataRow row, string field, out ItemKey value)
+        {
+            value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
         }
     }
 

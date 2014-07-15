@@ -103,6 +103,7 @@ namespace BoxSocial.Musician
                 core.FootHooks += new Core.HookHandler(core_FootHooks);
                 HookEventArgs e = new HookEventArgs(core, AppPrimitives.Musician, primitive);
                 core.InvokeHeadHooks(e);
+                core.InvokePrimitiveHeadHooks(e);
                 core.InvokeFootHooks(e);
             }
 

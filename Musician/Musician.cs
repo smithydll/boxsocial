@@ -350,6 +350,22 @@ namespace BoxSocial.Musician
             }
         }
 
+        public override string Square
+        {
+            get
+            {
+                if (iconUri != null)
+                {
+                    return string.Format("{0}images/_square{1}",
+                        UriStub, iconUri);
+                }
+                else
+                {
+                    return "FALSE";
+                }
+            }
+        }
+
         public Musician(Core core, long musicianId)
             : base(core)
         {

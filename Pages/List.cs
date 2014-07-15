@@ -457,9 +457,7 @@ namespace BoxSocial.Applications.Pages
 
                 e.Core.Display.ParsePageList(e.Page.Owner, true, page);
 
-                e.Template.Parse("USER_THUMB", e.Page.Owner.Thumbnail);
-                e.Template.Parse("USER_COVER_PHOTO", e.Page.Owner.CoverPhoto);
-                e.Template.Parse("USER_MOBILE_COVER_PHOTO", e.Page.Owner.MobileCoverPhoto);
+                e.Template.Parse("PAGE_TITLE", list.Title);
 
                 e.Template.Parse("LIST_TITLE", list.title);
                 e.Template.Parse("LIST_ID", list.ListId.ToString());

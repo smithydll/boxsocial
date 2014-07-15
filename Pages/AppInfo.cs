@@ -117,6 +117,7 @@ namespace BoxSocial.Applications.Pages
         {
             core.PageHooks += new Core.HookHandler(core_PageHooks);
             core.HeadHooks +=new Core.HookHandler(core_HeadHooks);
+            core.PrimitiveHeadHooks += new Core.HookHandler(core_PrimitiveHeadHooks);
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
@@ -211,6 +212,10 @@ namespace BoxSocial.Applications.Pages
 
         void core_HeadHooks(HookEventArgs e)
         {
+        }
+
+        void core_PrimitiveHeadHooks(HookEventArgs e)
+        {
             if (e.PageType == AppPrimitives.Group)
             {
                 core.Template.Parse("TAB_LIST", "TRUE");
@@ -237,7 +242,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (tabs.Count > 0)
                 {
-                    e.core.AddHeadPanel(template);
+                    e.core.AddPrimitiveHeadPanel(template);
                 }
             }
         }

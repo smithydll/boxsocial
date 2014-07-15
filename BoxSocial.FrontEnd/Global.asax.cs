@@ -214,16 +214,19 @@ namespace BoxSocial.FrontEnd
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            if (worker != null)
+            lock (workerLock)
             {
-                if ((!worker.CancellationPending) && (!e.Cancelled))
+                if (worker != null)
                 {
-                    worker.RunWorkerAsync();
-                }
-                else
-                {
-                    worker.Dispose();
-                    worker = null;
+                    if ((!worker.CancellationPending) && (!e.Cancelled))
+                    {
+                        worker.RunWorkerAsync();
+                    }
+                    else
+                    {
+                        worker.Dispose();
+                        worker = null;
+                    }
                 }
             }
         }

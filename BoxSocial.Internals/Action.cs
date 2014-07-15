@@ -259,7 +259,16 @@ namespace BoxSocial.Internals
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Action_ItemLoad);
 
-            loadItemInfo(actionRow);
+            //loadItemInfo(actionRow);
+            actionId = (long)actionRow["action_id"];
+            loadString(actionRow, "action_title", out title);
+            loadString(actionRow, "action_body", out body);
+            loadString(actionRow, "action_body_cache", out bodyCache);
+            applicationId = (long)actionRow["action_application"];
+            loadItemKey(actionRow, "action_primitive", out ownerKey);
+            loadItemKey(actionRow, "action_item", out itemKey);
+            loadItemKey(actionRow, "interact_item", out interactKey);
+            timeRaw = (long)actionRow["action_time_ut"];
 
             try
             {

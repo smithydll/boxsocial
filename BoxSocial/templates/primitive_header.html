@@ -1,10 +1,23 @@
 ﻿<div id="content">
   <div id="overview-profile" class="pane">
+		<div class="img-circ img-fl">
+			<!-- IF PRIMITIVE_TILE -->
+			<img src="{PRIMITIVE_TILE}" data-at2x="{PRIMITIVE_SQUARE}" alt="{PRIMITIVE_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<div class="no-disp-pic">{L_NO_PICTURE}</div>
+      <!-- ENDIF -->
+		</div>
   <!-- IF PRIMITIVE_COVER_PHOTO -->
-	  <div class="info" style="height: 100px; background-image: url('{PRIMITIVE_COVER_PHOTO}'); background-position: 0 -50px;">
+	  <div class="info parallax" style="height: 100px; background-image: url('{PRIMITIVE_COVER_PHOTO}');">
   <!-- ELSE -->
         <div class="info">
   <!-- ENDIF -->
         <h2>{PAGE_TITLE}</h2>
+        <!-- IF PAGE_SUB_TITLE -->
+        <h2>{PAGE_SUB_TITLE}</h2>
+        <!-- ENDIF -->
       </div>
     </div>
+<!-- BEGIN primitive_head_hook -->
+{primitive_head_hook.BODY}
+<!-- END primitive_head_hook -->

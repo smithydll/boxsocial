@@ -833,6 +833,16 @@ namespace BoxSocial.Applications.Blog
                 core.Template.Parse("USER_COVER_PHOTO", page.Owner.CoverPhoto);
                 core.Template.Parse("USER_MOBILE_COVER_PHOTO", page.Owner.MobileCoverPhoto);
 
+                if (string.IsNullOrEmpty(myBlog.Title))
+                {
+                    core.Template.Parse("PAGE_TITLE", core.Prose.GetString("BLOG"));
+                }
+                else
+                {
+                    core.Template.Parse("PAGE_TITLE", myBlog.Title);
+                    core.Template.Parse("PAGE_SUB_TITLE", core.Prose.GetString("BLOG"));
+                }
+
                 core.Template.Parse("BLOG_TITLE", myBlog.Title);
 
                 if (page.User.UserId == core.LoggedInMemberId)

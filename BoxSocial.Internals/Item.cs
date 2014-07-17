@@ -1691,16 +1691,6 @@ namespace BoxSocial.Internals
                 }
             }
 
-            //if (fieldsLoaded < objectFields)
-            {
-				//reader.Close();
-                //reader.Dispose();
-                //throw new InvalidItemException(this.GetType().FullName + " : Not all fields loaded. fieldsLoaded < objectFields");
-            }
-
-			//reader.Close();
-            //reader.Dispose();
-
             if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo")
             {
                 if (typeof(ICommentableItem).IsAssignableFrom(type) ||
@@ -1748,12 +1738,14 @@ namespace BoxSocial.Internals
                 ItemLoad();
             }
 
+#if DEBUG
             long timerElapsed = timer.ElapsedTicks;
             timer.Stop();
             if (HttpContext.Current != null)
             {
                 HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
             }
+#endif
         }
 
         protected virtual void loadItemInfo(DataRow itemRow)
@@ -1763,9 +1755,11 @@ namespace BoxSocial.Internals
 
         protected virtual void loadItemInfo(Type type, DataRow itemRow)
         {
+#if DEBUG
             // Profile this method
             Stopwatch timer = new Stopwatch();
             timer.Start();
+#endif
 
             FieldInfo[] fields = getFieldInfo(type);
 
@@ -1927,12 +1921,14 @@ namespace BoxSocial.Internals
                 }
             }
 
+#if DEBUG
             long timerElapsed = timer.ElapsedTicks;
             timer.Stop();
             if (HttpContext.Current != null)
             {
                 HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
             }
+#endif
         }
 
         protected void MoveUp(string orderField)

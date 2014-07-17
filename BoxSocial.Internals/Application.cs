@@ -98,9 +98,11 @@ namespace BoxSocial.Internals
 
         public void RegisterPages()
         {
+#if DEBUG
             // Profile this method
             Stopwatch timer = new Stopwatch();
             timer.Start();
+#endif
 
             Type type = this.GetType();
 
@@ -143,12 +145,14 @@ namespace BoxSocial.Internals
                 }
             }
 
+#if DEBUG
             long timerElapsed = timer.ElapsedTicks;
             timer.Stop();
             if (HttpContext.Current != null)
             {
                 HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
+#endif
         }
 
         public void InstallPages(ApplicationInstallationInfo aii)

@@ -578,6 +578,33 @@ namespace BoxSocial.Internals
             loadItemInfo(applicationRow);
         }
 
+        protected override void loadItemInfo(DataRow applicationRow)
+        {
+            loadValue(applicationRow, "application_id", out applicationId);
+            loadValue(applicationRow, "user_id", out creatorId);
+            loadValue(applicationRow, "application_title", out title);
+            loadValue(applicationRow, "application_description", out description);
+            loadValue(applicationRow, "application_icon", out applicationIcon);
+            loadValue(applicationRow, "application_thumb", out applicationThumb);
+            loadValue(applicationRow, "application_tile", out applicationTile);
+            loadValue(applicationRow, "application_square", out applicationSquare);
+            loadValue(applicationRow, "application_assembly_name", out assemblyName);
+            loadValue(applicationRow, "application_primitive", out isPrimitive);
+            loadValue(applicationRow, "application_primitives", out primitives);
+            loadValue(applicationRow, "application_date_ut", out dateRaw);
+            loadValue(applicationRow, "application_comment", out usesComments);
+            loadValue(applicationRow, "application_rating", out usesRatings);
+            loadValue(applicationRow, "application_style", out hasStyleSheet);
+            loadValue(applicationRow, "application_script", out hasJavaScript);
+            loadValue(applicationRow, "application_locked", out isLocked);
+            loadValue(applicationRow, "application_update", out updateQueued);
+            loadValue(applicationRow, "application_simple_permissions", out simplePermissions);
+            loadValue(applicationRow, "application_type", out applicationType);
+
+            itemLoaded(applicationRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void ApplicationEntry_ItemLoad()
         {
             OnCommentPosted += new CommentHandler(ApplicationEntry_CommentPosted);

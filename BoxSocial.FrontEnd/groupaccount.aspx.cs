@@ -162,14 +162,14 @@ namespace BoxSocial.FrontEnd
 
             VariableCollection parentModulesVariableCollection = null;
 
-            template.Parse("ACCOUNT_TITLE", "Group Control Panel");
+            template.Parse("ACCOUNT_TITLE", core.Prose.GetString("GROUP_CONTROL_PANEL"));
             template.Parse("PRIMITIVE_TITLE", Group.DisplayName);
             template.Parse("U_PRIMITIVE", Group.Uri);
 
             template.Parse("IS_CONTENT", "FALSE");
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "account", "Group Control Panel" });
+            breadCrumbParts.Add(new string[] { "account", core.Prose.GetString("GROUP_CONTROL_PANEL") });
 
             Owner.ParseBreadCrumbs(breadCrumbParts);
 

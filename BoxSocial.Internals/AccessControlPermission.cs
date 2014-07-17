@@ -216,6 +216,18 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected override void loadItemInfo(DataRow permissionRow)
+        {
+            loadValue(permissionRow, "permission_id", out permissionId);
+            loadValue(permissionRow, "permission_name", out permissionName);
+            loadValue(permissionRow, "permission_item_type_id", out itemTypeId);
+            loadValue(permissionRow, "permission_description", out permissionDescription);
+            loadValue(permissionRow, "permission_type", out permissionType);
+
+            itemLoaded(permissionRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void AccessControlPermission_OnDelete(object sender, EventArgs e)
         {
             

@@ -14,7 +14,7 @@
 	</div>
 	<!-- ENDIF -->
 	
-	<!-- IF U_NEW_TOPIC -->
+	<!-- IF SHOW_TOPICS AND U_NEW_TOPIC -->
 	<div class="new-stuff">
 		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 	</div>
@@ -71,6 +71,7 @@
   <!-- END forum_list -->
   <!-- ENDIF -->
 	
+  <!-- IF SHOW_TOPICS -->
 	<!-- IF TOPICS -->
   <p>
     <!-- IF IS_FORUM_MEMBER -->
@@ -152,10 +153,11 @@
 		<span class="new-topic post-button"><a href="{U_NEW_TOPIC}">{L_NEW_TOPIC}</a></span>
 	</div>
 	<!-- ENDIF -->
+  <!-- ENDIF -->
 
 <!-- IF INDEX_STATISTICS -->
 <div class="forum-statistics">
-  <p>Forum posts {FORUM_POSTS} &bull; Forum topics {FORUM_TOPICS} &bull; Group members {GROUP_MEMBERS}</p>
+  <p>{L_-FORUM_POSTS} {FORUM_POSTS} &bull; {L_-FORUM_TOPICS} {FORUM_TOPICS} &bull; {L_-GROUP_MEMBERS} {GROUP_MEMBERS}</p>
 </div>
 <!-- ENDIF -->
 

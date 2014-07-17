@@ -122,7 +122,9 @@ namespace BoxSocial.Applications.Forum
                     }
                     else
                     {
-                        forum = new Forum(core, forumId);
+                        ItemKey forumKey = new ItemKey(ForumId, ItemType.GetTypeId(typeof(Forum)));
+                        core.ItemCache.RequestItem(forumKey);
+                        forum = (Forum)core.ItemCache[forumKey];
                     }
                 }
                 return forum;
@@ -390,6 +392,28 @@ namespace BoxSocial.Applications.Forum
                 readStatus = null;
                 readStatusLoaded = true;
             }
+        }
+
+        protected override void loadItemInfo(DataRow topicRow)
+        {
+            loadValue(topicRow, "topic_id", out topicId);
+            loadValue(topicRow, "forum_id", out forumId);
+            loadValue(topicRow, "topic_title", out topicTitle);
+            loadValue(topicRow, "user_id", out userId);
+            loadValue(topicRow, "topic_posts", out topicPosts);
+            loadValue(topicRow, "topic_views", out topicViews);
+            loadValue(topicRow, "topic_time_ut", out createdRaw);
+            loadValue(topicRow, "topic_modified_ut", out modifiedRaw);
+            loadValue(topicRow, "topic_last_post_time_ut", out lastPostTimeRaw);
+            loadValue(topicRow, "topic_last_post_id", out lastPostId);
+            loadValue(topicRow, "topic_first_post_id", out firstPostId);
+            loadValue(topicRow, "topic_status", out topicStatus);
+            loadValue(topicRow, "topic_locked", out topicLocked);
+            loadValue(topicRow, "topic_moved", out topicMoved);
+            loadValue(topicRow, "topic_item", out ownerKey);
+
+            itemLoaded(topicRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void Topic_ItemLoad()
@@ -1023,7 +1047,7 @@ namespace BoxSocial.Applications.Forum
                 core.Display.ParsePagination(thisTopic.Uri, settings.PostsPerPage, thisTopic.Posts + 1);
 
                 List<string[]> breadCrumbParts = new List<string[]>();
-                breadCrumbParts.Add(new string[] { "forum", "Forum" });
+                breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });
 
                 if (thisForum.Parents != null)
                 {

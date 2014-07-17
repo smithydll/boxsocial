@@ -42,10 +42,6 @@ namespace BoxSocial.Internals
         private long commentId;
         [DataField("user_id")]
         private long userId;
-        /*[DataField("comment_item_id")]
-        private long itemId;
-        [DataField("comment_item_type", NAMESPACE)]
-        private string itemType;*/
 		[DataField("comment_item", DataFieldKeys.Index)]
         private ItemKey itemKey;
         [DataField("comment_likes")]
@@ -193,6 +189,25 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidCommentException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow commentRow)
+        {
+            loadValue(commentRow, "comment_id", out commentId);
+            loadValue(commentRow, "user_id", out userId);
+            loadValue(commentRow, "comment_item", out itemKey);
+            loadValue(commentRow, "comment_likes", out likes);
+            loadValue(commentRow, "comment_dislikes", out dislikes);
+            loadValue(commentRow, "comment_spam_score", out spamScore);
+            loadValue(commentRow, "comment_time_ut", out timeRaw);
+            loadValue(commentRow, "comment_ip", out commentIp);
+            loadValue(commentRow, "comment_text", out body);
+            loadValue(commentRow, "comment_text_cache", out bodyCache);
+            loadValue(commentRow, "comment_hash", out commentHash);
+            loadValue(commentRow, "comment_deleted", out deleted);
+
+            itemLoaded(commentRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void Comment_ItemLoad()

@@ -35,10 +35,6 @@ namespace BoxSocial.Applications.Pages
         private long tabId;
         [DataField("tab_page_id", typeof(Page))]
         private long pageId;
-        /*[DataField("tab_item_id")]
-        private long ownerId;
-        [DataField("tab_item_type", 15)]
-        private string ownerType;*/
         [DataField("tab_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("tab_order")]
@@ -132,6 +128,17 @@ namespace BoxSocial.Applications.Pages
             {
                 throw new InvalidNavigationTabException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow tabRow)
+        {
+            loadValue(tabRow, "tab_id", out tabId);
+            loadValue(tabRow, "tab_page_id", out pageId);
+            loadValue(tabRow, "tab_item", out ownerKey);
+            loadValue(tabRow, "tab_order", out order);
+
+            itemLoaded(tabRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void NagivationTab_ItemLoad()

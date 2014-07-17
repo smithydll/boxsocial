@@ -954,7 +954,7 @@ namespace BoxSocial.Networks
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "members", "Members" });
+            breadCrumbParts.Add(new string[] { "members", core.Prose.GetString("MEMBERS") });
 
             page.Network.GenerateBreadCrumbs(breadCrumbParts);
         }

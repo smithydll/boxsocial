@@ -39,8 +39,6 @@ namespace BoxSocial.Applications.News
         private long userId;
 		[DataField("article_item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
-		//[DataField("article_item_type", NAMESPACE)]
-        //private string ownerType;
 		[DataField("article_time_ut")]
         private long articleTime;
 		[DataField("article_subject", 127)]
@@ -173,6 +171,20 @@ namespace BoxSocial.Applications.News
 			}
 		}
 
+        protected override void loadItemInfo(DataRow articleRow)
+        {
+            loadValue(articleRow, "article_id", out articleId);
+            loadValue(articleRow, "user_id", out userId);
+            loadValue(articleRow, "article_item", out ownerKey);
+            loadValue(articleRow, "article_time_ut", out articleTime);
+            loadValue(articleRow, "article_subject", out articleSubject);
+            loadValue(articleRow, "article_body", out articleBody);
+            loadValue(articleRow, "article_icon_item_id", out newsIconId);
+
+            itemLoaded(articleRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void Article_ItemLoad()
 		{
             OnCommentPosted += new CommentHandler(Article_CommentPosted);
@@ -285,7 +297,7 @@ namespace BoxSocial.Applications.News
             e.Core.Display.ParsePagination(e.Template, article.Uri, 10, article.Comments);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "news", "News" });
+            breadCrumbParts.Add(new string[] { "news", e.Core.Prose.GetString("NEWS") });
 			breadCrumbParts.Add(new string[] { e.ItemId.ToString(), article.ArticleSubject });
 
             e.Page.Group.ParseBreadCrumbs(breadCrumbParts);

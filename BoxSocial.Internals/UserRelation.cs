@@ -64,7 +64,20 @@ namespace BoxSocial.Internals
         public UserRelation(Core core, DataRow userRow, UserLoadOptions loadOptions)
             : base(core, userRow, loadOptions)
         {
-            loadItemInfo(typeof(UserRelation), userRow);
+            loadItemInfo(userRow);
+        }
+
+        protected override void loadItemInfo(DataRow userRow)
+        {
+            loadValue(userRow, "relation_id", out relationId);
+            loadValue(userRow, "relation_me", out relationMeId);
+            loadValue(userRow, "relation_you", out userId);
+            loadValue(userRow, "relation_order", out relationOrder);
+            loadValue(userRow, "relation_type", out relationType);
+            loadValue(userRow, "relation_time_ut", out relationTime);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
@@ -72,7 +85,12 @@ namespace BoxSocial.Internals
             SelectQuery query = new SelectQuery("user_relations");
             query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
+
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
                 query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));

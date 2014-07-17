@@ -206,8 +206,12 @@ namespace BoxSocial.FrontEnd
 
             // Cleanup
 
-            //core.Prose.Close();
+            if (core.Prose != null)
+            {
+                core.Prose.Close();
+            }
             db.CloseConnection();
+            core = null;
         }
 
         protected void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

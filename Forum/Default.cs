@@ -48,8 +48,8 @@ namespace BoxSocial.Applications.Forum
             e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("FORUM_HELP"));
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
-            breadCrumbParts.Add(new string[] { "help", "Help" });
+            breadCrumbParts.Add(new string[] { "forum", e.Core.Prose.GetString("FORUM") });
+            breadCrumbParts.Add(new string[] { "help", e.Core.Prose.GetString("HELP") });
 
             e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }

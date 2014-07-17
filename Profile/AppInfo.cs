@@ -384,14 +384,12 @@ namespace BoxSocial.Applications.Profile
             {
                 VariableCollection friendVariableCollection = template.CreateChild("friend_list");
 
-                ItemInfo userInfo = new ItemInfo(core, new ItemKey(friend.UserId, ItemType.GetTypeId(typeof(User))));
-
                 friendVariableCollection.Parse("USER_DISPLAY_NAME", friend.DisplayName);
                 friendVariableCollection.Parse("U_PROFILE", friend.Uri);
                 friendVariableCollection.Parse("ICON", friend.Icon);
                 friendVariableCollection.Parse("TILE", friend.Tile);
                 friendVariableCollection.Parse("SQUARE", friend.Square);
-                friendVariableCollection.Parse("SUBSCRIBERS", userInfo.Subscribers);
+                friendVariableCollection.Parse("SUBSCRIBERS", friend.Info.Subscribers);
                 friendVariableCollection.Parse("IS_ONLINE", friend.IsOnline ? "TRUE" : "FALSE");
             }
 

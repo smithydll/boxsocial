@@ -63,8 +63,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
-            breadCrumbParts.Add(new string[] { "mcp", "Moderator Control Panel" });
+            breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });
+            breadCrumbParts.Add(new string[] { "mcp", core.Prose.GetString("MODERATOR_CONTROL_PANEL") });
 
             Owner.ParseBreadCrumbs(core.Template, "BREADCRUMBS", breadCrumbParts);
         }

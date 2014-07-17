@@ -367,8 +367,8 @@ namespace BoxSocial.Internals
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "*profile", "Profile" });
-            breadCrumbParts.Add(new string[] { "status-feed", "Status Feed" });
+            breadCrumbParts.Add(new string[] { "*profile", core.Prose.GetString("PROFILE") });
+            breadCrumbParts.Add(new string[] { "status-feed", core.Prose.GetString("STATUS_FEED") });
 
             e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
         }

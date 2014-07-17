@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -79,10 +80,13 @@ namespace BoxSocial.Applications.Forum
                 ForumSettings.Create(core, Owner);
                 settings = new ForumSettings(core, Owner);
             }
-            //ForumSettings settings = new ForumSettings(core, Owner);
+
+            CheckBox rootTopicsCheckBox = new CheckBox("root-topics");
+            rootTopicsCheckBox.IsChecked = settings.AllowTopicsAtRoot;
 
             template.Parse("S_TOPICS_PER_PAGE", settings.TopicsPerPage.ToString());
             template.Parse("S_POSTS_PER_PAGE", settings.PostsPerPage.ToString());
+            template.Parse("S_ROOT_TOPICS", rootTopicsCheckBox);
         }
 
         void AccountForumSettings_Save(object sender, EventArgs e)
@@ -92,6 +96,7 @@ namespace BoxSocial.Applications.Forum
             ForumSettings settings = new ForumSettings(core, Owner);
             settings.TopicsPerPage = core.Functions.FormInt("topics-per-page", 10);
             settings.PostsPerPage = core.Functions.FormInt("posts-per-page", 10);
+            settings.AllowTopicsAtRoot = core.Http.Form["root-topics"] != null;
 
             settings.Update();
 			

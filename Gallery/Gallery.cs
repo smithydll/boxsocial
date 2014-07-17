@@ -746,7 +746,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    LoadItem(typeof(Gallery), galleryId);
+                    LoadItem(galleryId);
                 }
                 catch (InvalidItemException)
                 {
@@ -777,7 +777,7 @@ namespace BoxSocial.Applications.Gallery
 
                 try
                 {
-                    LoadItem(typeof(Gallery), galleryId);
+                    LoadItem(galleryId);
                 }
                 catch (InvalidItemException)
                 {
@@ -812,7 +812,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryTable.Rows.Count == 1)
             {
-                loadItemInfo(typeof(Gallery), galleryTable.Rows[0]);
+                loadItemInfo(galleryTable.Rows[0]);
             }
             else
             {
@@ -825,7 +825,7 @@ namespace BoxSocial.Applications.Gallery
         {
             try
             {
-                loadItemInfo(typeof(Gallery), galleryRow);
+                loadItemInfo(galleryRow);
             }
             catch (InvalidItemException)
             {
@@ -847,7 +847,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                loadItemInfo(typeof(Gallery), galleryRow);
+                loadItemInfo(galleryRow);
             }
             catch (InvalidItemException)
             {
@@ -858,6 +858,33 @@ namespace BoxSocial.Applications.Gallery
             {
                 loadGalleryIcon(galleryRow);
             }
+        }
+
+        protected override void loadItemInfo(DataRow galleryRow)
+        {
+            loadValue(galleryRow, "gallery_id", out galleryId);
+            loadValue(galleryRow, "user_id", out userId);
+            loadValue(galleryRow, "settings_id", out settingsId);
+            loadValue(galleryRow, "gallery_parent_id", out parentId);
+            loadValue(galleryRow, "gallery_title", out galleryTitle);
+            loadValue(galleryRow, "gallery_parent_path", out parentPath);
+            loadValue(galleryRow, "gallery_path", out path);
+            loadValue(galleryRow, "gallery_item_comments", out galleryItemComments);
+            loadValue(galleryRow, "gallery_visits", out visits);
+            loadValue(galleryRow, "gallery_items", out items);
+            loadValue(galleryRow, "gallery_bytes", out bytes);
+            loadValue(galleryRow, "gallery_abstract", out galleryAbstract);
+            loadValue(galleryRow, "gallery_description", out galleryDescription);
+            loadValue(galleryRow, "gallery_highlight_id", out highlightId);
+            loadValue(galleryRow, "gallery_hierarchy", out hierarchy);
+            loadValue(galleryRow, "gallery_item", out ownerKey);
+            loadValue(galleryRow, "gallery_level", out galleryLevel);
+            loadValue(galleryRow, "gallery_order", out galleryOrder);
+            loadValue(galleryRow, "app_simple_permissions", out simplePermissions);
+            loadValue(galleryRow, "gallery_application", out galleryApplication);
+
+            itemLoaded(galleryRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         /// <summary>
@@ -1820,7 +1847,7 @@ namespace BoxSocial.Applications.Gallery
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+            breadCrumbParts.Add(new string[] { "gallery", e.Core.Prose.GetString("GALLERY") });
 
             if (gallery.Parents != null)
             {

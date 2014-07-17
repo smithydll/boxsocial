@@ -179,6 +179,22 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        protected override void loadItemInfo(DataRow settingsRow)
+        {
+            loadValue(settingsRow, "forum_settings_id", out settingsId);
+            loadValue(settingsRow, "forum_item", out ownerKey);
+            loadValue(settingsRow, "forum_topics", out topics);
+            loadValue(settingsRow, "forum_posts", out posts);
+            loadValue(settingsRow, "forum_members", out members);
+            loadValue(settingsRow, "forum_topics_per_page", out topicsPerPage);
+            loadValue(settingsRow, "forum_posts_per_page", out postsPerPage);
+            loadValue(settingsRow, "forum_allow_topics_root", out allowTopicsAtRoot);
+            loadValue(settingsRow, "forum_simple_permissions", out simplePermissions);
+
+            itemLoaded(settingsRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void ForumSettings_ItemLoad()
         {
         }

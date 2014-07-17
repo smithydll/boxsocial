@@ -102,6 +102,17 @@ namespace BoxSocial.Internals
             loadItemInfo(categoryRow);
         }
 
+        protected override void loadItemInfo(DataRow categoryRow)
+        {
+            loadValue(categoryRow, "category_id", out categoryId);
+            loadValue(categoryRow, "category_title", out title);
+            loadValue(categoryRow, "category_path", out path);
+            loadValue(categoryRow, "category_groups", out groupCount);
+
+            itemLoaded(categoryRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void Category_ItemLoad()
         {
         }

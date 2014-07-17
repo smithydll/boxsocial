@@ -144,7 +144,14 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
 
-            loadItemInfo(statusRow);
+            try
+            {
+                loadItemInfo(statusRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidStatusMessageException();
+            }
         }
 
         public StatusMessage(Core core, User owner, DataRow statusRow)
@@ -153,7 +160,14 @@ namespace BoxSocial.Internals
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
 
-            loadItemInfo(statusRow);
+            try
+            {
+                loadItemInfo(statusRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidStatusMessageException();
+            }
         }
 
         private StatusMessage(Core core, User owner, long statusId, string statusMessage)
@@ -163,6 +177,22 @@ namespace BoxSocial.Internals
             this.ownerId = owner.Id;
             this.statusId = statusId;
             this.statusMessage = statusMessage;
+        }
+
+        protected override void loadItemInfo(DataRow statusRow)
+        {
+            statusId = (long)statusRow["status_id"];
+            ownerId = (long)statusRow["user_id"];
+            loadValue(statusRow, "status_message", out statusMessage);
+            likes = (byte)statusRow["status_likes"];
+            dislikes = (byte)statusRow["status_dislikes"];
+            shares = (long)statusRow["status_shares"];
+            timeRaw = (long)statusRow["status_time_ut"];
+            loadValue(statusRow, "status_ip", out ip);
+            loadValue(statusRow, "status_simple_permissions", out simplePermissions);
+
+            itemLoaded(statusRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         private void StatusMessage_ItemLoad()
@@ -341,9 +371,9 @@ namespace BoxSocial.Internals
 
                 List<string[]> breadCrumbParts = new List<string[]>();
 
-                breadCrumbParts.Add(new string[] { "*profile", "Profile" });
-                breadCrumbParts.Add(new string[] { "status-feed", "Status Feed" });
-                breadCrumbParts.Add(new string[] { item.Id.ToString(), "Status" });
+                breadCrumbParts.Add(new string[] { "*profile", e.Core.Prose.GetString("PROFILE") });
+                breadCrumbParts.Add(new string[] { "status-feed", e.Core.Prose.GetString("STATUS_FEED") });
+                breadCrumbParts.Add(new string[] { item.Id.ToString(), e.Core.Prose.GetString("STATUS") });
 
                 e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
             }

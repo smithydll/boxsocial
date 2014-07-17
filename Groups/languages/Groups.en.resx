@@ -129,6 +129,9 @@
   <data name="GROUPS" xml:space="preserve">
     <value>Groups</value>
   </data>
+  <data name="GROUP_CONTROL_PANEL" xml:space="preserve">
+    <value>Group Control Panel</value>
+  </data>
   <data name="GROUP_LEADER" xml:space="preserve">
     <value>Group Leader</value>
   </data>

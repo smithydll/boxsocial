@@ -86,6 +86,10 @@ namespace BoxSocial.Internals
             foreach (Action action in tempActions)
             {
                 core.ItemCache.RequestItem(action.ActionItemKey);
+                if (!action.ActionItemKey.Equals(action.InteractItemKey))
+                {
+                    core.ItemCache.RequestItem(action.InteractItemKey);
+                }
             }
 
             foreach (Action action in tempActions)
@@ -171,6 +175,10 @@ namespace BoxSocial.Internals
             foreach (Action action in tempActions)
             {
                 core.ItemCache.RequestItem(action.ActionItemKey);
+                if (!action.ActionItemKey.Equals(action.InteractItemKey))
+                {
+                    core.ItemCache.RequestItem(action.InteractItemKey);
+                }
             }
 
             foreach (Action action in tempActions)
@@ -298,6 +306,10 @@ namespace BoxSocial.Internals
                         foreach (Action action in tempActions)
                         {
                             core.ItemCache.RequestItem(action.ActionItemKey);
+                            if (!action.ActionItemKey.Equals(action.InteractItemKey))
+                            {
+                                core.ItemCache.RequestItem(action.InteractItemKey);
+                            }
                         }
 
                         //HttpContext.Current.Response.Write("Time: " + (initTime / 10000000.0) + ", " + core.Db.GetQueryCount() + "<br />");

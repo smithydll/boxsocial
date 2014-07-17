@@ -153,12 +153,7 @@ namespace BoxSocial.Internals
             this.item = null;
             ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
 
-            //loadItemInfo(grantRow);
-            loadItemKey(grantRow, "grant_primitive", out primitiveKey);
-            itemId = (long)grantRow["grant_item_id"];
-            itemTypeId = (long)grantRow["grant_item_type_id"];
-            permissionId = (long)grantRow["grant_permission_id"];
-            grantAllow = (sbyte)grantRow["grant_allow"];
+            loadItemInfo(grantRow);
         }
 		
 		internal AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
@@ -167,12 +162,7 @@ namespace BoxSocial.Internals
 			this.item = item;
 			ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
 
-            //loadItemInfo(grantRow);
-            loadItemKey(grantRow, "grant_primitive", out primitiveKey);
-            itemId = (long)grantRow["grant_item_id"];
-            itemTypeId = (long)grantRow["grant_item_type_id"];
-            permissionId = (long)grantRow["grant_permission_id"];
-            grantAllow = (sbyte)grantRow["grant_allow"];
+            loadItemInfo(grantRow);
 		}
         
         internal AccessControlGrant(Core core, ItemKey primitive, ItemKey itemKey, long permissionId)
@@ -194,14 +184,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    //loadItemInfo(grantDataTable.Rows[0]);
-                    DataRow grantRow = grantDataTable.Rows[0];
-
-                    loadItemKey(grantRow, "grant_primitive", out primitiveKey);
-                    itemId = (long)grantRow["grant_item_id"];
-                    itemTypeId = (long)grantRow["grant_item_type_id"];
-                    permissionId = (long)grantRow["grant_permission_id"];
-                    grantAllow = (sbyte)grantRow["grant_allow"];
+                    loadItemInfo(grantDataTable.Rows[0]);
                 }
                 catch (InvalidItemException)
                 {
@@ -214,6 +197,17 @@ namespace BoxSocial.Internals
                 AccessControlPermission acp = new AccessControlPermission(core, permissionId);
                 throw new InvalidAccessControlGrantException(acp.Name);
             }
+        }
+
+        protected override void loadItemInfo(DataRow grantRow)
+        {
+            loadValue(grantRow, "grant_primitive", out primitiveKey);
+            loadValue(grantRow, "grant_item_id", out itemId);
+            loadValue(grantRow, "grant_item_type_id", out itemTypeId);
+            loadValue(grantRow, "grant_permission_id", out permissionId);
+            loadValue(grantRow, "grant_allow", out grantAllow);
+
+            itemLoaded(grantRow);
         }
 		
 		private void AccessControlGrant_ItemLoad()

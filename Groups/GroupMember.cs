@@ -103,7 +103,7 @@ namespace BoxSocial.Groups
         public GroupMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
-            loadItemInfo(typeof(GroupMember), memberRow);
+            loadItemInfo(memberRow);
 
             /*try
             {*/
@@ -125,7 +125,7 @@ namespace BoxSocial.Groups
         public GroupMember(Core core, DataRow memberRow)
             : base(core)
         {
-            loadItemInfo(typeof(GroupMember), memberRow);
+            loadItemInfo(memberRow);
             core.LoadUserProfile(userId);
             loadUserFromUser(core.PrimitiveCache[userId]);
 
@@ -144,6 +144,27 @@ namespace BoxSocial.Groups
                 // TODO: is there a better way?
                 //isOperator = false;
             }*/
+        }
+
+        protected override void loadItemInfo(DataRow memberRow)
+        {
+            try
+            {
+                loadValue(memberRow, "user_id", out userId);
+                loadValue(memberRow, "group_id", out groupId);
+                loadValue(memberRow, "group_member_date_ut", out memberJoinDateRaw);
+                loadValue(memberRow, "group_member_ip", out memberJoinIp);
+                loadValue(memberRow, "group_member_approved", out memberApproval);
+                loadValue(memberRow, "group_member_colour", out memberColour);
+                loadValue(memberRow, "group_default_subgroup", out memberDefaultSubGroup);
+
+                itemLoaded(memberRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
         }
 
         private void loadMemberInfo(DataRow memberRow)

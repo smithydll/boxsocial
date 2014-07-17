@@ -283,6 +283,32 @@ namespace BoxSocial.Groups
             }
         }
 
+        protected override void loadItemInfo(DataRow groupRow)
+        {
+            loadValue(groupRow, "group_id", out groupId);
+            loadValue(groupRow, "group_name", out groupSlug);
+            loadValue(groupRow, "group_name_display", out displayName);
+            loadValue(groupRow, "group_type", out groupType);
+            loadValue(groupRow, "group_abstract", out groupDescription);
+            loadValue(groupRow, "group_reg_date_ut", out timestampCreated);
+            loadValue(groupRow, "group_reg_ip", out registrationIp);
+            loadValue(groupRow, "group_operators", out groupOperators);
+            loadValue(groupRow, "group_officers", out groupOfficers);
+            loadValue(groupRow, "group_members", out groupMembers);
+            loadValue(groupRow, "group_category", out rawCategory);
+            loadValue(groupRow, "group_gallery_items", out galleryItems);
+            loadValue(groupRow, "group_home_page", out groupHomepage);
+            loadValue(groupRow, "group_style", out groupStyle);
+            loadValue(groupRow, "group_icon", out groupIcon);
+            loadValue(groupRow, "group_cover", out coverPhotoId);
+            loadValue(groupRow, "group_bytes", out groupBytes);
+            loadValue(groupRow, "group_views", out groupViews);
+            loadValue(groupRow, "group_news_articles", out groupNewsArticles);
+
+            itemLoaded(groupRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void UserGroupInfo_ItemLoad()
         {
         }

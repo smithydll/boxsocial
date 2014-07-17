@@ -488,6 +488,29 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        protected override void loadItemInfo(DataRow forumRow)
+        {
+            loadValue(forumRow, "forum_id", out forumId);
+            loadValue(forumRow, "forum_parent_id", out parentId);
+            loadValue(forumRow, "forum_title", out forumTitle);
+            loadValue(forumRow, "forum_description", out forumDescription);
+            loadValue(forumRow, "forum_rules", out forumRules);
+            loadValue(forumRow, "forum_locked", out forumLocked);
+            loadValue(forumRow, "forum_category", out isCategory);
+            loadValue(forumRow, "forum_topics", out forumTopics);
+            loadValue(forumRow, "forum_posts", out forumPosts);
+            loadValue(forumRow, "forum_last_post_time_ut", out lastPostTimeRaw);
+            loadValue(forumRow, "forum_last_post_id", out lastPostId);
+            loadValue(forumRow, "forum_item", out ownerKey);
+            loadValue(forumRow, "forum_order", out forumOrder);
+            loadValue(forumRow, "forum_level", out forumLevel);
+            loadValue(forumRow, "forum_parents", out parents);
+            loadValue(forumRow, "forum_simple_permissions", out simplePermissions);
+
+            itemLoaded(forumRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void Forum_ItemLoad()
         {
             ItemDeleted += new ItemDeletedEventHandler(Forum_ItemDeleted);
@@ -745,8 +768,8 @@ namespace BoxSocial.Applications.Forum
 		public static SelectBox BuildForumJumpBox(Core core, Primitive owner, long currentForum)
 		{
 			SelectBox sb = new SelectBox("forum");
-			
-			sb.Add(new SelectBoxItem("", "Select a forum"));
+
+            sb.Add(new SelectBoxItem("", core.Prose.GetString("SELECT_A_FORUM")));
 			sb.Add(new SelectBoxItem("", "--------------------"));
 			
 			SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
@@ -888,7 +911,18 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            SelectQuery query = new SelectQuery("forum_topics");
+            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+
+            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
+            if (core.LoggedInMemberId > 0)
+            {
+                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
+                tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
+            }
+
+
             query.AddCondition("topic_item_id", ownerKey.Id);
             query.AddCondition("topic_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Descending, "topic_last_post_id");
@@ -899,7 +933,9 @@ namespace BoxSocial.Applications.Forum
 
             foreach (DataRow dr in topicsTable.Rows)
             {
-                topics.Add(new ForumTopic(core, dr));
+                ForumTopic topic = new ForumTopic(core, dr);
+                core.ItemCache.RequestItem(new ItemKey(topic.ForumId, ItemType.GetTypeId(typeof(Forum))));
+                topics.Add(topic);
             }
 
             return topics;
@@ -909,7 +945,17 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            SelectQuery query = new SelectQuery("forum_topics");
+            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+
+            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
+            if (core.LoggedInMemberId > 0)
+            {
+                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
+                tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
+            }
+
             query.AddCondition("topic_id", ConditionEquality.In, topicIds);
             query.AddCondition("topic_item_id", ownerKey.Id);
             query.AddCondition("topic_item_type_id", ownerKey.TypeId);
@@ -1506,6 +1552,8 @@ namespace BoxSocial.Applications.Forum
 
                     core.Template.Parse("PAGE_TITLE", thisForum.Title);
                     core.Template.Parse("FORUM_TITLE", thisForum.Title);
+
+                    core.Template.Parse("SHOW_TOPICS", "TRUE");
                 }
                 else
                 {
@@ -1513,6 +1561,11 @@ namespace BoxSocial.Applications.Forum
 
                     core.Template.Parse("PAGE_TITLE", core.Prose.GetString("FORUM"));
                     core.Template.Parse("FORUM_TITLE", core.Prose.GetString("FORUM"));
+
+                    if (settings.AllowTopicsAtRoot)
+                    {
+                        core.Template.Parse("SHOW_TOPICS", "TRUE");
+                    }
                 }
             }
             catch (InvalidForumException)
@@ -1824,7 +1877,7 @@ namespace BoxSocial.Applications.Forum
             core.Display.ParsePagination(thisForum.Uri, settings.TopicsPerPage, topicsCount);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+            breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });
 
             if (thisForum.Parents != null)
             {

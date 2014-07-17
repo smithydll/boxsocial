@@ -115,6 +115,23 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        protected override void loadItemInfo(DataRow dr)
+        {
+            try
+            {
+                loadValue(dr, "topic_id", out topicId);
+                loadValue(dr, "user_id", out userId);
+                loadValue(dr, "forum_id", out forumId);
+                loadValue(dr, "read_time_ut", out readTime);
+
+                itemLoaded(dr);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         void TopicReadStatus_ItemLoad()
         {
         }

@@ -442,6 +442,29 @@ namespace BoxSocial.Groups
             }
         }
 
+        private new void loadItemInfo(Type type, DataRow userRow)
+        {
+            if (type == typeof(UserGroup))
+            {
+                loadItemInfo(userRow);
+            }
+            else
+            {
+                base.loadItemInfo(type, userRow);
+            }
+        }
+
+        protected override void loadItemInfo(DataRow groupRow)
+        {
+            loadValue(groupRow, "group_id", out groupId);
+            loadValue(groupRow, "group_name", out slug);
+            loadValue(groupRow, "group_domain", out domain);
+            loadValue(groupRow, "group_simple_permissions", out simplePermissions);
+
+            itemLoaded(groupRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void UserGroup_ItemLoad()
         {
             OnCommentPosted += new CommentHandler(UserGroup_CommentPosted);
@@ -556,7 +579,9 @@ namespace BoxSocial.Groups
 
             SelectQuery query = new SelectQuery("group_operators");
             query.AddField(new DataField("group_operators", "user_id"));
-            query.AddCondition("group_id", groupId);
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_operators", "user_id"), new DataField("group_members", "user_id"));
+            query.AddCondition(new DataField("group_operators", "group_id"), groupId);
 
             DataTable membersTable = db.Query(query);
 
@@ -590,7 +615,9 @@ namespace BoxSocial.Groups
             query.AddField(new DataField("group_officers", "user_id"));
             query.AddField(new DataField("group_officers", "officer_title"));
             query.AddField(new DataField("group_officers", "group_id"));
-            query.AddCondition("group_id", groupId);
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_officers", "user_id"), new DataField("group_members", "user_id"));
+            query.AddCondition(new DataField("group_officers", "group_id"), groupId);
 
             DataTable membersTable = db.Query(query);
 
@@ -766,6 +793,9 @@ namespace BoxSocial.Groups
         {
             SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
             query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserGroup), "group_id"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(UserGroup)));
 
             if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
             {
@@ -1536,7 +1566,7 @@ namespace BoxSocial.Groups
             List<string[]> breadCrumbParts = new List<string[]>();
             if (!core.IsMobile)
             {
-                breadCrumbParts.Add(new string[] { "profile", "Profile" });
+                breadCrumbParts.Add(new string[] { "profile", core.Prose.GetString("PROFILE") });
             }
 
             page.Owner.ParseBreadCrumbs(breadCrumbParts);
@@ -1666,7 +1696,7 @@ namespace BoxSocial.Groups
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "members", "Members" });
+            breadCrumbParts.Add(new string[] { "members", core.Prose.GetString("MEMBERS") });
 
             page.Group.ParseBreadCrumbs(breadCrumbParts);
         }

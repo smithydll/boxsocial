@@ -246,6 +246,24 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        protected override void loadItemInfo(DataRow postRow)
+        {
+            loadValue(postRow, "post_id", out postId);
+            loadValue(postRow, "topic_id", out topicId);
+            loadValue(postRow, "forum_id", out forumId);
+            loadValue(postRow, "user_id", out userId);
+            loadValue(postRow, "post_title", out postTitle);
+            loadValue(postRow, "post_text", out postText);
+            loadValue(postRow, "post_time_ut", out createdRaw);
+            loadValue(postRow, "post_modified_ut", out modifiedRaw);
+            loadValue(postRow, "post_modified_count", out modifiedCount);
+            loadValue(postRow, "post_modified_user_id", out modifiedUserId);
+            loadValue(postRow, "post_ip", out postIp);
+
+            itemLoaded(postRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void Post_ItemLoad()
         {
             ItemUpdated += new EventHandler(TopicPost_ItemUpdated);

@@ -189,6 +189,21 @@ namespace BoxSocial.Applications.Forum
 			}
 		}
 
+        protected override void loadItemInfo(DataRow rankRow)
+        {
+            loadValue(rankRow, "rank_id", out rankId);
+            loadValue(rankRow, "rank_owner", out rankOwner);
+            loadValue(rankRow, "rank_colour", out rankColour);
+            loadValue(rankRow, "rank_title", out rankTitleText);
+            loadValue(rankRow, "rank_posts", out rankPosts);
+            loadValue(rankRow, "rank_special", out rankSpecial);
+            loadValue(rankRow, "rank_image_id", out rankImageId);
+            loadValue(rankRow, "rank_simple_permissions", out simplePermissions);
+
+            itemLoaded(rankRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void ForumMemberRank_ItemLoad()
 		{
 		}

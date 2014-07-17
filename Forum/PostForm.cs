@@ -80,7 +80,7 @@ namespace BoxSocial.Applications.Forum
             string topicState = core.Http.Form["topic-state"];
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
+            breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });
 
             if (string.IsNullOrEmpty(mode))
             {
@@ -174,7 +174,7 @@ namespace BoxSocial.Applications.Forum
 
                 breadCrumbParts.Add(new string[] { "topic-" + thisTopic.Id.ToString(), thisTopic.Title });
 
-                breadCrumbParts.Add(new string[] { "*forum/post/?t=" + thisTopic.Id.ToString() + "&mode=reply", "Post Reply" });
+                breadCrumbParts.Add(new string[] { "*forum/post/?t=" + thisTopic.Id.ToString() + "&mode=reply", core.Prose.GetString("POST_REPLY") });
             }
             else if (forumId > 0)
             {
@@ -207,7 +207,7 @@ namespace BoxSocial.Applications.Forum
                     breadCrumbParts.Add(new string[] { forum.Id.ToString(), forum.Title });
                 }
 
-                breadCrumbParts.Add(new string[] { "*forum/post/?f=" + forum.Id.ToString() + "&mode=post", "New Topic" });
+                breadCrumbParts.Add(new string[] { "*forum/post/?f=" + forum.Id.ToString() + "&mode=post", core.Prose.GetString("NEW_TOPIC") });
             }
 
             core.Template.Parse("S_MODE", mode);

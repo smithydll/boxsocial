@@ -145,22 +145,10 @@ namespace BoxSocial.Applications.Gallery
         protected bool ultraExists;
         [DataField("gallery_item_cover_exists")]
         protected bool coverExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_mobile_cover_exists")]
         protected bool mobileCoverExists;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_vcrop")]
         protected int cropPositionVertical;
-
-        /// <summary>
-        /// 
-        /// </summary>
         [DataField("gallery_item_hcrop")]
         protected int cropPositionHorizontal;
 
@@ -656,7 +644,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                loadItemInfo(galleryItemTable.Rows[0]);
                 /*try
                 {
                     licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
@@ -683,7 +671,7 @@ namespace BoxSocial.Applications.Gallery
             this.db = db;
             this.owner = owner;
 
-            loadItemInfo(typeof(GalleryItem), itemRow);
+            loadItemInfo(itemRow);
             /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
@@ -704,7 +692,7 @@ namespace BoxSocial.Applications.Gallery
         {
             this.owner = owner;
 
-            loadItemInfo(typeof(GalleryItem), itemRow);
+            loadItemInfo(itemRow);
             /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
@@ -724,7 +712,7 @@ namespace BoxSocial.Applications.Gallery
         {
             // TODO: owner not set, no big worry
 
-            loadItemInfo(typeof(GalleryItem), itemRow);
+            loadItemInfo(itemRow);
             /*try
             {
                 licenseInfo = new ContentLicense(core, itemRow);
@@ -758,7 +746,7 @@ namespace BoxSocial.Applications.Gallery
 
             if (galleryItemTable.Rows.Count == 1)
             {
-                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                loadItemInfo(galleryItemTable.Rows[0]);
                 /*try
                 {
                     licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
@@ -795,7 +783,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                loadItemInfo(galleryItemTable.Rows[0]);
                 //licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
             catch (InvalidItemException)
@@ -828,7 +816,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                loadItemInfo(typeof(GalleryItem), galleryItemTable.Rows[0]);
+                loadItemInfo(galleryItemTable.Rows[0]);
 
                 //licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
             }
@@ -839,6 +827,45 @@ namespace BoxSocial.Applications.Gallery
             catch (InvalidLicenseException)
             {
             }
+        }
+
+        protected override void loadItemInfo(DataRow galleryItemRow)
+        {
+            loadValue(galleryItemRow, "user_id", out userId);
+            loadValue(galleryItemRow, "gallery_item_id", out itemId);
+            loadValue(galleryItemRow, "gallery_item_title", out itemTitle);
+            loadValue(galleryItemRow, "gallery_item_parent_path", out parentPath);
+            loadValue(galleryItemRow, "gallery_item_uri", out path);
+            loadValue(galleryItemRow, "gallery_id", out parentId);
+            loadValue(galleryItemRow, "gallery_item_views", out itemViews);
+            loadValue(galleryItemRow, "gallery_item_width", out itemWidth);
+            loadValue(galleryItemRow, "gallery_item_height", out itemHeight);
+            loadValue(galleryItemRow, "gallery_item_bytes", out itemBytes);
+            loadValue(galleryItemRow, "gallery_item_rating", out itemRating);
+            loadValue(galleryItemRow, "gallery_item_content_type", out contentType);
+            loadValue(galleryItemRow, "gallery_item_storage_path", out storagePath);
+            loadValue(galleryItemRow, "gallery_item_abstract", out itemAbstract);
+            loadValue(galleryItemRow, "gallery_item_date_ut", out itemCreatedRaw);
+            loadValue(galleryItemRow, "gallery_item_item", out ownerKey);
+            loadValue(galleryItemRow, "gallery_item_classification", out classification);
+            loadValue(galleryItemRow, "gallery_item_license", out license);
+            loadValue(galleryItemRow, "gallery_item_icon_exists", out iconExists);
+            loadValue(galleryItemRow, "gallery_item_tile_exists", out tileExists);
+            loadValue(galleryItemRow, "gallery_item_square_exists", out squareExists);
+            loadValue(galleryItemRow, "gallery_item_high_exists", out highExists);
+            loadValue(galleryItemRow, "gallery_item_tiny_exists", out tinyExists);
+            loadValue(galleryItemRow, "gallery_item_thumb_exists", out thumbnailExists);
+            loadValue(galleryItemRow, "gallery_item_mobile_exists", out mobileExists);
+            loadValue(galleryItemRow, "gallery_item_display_exists", out displayExists);
+            loadValue(galleryItemRow, "gallery_item_full_exists", out fullExists);
+            loadValue(galleryItemRow, "gallery_item_ultra_exists", out ultraExists);
+            loadValue(galleryItemRow, "gallery_item_cover_exists", out coverExists);
+            loadValue(galleryItemRow, "gallery_item_mobile_cover_exists", out mobileCoverExists);
+            loadValue(galleryItemRow, "gallery_item_vcrop", out cropPositionVertical);
+            loadValue(galleryItemRow, "gallery_item_hcrop", out cropPositionHorizontal);
+
+            itemLoaded(galleryItemRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void GalleryItem_ItemLoad()
@@ -1610,7 +1637,7 @@ namespace BoxSocial.Applications.Gallery
 
                 List<string[]> breadCrumbParts = new List<string[]>();
 
-                breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+                breadCrumbParts.Add(new string[] { "gallery", e.Core.Prose.GetString("GALLERY") });
                 if (gallery.Parents != null)
                 {
                     foreach (ParentTreeNode node in gallery.Parents.Nodes)

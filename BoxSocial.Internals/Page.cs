@@ -482,7 +482,7 @@ namespace BoxSocial.Internals
 
             if (pageTable.Rows.Count == 1)
             {
-                loadPageInfo(pageTable.Rows[0]);
+                loadItemInfo(pageTable.Rows[0]);
                 try
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
@@ -515,7 +515,7 @@ namespace BoxSocial.Internals
 
             if (pageTable.Rows.Count == 1)
             {
-                loadPageInfo(pageTable.Rows[0]);
+                loadItemInfo(pageTable.Rows[0]);
                 try
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
@@ -544,7 +544,7 @@ namespace BoxSocial.Internals
 
             if (pageTable.Rows.Count == 1)
             {
-                loadPageInfo(pageTable.Rows[0]);
+                loadItemInfo(pageTable.Rows[0]);
                 try
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
@@ -576,7 +576,7 @@ namespace BoxSocial.Internals
 
             if (pageTable.Rows.Count == 1)
             {
-                loadPageInfo(pageTable.Rows[0]);
+                loadItemInfo(pageTable.Rows[0]);
                 /*try
                 {
                     loadLicenseInfo(pageTable.Rows[0]);
@@ -633,34 +633,35 @@ namespace BoxSocial.Internals
             ae.SendNotification(core, comment.OwnerKey, comment.User, ev.OwnerKey, ev.ItemKey, "_COMMENTED_PAGE", comment.BuildUri(ev));
         }
 
-        private void loadPageInfo(DataRow pageRow)
+        private void loadItemInfo(DataRow pageRow)
         {
-            pageId = (long)pageRow["page_id"];
-            creatorId = (long)pageRow["user_id"];
-            /*ownerId = (long)pageRow["page_item_id"];
-            ownerType = (string)pageRow["page_item_type"];*/
-			ownerKey = new ItemKey((long)pageRow["page_item_id"], (long)pageRow["page_item_type_id"]);
-            slug = (string)pageRow["page_slug"];
-            title = (string)pageRow["page_title"];
-            if (!(pageRow["page_text"] is DBNull))
-            {
-                body = (string)pageRow["page_text"];
-            }
-            licenseId = (byte)pageRow["page_license"];
-            views = (long)pageRow["page_views"];
-            status = (string)pageRow["page_status"];
-            ipRaw = (string)pageRow["page_ip"];
-            parentPath = (string)pageRow["page_parent_path"];
-            order = (int)pageRow["page_order"];
-            parentId = (long)pageRow["page_parent_id"];
-            createdRaw = (long)pageRow["page_date_ut"];
-            modifiedRaw = (long)pageRow["page_modified_ut"];
-            classification = (Classifications)(byte)pageRow["page_classification"];
-            listOnly = ((byte)pageRow["page_list_only"] > 0) ? true : false;
-            if (!(pageRow["page_hierarchy"] is DBNull))
-            {
-                hierarchy = (string)pageRow["page_hierarchy"];
-            }
+            loadValue(pageRow, "page_id", out pageId);
+            loadValue(pageRow, "user_id", out creatorId);
+            loadValue(pageRow, "page_slug", out slug);
+            loadValue(pageRow, "page_title", out title);
+            loadValue(pageRow, "page_text", out body);
+            loadValue(pageRow, "page_text_cache", out bodyCache);
+            loadValue(pageRow, "page_license", out licenseId);
+            loadValue(pageRow, "page_views", out views);
+            loadValue(pageRow, "page_status", out status);
+            loadValue(pageRow, "page_ip", out ipRaw);
+            loadValue(pageRow, "page_ip_proxy", out ipProxyRaw);
+            loadValue(pageRow, "page_parent_path", out parentPath);
+            loadValue(pageRow, "page_order", out order);
+            loadValue(pageRow, "page_parent_id", out parentId);
+            loadValue(pageRow, "page_list_only", out listOnly);
+            loadValue(pageRow, "page_application", out applicationId);
+            loadValue(pageRow, "page_icon", out pageIcon);
+            loadValue(pageRow, "page_date_ut", out createdRaw);
+            loadValue(pageRow, "page_modified_ut", out modifiedRaw);
+            loadValue(pageRow, "page_classification", out classificationId);
+            loadValue(pageRow, "page_level", out pageLevel);
+            loadValue(pageRow, "page_hierarchy", out hierarchy);
+            loadValue(pageRow, "page_item", out ownerKey);
+            loadValue(pageRow, "page_simple_permissions", out simplePermissions);
+
+            itemLoaded(pageRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         private void loadLicenseInfo(DataRow pageRow)

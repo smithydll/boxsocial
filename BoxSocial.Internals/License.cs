@@ -117,6 +117,25 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected override void loadItemInfo(DataRow licenseRow)
+        {
+            try
+            {
+                loadValue(licenseRow, "license_id", out licenseId);
+                loadValue(licenseRow, "license_title", out title);
+                loadValue(licenseRow, "license_icon", out icon);
+                loadValue(licenseRow, "license_link", out link);
+                loadValue(licenseRow, "license_text", out text);
+
+                itemLoaded(licenseRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
         private void ContentLicense_ItemLoad()
         {
         }

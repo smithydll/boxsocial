@@ -784,6 +784,36 @@ namespace BoxSocial.Internals
             }
         }
 
+        private new void loadItemInfo(Type type, DataRow userRow)
+        {
+            if (type == typeof(User))
+            {
+                loadUser(userRow);
+            }
+            else
+            {
+                base.loadItemInfo(type, userRow);
+            }
+        }
+
+        protected override void loadItemInfo(DataRow userRow)
+        {
+            loadUser(userRow);
+        }
+
+        protected void loadUser(DataRow userRow)
+        {
+            loadValue(userRow, "user_id", out userId);
+            loadValue(userRow, "user_name", out userName);
+            loadValue(userRow, "user_name_lower", out userNameLower);
+            loadValue(userRow, "user_domain", out domain);
+            loadValue(userRow, "user_name_first", out userNameFirstCharacter);
+            loadValue(userRow, "user_simple_permissions", out simplePermissions);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void User_ItemLoad()
         {
             ItemUpdated += new EventHandler(User_ItemUpdated);
@@ -968,10 +998,15 @@ namespace BoxSocial.Internals
             query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
             QueryCondition qc1 = query.AddCondition(new DataField("user_info", "user_name"), ConditionEquality.Like, namePart + "%");
@@ -1011,12 +1046,17 @@ namespace BoxSocial.Internals
             query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
             query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
+
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
             if ((!string.IsNullOrEmpty(filter)) && filter.Length == 1)
@@ -2392,7 +2432,7 @@ namespace BoxSocial.Internals
             List<string[]> breadCrumbParts = new List<string[]>();
             if (!core.IsMobile)
             {
-                breadCrumbParts.Add(new string[] { "profile", "Profile" });
+                breadCrumbParts.Add(new string[] { "profile", core.Prose.GetString("PROFILE") });
             }
 
             page.Owner.ParseBreadCrumbs(breadCrumbParts);
@@ -2455,7 +2495,7 @@ namespace BoxSocial.Internals
             e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.Subscribers);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "subscriptions", "Subscriptions" });
+            breadCrumbParts.Add(new string[] { "subscriptions", e.Core.Prose.GetString("SUBSCRIPTIONS") });
 
             e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -2507,7 +2547,7 @@ namespace BoxSocial.Internals
             e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.Info.Subscribers);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "subscribers", "Subscribers" });
+            breadCrumbParts.Add(new string[] { "subscribers", e.Core.Prose.GetString("SUBSCRIBERS") });
 
             e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }
@@ -2597,11 +2637,8 @@ namespace BoxSocial.Internals
             string pageUri = e.Core.Hyperlink.BuildFriendsUri(e.Page.User);
             e.Core.Display.ParsePagination(pageUri, 18, e.Page.User.UserInfo.Friends);
 
-            /* pages */
-            e.Core.Display.ParsePageList(e.Page.User, true);
-
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "contacts/friends", "Friends" });
+            breadCrumbParts.Add(new string[] { "contacts/friends", e.Core.Prose.GetString("FRIENDS") });
 
             e.Page.User.ParseBreadCrumbs(breadCrumbParts);
         }

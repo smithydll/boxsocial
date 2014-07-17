@@ -168,6 +168,9 @@
   <data name="SIMPLE" xml:space="preserve">
     <value>Simple</value>
   </data>
+  <data name="STATUS" xml:space="preserve">
+    <value>Status</value>
+  </data>
   <data name="STATUS_FEED" xml:space="preserve">
     <value>Status Feed</value>
   </data>

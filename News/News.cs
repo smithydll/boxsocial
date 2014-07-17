@@ -122,6 +122,18 @@ namespace BoxSocial.Applications.News
             }
 		}
 
+        protected override void loadItemInfo(DataRow newsRow)
+        {
+            loadValue(newsRow, "news_id", out newsId);
+            loadValue(newsRow, "news_item", out ownerKey);
+            loadValue(newsRow, "news_title", out newsTitle);
+            loadValue(newsRow, "news_items_per_page", out newsItemsPerPage);
+            loadValue(newsRow, "news_simple_permissions", out simplePermissions);
+
+            itemLoaded(newsRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         void News_ItemLoad()
         {
         }
@@ -225,7 +237,7 @@ namespace BoxSocial.Applications.News
             e.Core.Display.ParsePagination(e.Template, news.Uri, 10, e.Page.Group.GroupInfo.NewsArticles);
 			
 			List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "news", "News" });
+            breadCrumbParts.Add(new string[] { "news", e.Core.Prose.GetString("NEWS") });
 
             e.Page.Group.ParseBreadCrumbs(breadCrumbParts);
 		}

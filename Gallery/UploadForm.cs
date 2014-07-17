@@ -72,7 +72,7 @@ namespace BoxSocial.Applications.Gallery
             long galleryId = core.Functions.RequestLong("gallery-id", 0);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "gallery", "Gallery" });
+            breadCrumbParts.Add(new string[] { "gallery", core.Prose.GetString("GALLERY") });
 
             if (galleryId == 0)
             {
@@ -107,7 +107,7 @@ namespace BoxSocial.Applications.Gallery
 
                 core.Display.ParseClassification(template, "S_PHOTO_CLASSIFICATION", Classifications.Everyone);
 
-                breadCrumbParts.Add(new string[] { "upload?gallery-id=" + galleryId.ToString(), "Upload" });
+                breadCrumbParts.Add(new string[] { "upload?gallery-id=" + galleryId.ToString(), core.Prose.GetString("UPLOAD_PHOTO") });
 
                 page.Owner.ParseBreadCrumbs(breadCrumbParts);
             }

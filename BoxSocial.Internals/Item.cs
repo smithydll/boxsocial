@@ -80,6 +80,8 @@ namespace BoxSocial.Internals
             }
         }
 
+        private Stopwatch timer;
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         protected Item(Core core)
         {
@@ -87,6 +89,10 @@ namespace BoxSocial.Internals
             this.db = core.Db;
             assembly = Assembly.GetCallingAssembly();
             updatedItems = new List<string>();
+
+            // Profile this method
+            timer = new Stopwatch();
+            timer.Start();
         }
 
         public static string GetPrimaryKey(Type type)
@@ -144,21 +150,13 @@ namespace BoxSocial.Internals
                 throw new NoUniqueKeyException();
             }
 
-            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
-            if (reader.HasRows)
+            DataTable dataTable = core.Db.Query(query);
+            if (dataTable.Rows.Count == 1)
             {
-                reader.Read();
-
-                loadItemInfo(type, reader);
-
-                reader.Close();
-                reader.Dispose();
+                loadItemInfo(dataTable.Rows[0]);
             }
             else
             {
-                reader.Close();
-                reader.Dispose();
-
                 throw new InvalidItemException();
             }
 
@@ -218,34 +216,14 @@ namespace BoxSocial.Internals
                 }
             }
 
-            /*DataTable itemTable = Query(query);
-
-            if (itemTable.Rows.Count == 1)
+            DataTable dataTable = core.Db.Query(query);
+            if (dataTable.Rows.Count == 1)
             {
-                loadItemInfo(type, itemTable.Rows[0]);
+                loadItemInfo(dataTable.Rows[0]);
             }
             else
             {
-                // Error
                 throw new InvalidItemException(this.GetType().FullName);
-            }*/
-
-            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
-            if (reader.HasRows)
-            {
-                reader.Read();
-
-                loadItemInfo(type, reader);
-
-                reader.Close();
-                reader.Dispose();
-            }
-            else
-            {
-                reader.Close();
-                reader.Dispose();
-
-                throw new InvalidItemException();
             }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
@@ -266,8 +244,10 @@ namespace BoxSocial.Internals
             // 3. Execute query
             // 4. Fill results
 
-            string tableName = GetTable(this.GetType());
-            List<DataFieldInfo> fields = GetFields(this.GetType());
+            Type type = this.GetType();
+
+            string tableName = GetTable(type);
+            List<DataFieldInfo> fields = GetFields(type);
             string keyField = string.Empty;
 
             SelectQuery query = new SelectQuery(tableName);
@@ -298,39 +278,14 @@ namespace BoxSocial.Internals
                 query.AddCondition(keyField, value);
             }
 
-            /*DataTable itemTable = Query(query);
-
-            if (itemTable.Rows.Count == 1)
+            DataTable dataTable = core.Db.Query(query);
+            if (dataTable.Rows.Count == 1)
             {
-                loadItemInfo(itemTable.Rows[0]);
-
-                if (ItemLoad != null)
-                {
-                    ItemLoad();
-                }
+                loadItemInfo(dataTable.Rows[0]);
             }
             else
             {
-                // Error
-                throw new InvalidItemException(this.GetType().FullName);
-            }*/
-			
-            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
-            if (reader.HasRows)
-            {
-                reader.Read();
-
-                loadItemInfo(this.GetType(), reader);
-
-                reader.Close();
-                reader.Dispose();
-            }
-            else
-            {
-                reader.Close();
-                reader.Dispose();
-
-                throw new InvalidItemException();
+                throw new InvalidItemException(type.FullName);
             }
         }
 
@@ -370,39 +325,14 @@ namespace BoxSocial.Internals
                 }
             }
 
-            /*DataTable itemTable = Query(query);
-
-            if (itemTable.Rows.Count == 1)
+            DataTable dataTable = core.Db.Query(query);
+            if (dataTable.Rows.Count == 1)
             {
-                loadItemInfo(itemTable.Rows[0]);
-
-                if (ItemLoad != null)
-                {
-                    ItemLoad();
-                }
+                loadItemInfo(dataTable.Rows[0]);
             }
             else
             {
-                // Error
                 throw new InvalidItemException(this.GetType().FullName);
-            }*/
-			
-            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
-            if (reader.HasRows)
-            {
-                reader.Read();
-
-                loadItemInfo(this.GetType(), reader);
-
-                reader.Close();
-                reader.Dispose();
-            }
-            else
-            {
-                reader.Close();
-                reader.Dispose();
-
-                throw new InvalidItemException();
             }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
@@ -1614,10 +1544,6 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
-            // Profile this method
-            Stopwatch timer = new Stopwatch();
-            timer.Start();
-
             FieldInfo[] ffields = getFieldInfo(type);
 
             int fieldsLoaded = 0;
@@ -1826,16 +1752,16 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
             }
         }
 
-        protected void loadItemInfo(DataRow itemRow)
+        protected virtual void loadItemInfo(DataRow itemRow)
         {
             loadItemInfo(this.GetType(), itemRow);
         }
 
-        protected void loadItemInfo(Type type, DataRow itemRow)
+        protected virtual void loadItemInfo(Type type, DataRow itemRow)
         {
             // Profile this method
             Stopwatch timer = new Stopwatch();
@@ -1955,20 +1881,21 @@ namespace BoxSocial.Internals
                 throw new InvalidItemException(this.GetType().FullName);
             }
 
-            if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo")
+            // the column most likely to be unique
+            if (itemRow.Table.Columns.Contains("info_item_time_ut"))
             {
-                if (typeof(ICommentableItem).IsAssignableFrom(type) ||
-                    typeof(ILikeableItem).IsAssignableFrom(type) ||
-                    typeof(IRateableItem).IsAssignableFrom(type) ||
-                    typeof(ITagableItem).IsAssignableFrom(type) ||
-                    typeof(IViewableItem).IsAssignableFrom(type) ||
-                    typeof(ISubscribeableItem).IsAssignableFrom(type) ||
-                    typeof(IShareableItem).IsAssignableFrom(type) ||
-                    typeof(IViewableItem).IsAssignableFrom(type))
+                if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo")
                 {
-                    // the column most likely to be unique
-                    if (itemRow.Table.Columns.Contains("info_item_time_ut"))
+                    if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        typeof(IRateableItem).IsAssignableFrom(type) ||
+                        typeof(ITagableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type) ||
+                        typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                        typeof(IShareableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type))
                     {
+
                         try
                         {
                             ((NumberedItem)this).info = new ItemInfo(core, itemRow);
@@ -2004,7 +1931,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
             }
         }
 
@@ -2056,7 +1983,7 @@ namespace BoxSocial.Internals
             core.Db.Query(uQuery);
         }
 
-        protected static void loadString(DataRow row, string field, out string value)
+        protected static void loadValue(DataRow row, string field, out string value)
         {
             if (!(row[field] is DBNull))
             {
@@ -2068,9 +1995,138 @@ namespace BoxSocial.Internals
             }
         }
 
-        protected static void loadItemKey(DataRow row, string field, out ItemKey value)
+        protected static void loadValue(DataRow row, string field, out ItemKey value)
         {
             value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
+        }
+
+        protected static void loadValue(DataRow row, string field, out bool value)
+        {
+            if (row[field] is bool)
+            {
+                value = (bool)row[field];
+            }
+            else if (row[field] is byte)
+            {
+                value = ((byte)row[field] > 0) ? true : false;
+            }
+            else if (row[field] is sbyte)
+            {
+                value = ((sbyte)row[field] > 0) ? true : false;
+            }
+            else
+            {
+                value = false;
+            }
+        }
+
+        protected static void loadValue(DataRow row, string field, out ulong value)
+        {
+            value = (ulong)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out long value)
+        {
+            value = (long)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out uint value)
+        {
+            value = (uint)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out int value)
+        {
+            value = (int)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out ushort value)
+        {
+            value = (ushort)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out short value)
+        {
+            value = (short)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out sbyte value)
+        {
+            value = (sbyte)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out byte value)
+        {
+            value = (byte)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out double value)
+        {
+            value = (double)row[field];
+        }
+
+        protected static void loadValue(DataRow row, string field, out float value)
+        {
+            value = (float)row[field];
+        }
+
+        protected void itemLoaded(DataRow itemRow)
+        {
+            Type type = this.GetType();
+
+#if DEBUG
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+            }
+#endif
+
+            // the column most likely to be unique
+            if (itemRow.Table.Columns.Contains("info_item_time_ut"))
+            {
+                if (type.IsSubclassOf(typeof(NumberedItem)) && (!type.Equals(typeof(ItemInfo))))
+                {
+                    if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        typeof(IRateableItem).IsAssignableFrom(type) ||
+                        typeof(ITagableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type) ||
+                        typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                        typeof(IShareableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type))
+                    {
+
+                        try
+                        {
+                            if (((NumberedItem)this).info == null)
+                            {
+                                ((NumberedItem)this).info = new ItemInfo(core, itemRow);
+                            }
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            // not all rows will have one yet, but be ready
+                        }
+                        catch
+                        {
+                            // catch all remaining errors
+                        }
+                    }
+                }
+#if DEBUG
+                if (type.Equals(typeof(ItemInfo)))
+                {
+                    HttpContext.Current.Response.Write("<!-- " + itemRow["info_item_type_id"].ToString() + "," + itemRow["info_item_id"].ToString() + "-->\r\n");
+                }
+#endif
+            }
+
+            if (ItemLoad != null)
+            {
+                ItemLoad();
+            }
         }
     }
 

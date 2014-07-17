@@ -192,6 +192,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected override void loadItemInfo(DataRow emailRow)
+        {
+            loadValue(emailRow, "email_id", out emailId);
+            loadValue(emailRow, "email_user_id", out userId);
+            loadValue(emailRow, "email_email", out emailEmail);
+            loadValue(emailRow, "email_type", out emailType);
+            loadValue(emailRow, "email_verified", out emailVerified);
+            loadValue(emailRow, "email_time_ut", out emailTimeRaw);
+            loadValue(emailRow, "email_activate_code", out emailActivateKey);
+            loadValue(emailRow, "email_simple_permissions", out simplePermissions);
+
+            itemLoaded(emailRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void UserEmail_ItemLoad()
         {
         }

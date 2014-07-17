@@ -121,21 +121,13 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(sQuery);
-                if (reader.HasRows)
+                DataTable memberDataTable = core.Db.Query(sQuery);
+                if (memberDataTable.Rows.Count == 1)
                 {
-                    reader.Read();
-
-                    loadItemInfo(typeof(ForumMember), reader);
-
-                    reader.Close();
-                    reader.Dispose();
+                    loadItemInfo(memberDataTable.Rows[0]);
                 }
                 else
                 {
-                    reader.Close();
-                    reader.Dispose();
-
                     throw new InvalidForumMemberException();
                 }
             }
@@ -150,7 +142,7 @@ namespace BoxSocial.Applications.Forum
         {
             ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
 
-            loadItemInfo(typeof(ForumMember), memberRow);
+            loadItemInfo(memberRow);
         }
 
         public ForumMember(Core core, Primitive owner, long userId, UserLoadOptions loadOptions)
@@ -169,7 +161,7 @@ namespace BoxSocial.Applications.Forum
             {
                 DataRow userRow = memberTable.Rows[0];
 
-                loadItemInfo(typeof(ForumMember), userRow);
+                loadItemInfo(userRow);
                 loadItemInfo(typeof(User), userRow);
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
@@ -190,6 +182,25 @@ namespace BoxSocial.Applications.Forum
             else
             {
                 throw new InvalidUserException();
+            }
+        }
+
+        protected override void loadItemInfo(DataRow memberRow)
+        {
+            try
+            {
+                loadValue(memberRow, "user_id", out userId);
+                loadValue(memberRow, "item", out itemKey);
+                loadValue(memberRow, "posts", out forumPosts);
+                loadValue(memberRow, "rank", out forumRank);
+                loadValue(memberRow, "signature", out forumSignature);
+
+                itemLoaded(memberRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
             }
         }
 
@@ -396,8 +407,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
-            breadCrumbParts.Add(new string[] { "ucp", "User Control Panel" });
+            breadCrumbParts.Add(new string[] { "forum", e.Core.Prose.GetString("FORUM") });
+            breadCrumbParts.Add(new string[] { "ucp", e.Core.Prose.GetString("USER_CONTROL_PANEL") });
 
             e.Page.Owner.ParseBreadCrumbs(breadCrumbParts);
 
@@ -484,8 +495,8 @@ namespace BoxSocial.Applications.Forum
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "forum", "Forum" });
-            breadCrumbParts.Add(new string[] { "memberlist", "Memberlist" });
+            breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });
+            breadCrumbParts.Add(new string[] { "memberlist", core.Prose.GetString("MEMBERLIST") });
 
             page.Owner.ParseBreadCrumbs(breadCrumbParts);
 

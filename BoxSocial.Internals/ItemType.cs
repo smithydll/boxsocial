@@ -195,6 +195,22 @@ namespace BoxSocial.Internals
                 throw new InvalidItemTypeException();
             }
 		}
+
+        protected override void loadItemInfo(DataRow typeRow)
+        {
+            loadValue(typeRow, "type_id", out typeId);
+            loadValue(typeRow, "type_namespace", out typeNamespace);
+            loadValue(typeRow, "type_application_id", out applicationId);
+            loadValue(typeRow, "type_primitive", out typeInheritsPrimitive);
+            loadValue(typeRow, "type_likeable", out typeImplementsILikeable);
+            loadValue(typeRow, "type_commentable", out typeImplementsICommentable);
+            loadValue(typeRow, "type_rateable", out typeImplementsIRateable);
+            loadValue(typeRow, "type_subscribeable", out typeImplementsISubscribeable);
+            loadValue(typeRow, "type_shareable", out typeImplementsIShareable);
+            loadValue(typeRow, "type_viewable", out typeImplementsIViewable);
+            loadValue(typeRow, "type_notifiable", out typeImplementsINotifiable);
+            loadValue(typeRow, "type_embeddable", out typeImplementsIEmbeddable);
+        }
 		
 		private void ItemType_ItemLoad()
         {
@@ -218,6 +234,8 @@ namespace BoxSocial.Internals
                                       new FieldValuePair("type_subscribeable", (typeof(ISubscribeableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_viewable", (typeof(IViewableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_shareable", (typeof(IShareableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_notifiable", (typeof(INotifiableItem).IsAssignableFrom(type))),
+                                      new FieldValuePair("type_embeddable", (typeof(IEmbeddableItem).IsAssignableFrom(type))),
                                       new FieldValuePair("type_primitive", type.IsSubclassOf(typeof(Primitive))));
 			
 			return it;

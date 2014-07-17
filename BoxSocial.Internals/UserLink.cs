@@ -81,6 +81,19 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected override void loadItemInfo(DataRow linkRow)
+        {
+            loadValue(linkRow, "user_link_id", out linkId);
+            loadValue(linkRow, "user_link_user_id", out userId);
+            loadValue(linkRow, "user_link_title", out title);
+            loadValue(linkRow, "user_link_uri", out uri);
+            loadValue(linkRow, "user_favicon", out favicon);
+            loadValue(linkRow, "link_time_ut", out linkTimeRaw);
+
+            itemLoaded(linkRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void UserLink_ItemLoad()
         {
         }

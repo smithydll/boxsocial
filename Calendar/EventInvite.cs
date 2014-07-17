@@ -42,10 +42,6 @@ namespace BoxSocial.Applications.Calendar
     {
         [DataField("event_id", typeof(Event))]
         private long eventId;
-        /*[DataField("item_id")]
-        private long itemId;
-        [DataField("item_type", NAMESPACE)]
-        private string itemType;*/
         [DataField("item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
         [DataField("inviter_id")]
@@ -164,6 +160,18 @@ namespace BoxSocial.Applications.Calendar
             {
                 throw new InvalidEventInviteException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow inviteRow)
+        {
+            loadValue(inviteRow, "event_id", out eventId);
+            loadValue(inviteRow, "item", out ownerKey);
+            loadValue(inviteRow, "inviter_id", out inviterId);
+            loadValue(inviteRow, "invite_date_ut", out inviteTimeRaw);
+            loadValue(inviteRow, "invite_accepted", out inviteAccepted);
+            loadValue(inviteRow, "invite_status", out inviteStatus);
+
+            itemLoaded(inviteRow);
         }
 
         void EventInvite_ItemLoad()

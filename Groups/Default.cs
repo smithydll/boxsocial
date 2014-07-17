@@ -93,7 +93,7 @@ namespace BoxSocial.Groups
             e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), UserGroup.GROUPS_PER_PAGE, category.Groups);
 
             List<string[]> breadCrumbParts = new List<string[]>();
-            breadCrumbParts.Add(new string[] { "groups", "Groups" });
+            breadCrumbParts.Add(new string[] { "groups", e.Core.Prose.GetString("GROUPS") });
             breadCrumbParts.Add(new string[] { category.Path, category.Title });
 
             e.Page.ParseCoreBreadCrumbs(breadCrumbParts);

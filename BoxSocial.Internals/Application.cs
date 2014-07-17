@@ -98,6 +98,10 @@ namespace BoxSocial.Internals
 
         public void RegisterPages()
         {
+            // Profile this method
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             Type type = this.GetType();
 
             if (type == null)
@@ -137,6 +141,13 @@ namespace BoxSocial.Internals
                         core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, true);
                     }
                 }
+            }
+
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
         }
 

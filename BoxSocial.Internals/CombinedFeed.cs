@@ -82,6 +82,10 @@ namespace BoxSocial.Internals
                             Action action = new Action(core, owner, row);
                             tempActions.Add(action);
                             core.ItemCache.RequestItem(action.ActionItemKey);
+                            if (!action.ActionItemKey.Equals(action.InteractItemKey))
+                            {
+                                core.ItemCache.RequestItem(action.InteractItemKey);
+                            }
                         }
 
                         foreach (Action action in tempActions)
@@ -246,8 +250,8 @@ namespace BoxSocial.Internals
 
             List<string[]> breadCrumbParts = new List<string[]>();
 
-            breadCrumbParts.Add(new string[] { "*profile", "Profile" });
-            breadCrumbParts.Add(new string[] { "feed", "Feed" });
+            breadCrumbParts.Add(new string[] { "*profile", core.Prose.GetString("PROFILE") });
+            breadCrumbParts.Add(new string[] { "feed", core.Prose.GetString("FEED") });
 
             owner.ParseBreadCrumbs(breadCrumbParts);
         }

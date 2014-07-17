@@ -238,6 +238,22 @@ namespace BoxSocial.Applications.Blog
             loadItemInfo(blogRow);
         }
 
+        protected override void loadItemInfo(DataRow blogRow)
+        {
+            loadValue(blogRow, "user_id", out userId);
+            loadValue(blogRow, "blog_title", out title);
+            loadValue(blogRow, "blog_entries", out entries);
+            loadValue(blogRow, "blog_drafts", out drafts);
+            loadValue(blogRow, "blog_comments", out comments);
+            loadValue(blogRow, "blog_visits", out visits);
+            loadValue(blogRow, "allow_trackback", out allowTrackBack);
+            loadValue(blogRow, "allow_pingback", out allowPingBack);
+            loadValue(blogRow, "blog_simple_permissions", out simplePermissions);
+
+            itemLoaded(blogRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         /// <summary>
         /// ItemLoad event
         /// </summary>
@@ -1120,7 +1136,7 @@ namespace BoxSocial.Applications.Blog
                 string breadcrumbExtension = (page.User.UserInfo.ProfileHomepage == "/blog") ? "" : "blog/";
 
                 List<string[]> breadCrumbParts = new List<string[]>();
-                breadCrumbParts.Add(new string[] { "blog", "Blog" });
+                breadCrumbParts.Add(new string[] { "blog", core.Prose.GetString("BLOG") });
 
                 if (!string.IsNullOrEmpty(category))
                 {

@@ -422,6 +422,29 @@ namespace BoxSocial.Applications.Blog
             loadItemInfo(postEntryRow);
         }
 
+        protected override void loadItemInfo(DataRow postEntryRow)
+        {
+            loadValue(postEntryRow, "post_id", out postId);
+            loadValue(postEntryRow, "user_id", out ownerId);
+            loadValue(postEntryRow, "post_title", out title);
+            loadValue(postEntryRow, "post_text", out body);
+            loadValue(postEntryRow, "post_text_cache", out bodyCache);
+            loadValue(postEntryRow, "post_views", out views);
+            loadValue(postEntryRow, "post_trackbacks", out trackbacks);
+            loadValue(postEntryRow, "post_status", out status);
+            loadValue(postEntryRow, "post_license", out license);
+            loadValue(postEntryRow, "post_category", out category);
+            loadValue(postEntryRow, "post_guid", out guid);
+            loadValue(postEntryRow, "post_ip", out ip);
+            loadValue(postEntryRow, "post_time_ut", out createdRaw);
+            loadValue(postEntryRow, "post_modified_ut", out modifiedRaw);
+            loadValue(postEntryRow, "post_allow_comment", out allowComment);
+            loadValue(postEntryRow, "post_simple_permissions", out simplePermissions);
+
+            itemLoaded(postEntryRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         /// <summary>
         /// ItemLoad event
         /// </summary>

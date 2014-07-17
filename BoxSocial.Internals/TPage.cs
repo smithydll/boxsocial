@@ -421,8 +421,10 @@ namespace BoxSocial.Internals
                     if (core.LoggedInMemberId <= 2 && core.LoggedInMemberId != 0)
                     {
                         HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
+#if DEBUG
                         // We will write it out as a comment to preserve html validation
-                        //HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
+#endif
                     }
                 }
 

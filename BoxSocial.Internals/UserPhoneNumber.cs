@@ -58,6 +58,8 @@ namespace BoxSocial.Internals
         private long phoneTimeRaw;
         [DataField("phone_validated_time_ut")]
         private long phoneValidatedTime;
+        [DataField("phone_activate_code", 15)]
+        private string phoneActivateKey;
         [DataField("phone_simple_permissions")]
         private bool simplePermissions;
 
@@ -181,6 +183,21 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidUserPhoneNumberException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow phoneRow)
+        {
+            loadValue(phoneRow, "phone_id", out phoneId);
+            loadValue(phoneRow, "phone_user_id", out userId);
+            loadValue(phoneRow, "phone_number", out phoneNumber);
+            loadValue(phoneRow, "phone_type", out phoneType);
+            loadValue(phoneRow, "phone_validated", out phoneValidated);
+            loadValue(phoneRow, "phone_validated_time_ut", out phoneValidatedTime);
+            loadValue(phoneRow, "phone_activate_code", out phoneActivateKey);
+            loadValue(phoneRow, "phone_simple_permissions", out simplePermissions);
+
+            itemLoaded(phoneRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         private void UserPhoneNumber_ItemLoad()

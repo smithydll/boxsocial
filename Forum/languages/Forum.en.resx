@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="-FORUM_POSTS" xml:space="preserve">
+    <value>Forum posts</value>
+  </data>
+  <data name="-FORUM_TOPICS" xml:space="preserve">
+    <value>Forum topics</value>
+  </data>
+  <data name="-GROUP_MEMBERS" xml:space="preserve">
+    <value>Group members</value>
+  </data>
+  <data name="ALLOW_TOPICS_AT_FORUM_ROOT" xml:space="preserve">
+    <value>Allow topics at forum root</value>
+  </data>
   <data name="CAN" xml:space="preserve">
     <value>can</value>
   </data>
@@ -146,6 +158,9 @@
   </data>
   <data name="FORUM_MEMBER" xml:space="preserve">
     <value>Forum Member</value>
+  </data>
+  <data name="FORUM_NO_MEMBERS" xml:space="preserve">
+    <value>This forum has no members.</value>
   </data>
   <data name="FORUM_PARENT" xml:space="preserve">
     <value>Parent Forum</value>
@@ -201,6 +216,9 @@
   <data name="MINIMUM_POSTS" xml:space="preserve">
     <value>Minimum Posts</value>
   </data>
+  <data name="MODERATOR_CONTROL_PANEL" xml:space="preserve">
+    <value>Moderator Control Panel</value>
+  </data>
   <data name="NEW_RANK" xml:space="preserve">
     <value>New Rank</value>
   </data>
@@ -239,6 +257,9 @@
   </data>
   <data name="REPLIES" xml:space="preserve">
     <value>Replies</value>
+  </data>
+  <data name="SELECT_A_FORUM" xml:space="preserve">
+    <value>Select a Forum</value>
   </data>
   <data name="SIGNATURE" xml:space="preserve">
     <value>Signature</value>

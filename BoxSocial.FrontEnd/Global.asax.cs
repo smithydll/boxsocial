@@ -39,11 +39,40 @@ namespace BoxSocial.FrontEnd
 {
     public partial class Global : System.Web.HttpApplication
     {
-        private static Object workerLock = new object();
         protected static BackgroundWorker worker = new BackgroundWorker();
 
         private static Object queueLock = new object();
         protected static JobQueue queue = null;
+
+        protected static JobQueue Queue
+        {
+            get
+            {
+                if (queue == null)
+                {
+                    switch (WebConfigurationManager.AppSettings["queue-provider"])
+                    {
+                        case "amazon_sqs":
+                            queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
+                            break;
+                        case "rackspace":
+                            queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
+
+                            string location = WebConfigurationManager.AppSettings["rackspace-location"];
+                            if (!string.IsNullOrEmpty(location))
+                            {
+                                ((RackspaceCloudQueues)queue).SetLocation(location);
+                            }
+                            break;
+                        case "database":
+                        default:
+                            //queue = new DatabaseQueue(db);
+                            break;
+                    }
+                }
+                return queue;
+            }
+        }
 
         protected void Application_Start(object sender, EventArgs e)
         {
@@ -67,41 +96,24 @@ namespace BoxSocial.FrontEnd
             // Implements a message queue processor
             lock (queueLock)
             {
-                switch (WebConfigurationManager.AppSettings["queue-provider"])
+                // Check the queues and create is not exist
+                if (Queue != null)
                 {
-                    case "amazon_sqs":
-                        queue = new AmazonSQS(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"]);
-                        break;
-                    case "rackspace":
-                        queue = new RackspaceCloudQueues(WebConfigurationManager.AppSettings["rackspace-key"], WebConfigurationManager.AppSettings["rackspace-username"]);
+                    if (!Queue.QueueExists(WebConfigurationManager.AppSettings["queue-default-priority"]))
+                    {
+                        Queue.CreateQueue(WebConfigurationManager.AppSettings["queue-default-priority"]);
+                    }
 
-                        string location = WebConfigurationManager.AppSettings["rackspace-location"];
-                        if (!string.IsNullOrEmpty(location))
-                        {
-                            ((RackspaceCloudQueues)queue).SetLocation(location);
-                        }
-                        break;
-                    case "database":
-                    default:
-                        //queue = new DatabaseQueue(db);
-                        break;
-                }
-            }
-
-            // Check the queues and create is not exist
-            if (queue != null)
-            {
-                if (!queue.QueueExists(WebConfigurationManager.AppSettings["queue-default-priority"]))
-                {
-                    queue.CreateQueue(WebConfigurationManager.AppSettings["queue-default-priority"]);
+                    // Starts the queue processor
+                    worker.WorkerReportsProgress = false;
+                    worker.WorkerSupportsCancellation = true;
+                    worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+                    worker.RunWorkerAsync(HttpContext.Current);
                 }
 
-                // Starts the queue processor
-                worker.WorkerReportsProgress = false;
-                worker.WorkerSupportsCancellation = true;
-                worker.DoWork += new DoWorkEventHandler(worker_DoWork);
-                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-                worker.RunWorkerAsync(HttpContext.Current);
+                queue.CloseConnection();
+                queue = null;
             }
         }
 
@@ -132,7 +144,7 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                if (queue != null)
+                if (Queue != null)
                 {
                     int failedJobs = 0;
 
@@ -145,7 +157,7 @@ namespace BoxSocial.FrontEnd
                         List<Job> jobs = null;
                         lock (queueLock)
                         {
-                            jobs = queue.ClaimJobs(queueName, queues[queueName]);
+                            jobs = Queue.ClaimJobs(queueName, queues[queueName]);
                         }
 
                         foreach (Job job in jobs)
@@ -169,7 +181,7 @@ namespace BoxSocial.FrontEnd
                             {
                                 lock (queueLock)
                                 {
-                                    queue.DeleteJob(job);
+                                    Queue.DeleteJob(job);
                                 }
                             }
                             else
@@ -206,43 +218,37 @@ namespace BoxSocial.FrontEnd
 
             // Cleanup
 
-            if (core.Prose != null)
-            {
-                core.Prose.Close();
-            }
+            core.CloseProse();
+            core.CloseSearch();
             db.CloseConnection();
             core = null;
+            queue.CloseConnection();
+            queue = null;
         }
 
         protected void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            lock (workerLock)
+            if (worker != null)
             {
-                if (worker != null)
+                if ((!worker.CancellationPending) && (!e.Cancelled))
                 {
-                    if ((!worker.CancellationPending) && (!e.Cancelled))
-                    {
-                        worker.RunWorkerAsync();
-                    }
-                    else
-                    {
-                        worker.Dispose();
-                        worker = null;
-                    }
+                    worker.RunWorkerAsync();
+                }
+                else
+                {
+                    worker.Dispose();
+                    worker = null;
                 }
             }
         }
 
         protected void Application_End(object sender, EventArgs e)
         {
-            lock (workerLock)
+            if (worker != null && (!worker.CancellationPending))
             {
-                if (worker != null && (!worker.CancellationPending))
-                {
-                    worker.CancelAsync();
-                }
+                worker.CancelAsync();
             }
         }
 

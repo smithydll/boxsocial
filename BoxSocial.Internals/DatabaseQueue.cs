@@ -66,5 +66,10 @@ namespace BoxSocial.Internals
         public override void DeleteJob(Job job)
         {
         }
+
+        public override void CloseConnection()
+        {
+
+        }
     }
 }

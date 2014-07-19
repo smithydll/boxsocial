@@ -408,8 +408,8 @@ namespace BoxSocial.Internals
                     db.CloseConnection();
                 }
 
-                core.Prose.Close();
-                core.Search.Dispose();
+                core.CloseProse();
+                core.CloseSearch();
                 //core.Dispose();
                 //core = null;
 
@@ -441,7 +441,7 @@ namespace BoxSocial.Internals
                 db.CloseConnection();
             }
 
-            core.Prose.Close();
+            core.CloseProse();
             core.Search.Dispose();
             //core.Dispose();
             //core = null;

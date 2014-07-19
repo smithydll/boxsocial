@@ -136,5 +136,11 @@ namespace BoxSocial.IO
                 // some jobs won't execute if complete even if in the queue
             }
         }
+
+        public override void CloseConnection()
+        {
+            provider = null;
+            identity = null;
+        }
     }
 }

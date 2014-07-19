@@ -418,6 +418,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void CloseSearch()
+        {
+            if (search != null)
+            {
+                search.Dispose();
+                search = null;
+            }
+        }
+
         public List<Emoticon> Emoticons
         {
             get
@@ -507,6 +516,15 @@ namespace BoxSocial.Internals
             internal set
             {
                 prose = value;
+            }
+        }
+
+        public void CloseProse()
+        {
+            if (prose != null)
+            {
+                prose.Close();
+                prose = null;
             }
         }
 

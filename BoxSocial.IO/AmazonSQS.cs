@@ -136,5 +136,14 @@ namespace BoxSocial.IO
             request.ReceiptHandle = job.Handle;
             DeleteMessageResponse response = client.DeleteMessage(request);
         }
+
+        public override void CloseConnection()
+        {
+            if (client != null)
+            {
+                client.Dispose();
+                client = null;
+            }
+        }
     }
 }

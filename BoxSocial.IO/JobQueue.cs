@@ -44,5 +44,7 @@ namespace BoxSocial.IO
         public abstract void DeleteJob(Job job);
 
         public abstract List<Job> ClaimJobs(string queue, int count);
+
+        public abstract void CloseConnection();
     }
 }

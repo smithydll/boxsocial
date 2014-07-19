@@ -1471,7 +1471,7 @@ namespace BoxSocial.Internals
                     {
                         if (!string.IsNullOrEmpty(caption))
                         {
-                            caption = string.Format("<strong>{0}</strong><br />", caption);
+                            caption = string.Format("<strong>{0}</strong>", caption);
                         }
 
                         e.PrefixText = string.Format("{0}<br /><code{1}>", caption, hasColour ? " style=\"color: " + e.Attributes.GetAttribute("color") + "\"" : string.Empty) + e.Contents.Trim(new char[] { '\n' }).Replace(" ", "&nbsp;");
@@ -1639,6 +1639,24 @@ namespace BoxSocial.Internals
             }
         }
 
+        private static void BbcodeTableOfContents(BbcodeEventArgs e)
+        {
+            if (e.Tag.Tag != "toc") return;
+
+            e.SetHandled();
+
+            switch (e.Mode)
+            {
+                case BbcodeParseMode.Normal:
+                    break;
+            }
+        }
+
+        private static string getHeaderId(string input)
+        {
+            return input.ToLowerInvariant().Replace(" ", "-").Substring(0, Math.Min(input.Length, 10));
+        }
+
         private static void BbcodeH1(BbcodeEventArgs e)
         {
             if (e.Tag.Tag != "h1") return;
@@ -1657,7 +1675,7 @@ namespace BoxSocial.Internals
                     e.SuffixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    e.PrefixText = "</p><h2>";
+                    e.PrefixText = "</p><h2 id=\"" + getHeaderId(e.Contents) + "\">";
                     e.SuffixText = "</h2><p>";
                     break;
             }
@@ -1681,7 +1699,7 @@ namespace BoxSocial.Internals
                     e.SuffixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    e.PrefixText = "</p><h3>";
+                    e.PrefixText = "</p><h3 id=\"" + getHeaderId(e.Contents) + "\">";
                     e.SuffixText = "</h3><p>";
                     break;
             }
@@ -1705,7 +1723,7 @@ namespace BoxSocial.Internals
                     e.SuffixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    e.PrefixText = "</p><h4>";
+                    e.PrefixText = "</p><h4 id=\"" + getHeaderId(e.Contents) + "\">";
                     e.SuffixText = "</h4><p>";
                     break;
             }
@@ -1761,16 +1779,42 @@ namespace BoxSocial.Internals
                         if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$", RegexOptions.Compiled))
                             e.AbortParse();
                         string styles = string.Empty;
-                        styles = "float: " + e.Attributes.GetAttribute("default") + "; margin-right: 10px";
+                        switch (e.Attributes.GetAttribute("default"))
+                        {
+                            case "left":
+                                styles = "float: left; margin-right: 10px";
+                                break;
+                            case "right":
+                                styles = "float: right; margin-left: 10px";
+                                break;
+                        }
+                        
 
                         if (e.Attributes.HasAttribute("width"))
                         {
-                            styles += "; width: " + e.Attributes.GetAttribute("width") + "px";
+                            int width = 0;
+                            Match match = Regex.Match(e.Attributes.GetAttribute("width"), "^(\\d+)([ \t]*)(|%|px)$");
+                            if (match.Success && int.TryParse(match.Groups[1].Value, out width))
+                            {
+                                if (match.Groups[3].Value == "%")
+                                {
+                                    styles += "; width: " + width.ToString() + "%";
+                                }
+                                else
+                                {
+                                    styles += "; width: " + width.ToString() + "px";
+                                }
+                            }
                         }
 
                         if (e.Attributes.HasAttribute("height"))
                         {
-                            styles += "; height: " + e.Attributes.GetAttribute("height") + "px";
+                            int height = 0;
+                            Match match = Regex.Match(e.Attributes.GetAttribute("height"), "^(\\d+)([ \t]*)(|px)$");
+                            if (match.Success && int.TryParse(match.Groups[1].Value, out height))
+                            {
+                                styles += "; height: " + height.ToString() + "px";
+                            }
                         }
 
                         e.PrefixText = "</p><div style=\"" + styles + "\">";

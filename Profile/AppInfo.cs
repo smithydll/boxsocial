@@ -175,7 +175,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                User.ShowProfile(core, (UPage)sender);
+                Default.ShowProfile(sender, new ShowUPageEventArgs((UPage)sender));
             }
             else if (sender is APage)
             {
@@ -207,7 +207,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                User.ShowFriends(sender, new ShowUPageEventArgs((UPage)sender));
+                Default.ShowFriends(sender, new ShowUPageEventArgs((UPage)sender));
             }
         }
 
@@ -217,7 +217,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                User.ShowSubscribers(sender, new ShowUPageEventArgs((UPage)sender));
+                Default.ShowSubscribers(sender, new ShowUPageEventArgs((UPage)sender));
             }
         }
 
@@ -227,7 +227,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                User.ShowSubscriptions(sender, new ShowUPageEventArgs((UPage)sender));
+                Default.ShowSubscriptions(sender, new ShowUPageEventArgs((UPage)sender));
             }
         }
 
@@ -236,7 +236,7 @@ namespace BoxSocial.Applications.Profile
         {
             if (sender is UPage)
             {
-                User.ShowFamily(sender, new ShowUPageEventArgs((UPage)sender));
+                Default.ShowFamily(sender, new ShowUPageEventArgs((UPage)sender));
             }
         }
 

@@ -127,7 +127,7 @@ namespace BoxSocial.Applications.Pages
             DateTime pageDateTime = thePage.GetModifiedDate(core.Tz);
             core.Template.Parse("PAGE_LAST_MODIFIED", core.Tz.DateTimeToString(pageDateTime));
             core.Template.Parse("PAGE_VIEWS", thePage.Views.ToString());
-            core.Template.Parse("LAST_MODIFIED_PAGE_VIEWS", string.Format(core.Prose.GetString("LAST_MODIFIED_PAGE_VIEWS", core.Tz.DateTimeToString(pageDateTime), thePage.Views.ToString())));
+            core.Template.Parse("LAST_MODIFIED_PAGE_VIEWS", string.Format(core.Prose.GetString("LAST_MODIFIED_PAGE_VIEWS"), core.Tz.DateTimeToString(pageDateTime), thePage.Views.ToString()));
 
             List<string[]> breadCrumbParts = new List<string[]>();
             if (thePage.Parents != null)

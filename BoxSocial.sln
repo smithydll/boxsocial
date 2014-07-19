@@ -5,8 +5,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calendar", "Calendar\Calend
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Musician", "Musician\Musician.csproj", "{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Services.Installer", "BoxSocial.Services\BoxSocial.Services.Installer\BoxSocial.Services.Installer.csproj", "{201B6661-4497-45B1-AE71-5D84F107B2CD}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Groups", "Groups\Groups.csproj", "{5167D049-B052-435C-BD6C-6A002AF15009}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BoxSocial.Internals", "BoxSocial.Internals\BoxSocial.Internals.csproj", "{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}"
@@ -75,16 +73,6 @@ Global
 		{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{5BA98A8F-DA82-482E-9350-2A6CD935CDD5}.Release|x86.ActiveCfg = Release|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{201B6661-4497-45B1-AE71-5D84F107B2CD}.Release|x86.ActiveCfg = Release|Any CPU
 		{5167D049-B052-435C-BD6C-6A002AF15009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5167D049-B052-435C-BD6C-6A002AF15009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5167D049-B052-435C-BD6C-6A002AF15009}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU

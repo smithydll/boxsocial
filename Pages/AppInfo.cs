@@ -164,17 +164,9 @@ namespace BoxSocial.Applications.Pages
 
         private void showPage(Core core, object sender)
         {
-            if (sender is UPage)
+            if (sender is PPage)
             {
-                Page.Show(core, ((UPage)sender).User, core.PagePathParts[1].Value);
-            }
-            else if (sender is GPage)
-            {
-                Page.Show(core, ((GPage)sender).Group, core.PagePathParts[1].Value);
-            }
-            else if (sender is MPage)
-            {
-                Page.Show(core, ((MPage)sender).Musician, core.PagePathParts[1].Value);
+                Default.Show(sender, new ShowPPageEventArgs((PPage)sender, core.PagePathParts[1].Value));
             }
         }
 

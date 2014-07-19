@@ -369,7 +369,7 @@ namespace BoxSocial.Applications.Profile
                 template.Parse("S_SHARE_FACEBOOK", facebookSyndicateCheckBox);
             }
 
-            e.core.AddPostPanel("Status", template);
+            e.core.AddPostPanel(e.core.Prose.GetString("STATUS"), template);
         }
 
         void ShowFriends(HookEventArgs e)

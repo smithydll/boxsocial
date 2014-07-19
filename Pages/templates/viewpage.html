@@ -9,7 +9,7 @@
 <!-- IF $_IS_DESKTOP -->
 <div id="pane-profile">
 	<div id="pane-pages" class="pane">
-		<h3>Pages</h3>
+		<h3>{L_PAGES}</h3>
 		<ul class="page-tiles">
 			{PAGE_LIST}
 		</ul>
@@ -25,7 +25,7 @@
 </p>
     <ul id="actions-menu" class="popup-menu">
     <!-- IF U_EDIT -->
-        <li><a href="{U_EDIT}">Edit Page</a></li>
+        <li><a href="{U_EDIT}">{L_EDIT_PAGE}</a></li>
     <!-- ENDIF -->
     </ul>
 <!-- ENDIF -->
@@ -37,7 +37,7 @@
 	</div>
   <div class="cheat-clear"></div>
 	<hr />
-	<p><em>Last Modified: {PAGE_LAST_MODIFIED}</em> with <em>{PAGE_VIEWS} page views.</em></p>
+	<p>{LAST_MODIFIED_PAGE_VIEWS}</p>
 	<!-- IF PAGE_LICENSE -->
 	<p>
 	<!-- IF I_PAGE_LICENSE -->
@@ -52,7 +52,7 @@
 	<!-- ENDIF -->
 	<!-- IF $_IS_DESKTOP AND U_EDIT -->
 	<div id="new-stuff">
-		<span id="edit-page" class="post-button"><a href="{U_EDIT}">Edit Page</a></span>
+		<span id="edit-page" class="post-button"><a href="{U_EDIT}">{L_EDIT_PAGE}</a></span>
 	</div>
 	<!-- ENDIF -->
 </div>

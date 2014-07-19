@@ -444,7 +444,7 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
 
-            e.core.AddPostPanel("Blog", template);
+            e.core.AddPostPanel(e.core.Prose.GetString("BLOG"), template);
         }
     }
 }

@@ -74,6 +74,7 @@
     <Compile Include="AccountPagesManage.cs" />
     <Compile Include="AccountPagesWrite.cs" />
     <Compile Include="AppInfo.cs" />
+    <Compile Include="Default.cs" />
     <Compile Include="List.cs" />
     <Compile Include="ListItem.cs" />
     <Compile Include="ListType.cs" />
@@ -114,6 +115,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="languages\Pages.en.resx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -164,6 +166,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Pages.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Pages.en.resx"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

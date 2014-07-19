@@ -568,7 +568,7 @@ namespace BoxSocial.Applications.Gallery
 
             template.Parse("S_GALLERY_TITLE", galleryTitleTextBox);
 
-            e.core.AddPostPanel("Photo", template);
+            e.core.AddPostPanel(e.core.Prose.GetString("PHOTO"), template);
         }
 
         /// <summary>

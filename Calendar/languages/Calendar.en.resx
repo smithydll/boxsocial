@@ -141,6 +141,9 @@
   <data name="END_TIME" xml:space="preserve">
     <value>End Time</value>
   </data>
+  <data name="EVENT" xml:space="preserve">
+    <value>Event</value>
+  </data>
   <data name="EVENTS" xml:space="preserve">
     <value>Events</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="START_TIME" xml:space="preserve">
     <value>Start Time</value>
+  </data>
+  <data name="TASK" xml:space="preserve">
+    <value>Task</value>
   </data>
   <data name="TASKS" xml:space="preserve">
     <value>Tasks</value>

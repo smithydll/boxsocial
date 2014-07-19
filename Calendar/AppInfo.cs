@@ -315,7 +315,7 @@ namespace BoxSocial.Applications.Calendar
             template.Parse("S_TIMEZONE", timezoneSelectBox);
             template.Parse("S_INVITEES", inviteesUserSelectBox);
 
-            e.core.AddPostPanel("Event", template);
+            e.core.AddPostPanel(e.core.Prose.GetString("EVENT"), template);
         }
 
         void ShowMiniCalendar(HookEventArgs e)

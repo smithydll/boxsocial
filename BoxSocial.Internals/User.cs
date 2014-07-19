@@ -657,7 +657,7 @@ namespace BoxSocial.Internals
             {
                 try
                 {
-                    LoadItem("user_name", userName, true);
+                    LoadItem("user_name_lower", userName.ToLower(), true);
                 }
                 catch (InvalidItemException)
                 {
@@ -668,7 +668,7 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
                 query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-                query.AddCondition("`user_keys`.`user_name`", userName);
+                query.AddCondition(new DataField("user_keys", "user_name_lower"), userName.ToLower());
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
                 {
@@ -812,6 +812,7 @@ namespace BoxSocial.Internals
 
             itemLoaded(userRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
+            core.PrimitiveCache.RegisterItem((Primitive)this);
         }
 
         void User_ItemLoad()

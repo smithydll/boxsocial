@@ -39,31 +39,24 @@ namespace BoxSocial.Internals
         }
 
         /// <summary>
-        /// A cache of primitives loaded.
-        /// </summary>
-        private Dictionary<PrimitiveId, Primitive> primitivesCached = new Dictionary<PrimitiveId, Primitive>();
-
-        /// <summary>
         /// A cached primitive keys.
         /// </summary>
         private Dictionary<PrimitiveKey, PrimitiveId> primitivesKeysCached = new Dictionary<PrimitiveKey, PrimitiveId>();
 
-        /// <summary>
-        /// A cached user Ids.
-        /// </summary>
-        private Dictionary<string, long> userIdsCached = new Dictionary<string, long>(StringComparer.Ordinal);
+        public void RegisterItem(Primitive item)
+        {
+            PrimitiveKey kid = new PrimitiveKey(item.Key.ToLower(), item.TypeId);
 
-        /// <summary>
-        /// A list of primitive Ids for batched loading
-        /// </summary>
-        private List<PrimitiveId> batchedPrimitivesIds = new List<PrimitiveId>();
+            if (!primitivesKeysCached.ContainsKey(kid))
+            {
+                primitivesKeysCached.Add(kid, new PrimitiveId(item.Id, item.TypeId));
+            }
+        }
 
         public User this[long key]
         {
             get
             {
-                /*loadBatchedIds(ItemKey.GetTypeId(typeof(User)), key);
-                return (User)primitivesCached[new PrimitiveId(key, ItemKey.GetTypeId(typeof(User)))];*/
                 return (User)core.ItemCache[new ItemKey(key, typeof(User))];
             }
         }
@@ -72,15 +65,6 @@ namespace BoxSocial.Internals
         {
             get
             {
-                /*try
-                {
-                    loadBatchedIds(key.TypeId, key.Id);
-                    return primitivesCached[new PrimitiveId(key.Id, key.TypeId)];
-                }
-                catch (KeyNotFoundException ex)
-                {
-                    throw new Exception(string.Format("Something went terribly wrong with {0}\n{1}\n\n{2}", key.ToString(), ex.ToString(), core.Db.QueryListToString()));
-                }*/
                 return (Primitive)core.ItemCache[key];
             }
         }
@@ -89,8 +73,6 @@ namespace BoxSocial.Internals
         {
             get
             {
-                /*loadBatchedIds(typeId, key);
-                return primitivesCached[new PrimitiveId(key, typeId)];*/
                 return (Primitive)core.ItemCache[new ItemKey(key, typeId)];
             }
         }
@@ -99,89 +81,22 @@ namespace BoxSocial.Internals
         {
             foreach (long userId in userIds)
             {
-                //batchedPrimitivesIds.Add(new PrimitiveId(userId, ItemKey.GetTypeId(typeof(User))));
                 core.ItemCache.RequestItem(new ItemKey(userId, typeof(User)));
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="primitiveIds"></param>
-        private void loadPrimitiveProfiles(List<PrimitiveId> primitiveIds)
-        {
-            Dictionary<long, List<long>> idList = new Dictionary<long, List<long>>();
-            foreach (PrimitiveId id in primitiveIds)
-            {
-                if (id.Id > 0)
-                {
-                    if (!primitivesCached.ContainsKey(id))
-                    {
-                        if (!idList.ContainsKey(id.TypeId))
-                        {
-                            idList.Add(id.TypeId, new List<long>());
-                        }
-                        idList[id.TypeId].Add(id.Id);
-                    }
-                }
-            }
-
-            foreach (long typeId in idList.Keys)
-            {
-                if (idList[typeId].Count > 0)
-                {
-                    Type t = core.GetPrimitiveType(typeId);
-                    if (t != null)
-                    {
-                        string keysTable = Primitive.GetTable(t);
-                        PrimitiveAttribute attr = core.GetPrimitiveAttributes(typeId);
-                        if (attr == null)
-                        {
-                            continue;
-                        }
-                        string idField = attr.IdField;
-
-                        SelectQuery query = Primitive.GetSelectQueryStub(t);
-                        query.AddCondition(string.Format("`{0}`.`{1}`", keysTable, idField), ConditionEquality.In, idList[typeId]);
-
-                        DataTable primitivesTable = db.Query(query);
-
-                        foreach (DataRow primitiveRow in primitivesTable.Rows)
-                        {
-                            Primitive newPrimitive = System.Activator.CreateInstance(t, new object[] { core, primitiveRow, core.GetPrimitiveAttributes(typeId).DefaultLoadOptions }) as Primitive;
-                            primitivesCached.Add(new PrimitiveId(newPrimitive.Id, typeId), newPrimitive);
-                            primitivesKeysCached.Add(new PrimitiveKey(newPrimitive.Key, typeId), new PrimitiveId(newPrimitive.Id, typeId));
-                        }
-                    }
-                }
             }
         }
 
         public void LoadUserProfile(long userId)
         {
-            /*PrimitiveId key = new PrimitiveId(userId, ItemKey.GetTypeId(typeof(User)));
-            if ((!primitivesCached.ContainsKey(key)) && (!batchedPrimitivesIds.Contains(key)))
-            {
-                batchedPrimitivesIds.Add(key);
-            }*/
             core.ItemCache.RequestItem(new ItemKey(userId, typeof(User)));
         }
 
         public void LoadPrimitiveProfile(ItemKey key)
         {
-            /*if (!primitivesCached.ContainsKey(new PrimitiveId(key.Id, key.TypeId)))
-            {
-                batchedPrimitivesIds.Add(new PrimitiveId(key.Id, key.TypeId));
-            }*/
             core.ItemCache.RequestItem(key);
         }
 
         public void LoadPrimitiveProfile(long id, long typeId)
         {
-            /*if (!primitivesCached.ContainsKey(new PrimitiveId(id, typeId)))
-            {
-                batchedPrimitivesIds.Add(new PrimitiveId(id, typeId));
-            }*/
             core.ItemCache.RequestItem(new ItemKey(id, typeId));
         }
 
@@ -189,13 +104,6 @@ namespace BoxSocial.Internals
         {
             foreach (ItemKey ik in itemkeys)
             {
-                /*if (ik.InheritsPrimitive)
-                {
-                    if (!primitivesCached.ContainsKey(new PrimitiveId(ik.Id, ik.TypeId)))
-                    {
-                        batchedPrimitivesIds.Add(new PrimitiveId(ik.Id, ik.TypeId));
-                    }
-                }*/
                 core.ItemCache.RequestItem(ik);
             }
         }
@@ -213,17 +121,6 @@ namespace BoxSocial.Internals
                 {
                     usernameList.Add(username.ToLower());
                 }
-                else
-                {
-                    if (!userIdsCached.ContainsKey(username.ToLower()))
-                    {
-                        usernameList.Add(username.ToLower());
-                    }
-                    else
-                    {
-                        userIds.Add(username.ToLower(), userIdsCached[username.ToLower()]);
-                    }
-                }
             }
 
             if (usernameList.Count > 0)
@@ -236,33 +133,22 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
-                query.AddCondition("LCASE(`user_keys`.`user_name`)", ConditionEquality.In, usernameList);
+                query.AddCondition(new DataField("user_keys", "user_name_lower"), ConditionEquality.In, usernameList);
 
                 DataTable usersTable = db.Query(query);
 
                 foreach (DataRow userRow in usersTable.Rows)
                 {
                     User newUser = new User(core, userRow, UserLoadOptions.All);
+                    // This will automatically cache itself when loadUser is called
 
                     PrimitiveId pid = new PrimitiveId(newUser.Id, userTypeId);
                     PrimitiveKey kid = new PrimitiveKey(newUser.UserName.ToLower(), userTypeId);
 					
-					if (!primitivesCached.ContainsKey(pid))
-					{
-						primitivesCached.Add(pid, newUser);
-					}
-					if (!primitivesKeysCached.ContainsKey(kid))
-					{
-                        primitivesKeysCached.Add(kid, new PrimitiveId(newUser.Id, userTypeId));
-					}
 					if (!userIds.ContainsValue(newUser.Id))
 					{
 						userIds.Add(newUser.UserName, newUser.Id);
 					}
-                    if (!userIdsCached.ContainsKey(newUser.UserName.ToLower()))
-                    {
-                        userIdsCached.Add(newUser.UserName.ToLower(), newUser.Id);
-                    }
                 }
             }
 
@@ -281,25 +167,13 @@ namespace BoxSocial.Internals
             try
             {
                 User newUser = new User(core, username, UserLoadOptions.All);
-                PrimitiveId id = new PrimitiveId(newUser.Id, ItemKey.GetTypeId(typeof(User)));
-                if (!primitivesCached.ContainsKey(id))
-                {
-                    primitivesCached.Add(id, newUser);
-                }
+                // This will automatically cache itself when loadUser is called
 
                 return newUser.Id;
             }
             catch (InvalidUserException)
             {
                 return 0;
-            }
-        }
-
-        private void loadBatchedIds(long typeId, long requestedId)
-        {
-            if (batchedPrimitivesIds.Contains(new PrimitiveId(requestedId, typeId)))
-            {
-                loadPrimitiveProfiles(batchedPrimitivesIds);
             }
         }
     }

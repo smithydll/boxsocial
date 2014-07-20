@@ -94,9 +94,13 @@ p {
 	display: none;
 }
 
+#body h2, #body h3, #body h4, #body h5, #body h6 {
+    margin-top: 0.30em;
+    margin-bottom: 0.15em;
+}
+
 #body h2 {
 	font-size: 220%;
-	margin-top: 0;
 	font-weight: 200;
 }
 

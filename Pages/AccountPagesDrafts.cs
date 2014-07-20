@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return "Draft Pages";
+                return core.Prose.GetString("DRAFT_PAGES");
             }
         }
 

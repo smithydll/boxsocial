@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return "Manage Pages";
+                return core.Prose.GetString("MANAGE_PAGES");
             }
         }
 

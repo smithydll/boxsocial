@@ -156,6 +156,12 @@
   <data name="PARENT" xml:space="preserve">
     <value>Parent</value>
   </data>
+  <data name="PUBLISH" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="SAVE_DRAFT" xml:space="preserve">
+    <value>Save (draft)</value>
+  </data>
   <data name="SLUG" xml:space="preserve">
     <value>Slug</value>
   </data>

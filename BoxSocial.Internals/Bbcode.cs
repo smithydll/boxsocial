@@ -1654,7 +1654,7 @@ namespace BoxSocial.Internals
 
         private static string getHeaderId(string input)
         {
-            return input.ToLowerInvariant().Replace(" ", "-").Substring(0, Math.Min(input.Length, 10));
+            return input.ToLowerInvariant().Replace(" ", "-").Substring(0, Math.Min(input.Length, 20));
         }
 
         private static void BbcodeH1(BbcodeEventArgs e)

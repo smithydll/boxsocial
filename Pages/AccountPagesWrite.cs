@@ -37,7 +37,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return "Write New Page";
+                return core.Prose.GetString("CREATE_NEW_PAGE");
             }
         }
 

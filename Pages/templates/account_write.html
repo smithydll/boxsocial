@@ -4,22 +4,22 @@
 	<fieldset>
 		<legend>Write Page</legend>
 		<dl>
-			<dt><label for="title">Title</label></dt>
+			<dt><label for="title">{L_PAGE_TITLE}</label></dt>
 			<dd><input type="text" id="title" name="title" onchange="UpdateSlug();" value="{S_TITLE}" style="width: 100%;" /></dd>
-			<dt><label for="slug">Page Slug</label></dt>
-			<dd><label>Parent: {S_PAGE_PARENT}</label> <label>Slug: <input type="text" id="slug" name="slug" value="{S_SLUG}" /></label></dd>
-			<dt><label for="post">Page Text</label></dt>
+			<dt><label for="slug">{L_PAGE_SLUG}</label></dt>
+			<dd><label>{L_PARENT} {S_PAGE_PARENT}</label> <label>{L_SLUG} <input type="text" id="slug" name="slug" value="{S_SLUG}" /></label></dd>
+			<dt><label for="post">{L_PAGE_BODY}</label></dt>
 			<dd>
 				<textarea id="post" name="post" style="margin: 0px; width: 100%; height: 250px;" cols="70" rows="15">{S_PAGE_TEXT}</textarea>
 			</dd>
-			<dt><label>Page Classification</label></dt>
+			<dt><label>{L_PAGE_CLASSIFICATION}</label></dt>
 			<dd>{S_PAGE_CLASSIFICATION}</dd>
-			<dt><label for="license">Page License</label></dt>
+			<dt><label for="license">{L_PAGE_LICENSE}</label></dt>
 			<dd>{S_PAGE_LICENSE} <a href="">Learn More...</a></dd>
 			<dt></dt>
 			<dd>
-				<input type="submit" name="save" value="Save (draft)" />
-				<input type="submit" name="publish" value="Publish" />
+				<input type="submit" name="save" value="{L_SAVE_DRAFT}" />
+				<input type="submit" name="publish" value="{L_PUBLISH}" />
 			</dd>
 		</dl>
 		<input type="hidden" name="module" value="pages" />

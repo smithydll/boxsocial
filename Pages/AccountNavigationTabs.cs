@@ -36,7 +36,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return "Navigation Tabs";
+                return core.Prose.GetString("NAVIGATION_TABS");
             }
         }
 

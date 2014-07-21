@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return "Account Security";
+                return core.Prose.GetString("ACCOUNT_SECURITY");
             }
         }
 
@@ -109,6 +109,8 @@ namespace BoxSocial.Internals
                 template.Parse("S_DISABLED", "TRUE");
                 template.Parse("U_ENABLE", core.Hyperlink.AppendSid(BuildUri("security", "enable"), true));
             }
+
+            // Show all active sessions
         }
 
         void AccountSecurity_Save(object sender, EventArgs e)

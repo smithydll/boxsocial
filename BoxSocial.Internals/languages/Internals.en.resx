@@ -120,6 +120,9 @@
   <data name="ABOUT" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="ACCOUNT_SECURITY" xml:space="preserve">
+    <value>Account Security</value>
+  </data>
   <data name="ADD_FRIEND" xml:space="preserve">
     <value>Add friend</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="ANONYMOUS" xml:space="preserve">
     <value>Anonymous</value>
+  </data>
+  <data name="APPLICATIONS" xml:space="preserve">
+    <value>Applications</value>
   </data>
   <data name="APRIL" xml:space="preserve">
     <value>April</value>
@@ -173,6 +179,9 @@
   </data>
   <data name="CATEGORIES" xml:space="preserve">
     <value>Categories</value>
+  </data>
+  <data name="CHANGE_PASSWORD" xml:space="preserve">
+    <value>Change Password</value>
   </data>
   <data name="COMMENTS" xml:space="preserve">
     <value>Comments</value>

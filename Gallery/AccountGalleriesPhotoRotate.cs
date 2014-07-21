@@ -33,9 +33,10 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule("galleries", "rotate-photo")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "rotate-photo")]
     public class AccountGalleriesPhotoRotate : AccountSubModule
     {
+        GalleryItem galleryItem;
 
         /// <summary>
         /// 
@@ -84,7 +85,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    GalleryItem photo = new GalleryItem(core, LoggedInMember, photoId);
+                    GalleryItem photo = new GalleryItem(core, Owner, photoId);
 
                     System.Drawing.RotateFlipType rotation = System.Drawing.RotateFlipType.RotateNoneFlipNone;
 
@@ -105,7 +106,7 @@ namespace BoxSocial.Applications.Gallery
 
                     photo.Rotate(core, rotation);
 
-                    SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, photo.ParentPath, photo.Path, true));
+                    SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, photo.ParentPath, photo.Path, true));
                     core.Display.ShowMessage("Image rotated", "You have successfully rotated the image.");
                     return;
                 }
@@ -119,6 +120,27 @@ namespace BoxSocial.Applications.Gallery
             {
                 core.Display.ShowMessage("Error", "An error has occured, go back.");
                 return;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (galleryItem == null)
+                {
+                    galleryItem = new GalleryItem(core, core.Functions.FormLong("id", core.Functions.RequestLong("id", 0)));
+                }
+
+                return galleryItem.Parent.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "EDIT_ITEMS";
             }
         }
     }

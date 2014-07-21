@@ -33,9 +33,10 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule("galleries", "gallery-cover")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "gallery-cover")]
     public class AccountGalleriesPhotoCover : AccountSubModule
     {
+        GalleryItem galleryItem;
 
         /// <summary>
         /// 
@@ -90,7 +91,7 @@ namespace BoxSocial.Applications.Gallery
             // check the image is owned by the user trying to set it as their display picture
             try
             {
-                GalleryItem ugi = new GalleryItem(core, LoggedInMember, pictureId);
+                GalleryItem ugi = new GalleryItem(core, Owner, pictureId);
 
                 string galleryFullPath = ugi.ParentPath;
                 int indexOfLastSlash = galleryFullPath.LastIndexOf('/');
@@ -102,7 +103,7 @@ namespace BoxSocial.Applications.Gallery
                     gallery.HighlightId = pictureId;
                     gallery.Update();
 
-                    SetRedirectUri(Gallery.BuildGalleryUri(core, LoggedInMember, galleryFullPath));
+                    SetRedirectUri(Gallery.BuildGalleryUri(core, Owner, galleryFullPath));
                     core.Display.ShowMessage("Gallery Cover Image Changed", "You have successfully changed the cover image of the gallery.");
                     return;
                 }
@@ -124,6 +125,25 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public Access Access
+        {
+            get
+            {
+                if (galleryItem == null)
+                {
+                    galleryItem = new GalleryItem(core, core.Functions.FormLong("id", core.Functions.RequestLong("id", 0)));
+                }
 
+                return galleryItem.Parent.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "EDIT_ITEMS";
+            }
+        }
     }
 }

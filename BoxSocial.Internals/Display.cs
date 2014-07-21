@@ -110,6 +110,10 @@ namespace BoxSocial.Internals
         {
             int maxPages = (int)Math.Ceiling(totalItems / (double)itemsPerPage);
             template.ParseRaw(templateVar, GeneratePagination(baseUri, pageLevel, core.PageNumber, core.PageOffset, maxPages, (minimal ? PaginationOptions.Minimal : PaginationOptions.Normal)));
+            if (maxPages > 1)
+            {
+                template.Parse(templateVar + "_MORE", "TRUE");
+            }
         }
 
         // Minimal

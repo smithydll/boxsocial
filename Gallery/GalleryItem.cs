@@ -1492,6 +1492,16 @@ namespace BoxSocial.Applications.Gallery
                     return;
                 }
 
+                if (gallery.Access.Can("EDIT_ITEMS"))
+                {
+                    e.Template.Parse("S_CAN_EDIT", "TRUE");
+                }
+
+                if (gallery.Access.Can("DELETE_ITEMS"))
+                {
+                    e.Template.Parse("S_CAN_DELETE", "TRUE");
+                }
+
                 /* pages */
                 e.Core.Display.ParsePageList(e.Page.Owner, true);
 
@@ -2946,7 +2956,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "edit-photo", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "edit-photo", itemId, true);
             }
         }
 
@@ -2957,7 +2967,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "display-pic", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "display-pic", itemId, true);
             }
         }
 
@@ -2968,7 +2978,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "profile-cover", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "profile-cover", itemId, true);
             }
         }
 
@@ -2979,7 +2989,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "gallery-cover", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "gallery-cover", itemId, true);
             }
         }
 
@@ -2987,7 +2997,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString() , "rotation=left" });
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString(), "rotation=left" });
             }
         }
 
@@ -2995,7 +3005,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString(), "rotation=right" });
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "rotate-photo", true, new string[] { "id=" + itemId.ToString(), "rotation=right" });
             }
         }
 
@@ -3006,7 +3016,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "delete", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "delete", itemId, true);
             }
         }
 
@@ -3014,7 +3024,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return core.Hyperlink.BuildAccountSubModuleUri("galleries", "tag", itemId, true);
+                return core.Hyperlink.BuildAccountSubModuleUri(Owner, "galleries", "tag", itemId, true);
             }
         }
 

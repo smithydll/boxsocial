@@ -33,9 +33,10 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule("galleries", "edit-photo")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "edit-photo")]
     public class AccountGalleriesPhotoEdit : AccountSubModule
     {
+        GalleryItem galleryItem;
 
         /// <summary>
         /// 
@@ -128,7 +129,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GalleryItem galleryItem = new GalleryItem(core, LoggedInMember, photoId);
+                GalleryItem galleryItem = new GalleryItem(core, Owner, photoId);
                 //galleryItem.Update(title, description, core.Functions.GetLicense(), core.Functions.GetClassification());
                 galleryItem.ItemTitle = title;
                 galleryItem.ItemAbstract = description;
@@ -137,7 +138,7 @@ namespace BoxSocial.Applications.Gallery
 
                 galleryItem.Update();
 
-                SetRedirectUri(Gallery.BuildPhotoUri(core, LoggedInMember, galleryItem.ParentPath, galleryItem.Path));
+                SetRedirectUri(Gallery.BuildPhotoUri(core, Owner, galleryItem.ParentPath, galleryItem.Path));
                 core.Display.ShowMessage("Changes to Photo Saved", "You have successfully saved the changes to the photo.");
                 return;
             }
@@ -145,6 +146,27 @@ namespace BoxSocial.Applications.Gallery
             {
                 core.Display.ShowMessage("Invalid submission", "You have made an invalid form submission. (0x0A)");
                 return;
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (galleryItem == null)
+                {
+                    galleryItem = new GalleryItem(core, core.Functions.FormLong("id", core.Functions.RequestLong("id", 0)));
+                }
+
+                return galleryItem.Parent.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "EDIT_ITEMS";
             }
         }
     }

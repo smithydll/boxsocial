@@ -57,7 +57,11 @@
   </ul>
   <div class="cheat-clear-left"></div>
   <!-- IF PAGINATION -->
+  <!-- IF PAGINATION_MORE -->
   <p><span>{PAGINATION}</span><a href="#" class="infinite-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $('#photo-list'));">{L_LOAD_MORE}</a></p>
+  <!-- ELSE -->
+  <p><span>{PAGINATION}</span><a href="#" class="infinite-more no-more" onclick="return loadInfiniteContent('{U_NEXT_PAGE}', $('#photo-list'));">{L_LOAD_MORE}</a></p>
+  <!-- ENDIF -->
   <!-- ENDIF -->
   </div>
   <!-- ENDIF -->

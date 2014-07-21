@@ -32,9 +32,10 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountSubModule("galleries", "delete")]
+    [AccountSubModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries", "delete")]
     public class AccountGalleriesPhotoDelete : AccountSubModule
     {
+        GalleryItem galleryItem;
 
         /// <summary>
         /// 
@@ -85,7 +86,7 @@ namespace BoxSocial.Applications.Gallery
 
             try
             {
-                GalleryItem ugi = new GalleryItem(core, LoggedInMember, id);
+                GalleryItem ugi = new GalleryItem(core, Owner, id);
 
                 Dictionary<string, string> hiddenFieldList = new Dictionary<string, string>();
                 hiddenFieldList.Add("module", ModuleKey);
@@ -119,7 +120,7 @@ namespace BoxSocial.Applications.Gallery
             {
                 try
                 {
-                    GalleryItem photo = new GalleryItem(core, LoggedInMember, id);
+                    GalleryItem photo = new GalleryItem(core, Owner, id);
 
                     try
                     {
@@ -149,6 +150,27 @@ namespace BoxSocial.Applications.Gallery
             }
             else
             {
+            }
+        }
+
+        public Access Access
+        {
+            get
+            {
+                if (galleryItem == null)
+                {
+                    galleryItem = new GalleryItem(core, core.Functions.FormLong("id", core.Functions.RequestLong("id", 0)));
+                }
+
+                return galleryItem.Parent.Access;
+            }
+        }
+
+        public string AccessPermission
+        {
+            get
+            {
+                return "DELETE_ITEMS";
             }
         }
     }

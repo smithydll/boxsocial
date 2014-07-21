@@ -429,8 +429,12 @@ var infiniteLoading = false;
 var loadCount = 0;
 
 $(document).ready(function () {
-    $(".infinite-more").siblings().hide();
-    $(".infinite-more").css('display', 'block');
+    var iMore = $(".infinite-more");
+    iMore.siblings().hide();
+    iMore.css('display', 'block');
+    if (iMore.hasClass('no-more')) {
+        iMore.hide();
+    }
     $(window).scroll(function () {
         var trigger = 200;
 

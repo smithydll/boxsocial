@@ -948,7 +948,7 @@ namespace BoxSocial.Internals
                                     int tempLength = i - tempIndex - tempTag.EndLength + 1;
                                     if (tempLength > 0)
                                     {
-                                        input.Substring(tempIndex, tempLength);
+                                        contents = input.Substring(tempIndex, tempLength);
                                     }
 
                                     BbcodeEventArgs eventArgs = new BbcodeEventArgs(core, contents, tempTag, options, postOwner, (inList > 0), quoteDepth, shareDepth, mode, ref insertStart, ref insertEnd, ref handled, ref abortParse);
@@ -1901,11 +1901,11 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (e.Attributes.HasAttributes())
                     {
-                        if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                        if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
                         {
                             e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
                         }
-                        else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                        else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
                         {
                             e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
                         }
@@ -1917,11 +1917,12 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                        //"(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)"
+                        if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
                         {
                             e.PrefixText = "<a href=\"" + e.Contents + "\">";
                         }
-                        else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\[\\]+]*?)$", RegexOptions.Compiled))
+                        else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
                         {
                             e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
                         }

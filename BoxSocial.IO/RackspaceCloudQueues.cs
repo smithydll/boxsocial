@@ -58,8 +58,35 @@ namespace BoxSocial.IO
 
         public override void CreateQueue(string queue)
         {
-            Task<bool> createQueueTasks = provider.CreateQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
-            createQueueTasks.Wait();
+            int attempts = 0;
+            while (attempts < 3)
+            {
+                Task<bool> createQueueTasks = null;
+                try
+                {
+                    createQueueTasks = provider.CreateQueueAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
+                    createQueueTasks.Wait();
+
+                    return;
+                }
+                catch (System.AggregateException)
+                {
+                }
+                catch (System.Net.WebException)
+                {
+                }
+                finally
+                {
+                    if (createQueueTasks != null)
+                    {
+                        createQueueTasks.Dispose();
+                    }
+                }
+
+                System.Threading.Thread.Sleep(15); // give the remote server some time to recover
+            }
+
+            throw new ErrorCreatingQueueException();
         }
 
         public override void DeleteQueue(string queue)
@@ -70,9 +97,32 @@ namespace BoxSocial.IO
 
         public override bool QueueExists(string queue)
         {
-            Task<bool> result = provider.QueueExistsAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
-            result.Wait();
-            return result.Result;
+            int attempts = 0;
+            while (attempts < 3)
+            {
+                Task<bool> result = null;
+                try
+                {
+                    result = provider.QueueExistsAsync(new QueueName(SanitiseQueueName(queue)), CancellationToken.None);
+                    result.Wait();
+                    return result.Result;
+                }
+                catch (System.AggregateException)
+                {
+                }
+                catch (System.Net.WebException)
+                {
+                }
+                finally
+                {
+                    if (result != null)
+                    {
+                        result.Dispose();
+                    }
+                }
+            }
+
+                throw new ErrorQueryingQueueException();
         }
 
         public override void PushJob(Job jobMessage)
@@ -82,9 +132,10 @@ namespace BoxSocial.IO
 
         public override void PushJob(TimeSpan ttl, Job jobMessage)
         {
+            Task postResult = null;
             try
             {
-                Task postResult = provider.PostMessagesAsync(new QueueName(SanitiseQueueName(jobMessage.QueueName)), CancellationToken.None, new Message<Job>(ttl, jobMessage));
+                postResult = provider.PostMessagesAsync(new QueueName(SanitiseQueueName(jobMessage.QueueName)), CancellationToken.None, new Message<Job>(ttl, jobMessage));
                 postResult.Wait();
             }
             catch (System.AggregateException)
@@ -94,15 +145,23 @@ namespace BoxSocial.IO
             {
                 // some jobs will eventually execute even if not in the queue
             }
+            finally
+            {
+                if (postResult != null)
+                {
+                    postResult.Dispose();
+                }
+            }
         }
 
         public override List<Job> ClaimJobs(string queue, int count)
         {
             List<Job> claimedJobs = new List<Job>();
+            Task<Claim> claims = null;
 
             try
             {
-                Task<Claim> claims = provider.ClaimMessageAsync(new QueueName(SanitiseQueueName(queue)), count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), CancellationToken.None);
+                claims = provider.ClaimMessageAsync(new QueueName(SanitiseQueueName(queue)), count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5), CancellationToken.None);
                 claims.Wait();
 
                 for (int i = 0; i < claims.Result.Messages.Count; i++)
@@ -117,15 +176,23 @@ namespace BoxSocial.IO
             {
                 // wait until next time to claim
             }
+            finally
+            {
+                if (claims != null)
+                {
+                    claims.Dispose();
+                }
+            }
 
             return claimedJobs;
         }
 
         public override void DeleteJob(Job job)
         {
+            Task deleteResult = null;
             try
             {
-                Task deleteResult = provider.DeleteMessageAsync(new QueueName(SanitiseQueueName(job.QueueName)), new MessageId(job.JobId), null, CancellationToken.None);
+                deleteResult = provider.DeleteMessageAsync(new QueueName(SanitiseQueueName(job.QueueName)), new MessageId(job.JobId), null, CancellationToken.None);
                 deleteResult.Wait();
             }
             catch (System.AggregateException)
@@ -134,6 +201,13 @@ namespace BoxSocial.IO
             catch (System.Net.WebException)
             {
                 // some jobs won't execute if complete even if in the queue
+            }
+            finally
+            {
+                if (deleteResult != null)
+                {
+                    deleteResult.Dispose();
+                }
             }
         }
 

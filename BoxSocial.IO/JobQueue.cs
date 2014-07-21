@@ -47,4 +47,12 @@ namespace BoxSocial.IO
 
         public abstract void CloseConnection();
     }
+
+    public class ErrorCreatingQueueException : Exception
+    {
+    }
+
+    public class ErrorQueryingQueueException : Exception
+    {
+    }
 }

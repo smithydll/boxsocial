@@ -120,10 +120,10 @@ namespace BoxSocial.FrontEnd
         protected void worker_DoWork(object sender, DoWorkEventArgs e)
         {
             int wait = 15;
-            for (int i = 0; i < wait * 10; i++)
+            for (int i = 0; i < wait * 100; i++)
             {
                 // The sleep should happen on the worker thread rather than the application thread
-                System.Threading.Thread.Sleep(100);
+                System.Threading.Thread.Sleep(10);
                 if (e.Cancel)
                 {
                     // Poll the thread every [wait] seconds to work out if the worker should be cancelled
@@ -139,8 +139,6 @@ namespace BoxSocial.FrontEnd
                 WebConfigurationManager.AppSettings["mysql-host"]);
 
             Core core = new Core(null, db, null);
-            //core.Http = new Http();
-            //core.Prose = new Prose();
 
             try
             {

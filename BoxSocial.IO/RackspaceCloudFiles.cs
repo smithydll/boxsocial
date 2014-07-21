@@ -133,6 +133,9 @@ namespace BoxSocial.IO
             catch (net.openstack.Core.Exceptions.Response.ItemNotFoundException)
             {
             }
+            catch (Exception)
+            {
+            }
         }
 
         public override void TouchFile(string bin, string fileName)

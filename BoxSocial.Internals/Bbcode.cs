@@ -23,6 +23,7 @@ using System.Data;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Net;
 using System.Web;
 using System.Text.RegularExpressions;
@@ -65,11 +66,39 @@ namespace BoxSocial.Internals
 
         private List<string> styleList;
 
+        private Stopwatch timer;
+        private int parseCount;
+
         public Bbcode(Core core)
         {
+#if DEBUG
+            timer = new Stopwatch();
+            timer.Start();
+            parseCount = 0;
+#endif
             this.core = core;
 
             Initialise();
+
+#if DEBUG
+            timer.Stop();
+            long timerElapsed = timer.ElapsedTicks;
+
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- BBcode initialised in : " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
+            }
+#endif
+        }
+
+        public double GetBbcodeTime()
+        {
+            return timer.ElapsedTicks / 10000000.0;
+        }
+
+        public int GetParseCount()
+        {
+            return parseCount;
         }
 
         public void Initialise()
@@ -719,6 +748,10 @@ namespace BoxSocial.Internals
 
         private string Parse(string input, User viewer, Primitive postOwner, bool appendP, string id, string styleClass, BbcodeParseMode mode, bool fullInternalUrls)
         {
+#if DEBUG
+            timer.Start();
+            parseCount++;
+#endif
             if (string.IsNullOrEmpty(input))
             {
                 return string.Empty;
@@ -911,7 +944,12 @@ namespace BoxSocial.Internals
                                     bool handled = false;
 
                                     int tempIndex = tempTag.indexStart + tempTag.StartLength;
-                                    string contents = input.Substring(tempIndex, i - tempIndex - tempTag.EndLength + 1);
+                                    string contents = string.Empty;
+                                    int tempLength = i - tempIndex - tempTag.EndLength + 1;
+                                    if (tempLength > 0)
+                                    {
+                                        input.Substring(tempIndex, tempLength);
+                                    }
 
                                     BbcodeEventArgs eventArgs = new BbcodeEventArgs(core, contents, tempTag, options, postOwner, (inList > 0), quoteDepth, shareDepth, mode, ref insertStart, ref insertEnd, ref handled, ref abortParse);
                                     BbcodeHooks(eventArgs);
@@ -1088,6 +1126,10 @@ namespace BoxSocial.Internals
 
                 input = ParseEmoticons(core, input);
             }
+
+#if DEBUG
+            timer.Stop();
+#endif
             
             return input;
         }

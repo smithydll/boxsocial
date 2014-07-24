@@ -192,7 +192,37 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserEmail(Core core, System.Data.Common.DbDataReader emailRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserEmail_ItemLoad);
+
+            try
+            {
+                loadItemInfo(emailRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserEmailException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow emailRow)
+        {
+            loadValue(emailRow, "email_id", out emailId);
+            loadValue(emailRow, "email_user_id", out userId);
+            loadValue(emailRow, "email_email", out emailEmail);
+            loadValue(emailRow, "email_type", out emailType);
+            loadValue(emailRow, "email_verified", out emailVerified);
+            loadValue(emailRow, "email_time_ut", out emailTimeRaw);
+            loadValue(emailRow, "email_activate_code", out emailActivateKey);
+            loadValue(emailRow, "email_simple_permissions", out simplePermissions);
+
+            itemLoaded(emailRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader emailRow)
         {
             loadValue(emailRow, "email_id", out emailId);
             loadValue(emailRow, "email_user_id", out userId);

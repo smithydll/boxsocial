@@ -317,6 +317,22 @@ namespace BoxSocial.Internals
             core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
+        protected override void loadItemInfo(System.Data.Common.DbDataReader actionRow)
+        {
+            actionId = (long)actionRow["action_id"];
+            loadValue(actionRow, "action_title", out title);
+            loadValue(actionRow, "action_body", out body);
+            loadValue(actionRow, "action_body_cache", out bodyCache);
+            applicationId = (long)actionRow["action_application"];
+            loadValue(actionRow, "action_primitive", out ownerKey);
+            loadValue(actionRow, "action_item", out itemKey);
+            loadValue(actionRow, "interact_item", out interactKey);
+            timeRaw = (long)actionRow["action_time_ut"];
+
+            itemLoaded(actionRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void Action_ItemLoad()
         {
         }

@@ -375,30 +375,57 @@ namespace BoxSocial.Groups
                     }
                 }
 
-                DataTable groupTable = db.Query(query);
+                System.Data.Common.DbDataReader groupReader = db.ReaderQuery(query);
 
-                if (groupTable.Rows.Count > 0)
+                if (groupReader.HasRows)
                 {
-                    loadItemInfo(typeof(UserGroup), groupTable.Rows[0]);
+                    groupReader.Read();
+
+                    loadItemInfo(typeof(UserGroup), groupReader);
 
                     if (containsInfoData)
                     {
-                        groupInfo = new UserGroupInfo(core, groupTable.Rows[0]);
+                        groupInfo = new UserGroupInfo(core, groupReader);
                     }
 
                     if (containsIconData)
                     {
-                        loadUserGroupIcon(groupTable.Rows[0]);
+                        loadUserGroupIcon(groupReader);
                     }
+
+                    groupReader.Close();
+                    groupReader.Dispose();
                 }
                 else
                 {
+                    groupReader.Close();
+                    groupReader.Dispose();
+
                     throw new InvalidGroupException();
                 }
             }
         }
 
         public UserGroup(Core core, DataRow groupRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            if (groupRow != null)
+            {
+                loadItemInfo(typeof(UserGroup), groupRow);
+
+                groupInfo = new UserGroupInfo(core, groupRow);
+
+                loadUserGroupIcon(groupRow);
+            }
+            else
+            {
+                throw new InvalidGroupException();
+            }
+        }
+
+        public UserGroup(Core core, System.Data.Common.DbDataReader groupRow)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
@@ -442,6 +469,31 @@ namespace BoxSocial.Groups
             }
         }
 
+        public UserGroup(Core core, System.Data.Common.DbDataReader groupRow, UserGroupLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserGroup_ItemLoad);
+
+            if (groupRow != null)
+            {
+                loadItemInfo(typeof(UserGroup), groupRow);
+
+                if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
+                {
+                    groupInfo = new UserGroupInfo(core, groupRow);
+                }
+
+                if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
+                {
+                    loadUserGroupIcon(groupRow);
+                }
+            }
+            else
+            {
+                throw new InvalidGroupException();
+            }
+        }
+
         private new void loadItemInfo(Type type, DataRow userRow)
         {
             if (type == typeof(UserGroup))
@@ -454,7 +506,30 @@ namespace BoxSocial.Groups
             }
         }
 
+        private new void loadItemInfo(Type type, System.Data.Common.DbDataReader userRow)
+        {
+            if (type == typeof(UserGroup))
+            {
+                loadItemInfo(userRow);
+            }
+            else
+            {
+                base.loadItemInfo(type, userRow);
+            }
+        }
+
         protected override void loadItemInfo(DataRow groupRow)
+        {
+            loadValue(groupRow, "group_id", out groupId);
+            loadValue(groupRow, "group_name", out slug);
+            loadValue(groupRow, "group_domain", out domain);
+            loadValue(groupRow, "group_simple_permissions", out simplePermissions);
+
+            itemLoaded(groupRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader groupRow)
         {
             loadValue(groupRow, "group_id", out groupId);
             loadValue(groupRow, "group_name", out slug);
@@ -484,6 +559,10 @@ namespace BoxSocial.Groups
         }
 
         private void loadUserGroupIcon(DataRow groupRow)
+        {
+        }
+
+        private void loadUserGroupIcon(System.Data.Common.DbDataReader groupRow)
         {
         }
 
@@ -1407,12 +1486,15 @@ namespace BoxSocial.Groups
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable groupsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader groupsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in groupsTable.Rows)
+            while(groupsReader.Read())
             {
-                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
+                groups.Add(new UserGroup(core, groupsReader, UserGroupLoadOptions.Common));
             }
+
+            groupsReader.Close();
+            groupsReader.Dispose();
 
             return groups;
         }
@@ -1424,12 +1506,15 @@ namespace BoxSocial.Groups
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddCondition("group_category", category.Id);
 
-            DataTable groupsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader groupsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in groupsTable.Rows)
+            while (groupsReader.Read())
             {
-                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
+                groups.Add(new UserGroup(core, groupsReader, UserGroupLoadOptions.Common));
             }
+
+            groupsReader.Close();
+            groupsReader.Dispose();
 
             return groups;
         }
@@ -1443,12 +1528,15 @@ namespace BoxSocial.Groups
             query.LimitStart = (page - 1) * GROUPS_PER_PAGE;
             query.LimitCount = GROUPS_PER_PAGE;
 
-            DataTable groupsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader groupsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in groupsTable.Rows)
+            while (groupsReader.Read())
             {
-                groups.Add(new UserGroup(core, dr, UserGroupLoadOptions.Common));
+                groups.Add(new UserGroup(core, groupsReader, UserGroupLoadOptions.Common));
             }
+
+            groupsReader.Close();
+            groupsReader.Dispose();
 
             return groups;
         }

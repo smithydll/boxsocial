@@ -154,7 +154,38 @@ namespace BoxSocial.Internals
             }
         }
 
+        public StatusMessage(Core core, System.Data.Common.DbDataReader statusRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
+
+            try
+            {
+                loadItemInfo(statusRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidStatusMessageException();
+            }
+        }
+
         public StatusMessage(Core core, User owner, DataRow statusRow)
+            : base(core)
+        {
+            this.owner = owner;
+            ItemLoad += new ItemLoadHandler(StatusMessage_ItemLoad);
+
+            try
+            {
+                loadItemInfo(statusRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidStatusMessageException();
+            }
+        }
+
+        public StatusMessage(Core core, User owner, System.Data.Common.DbDataReader statusRow)
             : base(core)
         {
             this.owner = owner;
@@ -180,6 +211,22 @@ namespace BoxSocial.Internals
         }
 
         protected override void loadItemInfo(DataRow statusRow)
+        {
+            statusId = (long)statusRow["status_id"];
+            ownerId = (long)statusRow["user_id"];
+            loadValue(statusRow, "status_message", out statusMessage);
+            likes = (byte)statusRow["status_likes"];
+            dislikes = (byte)statusRow["status_dislikes"];
+            shares = (long)statusRow["status_shares"];
+            timeRaw = (long)statusRow["status_time_ut"];
+            loadValue(statusRow, "status_ip", out ip);
+            loadValue(statusRow, "status_simple_permissions", out simplePermissions);
+
+            itemLoaded(statusRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader statusRow)
         {
             statusId = (long)statusRow["status_id"];
             ownerId = (long)statusRow["user_id"];

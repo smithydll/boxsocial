@@ -688,7 +688,30 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserProfile(Core core, User user, System.Data.Common.DbDataReader memberRow)
+            : base(core)
+        {
+            this.user = user;
+
+            ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+            ItemUpdated += new EventHandler(UserProfile_ItemUpdated);
+
+            try
+            {
+                loadItemInfo(memberRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public UserProfile(Core core, User user, DataRow memberRow, UserLoadOptions loadOptions)
+            : this(core, user, memberRow)
+        {
+        }
+
+        public UserProfile(Core core, User user, System.Data.Common.DbDataReader memberRow, UserLoadOptions loadOptions)
             : this(core, user, memberRow)
         {
         }
@@ -710,7 +733,61 @@ namespace BoxSocial.Internals
             loadUserProfile(userRow);
         }
 
+        private new void loadItemInfo(Type type, System.Data.Common.DbDataReader userRow)
+        {
+            if (type == typeof(UserProfile))
+            {
+                loadUserProfile(userRow);
+            }
+            else
+            {
+                base.loadItemInfo(type, userRow);
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader userRow)
+        {
+            loadUserProfile(userRow);
+        }
+
         protected void loadUserProfile(DataRow userRow)
+        {
+            loadValue(userRow, "user_id", out userId);
+            loadValue(userRow, "profile_autobiography", out autobiography);
+            loadValue(userRow, "profile_curriculum_vitae", out curriculumVitae);
+            loadValue(userRow, "profile_gender", out gender);
+            loadValue(userRow, "profile_interested_in_men", out interestedInMen);
+            loadValue(userRow, "profile_interested_in_women", out interestedInWomen);
+            loadValue(userRow, "profile_sexuality", out sexuality);
+            loadValue(userRow, "profile_maritial_status", out maritialStatus);
+            loadValue(userRow, "profile_maritial_with", out maritialWith);
+            loadValue(userRow, "profile_maritial_with_confirmed", out maritialWithConfirmed);
+            loadValue(userRow, "profile_name_title", out nameTitle);
+            loadValue(userRow, "profile_name_first", out nameFirst);
+            loadValue(userRow, "profile_name_middle", out nameMiddle);
+            loadValue(userRow, "profile_name_last", out nameLast);
+            loadValue(userRow, "profile_name_suffix", out nameSuffix);
+            loadValue(userRow, "profile_hometown", out hometown);
+            loadValue(userRow, "profile_views", out profileViews);
+            loadValue(userRow, "profile_height", out height);
+            loadValue(userRow, "profile_weight", out weight);
+            loadValue(userRow, "profile_religion", out religionId);
+            loadValue(userRow, "profile_comments", out profileComments);
+            loadValue(userRow, "profile_date_of_birth_ut", out dateofBirthRaw);
+            loadValue(userRow, "profile_date_of_birth_month_cache", out dateofBirthMonthRaw);
+            loadValue(userRow, "profile_date_of_birth_day_cache", out dateofBirthDayRaw);
+            loadValue(userRow, "profile_country", out country);
+            loadValue(userRow, "profile_address_line_1", out addressLine1);
+            loadValue(userRow, "profile_address_line_2", out addressLine2);
+            loadValue(userRow, "profile_address_town", out addressTown);
+            loadValue(userRow, "profile_address_state", out addressState);
+            loadValue(userRow, "profile_address_post_code", out addressPostCode);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected void loadUserProfile(System.Data.Common.DbDataReader userRow)
         {
             loadValue(userRow, "user_id", out userId);
             loadValue(userRow, "profile_autobiography", out autobiography);

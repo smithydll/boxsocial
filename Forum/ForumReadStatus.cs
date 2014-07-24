@@ -33,6 +33,7 @@ namespace BoxSocial.Applications.Forum
     [DataTable("forum_read_status")]
     public class ForumReadStatus : Item
     {
+        [DataFieldKey(DataFieldKeys.Index, "i_forum_read_forum_id")]
         [DataField("forum_id", DataFieldKeys.Unique, "frs_key")]
         private long forumId;
         [DataField("user_id", DataFieldKeys.Unique, "frs_key")]
@@ -105,7 +106,38 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ForumReadStatus(Core core, System.Data.Common.DbDataReader dr)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ForumReadStatus_ItemLoad);
+
+            try
+            {
+                loadItemInfo(dr);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumReadStatusException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow readStatusRow)
+        {
+            try
+            {
+                loadValue(readStatusRow, "forum_id", out forumId);
+                loadValue(readStatusRow, "user_id", out userId);
+                loadValue(readStatusRow, "read_time_ut", out readTime);
+
+                itemLoaded(readStatusRow);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader readStatusRow)
         {
             try
             {

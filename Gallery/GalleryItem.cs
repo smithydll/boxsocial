@@ -681,6 +681,22 @@ namespace BoxSocial.Applications.Gallery
             }*/
         }
 
+        public GalleryItem(Core core, User owner, System.Data.Common.DbDataReader itemRow)
+            : base(core)
+        {
+            this.db = db;
+            this.owner = owner;
+
+            loadItemInfo(itemRow);
+            /*try
+            {
+                licenseInfo = new ContentLicense(core, itemRow);
+            }
+            catch (InvalidLicenseException)
+            {
+            }*/
+        }
+
         /// <summary>
         /// Initialises a new instance of the GalleryItem class.
         /// </summary>
@@ -702,12 +718,42 @@ namespace BoxSocial.Applications.Gallery
             }*/
         }
 
+        public GalleryItem(Core core, Primitive owner, System.Data.Common.DbDataReader itemRow)
+            : base(core)
+        {
+            this.owner = owner;
+
+            loadItemInfo(itemRow);
+            /*try
+            {
+                licenseInfo = new ContentLicense(core, itemRow);
+            }
+            catch (InvalidLicenseException)
+            {
+            }*/
+        }
+
         /// <summary>
         /// Initialises a new instance of the GalleryItem class.
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="itemRow">Raw data row of gallery item</param>
         public GalleryItem(Core core, DataRow itemRow)
+            : base(core)
+        {
+            // TODO: owner not set, no big worry
+
+            loadItemInfo(itemRow);
+            /*try
+            {
+                licenseInfo = new ContentLicense(core, itemRow);
+            }
+            catch (InvalidLicenseException)
+            {
+            }*/
+        }
+
+        public GalleryItem(Core core, System.Data.Common.DbDataReader itemRow)
             : base(core)
         {
             // TODO: owner not set, no big worry
@@ -830,6 +876,45 @@ namespace BoxSocial.Applications.Gallery
         }
 
         protected override void loadItemInfo(DataRow galleryItemRow)
+        {
+            loadValue(galleryItemRow, "user_id", out userId);
+            loadValue(galleryItemRow, "gallery_item_id", out itemId);
+            loadValue(galleryItemRow, "gallery_item_title", out itemTitle);
+            loadValue(galleryItemRow, "gallery_item_parent_path", out parentPath);
+            loadValue(galleryItemRow, "gallery_item_uri", out path);
+            loadValue(galleryItemRow, "gallery_id", out parentId);
+            loadValue(galleryItemRow, "gallery_item_views", out itemViews);
+            loadValue(galleryItemRow, "gallery_item_width", out itemWidth);
+            loadValue(galleryItemRow, "gallery_item_height", out itemHeight);
+            loadValue(galleryItemRow, "gallery_item_bytes", out itemBytes);
+            loadValue(galleryItemRow, "gallery_item_rating", out itemRating);
+            loadValue(galleryItemRow, "gallery_item_content_type", out contentType);
+            loadValue(galleryItemRow, "gallery_item_storage_path", out storagePath);
+            loadValue(galleryItemRow, "gallery_item_abstract", out itemAbstract);
+            loadValue(galleryItemRow, "gallery_item_date_ut", out itemCreatedRaw);
+            loadValue(galleryItemRow, "gallery_item_item", out ownerKey);
+            loadValue(galleryItemRow, "gallery_item_classification", out classification);
+            loadValue(galleryItemRow, "gallery_item_license", out license);
+            loadValue(galleryItemRow, "gallery_item_icon_exists", out iconExists);
+            loadValue(galleryItemRow, "gallery_item_tile_exists", out tileExists);
+            loadValue(galleryItemRow, "gallery_item_square_exists", out squareExists);
+            loadValue(galleryItemRow, "gallery_item_high_exists", out highExists);
+            loadValue(galleryItemRow, "gallery_item_tiny_exists", out tinyExists);
+            loadValue(galleryItemRow, "gallery_item_thumb_exists", out thumbnailExists);
+            loadValue(galleryItemRow, "gallery_item_mobile_exists", out mobileExists);
+            loadValue(galleryItemRow, "gallery_item_display_exists", out displayExists);
+            loadValue(galleryItemRow, "gallery_item_full_exists", out fullExists);
+            loadValue(galleryItemRow, "gallery_item_ultra_exists", out ultraExists);
+            loadValue(galleryItemRow, "gallery_item_cover_exists", out coverExists);
+            loadValue(galleryItemRow, "gallery_item_mobile_cover_exists", out mobileCoverExists);
+            loadValue(galleryItemRow, "gallery_item_vcrop", out cropPositionVertical);
+            loadValue(galleryItemRow, "gallery_item_hcrop", out cropPositionHorizontal);
+
+            itemLoaded(galleryItemRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader galleryItemRow)
         {
             loadValue(galleryItemRow, "user_id", out userId);
             loadValue(galleryItemRow, "gallery_item_id", out itemId);

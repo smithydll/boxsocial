@@ -135,11 +135,11 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
                 query.AddCondition(new DataField("user_keys", "user_name_lower"), ConditionEquality.In, usernameList);
 
-                DataTable usersTable = db.Query(query);
+                System.Data.Common.DbDataReader usersReader = db.ReaderQuery(query);
 
-                foreach (DataRow userRow in usersTable.Rows)
+                while(usersReader.Read())
                 {
-                    User newUser = new User(core, userRow, UserLoadOptions.All);
+                    User newUser = new User(core, usersReader, UserLoadOptions.All);
                     // This will automatically cache itself when loadUser is called
 
                     PrimitiveId pid = new PrimitiveId(newUser.Id, userTypeId);
@@ -150,6 +150,9 @@ namespace BoxSocial.Internals
 						userIds.Add(newUser.UserName, newUser.Id);
 					}
                 }
+
+                usersReader.Close();
+                usersReader.Dispose();
             }
 
             return userIds;

@@ -102,16 +102,24 @@ namespace BoxSocial.Internals
             query.AddCondition("info_item_id", itemId);
             query.AddCondition("info_item_type_id", itemTypeId);
 
-            DataTable infoTable = db.Query(query);
+            System.Data.Common.DbDataReader infoReader = db.ReaderQuery(query);
 
             try
             {
-                if (infoTable.Rows.Count == 1)
+                if (infoReader.HasRows)
                 {
-                    loadItemInfo(infoTable.Rows[0]);
+                    infoReader.Read();
+
+                    loadItemInfo(infoReader);
+
+                    infoReader.Close();
+                    infoReader.Dispose();
                 }
                 else
                 {
+                    infoReader.Close();
+                    infoReader.Dispose();
+
                     throw new InvalidIteminfoException();
                 }
             }
@@ -198,6 +206,84 @@ namespace BoxSocial.Internals
             timeRaw = (long)itemRow["info_item_time_ut"];
 
             itemLoaded(itemRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader itemRow)
+        {
+            loadValue(itemRow, "info_item", out itemKey);
+            loadValue(itemRow, "info_shortkey", out shortUrlKey);
+            comments = (long)itemRow["info_comments"];
+            likes = (long)itemRow["info_likes"];
+            dislikes = (long)itemRow["info_dislikes"];
+            rating = (float)itemRow["info_rating"];
+            subscribers = (long)itemRow["info_subscribers"];
+            tags = (long)itemRow["info_tags"];
+            sharedTimes = (long)itemRow["info_shared_times"];
+            viewedTimes = (long)itemRow["info_viewed_times"];
+            tweetId = (long)itemRow["info_tweet_id"];
+            loadValue(itemRow, "info_tweet_uri", out tweetUri);
+            loadValue(itemRow, "info_facebook_post_id", out facebookPostId);
+            tumblrPostId = (long)itemRow["info_tumblr_post_id"];
+            timeRaw = (long)itemRow["info_item_time_ut"];
+
+            itemLoaded(itemRow);
+        }
+
+        protected override bool setProperty(string field, object value)
+        {
+            switch (field)
+            {
+                case "info_item":
+                    itemKey = (ItemKey)value;
+                    return true;
+                case "info_shortkey":
+                    shortUrlKey = (string)value;
+                    return true;
+                case "info_comments":
+                    comments = (long)value;
+                    return true;
+                case "info_likes":
+                    likes = (long)value;
+                    return true;
+                case "info_dislikes":
+                    dislikes = (long)value;
+                    return true;
+                case "info_ratings":
+                    ratings = (long)value;
+                    return true;
+                case "info_rating":
+                    rating = (float)value;
+                    return true;
+                case "info_subscribers":
+                    subscribers = (long)value;
+                    return true;
+                case "info_tags":
+                    tags = (long)value;
+                    return true;
+                case "info_shared_times":
+                    sharedTimes = (long)value;
+                    return true;
+                case "info_viewed_times":
+                    viewedTimes = (long)value;
+                    return true;
+                case "info_tweet_id":
+                    tweetId = (long)value;
+                    return true;
+                case "info_tweet_uri":
+                    tweetUri = (string)value;
+                    return true;
+                case "info_facebook_post_id":
+                    facebookPostId = (string)value;
+                    return true;
+                case "info_tumblr_post_id":
+                    tumblrPostId = (long)value;
+                    return true;
+                case "info_item_time_ut":
+                    timeRaw = (long)value;
+                    return true;
+            }
+
+            return false;
         }
 
         private void ItemInfo_ItemLoad()

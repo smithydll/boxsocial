@@ -104,6 +104,21 @@ namespace BoxSocial.Applications.News
                 throw new InvalidNewsException();
 			}
 		}
+
+        public News(Core core, System.Data.Common.DbDataReader newsDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(News_ItemLoad);
+
+            try
+            {
+                loadItemInfo(newsDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNewsException();
+            }
+        }
 		
 		public News(Core core, Primitive owner)
             : base (core)
@@ -123,6 +138,18 @@ namespace BoxSocial.Applications.News
 		}
 
         protected override void loadItemInfo(DataRow newsRow)
+        {
+            loadValue(newsRow, "news_id", out newsId);
+            loadValue(newsRow, "news_item", out ownerKey);
+            loadValue(newsRow, "news_title", out newsTitle);
+            loadValue(newsRow, "news_items_per_page", out newsItemsPerPage);
+            loadValue(newsRow, "news_simple_permissions", out simplePermissions);
+
+            itemLoaded(newsRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader newsRow)
         {
             loadValue(newsRow, "news_id", out newsId);
             loadValue(newsRow, "news_item", out ownerKey);

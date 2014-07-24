@@ -177,6 +177,36 @@ namespace BoxSocial.Internals
 
             SelectQuery query;
 
+#if DEBUG
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+#endif
+            bool dataReader = false;
+
+            ConstructorInfo[] constructors = typeToGet.GetConstructors();
+
+            // temporary
+            foreach (ConstructorInfo constructor in constructors)
+            {
+                ParameterInfo[] parameters = constructor.GetParameters();
+                if (parameters.Length >= 2)
+                {
+                    if (parameters[1].ParameterType == typeof(System.Data.Common.DbDataReader))
+                    {
+                        dataReader = true;
+                        break;
+                    }
+                }
+            }
+            // end temporary
+#if DEBUG
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                //HttpContext.Current.Response.Write(string.Format("<!-- Constructor {1} found in {0} -->\r\n", timer.ElapsedTicks / 10000000.0, typeToGet.Name));
+            }
+#endif
+
             if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", new Type[] { typeof(Core) }) != null)
             {
                 query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }); //GetSelectQueryStub(typeToGet);
@@ -210,21 +240,43 @@ namespace BoxSocial.Internals
 
             query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(this.GetType(), typeToGet), Id);
 
-            DataTable itemsTable = db.Query(query);
-
-            foreach (DataRow dr in itemsTable.Rows)
+            if (!dataReader)
             {
-                if (feedParentArgument)
-                {
-                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, dr }) as Item);
-                }
-                else
-                {
-                    items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
-                }
-            }
+                DataTable itemsTable = db.Query(query);
 
-            itemsTable.Dispose();
+                foreach (DataRow dr in itemsTable.Rows)
+                {
+                    if (feedParentArgument)
+                    {
+                        items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, dr }) as Item);
+                    }
+                    else
+                    {
+                        items.Add(Activator.CreateInstance(typeToGet, new object[] { core, dr }) as Item);
+                    }
+                }
+
+                itemsTable.Dispose();
+            }
+            else
+            {
+                System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+
+                while (reader.Read())
+                {
+                    if (feedParentArgument)
+                    {
+                        items.Add(Activator.CreateInstance(typeToGet, new object[] { core, this, reader }) as Item);
+                    }
+                    else
+                    {
+                        items.Add(Activator.CreateInstance(typeToGet, new object[] { core, reader }) as Item);
+                    }
+                }
+
+                reader.Close();
+                reader.Dispose();
+            }
 
             return items;
         }

@@ -93,7 +93,23 @@ namespace BoxSocial.FrontEnd
             ads.ShadowCopyDirectories = ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/");
             //AppDomain.CurrentDomain.SetShadowCopyPath(ads.ShadowCopyDirectories + ";" + Server.MapPath(@"/applications/"));
 
+            //
+            // Load all applications
+            //
+
+            Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
+                WebConfigurationManager.AppSettings["mysql-password"],
+                WebConfigurationManager.AppSettings["mysql-database"],
+                WebConfigurationManager.AppSettings["mysql-host"]);
+
+            BoxSocial.Internals.Application.LoadAssemblies(db);
+
+            db.CloseConnection();
+
+            //
             // Implements a message queue processor
+            //
+
             lock (queueLock)
             {
                 // Check the queues and create is not exist

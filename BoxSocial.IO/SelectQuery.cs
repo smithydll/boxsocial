@@ -247,6 +247,14 @@ namespace BoxSocial.IO
         private SortOrder limitOrder = SortOrder.Ascending;
         private bool isDistinct = false;
 
+        public List<string> Tables
+        {
+            get
+            {
+                return tables;
+            }
+        }
+
         public int LimitCount
         {
             get
@@ -297,7 +305,7 @@ namespace BoxSocial.IO
 
             tables = new List<string>(4);
             fields = new List<string>(64);
-            groupings = new List<string>();
+            groupings = new List<string>(2);
             conditions = new QueryCondition();
             joins = new List<TableJoin>(4);
             sorts = new List<TableSort>(4);
@@ -309,7 +317,7 @@ namespace BoxSocial.IO
         {
             tables = new List<string>(4);
             fields = new List<string>(64);
-            groupings = new List<string>();
+            groupings = new List<string>(2);
             conditions = new QueryCondition();
             joins = new List<TableJoin>(4);
             sorts = new List<TableSort>(4);
@@ -321,7 +329,7 @@ namespace BoxSocial.IO
         {
             tables = new List<string>(4);
             fields = new List<string>(64);
-            groupings = new List<string>();
+            groupings = new List<string>(2);
             conditions = new QueryCondition();
             joins = new List<TableJoin>(4);
             sorts = new List<TableSort>(4);

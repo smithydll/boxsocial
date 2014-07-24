@@ -185,7 +185,37 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserPhoneNumber(Core core, System.Data.Common.DbDataReader phoneRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserPhoneNumber_ItemLoad);
+
+            try
+            {
+                loadItemInfo(phoneRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserPhoneNumberException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow phoneRow)
+        {
+            loadValue(phoneRow, "phone_id", out phoneId);
+            loadValue(phoneRow, "phone_user_id", out userId);
+            loadValue(phoneRow, "phone_number", out phoneNumber);
+            loadValue(phoneRow, "phone_type", out phoneType);
+            loadValue(phoneRow, "phone_validated", out phoneValidated);
+            loadValue(phoneRow, "phone_validated_time_ut", out phoneValidatedTime);
+            loadValue(phoneRow, "phone_activate_code", out phoneActivateKey);
+            loadValue(phoneRow, "phone_simple_permissions", out simplePermissions);
+
+            itemLoaded(phoneRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader phoneRow)
         {
             loadValue(phoneRow, "phone_id", out phoneId);
             loadValue(phoneRow, "phone_user_id", out userId);

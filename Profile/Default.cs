@@ -144,13 +144,14 @@ namespace BoxSocial.Applications.Profile
             e.Core.Display.ParsePageList(e.Page.User, true);
 
             /* status */
-            StatusMessage statusMessage = StatusFeed.GetLatest(e.Core, e.Page.User);
+            // we don't show this on the profile anymore
+            /*StatusMessage statusMessage = StatusFeed.GetLatest(e.Core, e.Page.User);
 
             if (statusMessage != null)
             {
                 e.Core.Template.Parse("STATUS_MESSAGE", statusMessage.Message);
                 e.Core.Template.Parse("STATUS_UPDATED", e.Core.Tz.DateTimeToString(statusMessage.GetTime(e.Core.Tz)));
-            }
+            }*/
 
             List<UserLink> links = e.Page.User.GetLinks();
 

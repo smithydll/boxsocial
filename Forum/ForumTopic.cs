@@ -366,6 +366,32 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ForumTopic(Core core, System.Data.Common.DbDataReader topicRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Topic_ItemLoad);
+
+            try
+            {
+                loadItemInfo(topicRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTopicException();
+            }
+
+            try
+            {
+                readStatus = new TopicReadStatus(core, topicRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidTopicReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
+        }
+
         public ForumTopic(Core core, Forum forum, DataRow topicRow)
             : base(core)
         {
@@ -394,7 +420,57 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ForumTopic(Core core, Forum forum, System.Data.Common.DbDataReader topicRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Topic_ItemLoad);
+
+            this.forum = forum;
+
+            try
+            {
+                loadItemInfo(topicRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTopicException();
+            }
+
+            try
+            {
+                readStatus = new TopicReadStatus(core, topicRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidTopicReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
+        }
+
         protected override void loadItemInfo(DataRow topicRow)
+        {
+            loadValue(topicRow, "topic_id", out topicId);
+            loadValue(topicRow, "forum_id", out forumId);
+            loadValue(topicRow, "topic_title", out topicTitle);
+            loadValue(topicRow, "user_id", out userId);
+            loadValue(topicRow, "topic_posts", out topicPosts);
+            loadValue(topicRow, "topic_views", out topicViews);
+            loadValue(topicRow, "topic_time_ut", out createdRaw);
+            loadValue(topicRow, "topic_modified_ut", out modifiedRaw);
+            loadValue(topicRow, "topic_last_post_time_ut", out lastPostTimeRaw);
+            loadValue(topicRow, "topic_last_post_id", out lastPostId);
+            loadValue(topicRow, "topic_first_post_id", out firstPostId);
+            loadValue(topicRow, "topic_status", out topicStatus);
+            loadValue(topicRow, "topic_locked", out topicLocked);
+            loadValue(topicRow, "topic_moved", out topicMoved);
+            loadValue(topicRow, "topic_item", out ownerKey);
+
+            itemLoaded(topicRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader topicRow)
         {
             loadValue(topicRow, "topic_id", out topicId);
             loadValue(topicRow, "forum_id", out forumId);
@@ -554,6 +630,18 @@ namespace BoxSocial.Applications.Forum
                 uQuery.AddField("forum_last_post_id", post.Id);
                 uQuery.AddField("forum_last_post_time_ut", post.TimeCreatedRaw);
                 uQuery.AddCondition("forum_id", ConditionEquality.In, parentForumIds);
+
+                rowsUpdated = core.Db.Query(uQuery);
+
+                if (rowsUpdated < 1)
+                {
+                    core.Db.RollBackTransaction();
+                    core.Display.ShowMessage("ERROR", "Error, rolling back transaction");
+                }
+
+                uQuery = new UpdateQuery(Forum.GetTable(typeof(Forum)));
+                uQuery.AddField("forum_topics", new QueryOperation("forum_topics_paged", QueryOperations.Addition, 1));
+                uQuery.AddCondition("forum_id", forum.Id);
 
                 rowsUpdated = core.Db.Query(uQuery);
 

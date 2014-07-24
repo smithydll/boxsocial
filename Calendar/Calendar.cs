@@ -137,6 +137,14 @@ namespace BoxSocial.Applications.Calendar
             loadItemInfo(calendarRow);
         }
 
+        public Calendar(Core core, System.Data.Common.DbDataReader calendarRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Calendar_ItemLoad);
+
+            loadItemInfo(calendarRow);
+        }
+
         public Calendar(Core core, long calendarId)
             : base(core)
         {
@@ -153,6 +161,18 @@ namespace BoxSocial.Applications.Calendar
         }
 
         protected override void loadItemInfo(DataRow calendarRow)
+        {
+            loadValue(calendarRow, "calendar_id", out calendarId);
+            loadValue(calendarRow, "calendar_item", out ownerKey);
+            loadValue(calendarRow, "calendar_events", out eventCount);
+            loadValue(calendarRow, "calendar_tasks", out taskCount);
+            loadValue(calendarRow, "calendar_simple_permissions", out simplePermissions);
+
+            itemLoaded(calendarRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader calendarRow)
         {
             loadValue(calendarRow, "calendar_id", out calendarId);
             loadValue(calendarRow, "calendar_item", out ownerKey);

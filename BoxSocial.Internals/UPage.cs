@@ -67,9 +67,10 @@ namespace BoxSocial.Internals
 
             try
             {
-                primitive = new User(core, profileUserName);
+                long userId = core.PrimitiveCache.LoadUserProfile(profileUserName);
+                primitive = core.PrimitiveCache[userId];
             }
-            catch (InvalidUserException)
+            catch
             {
                 core.Functions.Generate404();
                 return;

@@ -759,7 +759,58 @@ namespace BoxSocial.Internals
             }
         }
 
+        public User(Core core, System.Data.Common.DbDataReader userRow)
+            : base(core)
+        {
+            UserLoadOptions loadOptions = UserLoadOptions.All;
+            ItemLoad += new ItemLoadHandler(User_ItemLoad);
+
+            if (userRow != null)
+            {
+                loadItemInfo(typeof(User), userRow);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    userInfo = new UserInfo(core, userRow);
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    userProfile = new UserProfile(core, this, userRow, loadOptions);
+                }
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public User(Core core, DataRow userRow, UserLoadOptions loadOptions)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(User_ItemLoad);
+
+            if (userRow != null)
+            {
+                loadItemInfo(typeof(User), userRow);
+
+                if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
+                {
+                    userInfo = new UserInfo(core, userRow);
+                }
+
+                if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
+                {
+                    userProfile = new UserProfile(core, this, userRow, loadOptions);
+                }
+            }
+            else
+            {
+                throw new InvalidUserException();
+            }
+        }
+
+        public User(Core core, System.Data.Common.DbDataReader userRow, UserLoadOptions loadOptions)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(User_ItemLoad);
@@ -796,12 +847,43 @@ namespace BoxSocial.Internals
             }
         }
 
+        private new void loadItemInfo(Type type, System.Data.Common.DbDataReader userRow)
+        {
+            if (type == typeof(User))
+            {
+                loadUser(userRow);
+            }
+            else
+            {
+                base.loadItemInfo(type, userRow);
+            }
+        }
+
         protected override void loadItemInfo(DataRow userRow)
         {
             loadUser(userRow);
         }
 
+        protected override void loadItemInfo(System.Data.Common.DbDataReader userRow)
+        {
+            loadUser(userRow);
+        }
+
         protected void loadUser(DataRow userRow)
+        {
+            loadValue(userRow, "user_id", out userId);
+            loadValue(userRow, "user_name", out userName);
+            loadValue(userRow, "user_name_lower", out userNameLower);
+            loadValue(userRow, "user_domain", out domain);
+            loadValue(userRow, "user_name_first", out userNameFirstCharacter);
+            loadValue(userRow, "user_simple_permissions", out simplePermissions);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+            core.PrimitiveCache.RegisterItem((Primitive)this);
+        }
+
+        protected void loadUser(System.Data.Common.DbDataReader userRow)
         {
             loadValue(userRow, "user_id", out userId);
             loadValue(userRow, "user_name", out userName);
@@ -942,12 +1024,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Ascending, "relation_time_ut");
             query.LimitCount = count;
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friendIds.Add((long)dr["relation_you"]);
+                friendIds.Add((long)friendsReader["relation_you"]);
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friendIds;
         }
@@ -969,12 +1054,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Ascending, "relation_time_ut");
             query.LimitCount = count;
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friendIds.Add((long)dr["relation_me"]);
+                friendIds.Add((long)friendsReader["relation_me"]);
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friendIds;
         }
@@ -1016,12 +1104,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Ascending, "(relation_order - 1)");
             query.LimitCount = 10;
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friends.Add(new Friend(core, dr, UserLoadOptions.All));
+                friends.Add(new Friend(core, friendsReader, UserLoadOptions.All));
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friends;
         }
@@ -1080,12 +1171,15 @@ namespace BoxSocial.Internals
                 query.LimitOrder = SortOrder.Descending;
             }
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friends.Add(new Friend(core, dr, UserLoadOptions.All));
+                friends.Add(new Friend(core, friendsReader, UserLoadOptions.All));
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friends;
         }
@@ -1103,11 +1197,11 @@ namespace BoxSocial.Internals
             query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.GreaterThanEqual, st.Month * 31 + st.Day);
             query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.LessThanEqual, et.Month * 31 + et.Day);
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                UserRelation friend = new UserRelation(core, dr, UserLoadOptions.All);
+                UserRelation friend = new UserRelation(core, friendsReader, UserLoadOptions.All);
                 UnixTime tz = new UnixTime(core, friend.UserInfo.TimeZoneCode);
                 DateTime dob = new DateTime(st.Year, friend.Profile.DateOfBirth.Month, friend.Profile.DateOfBirth.Day);
                 long dobUt = tz.GetUnixTimeStamp(dob);
@@ -1118,6 +1212,9 @@ namespace BoxSocial.Internals
                     friends.Add(friend);
                 }
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friends;
         }
@@ -1140,12 +1237,15 @@ namespace BoxSocial.Internals
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
+                friends.Add(new UserRelation(core, friendsReader, UserLoadOptions.All));
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friends;
         }
@@ -1186,12 +1286,15 @@ namespace BoxSocial.Internals
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable friendsTable = db.Query(query);
+            System.Data.Common.DbDataReader friendsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in friendsTable.Rows)
+            while (friendsReader.Read())
             {
-                friends.Add(new UserRelation(core, dr, UserLoadOptions.All));
+                friends.Add(new UserRelation(core, friendsReader, UserLoadOptions.All));
             }
+
+            friendsReader.Close();
+            friendsReader.Dispose();
 
             return friends;
         }

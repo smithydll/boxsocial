@@ -102,7 +102,26 @@ namespace BoxSocial.Internals
             loadItemInfo(categoryRow);
         }
 
+        public Category(Core core, System.Data.Common.DbDataReader categoryRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Category_ItemLoad);
+
+            loadItemInfo(categoryRow);
+        }
+
         protected override void loadItemInfo(DataRow categoryRow)
+        {
+            loadValue(categoryRow, "category_id", out categoryId);
+            loadValue(categoryRow, "category_title", out title);
+            loadValue(categoryRow, "category_path", out path);
+            loadValue(categoryRow, "category_groups", out groupCount);
+
+            itemLoaded(categoryRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader categoryRow)
         {
             loadValue(categoryRow, "category_id", out categoryId);
             loadValue(categoryRow, "category_title", out title);
@@ -128,12 +147,14 @@ namespace BoxSocial.Internals
 
             SelectQuery query = GetSelectQueryStub(typeof(Category));
 
-            DataTable categoriesDataTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader categoriesReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in categoriesDataTable.Rows)
+            while (categoriesReader.Read())
             {
-                categories.Add(new Category(core, dr));
+                categories.Add(new Category(core, categoriesReader));
             }
+            categoriesReader.Close();
+            categoriesReader.Dispose();
 
             return categories;
         }

@@ -186,15 +186,23 @@ namespace BoxSocial.Internals
             SelectQuery query = GetSelectQueryStub();
             query.AddCondition("permission_item_type_id", typeId);
             query.AddCondition("permission_name", permissionName);
-            
-            DataTable dt = core.Db.Query(query);
 
-            if (dt.Rows.Count == 1)
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+
+            if (reader.HasRows)
             {
-                loadItemInfo(dt.Rows[0]);
+                reader.Read();
+
+                loadItemInfo(reader);
+
+                reader.Close();
+                reader.Dispose();
             }
             else
             {
+                reader.Close();
+                reader.Dispose();
+
                 throw new InvalidAccessControlPermissionException();
             }
         }
@@ -217,6 +225,18 @@ namespace BoxSocial.Internals
         }
 
         protected override void loadItemInfo(DataRow permissionRow)
+        {
+            loadValue(permissionRow, "permission_id", out permissionId);
+            loadValue(permissionRow, "permission_name", out permissionName);
+            loadValue(permissionRow, "permission_item_type_id", out itemTypeId);
+            loadValue(permissionRow, "permission_description", out permissionDescription);
+            loadValue(permissionRow, "permission_type", out permissionType);
+
+            itemLoaded(permissionRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader permissionRow)
         {
             loadValue(permissionRow, "permission_id", out permissionId);
             loadValue(permissionRow, "permission_name", out permissionName);

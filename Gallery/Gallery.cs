@@ -833,6 +833,19 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public Gallery(Core core, System.Data.Common.DbDataReader galleryRow)
+            : base(core)
+        {
+            try
+            {
+                loadItemInfo(galleryRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGalleryException();
+            }
+        }
+
         /// <summary>
         /// Initialises a new instance of the Gallery class.
         /// </summary>
@@ -860,7 +873,54 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public Gallery(Core core, Primitive owner, System.Data.Common.DbDataReader galleryRow, bool hasIcon)
+            : base(core)
+        {
+            this.owner = owner;
+
+            try
+            {
+                loadItemInfo(galleryRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGalleryException();
+            }
+
+            if (hasIcon)
+            {
+                loadGalleryIcon(galleryRow);
+            }
+        }
+
         protected override void loadItemInfo(DataRow galleryRow)
+        {
+            loadValue(galleryRow, "gallery_id", out galleryId);
+            loadValue(galleryRow, "user_id", out userId);
+            loadValue(galleryRow, "settings_id", out settingsId);
+            loadValue(galleryRow, "gallery_parent_id", out parentId);
+            loadValue(galleryRow, "gallery_title", out galleryTitle);
+            loadValue(galleryRow, "gallery_parent_path", out parentPath);
+            loadValue(galleryRow, "gallery_path", out path);
+            loadValue(galleryRow, "gallery_item_comments", out galleryItemComments);
+            loadValue(galleryRow, "gallery_visits", out visits);
+            loadValue(galleryRow, "gallery_items", out items);
+            loadValue(galleryRow, "gallery_bytes", out bytes);
+            loadValue(galleryRow, "gallery_abstract", out galleryAbstract);
+            loadValue(galleryRow, "gallery_description", out galleryDescription);
+            loadValue(galleryRow, "gallery_highlight_id", out highlightId);
+            loadValue(galleryRow, "gallery_hierarchy", out hierarchy);
+            loadValue(galleryRow, "gallery_item", out ownerKey);
+            loadValue(galleryRow, "gallery_level", out galleryLevel);
+            loadValue(galleryRow, "gallery_order", out galleryOrder);
+            loadValue(galleryRow, "app_simple_permissions", out simplePermissions);
+            loadValue(galleryRow, "gallery_application", out galleryApplication);
+
+            itemLoaded(galleryRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader galleryRow)
         {
             loadValue(galleryRow, "gallery_id", out galleryId);
             loadValue(galleryRow, "user_id", out userId);
@@ -976,6 +1036,22 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        protected void loadGalleryIcon(System.Data.Common.DbDataReader galleryRow)
+        {
+            if (!(galleryRow["gallery_item_parent_path"] is DBNull))
+            {
+                highlightItem = new GalleryItem(core, galleryRow);
+            }
+            if (!(galleryRow["gallery_item_uri"] is DBNull))
+            {
+                highlightUri = (string)galleryRow["gallery_item_uri"];
+            }
+            else
+            {
+                highlightUri = null;
+            }
+        }
+
         /// <summary>
         /// Returns a list of sub-galleries
         /// </summary>
@@ -984,10 +1060,15 @@ namespace BoxSocial.Applications.Gallery
 		{
 			List<Gallery> items = new List<Gallery>();
 
-            foreach (DataRow dr in GetGalleryDataRows(core))
+            System.Data.Common.DbDataReader galleryReader = core.Db.ReaderQuery(GetGalleryQuery(core));
+
+            while (galleryReader.Read())
             {
-                items.Add(new Gallery(core, owner, dr, true));
+                items.Add(new Gallery(core, owner, galleryReader, true));
             }
+
+            galleryReader.Close();
+            galleryReader.Dispose();
 
             return items;
 		}
@@ -997,7 +1078,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <returns>Raw data for a list of sub-galleries</returns>
-        protected DataRowCollection GetGalleryDataRows(Core core)
+        protected SelectQuery GetGalleryQuery(Core core)
         {
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
             //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
@@ -1011,7 +1092,7 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("`user_galleries`.`gallery_item_id`", owner.Id);
             query.AddCondition("`user_galleries`.`gallery_item_type_id`", owner.TypeId);
 
-            return core.Db.Query(query).Rows;
+            return query;
         }
 
         /// <summary>
@@ -1899,7 +1980,7 @@ namespace BoxSocial.Applications.Gallery
 
                     //galleryVariableCollection.Parse("U_EDIT", );
 
-                    e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
+                    //e.Core.Display.ParseBbcode(galleryVariableCollection, "ABSTRACT", galleryGallery.GalleryAbstract);
 
                     if (galleryGallery.Info.Likes > 0)
                     {

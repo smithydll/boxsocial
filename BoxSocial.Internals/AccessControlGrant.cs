@@ -155,6 +155,15 @@ namespace BoxSocial.Internals
 
             loadItemInfo(grantRow);
         }
+
+        internal AccessControlGrant(Core core, System.Data.Common.DbDataReader grantRow)
+            : base(core)
+        {
+            this.item = null;
+            ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
+
+            loadItemInfo(grantRow);
+        }
 		
 		internal AccessControlGrant(Core core, IPermissibleItem item, DataRow grantRow)
 			: base(core)
@@ -164,6 +173,15 @@ namespace BoxSocial.Internals
 
             loadItemInfo(grantRow);
 		}
+
+        internal AccessControlGrant(Core core, IPermissibleItem item, System.Data.Common.DbDataReader grantRow)
+            : base(core)
+        {
+            this.item = item;
+            ItemLoad += new ItemLoadHandler(AccessControlGrant_ItemLoad);
+
+            loadItemInfo(grantRow);
+        }
         
         internal AccessControlGrant(Core core, ItemKey primitive, ItemKey itemKey, long permissionId)
             : base(core)
@@ -200,6 +218,17 @@ namespace BoxSocial.Internals
         }
 
         protected override void loadItemInfo(DataRow grantRow)
+        {
+            loadValue(grantRow, "grant_primitive", out primitiveKey);
+            loadValue(grantRow, "grant_item_id", out itemId);
+            loadValue(grantRow, "grant_item_type_id", out itemTypeId);
+            loadValue(grantRow, "grant_permission_id", out permissionId);
+            loadValue(grantRow, "grant_allow", out grantAllow);
+
+            itemLoaded(grantRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader grantRow)
         {
             loadValue(grantRow, "grant_primitive", out primitiveKey);
             loadValue(grantRow, "grant_item_id", out itemId);
@@ -270,14 +299,17 @@ namespace BoxSocial.Internals
                     }
             }
 
-            DataTable grantsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
 
-            List<AccessControlGrant> grants = new List<AccessControlGrant>(grantsTable.Rows.Count);
+            List<AccessControlGrant> grants = new List<AccessControlGrant>(16);
 
-            foreach (DataRow dr in grantsTable.Rows)
+            while (grantsReader.Read())
             {
-                grants.Add(new AccessControlGrant(core, itemDictionary[new ItemKey((long)dr["grant_item_id"], (long)dr["grant_item_type_id"])], dr));
+                grants.Add(new AccessControlGrant(core, itemDictionary[new ItemKey((long)grantsReader["grant_item_id"], (long)grantsReader["grant_item_type_id"])], grantsReader));
             }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 
             return grants;
         }
@@ -309,12 +341,15 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
             sQuery.AddCondition("grant_item_type_id", itemTypeId);
 
-            DataTable grantsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in grantsTable.Rows)
+            while (grantsReader.Read())
             {
-                grants.Add(new AccessControlGrant(core, dr));
+                grants.Add(new AccessControlGrant(core, grantsReader));
             }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 
             return grants;
         }
@@ -332,12 +367,15 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_id", itemKey.Id);
             sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
 
-            DataTable grantsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in grantsTable.Rows)
+            while (grantsReader.Read())
             {
-                grants.Add(new AccessControlGrant(core, dr));
+                grants.Add(new AccessControlGrant(core, grantsReader));
             }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 
             return grants;
         }
@@ -354,13 +392,16 @@ namespace BoxSocial.Internals
 			SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
 			sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
 			sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
-			
-			DataTable grantsTable = core.Db.Query(sQuery);
-			
-			foreach (DataRow dr in grantsTable.Rows)
-			{
-				grants.Add(new AccessControlGrant(core, item, dr));
-			}
+
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
+
+            while (grantsReader.Read())
+            {
+                grants.Add(new AccessControlGrant(core, item, grantsReader));
+            }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 			
 			return grants;
 		}
@@ -379,12 +420,15 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);
 
-            DataTable grantsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in grantsTable.Rows)
+            while (grantsReader.Read())
             {
-                grants.Add(new AccessControlGrant(core, dr));
+                grants.Add(new AccessControlGrant(core, grantsReader));
             }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 
             return grants;
         }
@@ -403,12 +447,15 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);
 
-            DataTable grantsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader grantsReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in grantsTable.Rows)
+            while (grantsReader.Read())
             {
-                grants.Add(new AccessControlGrant(core, item, dr));
+                grants.Add(new AccessControlGrant(core, item, grantsReader));
             }
+
+            grantsReader.Close();
+            grantsReader.Dispose();
 
             return grants;
         }

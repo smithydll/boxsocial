@@ -111,6 +111,20 @@ namespace BoxSocial.Internals
             }
 
             // Show all active sessions
+            SelectQuery query = SessionKey.GetSelectQueryStub(typeof(SessionKey));
+            query.AddCondition(new DataField(typeof(SessionKey), "user_id"), LoggedInMember.Id);
+
+            DataTable sessionsTable = db.Query(query);
+
+            foreach (DataRow sessionRow in sessionsTable.Rows)
+            {
+                SessionKey sessionKey = new SessionKey(core, sessionRow);
+
+                VariableCollection sessionsVariableCollection = template.CreateChild("sessions_list");
+
+                sessionsVariableCollection.Parse("IP", sessionKey.Ip);
+                sessionsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(sessionKey.GetVisit(core.Tz)));
+            }
         }
 
         void AccountSecurity_Save(object sender, EventArgs e)

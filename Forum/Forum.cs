@@ -67,6 +67,8 @@ namespace BoxSocial.Applications.Forum
         private bool isCategory;
         [DataField("forum_topics")]
         private long forumTopics;
+        [DataField("forum_topics_paged")]
+        private long forumTopicsPaged;
         [DataField("forum_posts")]
         private long forumPosts;
         [DataField("forum_last_post_time_ut")]
@@ -193,6 +195,14 @@ namespace BoxSocial.Applications.Forum
             get
             {
                 return forumTopics;
+            }
+        }
+
+        public long TopicsPaged
+        {
+            get
+            {
+                return forumTopicsPaged;
             }
         }
 
@@ -400,26 +410,31 @@ namespace BoxSocial.Applications.Forum
             SelectQuery query = Forum_GetSelectQueryStub(core);
             query.AddCondition("`forum`.`forum_id`", forumId);
 
-            DataTable forumTable = db.Query(query);
+            System.Data.Common.DbDataReader forumReader = db.ReaderQuery(query);
 
-            if (forumTable.Rows.Count == 1)
+            if (forumReader.HasRows)
             {
-                loadItemInfo(forumTable.Rows[0]);
+                forumReader.Read();
+
+                loadItemInfo(forumReader);
+
+                try
+                {
+                    readStatus = new ForumReadStatus(core, forumReader);
+                    readStatusLoaded = true;
+                }
+                catch (InvalidForumReadStatusException)
+                {
+                    readStatus = null;
+                    readStatusLoaded = true;
+                }
+
+                forumReader.Close();
+                forumReader.Dispose();
             }
             else
             {
                 throw new InvalidForumException();
-            }
-
-            try
-            {
-                readStatus = new ForumReadStatus(core, forumTable.Rows[0]);
-                readStatusLoaded = true;
-            }
-            catch (InvalidForumReadStatusException)
-            {
-                readStatus = null;
-                readStatusLoaded = true;
             }
         }
 
@@ -455,12 +470,77 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public Forum(Core core, System.Data.Common.DbDataReader forumDataRow)
+            : this(core, (ForumSettings)null, forumDataRow)
+        {
+        }
+
+        public Forum(Core core, ForumSettings settings, System.Data.Common.DbDataReader forumDataRow)
+            : base(core)
+        {
+            this.settings = settings;
+            ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
+
+            try
+            {
+                loadItemInfo(forumDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumException();
+            }
+
+            try
+            {
+                readStatus = new ForumReadStatus(core, forumDataRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidForumReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
+        }
+
         public Forum(Core core, UserGroup owner, DataRow forumDataRow)
             : this(core, (ForumSettings)null, owner, forumDataRow)
         {
         }
 
+        public Forum(Core core, UserGroup owner, System.Data.Common.DbDataReader forumDataRow)
+            : this(core, (ForumSettings)null, owner, forumDataRow)
+        {
+        }
+
         public Forum(Core core, ForumSettings settings, UserGroup owner, DataRow forumDataRow)
+            : base(core)
+        {
+            this.owner = owner;
+            this.settings = settings;
+            ItemLoad += new ItemLoadHandler(Forum_ItemLoad);
+
+            try
+            {
+                loadItemInfo(forumDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumException();
+            }
+
+            try
+            {
+                readStatus = new ForumReadStatus(core, forumDataRow);
+                readStatusLoaded = true;
+            }
+            catch (InvalidForumReadStatusException)
+            {
+                readStatus = null;
+                readStatusLoaded = true;
+            }
+        }
+
+        public Forum(Core core, ForumSettings settings, UserGroup owner, System.Data.Common.DbDataReader forumDataRow)
             : base(core)
         {
             this.owner = owner;
@@ -498,6 +578,31 @@ namespace BoxSocial.Applications.Forum
             loadValue(forumRow, "forum_locked", out forumLocked);
             loadValue(forumRow, "forum_category", out isCategory);
             loadValue(forumRow, "forum_topics", out forumTopics);
+            loadValue(forumRow, "forum_topics_paged", out forumTopicsPaged);
+            loadValue(forumRow, "forum_posts", out forumPosts);
+            loadValue(forumRow, "forum_last_post_time_ut", out lastPostTimeRaw);
+            loadValue(forumRow, "forum_last_post_id", out lastPostId);
+            loadValue(forumRow, "forum_item", out ownerKey);
+            loadValue(forumRow, "forum_order", out forumOrder);
+            loadValue(forumRow, "forum_level", out forumLevel);
+            loadValue(forumRow, "forum_parents", out parents);
+            loadValue(forumRow, "forum_simple_permissions", out simplePermissions);
+
+            itemLoaded(forumRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader forumRow)
+        {
+            loadValue(forumRow, "forum_id", out forumId);
+            loadValue(forumRow, "forum_parent_id", out parentId);
+            loadValue(forumRow, "forum_title", out forumTitle);
+            loadValue(forumRow, "forum_description", out forumDescription);
+            loadValue(forumRow, "forum_rules", out forumRules);
+            loadValue(forumRow, "forum_locked", out forumLocked);
+            loadValue(forumRow, "forum_category", out isCategory);
+            loadValue(forumRow, "forum_topics", out forumTopics);
+            loadValue(forumRow, "forum_topics_paged", out forumTopicsPaged);
             loadValue(forumRow, "forum_posts", out forumPosts);
             loadValue(forumRow, "forum_last_post_time_ut", out lastPostTimeRaw);
             loadValue(forumRow, "forum_last_post_id", out lastPostId);
@@ -640,19 +745,22 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_parent_id", forumId);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = db.Query(query);
+            System.Data.Common.DbDataReader forumsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in forumsTable.Rows)
+            while (forumsReader.Read())
             {
                 if (Owner is UserGroup)
                 {
-                    forums.Add(new Forum(core, (UserGroup)Owner, dr));
+                    forums.Add(new Forum(core, (UserGroup)Owner, forumsReader));
                 }
                 else
                 {
-                    forums.Add(new Forum(core, dr));
+                    forums.Add(new Forum(core, forumsReader));
                 }
             }
+
+            forumsReader.Close();
+            forumsReader.Dispose();
 
             return forums;
         }
@@ -665,19 +773,22 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader forumsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in forumsTable.Rows)
+            while (forumsReader.Read())
             {
                 if (owner is UserGroup)
                 {
-                    forums.Add(new Forum(core, (UserGroup)owner, dr));
+                    forums.Add(new Forum(core, (UserGroup)owner, forumsReader));
                 }
                 else
                 {
-                    forums.Add(new Forum(core, dr));
+                    forums.Add(new Forum(core, forumsReader));
                 }
             }
+
+            forumsReader.Close();
+            forumsReader.Dispose();
 
             return forums;
         }
@@ -690,19 +801,22 @@ namespace BoxSocial.Applications.Forum
             query.AddCondition("forum_parent_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader forumsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in forumsTable.Rows)
+            while (forumsReader.Read())
             {
                 if (owner is UserGroup)
                 {
-                    forums.Add(new Forum(core, (UserGroup)owner, dr));
+                    forums.Add(new Forum(core, (UserGroup)owner, forumsReader));
                 }
                 else
                 {
-                    forums.Add(new Forum(core, dr));
+                    forums.Add(new Forum(core, forumsReader));
                 }
             }
+
+            forumsReader.Close();
+            forumsReader.Dispose();
 
             return forums;
         }
@@ -719,20 +833,20 @@ namespace BoxSocial.Applications.Forum
 			query.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, parent.Order);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
-            DataTable forumsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader forumsReader = core.Db.ReaderQuery(query);
 
 			bool isFirst = true;
 			long topLevelParent = -1;
-            foreach (DataRow dr in forumsTable.Rows)
+            while (forumsReader.Read())
             {
 				Forum forum;
                 if (parent.Owner is UserGroup)
                 {
-                    forum = new Forum(core, parent.Settings, (UserGroup)parent.Owner, dr);
+                    forum = new Forum(core, parent.Settings, (UserGroup)parent.Owner, forumsReader);
                 }
                 else
                 {
-                    forum = new Forum(core, parent.Settings, dr);
+                    forum = new Forum(core, parent.Settings, forumsReader);
                 }
 				
 				if (isFirst)
@@ -761,6 +875,9 @@ namespace BoxSocial.Applications.Forum
 					}
 				}
             }
+
+            forumsReader.Close();
+            forumsReader.Dispose();
 			
 			return forums;
 		}
@@ -833,12 +950,15 @@ namespace BoxSocial.Applications.Forum
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable topicsTable = db.Query(query);
+            System.Data.Common.DbDataReader topicsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in topicsTable.Rows)
+            while (topicsReader.Read())
             {
-                topics.Add(new ForumTopic(core, this, dr));
+                topics.Add(new ForumTopic(core, this, topicsReader));
             }
+
+            topicsReader.Close();
+            topicsReader.Dispose();
 
             return topics;
         }
@@ -865,12 +985,15 @@ namespace BoxSocial.Applications.Forum
             query.AddSort(SortOrder.Descending, "topic_status");
             query.AddSort(SortOrder.Descending, "topic_last_post_time_ut");
 
-            DataTable topicsTable = db.Query(query);
+            System.Data.Common.DbDataReader topicsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in topicsTable.Rows)
+            while (topicsReader.Read())
             {
-                topics.Add(new ForumTopic(core, this, dr));
+                topics.Add(new ForumTopic(core, this, topicsReader));
             }
+
+            topicsReader.Close();
+            topicsReader.Dispose();
 
             return topics;
         }
@@ -1729,140 +1852,143 @@ namespace BoxSocial.Applications.Forum
 
             if ((settings.AllowTopicsAtRoot && forumId == 0) || forumId > 0)
             {
-                List<ForumTopic> announcements = thisForum.GetAnnouncements();
-                List<ForumTopic> topics = thisForum.GetTopics(page.TopLevelPageNumber, settings.TopicsPerPage);
-                List<ForumTopic> allTopics = new List<ForumTopic>();
-                allTopics.AddRange(announcements);
-                allTopics.AddRange(topics);
-
-                topicsCount -= announcements.Count; // aren't counted in pagination
-
-                core.Template.Parse("ANNOUNCEMENTS", announcements.Count.ToString());
-                //page.template.Parse("TOPICS", topics.Count.ToString());
-
-                // PostId, TopicPost
-                Dictionary<long, TopicPost> topicLastPosts;
-
-                topicLastPosts = TopicPost.GetTopicLastPosts(core, allTopics);
-
-                core.Template.Parse("TOPICS", allTopics.Count.ToString());
-				
-				foreach (ForumTopic topic in allTopics)
+                if (thisForum.TopicsPaged > 0)
                 {
-					core.LoadUserProfile(topic.PosterId);
-				}
+                    List<ForumTopic> announcements = thisForum.GetAnnouncements();
+                    List<ForumTopic> topics = thisForum.GetTopics(page.TopLevelPageNumber, settings.TopicsPerPage);
+                    List<ForumTopic> allTopics = new List<ForumTopic>();
+                    allTopics.AddRange(announcements);
+                    allTopics.AddRange(topics);
 
-                foreach (ForumTopic topic in allTopics)
-                {
-                    VariableCollection topicVariableCollection = core.Template.CreateChild("topic_list");
+                    topicsCount -= announcements.Count; // aren't counted in pagination
 
-                    if (topic.Posts > settings.PostsPerPage)
+                    core.Template.Parse("ANNOUNCEMENTS", announcements.Count.ToString());
+                    //page.template.Parse("TOPICS", topics.Count.ToString());
+
+                    // PostId, TopicPost
+                    Dictionary<long, TopicPost> topicLastPosts;
+
+                    topicLastPosts = TopicPost.GetTopicLastPosts(core, allTopics);
+
+                    core.Template.Parse("TOPICS", allTopics.Count.ToString());
+
+                    foreach (ForumTopic topic in allTopics)
                     {
-                        core.Display.ParseMinimalPagination(topicVariableCollection, "PAGINATION", topic.Uri, 0, settings.PostsPerPage, topic.Posts);
+                        core.LoadUserProfile(topic.PosterId);
                     }
-                    else
+
+                    foreach (ForumTopic topic in allTopics)
                     {
-                        topicVariableCollection.Parse("PAGINATION", "FALSE");
+                        VariableCollection topicVariableCollection = core.Template.CreateChild("topic_list");
+
+                        if (topic.Posts > settings.PostsPerPage)
+                        {
+                            core.Display.ParseMinimalPagination(topicVariableCollection, "PAGINATION", topic.Uri, 0, settings.PostsPerPage, topic.Posts);
+                        }
+                        else
+                        {
+                            topicVariableCollection.Parse("PAGINATION", "FALSE");
+                        }
+
+                        topicVariableCollection.Parse("TITLE", topic.Title);
+                        topicVariableCollection.Parse("URI", topic.Uri);
+                        topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
+                        topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
+                        topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
+                        topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
+                        topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
+
+                        if (topicLastPosts.ContainsKey(topic.LastPostId))
+                        {
+                            topicVariableCollection.Parse("LAST_POST_URI", topicLastPosts[topic.LastPostId].Uri);
+                            topicVariableCollection.Parse("LAST_POST_TITLE", topicLastPosts[topic.LastPostId].Title);
+                            core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
+                                topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
+                        }
+                        else
+                        {
+                            topicVariableCollection.Parse("LAST_POST", "No posts");
+                        }
+
+                        switch (topic.Status)
+                        {
+                            case TopicStates.Normal:
+                                if (topic.IsRead)
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_NORMAL_READ_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_NORMAL_READ_UNLOCKED", "TRUE");
+                                    }
+                                }
+                                else
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_NORMAL_UNREAD_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_NORMAL_UNREAD_UNLOCKED", "TRUE");
+                                    }
+                                }
+                                break;
+                            case TopicStates.Sticky:
+                                if (topic.IsRead)
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_STICKY_READ_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_STICKY_READ_UNLOCKED", "TRUE");
+                                    }
+                                }
+                                else
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_STICKY_UNREAD_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_STICKY_UNREAD_UNLOCKED", "TRUE");
+                                    }
+                                }
+
+                                break;
+                            case TopicStates.Announcement:
+                            case TopicStates.Global:
+                                if (topic.IsRead)
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_UNLOCKED", "TRUE");
+                                    }
+                                }
+                                else
+                                {
+                                    if (topic.IsLocked)
+                                    {
+                                        topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_LOCKED", "TRUE");
+                                    }
+                                    else
+                                    {
+                                        topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_UNLOCKED", "TRUE");
+                                    }
+                                }
+
+                                break;
+                        }
                     }
-
-                    topicVariableCollection.Parse("TITLE", topic.Title);
-                    topicVariableCollection.Parse("URI", topic.Uri);
-                    topicVariableCollection.Parse("VIEWS", topic.Views.ToString());
-                    topicVariableCollection.Parse("REPLIES", topic.Posts.ToString());
-					topicVariableCollection.Parse("DATE", core.Tz.DateTimeToString(topic.GetCreatedDate(core.Tz)));
-					topicVariableCollection.Parse("USERNAME", core.PrimitiveCache[topic.PosterId].DisplayName);
-					topicVariableCollection.Parse("U_POSTER", core.PrimitiveCache[topic.PosterId].Uri);
-
-                    if (topicLastPosts.ContainsKey(topic.LastPostId))
-                    {
-                        topicVariableCollection.Parse("LAST_POST_URI", topicLastPosts[topic.LastPostId].Uri);
-                        topicVariableCollection.Parse("LAST_POST_TITLE", topicLastPosts[topic.LastPostId].Title);
-                        core.Display.ParseBbcode(topicVariableCollection, "LAST_POST", string.Format("[iurl={0}]{1}[/iurl]\n{2}",
-                            topicLastPosts[topic.LastPostId].Uri, Functions.TrimStringToWord(topicLastPosts[topic.LastPostId].Title, 20), core.Tz.DateTimeToString(topicLastPosts[topic.LastPostId].GetCreatedDate(core.Tz))));
-                    }
-                    else
-                    {
-                        topicVariableCollection.Parse("LAST_POST", "No posts");
-                    }
-					
-					switch (topic.Status)
-					{
-						case TopicStates.Normal:
-							if (topic.IsRead)
-		                    {
-								if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_NORMAL_READ_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_NORMAL_READ_UNLOCKED", "TRUE");
-								}
-		                    }
-		                    else
-		                    {
-		                        if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_NORMAL_UNREAD_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_NORMAL_UNREAD_UNLOCKED", "TRUE");
-								}
-		                    }
-							break;
-						case TopicStates.Sticky:
-							if (topic.IsRead)
-		                    {
-								if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_STICKY_READ_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_STICKY_READ_UNLOCKED", "TRUE");
-								}
-		                    }
-		                    else
-		                    {
-		                        if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_STICKY_UNREAD_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_STICKY_UNREAD_UNLOCKED", "TRUE");
-								}
-		                    }
-
-							break;
-						case TopicStates.Announcement:
-						case TopicStates.Global:
-							if (topic.IsRead)
-		                    {
-								if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_ANNOUNCEMENT_READ_UNLOCKED", "TRUE");
-								}
-		                    }
-		                    else
-		                    {
-		                        if (topic.IsLocked)
-								{
-									topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_LOCKED", "TRUE");
-								}
-								else
-								{
-									topicVariableCollection.Parse("IS_ANNOUNCEMENT_UNREAD_UNLOCKED", "TRUE");
-								}
-		                    }
-
-							break;
-					}
                 }
 
                 if (!thisForum.IsCategory)
@@ -1872,9 +1998,9 @@ namespace BoxSocial.Applications.Forum
                         core.Template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);
                     }
                 }
-            }
 
-            core.Display.ParsePagination(thisForum.Uri, settings.TopicsPerPage, topicsCount);
+                core.Display.ParsePagination(thisForum.Uri, settings.TopicsPerPage, thisForum.TopicsPaged);
+            }
 
             List<string[]> breadCrumbParts = new List<string[]>();
             breadCrumbParts.Add(new string[] { "forum", core.Prose.GetString("FORUM") });

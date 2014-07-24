@@ -111,7 +111,34 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Emoticon(Core core, System.Data.Common.DbDataReader emoticonRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Emoticon_ItemLoad);
+
+            try
+            {
+                loadItemInfo(emoticonRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidEmoticonException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow emoticonRow)
+        {
+            emoticonId = (long)emoticonRow["emoticon_id"];
+            loadValue(emoticonRow, "emoticon_title", out title);
+            loadValue(emoticonRow, "emoticon_code", out code);
+            loadValue(emoticonRow, "emoticon_file", out file);
+            loadValue(emoticonRow, "emoticon_category", out category);
+
+            itemLoaded(emoticonRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader emoticonRow)
         {
             emoticonId = (long)emoticonRow["emoticon_id"];
             loadValue(emoticonRow, "emoticon_title", out title);

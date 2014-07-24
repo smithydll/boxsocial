@@ -478,21 +478,28 @@ namespace BoxSocial.Internals
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);
 
-            DataTable pageTable = db.Query(query);
+            System.Data.Common.DbDataReader pageReader = db.ReaderQuery(query);
 
-            if (pageTable.Rows.Count == 1)
+            if (pageReader.HasRows)
             {
-                loadItemInfo(pageTable.Rows[0]);
+                pageReader.Read();
+
+                loadItemInfo(pageReader);
                 try
                 {
-                    loadLicenseInfo(pageTable.Rows[0]);
+                    loadLicenseInfo(pageReader);
                 }
                 catch (InvalidLicenseException)
                 {
                 }
+                pageReader.Close();
+                pageReader.Dispose();
             }
             else
             {
+                pageReader.Close();
+                pageReader.Dispose();
+
                 throw new PageNotFoundException();
             }
         }
@@ -601,6 +608,16 @@ namespace BoxSocial.Internals
             loadItemInfo(pageRow);
         }
 
+        public Page(Core core, Primitive owner, System.Data.Common.DbDataReader pageRow)
+            : base(core)
+        {
+            this.owner = owner;
+
+            ItemLoad += new ItemLoadHandler(Page_ItemLoad);
+
+            loadItemInfo(pageRow);
+        }
+
         private void Page_ItemLoad()
         {
             OnCommentPosted += new CommentHandler(Page_CommentPosted);
@@ -664,7 +681,43 @@ namespace BoxSocial.Internals
             core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
+        private void loadItemInfo(System.Data.Common.DbDataReader pageRow)
+        {
+            loadValue(pageRow, "page_id", out pageId);
+            loadValue(pageRow, "user_id", out creatorId);
+            loadValue(pageRow, "page_slug", out slug);
+            loadValue(pageRow, "page_title", out title);
+            loadValue(pageRow, "page_text", out body);
+            loadValue(pageRow, "page_text_cache", out bodyCache);
+            loadValue(pageRow, "page_license", out licenseId);
+            loadValue(pageRow, "page_views", out views);
+            loadValue(pageRow, "page_status", out status);
+            loadValue(pageRow, "page_ip", out ipRaw);
+            loadValue(pageRow, "page_ip_proxy", out ipProxyRaw);
+            loadValue(pageRow, "page_parent_path", out parentPath);
+            loadValue(pageRow, "page_order", out order);
+            loadValue(pageRow, "page_parent_id", out parentId);
+            loadValue(pageRow, "page_list_only", out listOnly);
+            loadValue(pageRow, "page_application", out applicationId);
+            loadValue(pageRow, "page_icon", out pageIcon);
+            loadValue(pageRow, "page_date_ut", out createdRaw);
+            loadValue(pageRow, "page_modified_ut", out modifiedRaw);
+            loadValue(pageRow, "page_classification", out classificationId);
+            loadValue(pageRow, "page_level", out pageLevel);
+            loadValue(pageRow, "page_hierarchy", out hierarchy);
+            loadValue(pageRow, "page_item", out ownerKey);
+            loadValue(pageRow, "page_simple_permissions", out simplePermissions);
+
+            itemLoaded(pageRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void loadLicenseInfo(DataRow pageRow)
+        {
+            license = new ContentLicense(core, pageRow);
+        }
+
+        private void loadLicenseInfo(System.Data.Common.DbDataReader pageRow)
         {
             license = new ContentLicense(core, pageRow);
         }

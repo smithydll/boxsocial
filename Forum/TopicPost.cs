@@ -229,6 +229,21 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public TopicPost(Core core, System.Data.Common.DbDataReader postRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Post_ItemLoad);
+
+            try
+            {
+                loadItemInfo(postRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPostException();
+            }
+        }
+
         public TopicPost(Core core, ForumTopic topic, DataRow postRow)
             : base(core)
         {
@@ -246,7 +261,42 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public TopicPost(Core core, ForumTopic topic, System.Data.Common.DbDataReader postRow)
+            : base(core)
+        {
+            this.topic = topic;
+
+            ItemLoad += new ItemLoadHandler(Post_ItemLoad);
+
+            try
+            {
+                loadItemInfo(postRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPostException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow postRow)
+        {
+            loadValue(postRow, "post_id", out postId);
+            loadValue(postRow, "topic_id", out topicId);
+            loadValue(postRow, "forum_id", out forumId);
+            loadValue(postRow, "user_id", out userId);
+            loadValue(postRow, "post_title", out postTitle);
+            loadValue(postRow, "post_text", out postText);
+            loadValue(postRow, "post_time_ut", out createdRaw);
+            loadValue(postRow, "post_modified_ut", out modifiedRaw);
+            loadValue(postRow, "post_modified_count", out modifiedCount);
+            loadValue(postRow, "post_modified_user_id", out modifiedUserId);
+            loadValue(postRow, "post_ip", out postIp);
+
+            itemLoaded(postRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader postRow)
         {
             loadValue(postRow, "post_id", out postId);
             loadValue(postRow, "topic_id", out topicId);
@@ -298,17 +348,20 @@ namespace BoxSocial.Applications.Forum
                 SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, topicLastPostIds);
 
-                DataTable postsTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader postsReader = core.Db.ReaderQuery(query);
 
                 List<long> posterIds = new List<long>();
 
-                foreach (DataRow dr in postsTable.Rows)
+                while(postsReader.Read())
                 {
-                    long postId = (long)dr["post_id"];
-                    TopicPost tp = new TopicPost(core, reverseLookup[postId], dr);
+                    long postId = (long)postsReader["post_id"];
+                    TopicPost tp = new TopicPost(core, reverseLookup[postId], postsReader);
                     posterIds.Add(tp.UserId);
                     posts.Add(tp.Id, tp);
                 }
+
+                postsReader.Close();
+                postsReader.Dispose();
 
                 core.LoadUserProfiles(posterIds);
             }
@@ -325,16 +378,19 @@ namespace BoxSocial.Applications.Forum
                 SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, postIds);
 
-                DataTable postsTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader postsReader = core.Db.ReaderQuery(query);
 
                 List<long> posterIds = new List<long>();
 
-                foreach (DataRow dr in postsTable.Rows)
+                while (postsReader.Read())
                 {
-                    TopicPost tp = new TopicPost(core, dr);
+                    TopicPost tp = new TopicPost(core, postsReader);
                     posterIds.Add(tp.UserId);
                     posts.Add(tp.Id, tp);
                 }
+
+                postsReader.Close();
+                postsReader.Dispose();
 
                 //core.LoadUserProfiles(posterIds);
             }

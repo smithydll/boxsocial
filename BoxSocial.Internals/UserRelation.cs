@@ -67,7 +67,26 @@ namespace BoxSocial.Internals
             loadItemInfo(userRow);
         }
 
+        public UserRelation(Core core, System.Data.Common.DbDataReader userRow, UserLoadOptions loadOptions)
+            : base(core, userRow, loadOptions)
+        {
+            loadItemInfo(userRow);
+        }
+
         protected override void loadItemInfo(DataRow userRow)
+        {
+            loadValue(userRow, "relation_id", out relationId);
+            loadValue(userRow, "relation_me", out relationMeId);
+            loadValue(userRow, "relation_you", out userId);
+            loadValue(userRow, "relation_order", out relationOrder);
+            loadValue(userRow, "relation_type", out relationType);
+            loadValue(userRow, "relation_time_ut", out relationTime);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader userRow)
         {
             loadValue(userRow, "relation_id", out relationId);
             loadValue(userRow, "relation_me", out relationMeId);

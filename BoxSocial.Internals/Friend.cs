@@ -39,6 +39,11 @@ namespace BoxSocial.Internals
 		{
 		}
 
+        public Friend(Core core, System.Data.Common.DbDataReader userRow, UserLoadOptions loadOptions)
+            : base(core, userRow, loadOptions)
+        {
+        }
+
         public static ItemKey FriendsGroupKey
         {
             get

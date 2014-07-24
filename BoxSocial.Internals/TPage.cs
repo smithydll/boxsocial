@@ -257,6 +257,8 @@ namespace BoxSocial.Internals
 
             pageTitle = core.Settings.SiteTitle + (!string.IsNullOrEmpty(core.Settings.SiteSlogan) ? " • " + core.Settings.SiteSlogan : string.Empty);
 
+            long loadStart = initTimer.ElapsedTicks;
+
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
 
@@ -278,10 +280,15 @@ namespace BoxSocial.Internals
                 }
             }
 
+            Stopwatch httpTimer = new Stopwatch();
+            httpTimer.Start();
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
+            httpTimer.Stop();
+#if DEBUG
+            //HttpContext.Current.Response.Write(string.Format("<!-- section A in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
+#endif
 
-            long loadStart = initTimer.ElapsedTicks;
             tz = new UnixTime(core, UnixTime.UTC_CODE);
 
             core.Session = session;
@@ -309,14 +316,14 @@ namespace BoxSocial.Internals
             core.Prose = new Prose();
             core.Prose.Initialise(core, "en");
 
-            List<string> asmNames = core.GetLoadedAssemblyNames();
-            foreach (string asm in asmNames)
+            //List<string> asmNames = core.GetLoadedAssemblyNames();
+            foreach (string asm in BoxSocial.Internals.Application.AssemblyNames.Keys)
             {
                 core.Prose.AddApplication(asm);
             }
 
-            List<Assembly> asms = core.GetLoadedAssemblies();
-            foreach (Assembly asm in asms)
+            //List<Assembly> asms = core.GetLoadedAssemblies();
+            foreach (Assembly asm in BoxSocial.Internals.Application.LoadedAssemblies.Values)
             {
                 template.AddPageAssembly(asm);
             }
@@ -361,7 +368,7 @@ namespace BoxSocial.Internals
                 offset = new long[] { 0 };
             }
 
-           if (session != null && session.SignedIn && core.IsMobile)
+           if (session != null && session.SignedIn && core.IsMobile && (!core.IsAjax))
            {
                 List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, core.Session.LoggedInMember);
 
@@ -420,11 +427,11 @@ namespace BoxSocial.Internals
                 {
                     if (core.LoggedInMemberId <= 2 && core.LoggedInMemberId != 0)
                     {
-                        HttpContext.Current.Response.Write(string.Format("\r\n<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
+                        HttpContext.Current.Response.Write(string.Format("\r\n<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->\r\n", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
 #if DEBUG
                         // We will write it out as a comment to preserve html validation
-                        HttpContext.Current.Response.Write(string.Format("\r\n<!-- {0} seconds, {1} parsed (BBcode) -->", core.Bbcode.GetBbcodeTime(), core.Bbcode.GetParseCount()));
-                        HttpContext.Current.Response.Write(string.Format("\r\n<!-- {0} -->", db.QueryListToString()));
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} seconds, {1} parsed (BBcode) -->\r\n", core.Bbcode.GetBbcodeTime(), core.Bbcode.GetParseCount()));
+                        HttpContext.Current.Response.Write(string.Format("<!-- {0} -->", db.QueryListToString()));
 #endif
                     }
                 }

@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -134,49 +135,12 @@ namespace BoxSocial.Internals
             }
             if (!typesAccessed.ContainsKey(itemKey.TypeId))
             {
-                // We need to make sure that the application is loaded
-                if (itemKey.ApplicationId > 0)
-                {
-                    core.ItemCache.RegisterType(typeof(ApplicationEntry));
-
-                    ItemKey applicationKey = new ItemKey(itemKey.ApplicationId, typeof(ApplicationEntry));
-                    core.ItemCache.RequestItem(applicationKey);
-
-                    ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
-
-                    typesAccessed.Add(itemKey.TypeId, ae.Assembly.GetType(itemKey.TypeString));
-                }
-                else
-                {
-                    try
-                    {
-                        typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.TypeString));
-                    }
-                    catch
-                    {
-                        HttpContext.Current.Response.Write(itemKey.ToString());
-                        HttpContext.Current.Response.End();
-                    }
-                }
+                typesAccessed.Add(itemKey.TypeId, item.GetType());
             }
 
             if (!(itemsCached.ContainsKey(itemKey)))
             {
                 itemsCached.Add(itemKey, item);
-
-                if (itemKey.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
-                {
-                    ApplicationEntry ae = (ApplicationEntry)item;
-
-                    /* The Prose should auto load because it is lightweight and so important */
-                    if (ae.Id > 0)
-                    {
-                        if (core.Prose != null)
-                        {
-                            core.Prose.AddApplication(ae.Key);
-                        }
-                    }
-                }
             }
 
             Type typeToGet;
@@ -290,6 +254,36 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query;
 
+#if DEBUG
+                Stopwatch timer = new Stopwatch();
+                timer.Start();
+#endif
+                bool dataReader = false;
+
+                ConstructorInfo[] constructors = typeToGet.GetConstructors();
+
+                // temporary
+                foreach (ConstructorInfo constructor in constructors)
+                {
+                    ParameterInfo[] parameters = constructor.GetParameters();
+                    if (parameters.Length >= 2)
+                    {
+                        if (parameters[1].ParameterType == typeof(System.Data.Common.DbDataReader))
+                        {
+                            dataReader = true;
+                            break;
+                        }
+                    }
+                }
+                // end temporary
+#if DEBUG
+                timer.Stop();
+                if (HttpContext.Current != null)
+                {
+                    //HttpContext.Current.Response.Write(string.Format("<!-- Constructor {1} found in {0} -->\r\n", timer.ElapsedTicks / 10000000.0, typeToGet.Name));
+                }
+#endif
+
                 if (typeToGet.GetMethod(typeToGet.Name + "_GetSelectQueryStub", new Type[] { typeof(Core) }) != null)
                 {
                     query = (SelectQuery)typeToGet.InvokeMember(typeToGet.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }); //GetSelectQueryStub(typeToGet);
@@ -305,15 +299,34 @@ namespace BoxSocial.Internals
 
                 query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetPrimaryKey(typeToGet), ConditionEquality.In, itemId);
 
-                DataTable itemsTable = db.Query(query);
-
-                foreach (DataRow dr in itemsTable.Rows)
+                if (dataReader)
                 {
-                    // this may seem counter intuitive, but the items self-cache through the RegisterItem(NumberedItem) method
-                    NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, dr }) as NumberedItem;
+                    System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
 
-                    NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
-                    batchedItemIds.Remove(loadedId);
+                    while (reader.Read())
+                    {
+                        // this may seem counter intuitive, but the items self-cache through the RegisterItem(NumberedItem) method
+                        NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, reader }) as NumberedItem;
+
+                        NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
+                        batchedItemIds.Remove(loadedId);
+                    }
+
+                    reader.Close();
+                    reader.Dispose();
+                }
+                else
+                {
+                    DataTable itemsTable = db.Query(query);
+
+                    foreach (DataRow dr in itemsTable.Rows)
+                    {
+                        // this may seem counter intuitive, but the items self-cache through the RegisterItem(NumberedItem) method
+                        NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, dr }) as NumberedItem;
+
+                        NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
+                        batchedItemIds.Remove(loadedId);
+                    }
                 }
 
                 if (itemsPersisted != null)

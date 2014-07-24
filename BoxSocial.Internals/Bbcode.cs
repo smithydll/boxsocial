@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
 
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- BBcode initialised in : " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
+                //HttpContext.Current.Response.Write("<!-- BBcode initialised in : " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
 #endif
         }
@@ -684,9 +684,15 @@ namespace BoxSocial.Internals
             return output.Trim(new char[] { '\n' });
         }
 
+        Regex urlRegex = null;
         public string ParseUrls(string input)
         {
-            input = Regex.Replace(input, "(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", "$1[url]$2[/url]", RegexOptions.IgnoreCase);
+            if (urlRegex == null)
+            {
+                urlRegex = new Regex("(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+            }
+            
+            input = urlRegex.Replace(input, "$1[url]$2[/url]");
 
             return input;
         }

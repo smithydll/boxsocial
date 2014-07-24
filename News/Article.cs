@@ -171,7 +171,36 @@ namespace BoxSocial.Applications.News
 			}
 		}
 
+        public Article(Core core, System.Data.Common.DbDataReader articleDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Article_ItemLoad);
+
+            try
+            {
+                loadItemInfo(articleDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidArticleException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow articleRow)
+        {
+            loadValue(articleRow, "article_id", out articleId);
+            loadValue(articleRow, "user_id", out userId);
+            loadValue(articleRow, "article_item", out ownerKey);
+            loadValue(articleRow, "article_time_ut", out articleTime);
+            loadValue(articleRow, "article_subject", out articleSubject);
+            loadValue(articleRow, "article_body", out articleBody);
+            loadValue(articleRow, "article_icon_item_id", out newsIconId);
+
+            itemLoaded(articleRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader articleRow)
         {
             loadValue(articleRow, "article_id", out articleId);
             loadValue(articleRow, "user_id", out userId);

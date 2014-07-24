@@ -834,7 +834,89 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserInfo(Core core, System.Data.Common.DbDataReader memberRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserInfo_ItemLoad);
+
+            try
+            {
+                loadItemInfo(memberRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow userRow)
+        {
+            loadValue(userRow, "user_id", out userId);
+            loadValue(userRow, "user_name", out userName);
+            loadValue(userRow, "user_reg_ip", out registrationIp);
+            loadValue(userRow, "user_password", out userPassword);
+            loadValue(userRow, "user_alternate_email", out primaryEmail);
+            loadValue(userRow, "user_time_zone", out timeZoneCode);
+            loadValue(userRow, "user_language", out language);
+            loadValue(userRow, "user_active", out userActivated);
+            loadValue(userRow, "user_activate_code", out activationCode);
+            loadValue(userRow, "user_name_display", out userDisplayName);
+            loadValue(userRow, "user_live_messenger", out contactLiveMessenger);
+            loadValue(userRow, "user_yahoo_messenger", out contactYahooMessenger);
+            loadValue(userRow, "user_jabber_address", out contactXmpp);
+            loadValue(userRow, "user_home_page", out profileHomepage);
+            loadValue(userRow, "user_blog_subscriptions", out blogSubscriptions);
+            loadValue(userRow, "user_icon", out displayPictureId);
+            loadValue(userRow, "user_cover", out coverPhotoId);
+            loadValue(userRow, "user_auto_login_id", out autoLoginId);
+            loadValue(userRow, "user_friends", out friends);
+            loadValue(userRow, "user_family", out family);
+            loadValue(userRow, "user_block", out blocked);
+            loadValue(userRow, "user_show_bbcode", out showBbcode);
+            loadValue(userRow, "user_users_blocked", out usersBlocked);
+            loadValue(userRow, "user_gallery_items", out galleryItems);
+            loadValue(userRow, "user_show_custom_styles", out showCustomStyles);
+            loadValue(userRow, "user_email_notifications", out emailNotifications);
+            loadValue(userRow, "user_bytes", out bytes);
+            loadValue(userRow, "user_bytes_month", out bytesMonth);
+            loadValue(userRow, "user_subscription_expirary", out subscriptionEndDate);
+            loadValue(userRow, "user_month_start", out bytesMonthStartDate);
+            loadValue(userRow, "user_reg_date_ut", out registrationDateRaw);
+            loadValue(userRow, "user_last_visit_ut", out lastVisitDateRaw);
+            loadValue(userRow, "user_status_messages", out userStatusMessages);
+            loadValue(userRow, "user_unread_notifications", out userUnreadNotifications);
+            loadValue(userRow, "user_unseen_mail", out userUnseenMail);
+            loadValue(userRow, "user_new_password", out userNewPassword);
+            loadValue(userRow, "user_subscription_level", out userSubscriptionLevel);
+            loadValue(userRow, "user_subscriptions", out userSubscriptions);
+            loadValue(userRow, "user_analytics_code", out analyticsCode);
+            loadValue(userRow, "user_invites", out userInvites);
+            loadValue(userRow, "user_twitter_user_name", out userTwitterUserName);
+            loadValue(userRow, "user_twitter_token", out userTwitterToken);
+            loadValue(userRow, "user_twitter_token_secret", out userTwitterTokenSecret);
+            loadValue(userRow, "user_twitter_syndicate", out userTwitterSyndicate);
+            loadValue(userRow, "user_twitter_authenticated", out userTwitterAthenticated);
+            loadValue(userRow, "user_facebook_user_id", out userFacebookUserId);
+            loadValue(userRow, "user_facebook_code", out userFacebookCode);
+            loadValue(userRow, "user_facebook_access_token", out userFacebookAccessToken);
+            loadValue(userRow, "user_facebook_expires_ut", out userFacebookExpires);
+            loadValue(userRow, "user_facebook_syndicate", out userFacebookSyndicate);
+            loadValue(userRow, "user_facebook_authenticated", out userFacebookAthenticated);
+            loadValue(userRow, "user_facebook_share_permissions", out userFacebookSharePermissions);
+            loadValue(userRow, "user_tumblr_user_name", out userTumblrUserName);
+            loadValue(userRow, "user_tumblr_hostname", out userTumblrHostname);
+            loadValue(userRow, "user_tumblr_token", out userTumblrToken);
+            loadValue(userRow, "user_tumblr_token_secret", out userTumblrTokenSecret);
+            loadValue(userRow, "user_tumblr_syndicate", out userTumblrSyndicate);
+            loadValue(userRow, "user_tumblr_authenticated", out userTumblrAthenticated);
+            loadValue(userRow, "user_two_factor_auth_key", out twoFactorAuthKey);
+            loadValue(userRow, "user_two_factor_auth_verified", out twoFactorAuthVerified);
+
+            itemLoaded(userRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader userRow)
         {
             loadValue(userRow, "user_id", out userId);
             loadValue(userRow, "user_name", out userName);

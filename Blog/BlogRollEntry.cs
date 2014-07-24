@@ -135,6 +135,38 @@ namespace BoxSocial.Applications.Blog
             loadItemInfo(blogRollRow);
         }
 
+        public BlogRollEntry(Core core, System.Data.Common.DbDataReader blogRollRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(BlogRollEntry_ItemLoad);
+
+            loadItemInfo(blogRollRow);
+        }
+
+        protected override void loadItemInfo(DataRow linkRow)
+        {
+            loadValue(linkRow, "entry_id", out blogRollEntryId);
+            loadValue(linkRow, "user_id", out blogId);
+            loadValue(linkRow, "entry_user_id", out userId);
+            loadValue(linkRow, "entry_uri", out uri);
+            loadValue(linkRow, "entry_title", out title);
+
+            itemLoaded(linkRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader linkRow)
+        {
+            loadValue(linkRow, "entry_id", out blogRollEntryId);
+            loadValue(linkRow, "user_id", out blogId);
+            loadValue(linkRow, "entry_user_id", out userId);
+            loadValue(linkRow, "entry_uri", out uri);
+            loadValue(linkRow, "entry_title", out title);
+
+            itemLoaded(linkRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void BlogRollEntry_ItemLoad()
         {
             core.LoadUserProfile(UserId);

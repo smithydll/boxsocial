@@ -82,15 +82,25 @@ namespace BoxSocial.IO
             ErrorList = new StringBuilder();
         }
 
-        private void PushQuery(string query)
+        private void PushQuery(string query, double time)
         {
-            //QueryList.Push(QueryList.Count + ":\r\n" + query + "\r\n" + Environment.StackTrace + "\r\n--------------------\r\n");
-            QueryList.Push(query);
+#if DEBUG
+            string[] stacktrace = Environment.StackTrace.Split(new char[] { '\n' });
+            if (stacktrace.Length > 7)
+            {
+                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n\r\n" + stacktrace[4].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[5].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[6].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[7].TrimEnd(new char[] { '\r' }) + "\r\n--------------------\r\n");
+            }
+            else
+            {
+                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n--------------------\r\n");
+            }
+            //QueryList.Push(query);
 
             if (QueryList.Count > 100)
             {
                 QueryList.Pop();
             }
+#endif
         }
 
         public string QueryListToString()
@@ -122,33 +132,40 @@ namespace BoxSocial.IO
 
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
-            PushQuery(sqlquery);
 
             Connect();
 
-            DataTable resultTable;
+            DataTable resultTable = new DataTable();
             try
             {
-                PushQuery(sqlConnection.State.ToString());
-                //PushQuery(string.Empty);
-                DataSet resultSet = new DataSet();
+                PushQuery(sqlConnection.State.ToString(), 0.0);
+                
+                //DataSet resultSet = new DataSet();
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
-                dataAdapter.Fill(resultSet);
+                long qt = timer.ElapsedTicks;
+                PushQuery("Query", qt / 10000000.0);
+                //dataAdapter.Fill(resultSet);
+                System.Data.Common.DbDataReader resultReader = dataAdapter.SelectCommand.ExecuteReader();
+                resultTable.Load(resultReader);
+                resultReader.Close();
+                resultReader.Dispose();
+                PushQuery("Fill", (timer.ElapsedTicks - qt) / 10000000.0);
                 dataAdapter.SelectCommand.Dispose();
                 dataAdapter.Dispose();
 
-                resultTable = resultSet.Tables[0];
+                //resultTable = resultSet.Tables[0];
 
                 timer.Stop();
-                queryTime += timer.ElapsedTicks;
+                queryTime += qt;
+                PushQuery(sqlquery, timer.ElapsedTicks / 10000000.0);
 
                 return resultTable;
             }
             catch (System.Exception ex)
             {
+                PushQuery(sqlquery, 0.0);
                 throw new System.Exception(ex.ToString());
-                //return new DataTable();
             }
         }
 
@@ -160,7 +177,6 @@ namespace BoxSocial.IO
 
             queryCount++;
             sqlquery = sqlquery.Replace("\\", "\\\\");
-            PushQuery(sqlquery);
 
             Connect();
 
@@ -172,6 +188,7 @@ namespace BoxSocial.IO
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;
+            PushQuery(sqlquery, timer.ElapsedTicks / 10000000.0);
 
             return resultReader;
         }
@@ -185,6 +202,12 @@ namespace BoxSocial.IO
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;
+#if DEBUG
+            if (HttpContext.Current != null)
+            {
+                //HttpContext.Current.Response.Write(string.Format("<!-- Query rendered in {0} seconds ({1}) -->\r\n", timer.ElapsedTicks / 10000000.0, query.Tables[0]));
+            }
+#endif
 
             return SelectQuery(q);
         }
@@ -219,7 +242,6 @@ namespace BoxSocial.IO
 
             int rowsAffected = 0;
             queryCount++;
-            PushQuery(sqlquery);
 
             Connect();
 
@@ -232,7 +254,7 @@ namespace BoxSocial.IO
             try
             {
                 sqlCommand.CommandText = sqlquery;
-                PushQuery(sqlConnection.State.ToString());
+                PushQuery(sqlConnection.State.ToString(), 0.0);
                 rowsAffected = sqlCommand.ExecuteNonQuery();
             }
             catch (System.Exception ex)
@@ -262,6 +284,7 @@ namespace BoxSocial.IO
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;
+            PushQuery(sqlquery, timer.ElapsedTicks / 10000000.0);
 
             if (sqlquery.StartsWith("INSERT INTO"))
             {
@@ -286,7 +309,7 @@ namespace BoxSocial.IO
                 sqlCommand.Transaction = sqlTransaction;
                 inTransaction = true;
 
-                PushQuery("BEGIN TRANSACTION");
+                PushQuery("BEGIN TRANSACTION", 0.0);
             }
         }
 
@@ -294,7 +317,7 @@ namespace BoxSocial.IO
         {
             if (inTransaction)
             {
-                PushQuery("COMMIT TRANSACTION");
+                PushQuery("COMMIT TRANSACTION", 0.0);
                 inTransaction = false;
                 try
                 {

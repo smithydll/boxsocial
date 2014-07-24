@@ -50,7 +50,7 @@ namespace BoxSocial.Internals
     {
         [DataField("session_id", DataFieldKeys.Primary)]
         private long sessionId;
-        [DataField("user_id")]
+        [DataField("user_id", DataFieldKeys.Index)]
         private long userId;
         [DataFieldKey(DataFieldKeys.Index, "i_sid_ip")]
         [DataField("session_string", DataFieldKeys.Index, 32)]
@@ -1026,15 +1026,24 @@ namespace BoxSocial.Internals
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_sessions", "user_id"));
                 query.AddCondition("session_string", sessionId);
 
-                DataTable userSessionTable = db.Query(query);
+                System.Data.Common.DbDataReader userSessionReader = db.ReaderQuery(query);
 
                 //
                 // Did the session exist in the DB?
                 //
-                if (userSessionTable.Rows.Count == 1)
+                if (userSessionReader.HasRows)
                 {
-                    DataRow userSessionRow = userSessionTable.Rows[0];
-                    loggedInMember = new User(core, userSessionRow, UserLoadOptions.Info);
+                    userSessionReader.Read();
+                    //DataRow userSessionRow = userSessionTable.Rows[0];
+                    loggedInMember = new User(core, userSessionReader, UserLoadOptions.Info);
+
+                    sbyte sessionSignedIn = (sbyte)userSessionReader["session_signed_in"];
+                    long sessionTimeUt = (long)userSessionReader["session_time_ut"];
+                    string sessionIp = (string)userSessionReader["session_ip"];
+
+                    userSessionReader.Close();
+                    userSessionReader.Dispose();
+
                     core.Hyperlink.Sid = sessionId;
 
                     if (loggedInMember.UserId != 0)
@@ -1042,7 +1051,7 @@ namespace BoxSocial.Internals
                         isLoggedIn = true;
                         if (loggedInMember.UserInfo.TwoFactorAuthVerified)
                         {
-                            signInState = (SessionSignInState)(sbyte)userSessionRow["session_signed_in"];
+                            signInState = (SessionSignInState)sessionSignedIn;
                         }
                         else
                         {
@@ -1057,10 +1066,10 @@ namespace BoxSocial.Internals
                     //
 
                     // we will use complete matches in BoxSocial
-                    if ((string)userSessionRow["session_ip"] == userIp)
+                    if (sessionIp == userIp)
                     {
                         UnixTime tzz = new UnixTime(core, UnixTime.UTC_CODE); // UTC
-                        TimeSpan tss = DateTime.UtcNow - tzz.DateTimeFromMysql(userSessionRow["session_time_ut"]);
+                        TimeSpan tss = DateTime.UtcNow - tzz.DateTimeFromMysql(sessionTimeUt);
 
                         //
                         // Only update session DB a minute or so after last update
@@ -1131,6 +1140,9 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
+                    userSessionReader.Close();
+                    userSessionReader.Dispose();
+
                     //Display.ShowMessage(this, "Error", "Error starting session");
                     //Response.Write("fail 3");
                     //Response.End();

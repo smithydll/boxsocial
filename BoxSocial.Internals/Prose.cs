@@ -29,6 +29,7 @@ using System.Reflection;
 using System.Resources;
 using System.Threading;
 using System.Web;
+using System.Web.Caching;
 using BoxSocial;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -106,9 +107,55 @@ namespace BoxSocial.Internals
             {
                 if (!languageResources.ContainsKey(key))
                 {
-                    ResourceManager rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.LanguagePath, key), null);
+                    string cacheKey = key + "-" + language;
+                    ResourceManager rm = null;
+                    bool cached = false;
+
+                    object o = null;
+                    System.Web.Caching.Cache cache;
+
+                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                    {
+                        cache = HttpContext.Current.Cache;
+                    }
+                    else
+                    {
+                        cache = new System.Web.Caching.Cache();
+                    }
+
+                    try
+                    {
+                        if (cache != null)
+                        {
+                            o = cache.Get(cacheKey);
+                        }
+                    }
+                    catch (NullReferenceException)
+                    {
+                    }
+
+                    if (o != null && o is ResourceManager)
+                    {
+                        rm = (ResourceManager)o;
+                        cached = true;
+                    }
+                    else
+                    {
+                        rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.LanguagePath, key), null);
+                    }
 
                     languageResources.Add(key, rm);
+
+                    if (!cached)
+                    {
+                        try
+                        {
+                            cache.Add(cacheKey, rm, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                        }
+                        catch (NullReferenceException)
+                        {
+                        }
+                    }
                 }
             }
             catch

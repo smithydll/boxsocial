@@ -465,16 +465,19 @@ namespace BoxSocial.Internals
                     emoticons = new List<Emoticon>();
 
                     SelectQuery query = Emoticon.GetSelectQueryStub(typeof(Emoticon));
-                    DataTable emoticonsTable = db.Query(query);
+                    System.Data.Common.DbDataReader emoticonsReader = db.ReaderQuery(query);
 
-                    foreach (DataRow emoticonRow in emoticonsTable.Rows)
+                    while(emoticonsReader.Read())
                     {
-                        emoticons.Add(new Emoticon(this, emoticonRow));
+                        emoticons.Add(new Emoticon(this, emoticonsReader));
                     }
+
+                    emoticonsReader.Close();
+                    emoticonsReader.Dispose();
 
                     try
                     {
-                        cache.Add("Emoticons", emoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                        //cache.Add("Emoticons", emoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
                     }
                     catch (NullReferenceException)
                     {
@@ -1377,7 +1380,7 @@ namespace BoxSocial.Internals
                                 assemblyPath = Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications"), ae.AssemblyName + ".dll");
                             }
                         }
-                        Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                        Assembly assembly = Application.LoadedAssemblies[ae.Id];
 
                         tType = assembly.GetType(iType.TypeNamespace);
                     }

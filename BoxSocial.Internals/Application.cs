@@ -40,6 +40,78 @@ namespace BoxSocial.Internals
     {
         protected Core core;
 
+        public static volatile Dictionary<long, Assembly> LoadedAssemblies = new Dictionary<long,Assembly>(16);
+        public static volatile Dictionary<string, long> AssemblyNames = new Dictionary<string, long>(16);
+
+        public static void LoadAssemblies(Mysql db)
+        {
+            string assemblyPath = null;
+
+            SelectQuery query = new SelectQuery("applications");
+            query.AddField(new DataField("applications", "application_id"));
+            query.AddField(new DataField("applications", "application_assembly_name"));
+            query.AddField(new DataField("applications", "application_locked"));
+            query.AddField(new DataField("applications", "application_update"));
+            query.AddField(new DataField("applications", "application_primitive"));
+
+            DataTable applicationDataTable = db.Query(query);
+
+            foreach (DataRow row in applicationDataTable.Rows)
+            {
+                long applicationId = (long)row["application_id"];
+                string assemblyName = (string)row["application_assembly_name"];
+                bool isPrimitive = false;
+
+                if (row["application_primitive"] is bool)
+                {
+                    isPrimitive = (bool)row["application_primitive"];
+                }
+                else if (row["application_primitive"] is byte)
+                {
+                    isPrimitive = ((byte)row["application_primitive"] > 0) ? true : false;
+                }
+                else if (row["application_primitive"] is sbyte)
+                {
+                    isPrimitive = ((sbyte)row["application_primitive"] > 0) ? true : false;
+                }
+                else
+                {
+                    isPrimitive = false;
+                }
+
+                if (isPrimitive)
+                {
+                    if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                    {
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", assemblyName + ".dll");
+                    }
+                    else
+                    {
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, assemblyName + ".dll");
+                    }
+                }
+                else
+                {
+                    if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
+                    {
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "applications", assemblyName + ".dll");
+                    }
+                    else
+                    {
+                        assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications", assemblyName + ".dll");
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(assemblyPath))
+                {
+                    Assembly assembly = Assembly.LoadFrom(assemblyPath);
+
+                    LoadedAssemblies.Add(applicationId, assembly);
+                    AssemblyNames.Add(assemblyName, applicationId);
+                }
+            }
+        }
+
         public Application(Core core)
         {
             this.core = core;
@@ -150,7 +222,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                //HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
 #endif
         }
@@ -444,46 +516,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        public static string InitialiseApplications(Core core, AppPrimitives primitive)
-        {
-            if (core == null)
-            {
-                throw new NullCoreException();
-            }
-
-            string debug = string.Empty;
-
-            Assembly[] assemblies = core.CoreDomain.GetAssemblies();
-
-            foreach (Assembly assembly in assemblies)
-            {
-                Type[] types = assembly.GetTypes();
-                foreach (Type type in types)
-                {
-                    if (type.IsSubclassOf(typeof(Application)))
-                    {
-                        Application newApplication = System.Activator.CreateInstance(type, new object[] {core}) as Application;
-
-                        if (newApplication != null)
-                        {
-                            if ((newApplication.GetAppPrimitiveSupport() & primitive) == primitive
-                                || primitive == AppPrimitives.Any)
-                            {
-                                newApplication.Initialise(core);
-                                debug += ", +" + type.ToString();
-                            }
-                        }
-                        else
-                        {
-                            debug += ", -" + type.ToString();
-                        }
-                    }
-                }
-            }
-            return debug;
-        }
-
-        private static DataTable GetApplicationRows(Core core, Primitive owner)
+        private static SelectQuery GetApplicationQuery(Core core, Primitive owner)
         {
             //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
             //long loggedIdUid = core.LoggedInMemberId;
@@ -503,9 +536,7 @@ namespace BoxSocial.Internals
             query.AddCondition("application_update", false);
             query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
 
-            DataTable userApplicationsTable = core.Db.Query(query);
-
-            return userApplicationsTable;
+            return query;
         }
 
         private static DataTable GetStaticApplicationRows(Core core)
@@ -522,19 +553,22 @@ namespace BoxSocial.Internals
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
             Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
 
-            DataTable userApplicationsTable = GetApplicationRows(core, owner);
+            System.Data.Common.DbDataReader userApplicationsReader = core.Db.ReaderQuery(GetApplicationQuery(core, owner));
 
-            if (userApplicationsTable.Rows.Count > 0)
+            if (userApplicationsReader.HasRows)
             {
                 List<long> applicationIds = new List<long>();
-                foreach (DataRow applicationRow in userApplicationsTable.Rows)
+                while (userApplicationsReader.Read())
                 {
-                    ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
+                    ApplicationEntry ae = new ApplicationEntry(core, userApplicationsReader);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
                     applicationIds.Add(ae.Id);
                 }
+
+                userApplicationsReader.Close();
+                userApplicationsReader.Dispose();
 
                 SelectQuery query = ControlPanelModuleRegister.GetSelectQueryStub(typeof(ControlPanelModuleRegister));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
@@ -546,6 +580,11 @@ namespace BoxSocial.Internals
                 {
                     applicationsDictionary[(int)moduleRow["application_id"]].AddModule((string)moduleRow["module_module"]);
                 }
+            }
+            else
+            {
+                userApplicationsReader.Close();
+                userApplicationsReader.Dispose();
             }
 
             return applicationsList;
@@ -561,19 +600,22 @@ namespace BoxSocial.Internals
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
             Dictionary<long, ApplicationEntry> applicationsDictionary = new Dictionary<long, ApplicationEntry>();
 
-            DataTable userApplicationsTable = GetApplicationRows(core, owner);
+            System.Data.Common.DbDataReader userApplicationsReader = core.Db.ReaderQuery(GetApplicationQuery(core, owner));
 
-            if (userApplicationsTable.Rows.Count > 0)
+            if (userApplicationsReader.HasRows)
             {
                 List<long> applicationIds = new List<long>();
-                foreach (DataRow applicationRow in userApplicationsTable.Rows)
+                while (userApplicationsReader.Read())
                 {
-                    ApplicationEntry ae = new ApplicationEntry(core, applicationRow);
+                    ApplicationEntry ae = new ApplicationEntry(core, userApplicationsReader);
                     applicationsList.Add(ae);
                     applicationsDictionary.Add(ae.ApplicationId, ae);
 
                     applicationIds.Add(ae.ApplicationId);
                 }
+
+                userApplicationsReader.Close();
+                userApplicationsReader.Dispose();
 
                 /*DataTable applicationSlugsTable = core.db.Query(string.Format(@"SELECT {0}
                     FROM application_slugs al
@@ -588,12 +630,20 @@ namespace BoxSocial.Internals
                 query.AddCondition("slug_static", false);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
-                DataTable applicationSlugsTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader applicationSlugsReader = core.Db.ReaderQuery(query);
 
-                foreach (DataRow slugRow in applicationSlugsTable.Rows)
+                while(applicationSlugsReader.Read())
                 {
-                    applicationsDictionary[(long)slugRow["application_id"]].LoadSlugEx((string)slugRow["slug_slug_ex"]);
+                    applicationsDictionary[(long)applicationSlugsReader["application_id"]].LoadSlugEx((string)applicationSlugsReader["slug_slug_ex"]);
                 }
+
+                applicationSlugsReader.Close();
+                applicationSlugsReader.Dispose();
+            }
+            else
+            {
+                userApplicationsReader.Close();
+                userApplicationsReader.Dispose();
             }
 
             return applicationsList;
@@ -643,20 +693,6 @@ namespace BoxSocial.Internals
             return applicationsList;
         }
 
-        public static void LoadApplications(List<ApplicationEntry> applicationsList)
-        {
-            foreach (ApplicationEntry ae in applicationsList)
-            {
-                try
-                {
-                    System.Reflection.Assembly.Load(ae.AssemblyName);
-                }
-                catch
-                {
-                }
-            }
-        }
-
         public static void LoadApplications(Core core, AppPrimitives primitive, string uri, List<ApplicationEntry> applicationsList)
         {
             if (core == null)
@@ -683,7 +719,7 @@ namespace BoxSocial.Internals
                             {
                                 assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
                             }
-                            Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                            Assembly assembly = LoadedAssemblies[ae.Id];
 
                             Type[] types = assembly.GetTypes();
                             foreach (Type type in types)
@@ -730,6 +766,10 @@ namespace BoxSocial.Internals
                 }
             }
             load.Stop();
+
+#if DEBUG
+            //HttpContext.Current.Response.Write(string.Format("<!-- Application.LoadApplications in {0} -->\r\n", load.ElapsedTicks / 10000000.0));
+#endif
         }
 
         public static Application GetApplication(Core core, AppPrimitives primitive, ApplicationEntry ae)
@@ -741,46 +781,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                string assemblyPath;
-                if (ae.IsPrimitive)
-                {
-					if (core.Http != null)
-					{
-						assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
-					}
-					else
-					{
-						//assemblyPath = string.Format("/var/www/bin/{0}.dll", ae.AssemblyName);
-                        if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
-                        {
-                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", ae.AssemblyName + ".dll");
-                        }
-                        else
-                        {
-                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ae.AssemblyName + ".dll");
-                        }
-					}
-                }
-                else
-                {
-					if (core.Http != null)
-					{
-                        assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
-					}
-					else
-					{
-						//assemblyPath = string.Format("/var/www/bin/applications/{0}.dll", ae.AssemblyName);
-                        if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
-                        {
-                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "applications", ae.AssemblyName + ".dll");
-                        }
-                        else
-                        {
-                            assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications", ae.AssemblyName + ".dll");
-                        }
-					}
-                }
-                Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                Assembly assembly = LoadedAssemblies[ae.Id];
 
                 Type[] types = assembly.GetTypes();
                 foreach (Type type in types)

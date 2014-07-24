@@ -115,7 +115,39 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public TopicReadStatus(Core core, System.Data.Common.DbDataReader dr)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(TopicReadStatus_ItemLoad);
+
+            try
+            {
+                loadItemInfo(dr);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTopicReadStatusException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow dr)
+        {
+            try
+            {
+                loadValue(dr, "topic_id", out topicId);
+                loadValue(dr, "user_id", out userId);
+                loadValue(dr, "forum_id", out forumId);
+                loadValue(dr, "read_time_ut", out readTime);
+
+                itemLoaded(dr);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader dr)
         {
             try
             {

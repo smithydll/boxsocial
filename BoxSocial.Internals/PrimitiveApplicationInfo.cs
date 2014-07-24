@@ -37,7 +37,8 @@ namespace BoxSocial.Internals
         private string itemType;*/
 		[DataField("item", DataFieldKeys.Index)]
         private ItemKey ownerKey;
-        [DataField("application_id")]
+        [DataFieldKey(DataFieldKeys.Index, "i_primitive_application_id")]
+        [DataField("application_id", typeof(ApplicationEntry))]
         private long applicationId;
         [DataField("app_simple_permissions")]
         private bool simplePermissions;

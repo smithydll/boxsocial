@@ -88,7 +88,7 @@ namespace BoxSocial.FrontEnd
                     {
                         assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
                     }
-                    Assembly assembly = Assembly.LoadFrom(assemblyPath);
+                    Assembly assembly = BoxSocial.Internals.Application.LoadedAssemblies[ae.Id];
 
                     loadModulesFromAssembly(accountObject, assembly, module);
                     loadSubModulesFromAssembly(accountObject, assembly, module);

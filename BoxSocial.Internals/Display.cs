@@ -1021,7 +1021,6 @@ namespace BoxSocial.Internals
 
         public void ParsePageList(Template template, string templateVar, Primitive owner, bool fragment, Page current)
         {
-            //template.Parse("PAGE_LIST_HOW", Environment.StackTrace);
             template.ParseRaw(templateVar, GeneratePageList(owner, core.Session.LoggedInMember, fragment, current));
         }
 
@@ -1057,13 +1056,19 @@ namespace BoxSocial.Internals
             }
             query.AddSort(SortOrder.Ascending, "page_order");
 
-            DataTable pagesTable = db.Query(query);
-            
             StringBuilder output = new StringBuilder();
+
+            int parents = 0;
+            int nextParents = 0;
+
+            List<IPermissibleItem> tempPages = new List<IPermissibleItem>();
+            List<Page> pages = new List<Page>();
+
+            System.Data.Common.DbDataReader pagesReader = db.ReaderQuery(query);
 
             if (!fragment)
             {
-                if (pagesTable.Rows.Count == 0)
+                if (!pagesReader.HasRows)
                 {
                     return string.Empty;
                 }
@@ -1073,16 +1078,13 @@ namespace BoxSocial.Internals
                 }
             }
 
-            int parents = 0;
-            int nextParents = 0;
-
-            List<IPermissibleItem> tempPages = new List<IPermissibleItem>();
-            List<Page> pages = new List<Page>();
-
-            for (int i = 0; i < pagesTable.Rows.Count; i++)
+            while (pagesReader.Read())
             {
-                tempPages.Add(new Page(core, owner, pagesTable.Rows[i]));
+                tempPages.Add(new Page(core, owner, pagesReader));
             }
+
+            pagesReader.Close();
+            pagesReader.Dispose();
 
             core.AcessControlCache.CacheGrants(tempPages);
 

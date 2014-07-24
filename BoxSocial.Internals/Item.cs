@@ -150,13 +150,30 @@ namespace BoxSocial.Internals
                 throw new NoUniqueKeyException();
             }
 
-            DataTable dataTable = core.Db.Query(query);
+            /*DataTable dataTable = core.Db.Query(query);
             if (dataTable.Rows.Count == 1)
             {
                 loadItemInfo(dataTable.Rows[0]);
             }
             else
             {
+                throw new InvalidItemException();
+            }*/
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+                loadItemInfo(reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
                 throw new InvalidItemException();
             }
 
@@ -216,7 +233,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            DataTable dataTable = core.Db.Query(query);
+            /*DataTable dataTable = core.Db.Query(query);
             if (dataTable.Rows.Count == 1)
             {
                 loadItemInfo(dataTable.Rows[0]);
@@ -224,6 +241,23 @@ namespace BoxSocial.Internals
             else
             {
                 throw new InvalidItemException(this.GetType().FullName);
+            }*/
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+                loadItemInfo(reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
             }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
@@ -278,7 +312,7 @@ namespace BoxSocial.Internals
                 query.AddCondition(keyField, value);
             }
 
-            DataTable dataTable = core.Db.Query(query);
+            /*DataTable dataTable = core.Db.Query(query);
             if (dataTable.Rows.Count == 1)
             {
                 loadItemInfo(dataTable.Rows[0]);
@@ -286,6 +320,23 @@ namespace BoxSocial.Internals
             else
             {
                 throw new InvalidItemException(type.FullName);
+            }*/
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+                loadItemInfo(reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
             }
         }
 
@@ -325,7 +376,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            DataTable dataTable = core.Db.Query(query);
+            /*DataTable dataTable = core.Db.Query(query);
             if (dataTable.Rows.Count == 1)
             {
                 loadItemInfo(dataTable.Rows[0]);
@@ -333,6 +384,23 @@ namespace BoxSocial.Internals
             else
             {
                 throw new InvalidItemException(this.GetType().FullName);
+            }*/
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+            if (reader.HasRows)
+            {
+                reader.Read();
+                loadItemInfo(reader);
+
+                reader.Close();
+                reader.Dispose();
+            }
+            else
+            {
+                reader.Close();
+                reader.Dispose();
+
+                throw new InvalidItemException();
             }
 
             if (this.GetType().IsSubclassOf(typeof(NumberedItem)))
@@ -993,6 +1061,9 @@ namespace BoxSocial.Internals
             }
 
             return returnValue;
+
+            /*return new string[] {string.Format("`{0}`.*",
+                    tableName)};*/
         }
 
         protected string Table
@@ -1537,7 +1608,7 @@ namespace BoxSocial.Internals
             return result;
         }
 
-        protected void loadItemInfo(System.Data.Common.DbDataReader reader)
+        protected virtual void loadItemInfo(System.Data.Common.DbDataReader reader)
         {
             loadItemInfo(this.GetType(), reader);
         }
@@ -1550,7 +1621,7 @@ namespace BoxSocial.Internals
             int objectFields = 0;
             Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(ffields.Length, StringComparer.Ordinal);
 
-            foreach (FieldInfo fi in ffields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
+            foreach (FieldInfo fi in ffields)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute))) // Surely THIS is SLOW??!!
                 {
@@ -1628,13 +1699,17 @@ namespace BoxSocial.Internals
                             {
                                 if (column.EndsWith("_type_id") && ikBufferId.ContainsKey(column.Substring(0, column.Length - 8)))
                                 {
-                                    fi.SetValue(this, new ItemKey(ikBufferId[column.Substring(0, column.Length - 8)], (long)value));
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, new ItemKey(ikBufferId[column.Substring(0, column.Length - 8)], (long)value)))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                                 else if (column.EndsWith("_id") && ikBufferTypeId.ContainsKey(column.Substring(0, column.Length - 3)))
                                 {
-                                    fi.SetValue(this, new ItemKey((long)value, ikBufferTypeId[column.Substring(0, column.Length - 3)]));
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, new ItemKey((long)value, ikBufferTypeId[column.Substring(0, column.Length - 3)])))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                                 else
                                 {
@@ -1654,32 +1729,42 @@ namespace BoxSocial.Internals
                             {
                                 if (((string)value).Length > 0)
                                 {
-                                    fi.SetValue(this, ((string)value)[0]);
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, ((string)value)[0]))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                                 else
                                 {
-                                    fi.SetValue(this, null);
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, null))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                             }
                             else if (fi.FieldType == typeof(bool) && !(value is bool))
                             {
                                 if (value is byte)
                                 {
-                                    fi.SetValue(this, ((byte)value > 0) ? true : false);
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, ((byte)value > 0) ? true : false))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                                 else if (value is sbyte)
                                 {
-                                    fi.SetValue(this, ((sbyte)value > 0) ? true : false);
-                                    fieldsLoaded++;
+                                    if (setProperty(type, column, ((sbyte)value > 0) ? true : false))
+                                    {
+                                        fieldsLoaded++;
+                                    }
                                 }
                             }
                             else
                             {
-                                fi.SetValue(this, value);
-                                fieldsLoaded++;
+                                if (setProperty(type, column, value))
+                                {
+                                    fieldsLoaded++;
+                                }
                             }
                             /*}
                             catch (Exception ex)
@@ -1743,9 +1828,64 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- slow dbreader path -->\r\n");
             }
 #endif
+        }
+
+        private Dictionary<string, FieldInfo> propertyFields = null;
+
+        protected virtual bool setProperty(string field, object value)
+        {
+            return setProperty(this.GetType(), field, value);
+        }
+
+        protected virtual bool setProperty(Type type, string column, object value)
+        {
+            FieldInfo[] ffields = getFieldInfo(type);
+
+            if (propertyFields == null)
+            {
+                Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo>(ffields.Length, StringComparer.Ordinal);
+
+                foreach (FieldInfo fi in ffields)
+                {
+                    foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute))) // Surely THIS is SLOW??!!
+                    {
+                        DataFieldAttribute dfattr = (DataFieldAttribute)attr;
+
+                        string columnPrefix;
+                        if (dfattr.FieldName != null)
+                        {
+                            columnPrefix = dfattr.FieldName;
+                        }
+                        else
+                        {
+                            columnPrefix = fi.Name;
+                        }
+
+                        fields.Add(columnPrefix, fi);
+                        if (fi.FieldType == typeof(ItemKey))
+                        {
+                            fields.Add(columnPrefix + "_id", fi);
+                            fields.Add(columnPrefix + "_type_id", fi);
+                        }
+                    }
+                }
+                propertyFields = fields;
+            }
+
+            {
+                FieldInfo fi = null;
+
+                if (propertyFields.TryGetValue(column, out fi))
+                {
+                    fi.SetValue(this, value);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected virtual void loadItemInfo(DataRow itemRow)
@@ -1991,7 +2131,24 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out string value)
+        {
+            if (!(row[field] is DBNull))
+            {
+                value = (string)row[field];
+            }
+            else
+            {
+                value = null;
+            }
+        }
+
         protected static void loadValue(DataRow row, string field, out ItemKey value)
+        {
+            value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ItemKey value)
         {
             value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
         }
@@ -2016,7 +2173,32 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out bool value)
+        {
+            if (row[field] is bool)
+            {
+                value = (bool)row[field];
+            }
+            else if (row[field] is byte)
+            {
+                value = ((byte)row[field] > 0) ? true : false;
+            }
+            else if (row[field] is sbyte)
+            {
+                value = ((sbyte)row[field] > 0) ? true : false;
+            }
+            else
+            {
+                value = false;
+            }
+        }
+
         protected static void loadValue(DataRow row, string field, out ulong value)
+        {
+            value = (ulong)row[field];
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ulong value)
         {
             value = (ulong)row[field];
         }
@@ -2026,7 +2208,17 @@ namespace BoxSocial.Internals
             value = (long)row[field];
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out long value)
+        {
+            value = (long)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out uint value)
+        {
+            value = (uint)row[field];
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out uint value)
         {
             value = (uint)row[field];
         }
@@ -2036,7 +2228,17 @@ namespace BoxSocial.Internals
             value = (int)row[field];
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out int value)
+        {
+            value = (int)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out ushort value)
+        {
+            value = (ushort)row[field];
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ushort value)
         {
             value = (ushort)row[field];
         }
@@ -2046,7 +2248,17 @@ namespace BoxSocial.Internals
             value = (short)row[field];
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out short value)
+        {
+            value = (short)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out sbyte value)
+        {
+            value = (sbyte)row[field];
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out sbyte value)
         {
             value = (sbyte)row[field];
         }
@@ -2056,12 +2268,27 @@ namespace BoxSocial.Internals
             value = (byte)row[field];
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out byte value)
+        {
+            value = (byte)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out double value)
         {
             value = (double)row[field];
         }
 
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out double value)
+        {
+            value = (double)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out float value)
+        {
+            value = (float)row[field];
+        }
+
+        protected static void loadValue(System.Data.Common.DbDataReader row, string field, out float value)
         {
             value = (float)row[field];
         }
@@ -2114,7 +2341,76 @@ namespace BoxSocial.Internals
 #if DEBUG
                 if (type.Equals(typeof(ItemInfo)))
                 {
-                    HttpContext.Current.Response.Write("<!-- " + itemRow["info_item_type_id"].ToString() + "," + itemRow["info_item_id"].ToString() + "-->\r\n");
+                    //HttpContext.Current.Response.Write("<!-- " + itemRow["info_item_type_id"].ToString() + "," + itemRow["info_item_id"].ToString() + " -->\r\n");
+                }
+#endif
+            }
+
+            if (ItemLoad != null)
+            {
+                ItemLoad();
+            }
+        }
+
+        protected void itemLoaded(System.Data.Common.DbDataReader itemRow)
+        {
+            Type type = this.GetType();
+
+#if DEBUG
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
+            }
+#endif
+
+            // the column most likely to be unique
+            bool hasItemInfo = false;
+            for (int i = 0; i < itemRow.FieldCount; i++)
+            {
+                if (itemRow.GetName(i) == "info_item_time_ut")
+                {
+                    hasItemInfo = true;
+                    break;
+                }
+            }
+
+            if (hasItemInfo)
+            {
+                if (type.IsSubclassOf(typeof(NumberedItem)) && (!type.Equals(typeof(ItemInfo))))
+                {
+                    if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        typeof(IRateableItem).IsAssignableFrom(type) ||
+                        typeof(ITagableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type) ||
+                        typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                        typeof(IShareableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type))
+                    {
+
+                        try
+                        {
+                            if (((NumberedItem)this).info == null)
+                            {
+                                ((NumberedItem)this).info = new ItemInfo(core, itemRow);
+                            }
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            // not all rows will have one yet, but be ready
+                        }
+                        catch
+                        {
+                            // catch all remaining errors
+                        }
+                    }
+                }
+#if DEBUG
+                if (type.Equals(typeof(ItemInfo)))
+                {
+                    //HttpContext.Current.Response.Write("<!-- " + itemRow["info_item_type_id"].ToString() + "," + itemRow["info_item_id"].ToString() + " --><!-- dbreader path -->\r\n");
                 }
 #endif
             }

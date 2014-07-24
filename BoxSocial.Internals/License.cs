@@ -117,7 +117,41 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ContentLicense(Core core, System.Data.Common.DbDataReader licenseRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ContentLicense_ItemLoad);
+
+            try
+            {
+                loadItemInfo(licenseRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidLicenseException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow licenseRow)
+        {
+            try
+            {
+                loadValue(licenseRow, "license_id", out licenseId);
+                loadValue(licenseRow, "license_title", out title);
+                loadValue(licenseRow, "license_icon", out icon);
+                loadValue(licenseRow, "license_link", out link);
+                loadValue(licenseRow, "license_text", out text);
+
+                itemLoaded(licenseRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader licenseRow)
         {
             try
             {
@@ -146,13 +180,21 @@ namespace BoxSocial.Internals
             permissions.Add("Can Read");
 
             Dictionary<string, string> licenses = new Dictionary<string, string>(StringComparer.Ordinal);
-            DataTable licensesTable = db.Query("SELECT li.license_id, li.license_title FROM licenses li");
+            SelectQuery query = new SelectQuery("licenses");
+            query.AddField(new DataField("licenses", "license_id"));
+            query.AddField(new DataField("licenses", "license_title"));
+
+            System.Data.Common.DbDataReader licensesReader = db.ReaderQuery(query);
 
             licenses.Add("0", "Default License (All Rights Reserved)");
-            foreach (DataRow licenseRow in licensesTable.Rows)
+
+            while (licensesReader.Read())
             {
-                licenses.Add(((byte)licenseRow["license_id"]).ToString(), (string)licenseRow["license_title"]);
+                licenses.Add(((byte)licensesReader["license_id"]).ToString(), (string)licensesReader["license_title"]);
             }
+
+            licensesReader.Close();
+            licensesReader.Dispose();
 
             return Functions.BuildSelectBox("license", licenses, selectedLicense.ToString());
         }

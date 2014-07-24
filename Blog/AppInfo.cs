@@ -424,13 +424,16 @@ namespace BoxSocial.Applications.Blog
             SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
             query.AddSort(SortOrder.Ascending, "category_title");
 
-            DataTable categoriesTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader categoriesReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow categoryRow in categoriesTable.Rows)
+            while (categoriesReader.Read())
             {
-                Category cat = new Category(core, categoryRow);
+                Category cat = new Category(core, categoriesReader);
                 categoriesSelectBox.Add(new SelectBoxItem(cat.Id.ToString(), cat.Title));
             }
+
+            categoriesReader.Close();
+            categoriesReader.Dispose();
 
             categoriesSelectBox.SelectedKey = 1.ToString();
 

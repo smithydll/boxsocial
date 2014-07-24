@@ -33,6 +33,7 @@ namespace BoxSocial.Applications.Pages
     {
         [DataField("tab_id", DataFieldKeys.Primary)]
         private long tabId;
+        [DataFieldKey(DataFieldKeys.Index, "i_page_id")]
         [DataField("tab_page_id", typeof(Page))]
         private long pageId;
         [DataField("tab_item", DataFieldKeys.Index)]
@@ -130,7 +131,41 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public NagivationTab(Core core, System.Data.Common.DbDataReader tabRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(NagivationTab_ItemLoad);
+
+            try
+            {
+                loadItemInfo(tabRow);
+                try
+                {
+                    page = new Page(core, Owner, tabRow);
+                }
+                catch
+                {
+                    // ignore
+                }
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNavigationTabException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow tabRow)
+        {
+            loadValue(tabRow, "tab_id", out tabId);
+            loadValue(tabRow, "tab_page_id", out pageId);
+            loadValue(tabRow, "tab_item", out ownerKey);
+            loadValue(tabRow, "tab_order", out order);
+
+            itemLoaded(tabRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader tabRow)
         {
             loadValue(tabRow, "tab_id", out tabId);
             loadValue(tabRow, "tab_page_id", out pageId);
@@ -253,12 +288,15 @@ namespace BoxSocial.Applications.Pages
             query.AddCondition("tab_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "tab_order");
 
-            DataTable tabTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader tabReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in tabTable.Rows)
+            while (tabReader.Read())
             {
-                tabs.Add(new NagivationTab(core, dr));
+                tabs.Add(new NagivationTab(core, tabReader));
             }
+
+            tabReader.Close();
+            tabReader.Dispose();
             
             return tabs;
         }

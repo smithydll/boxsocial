@@ -195,23 +195,31 @@ namespace BoxSocial.Internals
             query.AddCondition("grant_item_id", itemKey.Id);
             query.AddCondition("grant_item_type_id", itemKey.TypeId);
             query.AddCondition("grant_permission_id", permissionId);
-            
-            DataTable grantDataTable = core.Db.Query(query);
-            
-            if (grantDataTable.Rows.Count == 1)
+
+            System.Data.Common.DbDataReader grantReader = core.Db.ReaderQuery(query);
+
+            if (grantReader.HasRows)
             {
+                grantReader.Read();
+
                 try
                 {
-                    loadItemInfo(grantDataTable.Rows[0]);
+                    loadItemInfo(grantReader);
                 }
                 catch (InvalidItemException)
                 {
                     AccessControlPermission acp = new AccessControlPermission(core, permissionId);
                     throw new InvalidAccessControlGrantException(acp.Name);
                 }
+
+                grantReader.Close();
+                grantReader.Dispose();
             }
             else
             {
+                grantReader.Close();
+                grantReader.Dispose();
+
                 AccessControlPermission acp = new AccessControlPermission(core, permissionId);
                 throw new InvalidAccessControlGrantException(acp.Name);
             }

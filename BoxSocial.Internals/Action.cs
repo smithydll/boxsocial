@@ -373,26 +373,17 @@ namespace BoxSocial.Internals
             query.AddCondition("item_type_id", itemTypeId);
             query.AddSort(SortOrder.Descending, "status_time_ut");
 
-            DataTable actionsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader actionsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in actionsTable.Rows)
+            while (actionsReader.Read())
             {
-                actions.Add(new Action(core, user, dr));
+                actions.Add(new Action(core, user, actionsReader));
             }
 
+            actionsReader.Close();
+            actionsReader.Dispose();
+
             return actions;
-        }
-
-        public DataTable GetItemsData(Type type)
-        {
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ActionItem));
-            query.AddFields(Item.GetFieldsPrefixed(type));
-            query.AddCondition("item_type_id", ItemKey.GetTypeId(type));
-            query.AddJoin(JoinTypes.Inner, Item.GetTable(type), "item_id", "gallery_item_id");
-
-            DataTable itemsTable = db.Query(query);
-
-            return itemsTable;
         }
 
         public ActionItem convertToActionItem(Item input)

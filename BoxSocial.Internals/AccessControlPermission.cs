@@ -224,6 +224,23 @@ namespace BoxSocial.Internals
             }
         }
 
+        public AccessControlPermission(Core core, System.Data.Common.DbDataReader permissionRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(AccessControlPermission_ItemLoad);
+            OnUpdate += new EventHandler(AccessControlPermission_OnUpdate);
+            OnDelete += new EventHandler(AccessControlPermission_OnDelete);
+
+            try
+            {
+                loadItemInfo(permissionRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidAccessControlPermissionException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow permissionRow)
         {
             loadValue(permissionRow, "permission_id", out permissionId);

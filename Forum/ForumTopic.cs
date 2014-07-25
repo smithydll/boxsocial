@@ -317,26 +317,34 @@ namespace BoxSocial.Applications.Forum
             SelectQuery query = ForumTopic_GetSelectQueryStub(core);
             query.AddCondition("`forum_topics`.`topic_id`", topicId);
 
-            DataTable topicTable = db.Query(query);
+            System.Data.Common.DbDataReader topicReader = db.ReaderQuery(query);
 
-            if (topicTable.Rows.Count == 1)
+            if (topicReader.HasRows)
             {
-                loadItemInfo(topicTable.Rows[0]);
+                topicReader.Read();
+
+                loadItemInfo(topicReader);
+
+                try
+                {
+                    readStatus = new TopicReadStatus(core, topicReader);
+                    readStatusLoaded = true;
+                }
+                catch (InvalidTopicReadStatusException)
+                {
+                    readStatus = null;
+                    readStatusLoaded = true;
+                }
+
+                topicReader.Close();
+                topicReader.Dispose();
             }
             else
             {
-                throw new InvalidTopicException();
-            }
+                topicReader.Close();
+                topicReader.Dispose();
 
-            try
-            {
-                readStatus = new TopicReadStatus(core, topicTable.Rows[0]);
-                readStatusLoaded = true;
-            }
-            catch (InvalidTopicReadStatusException)
-            {
-                readStatus = null;
-                readStatusLoaded = true;
+                throw new InvalidTopicException();
             }
         }
 
@@ -856,10 +864,21 @@ namespace BoxSocial.Applications.Forum
 
                 query.AddSort(SortOrder.Ascending, "post_time_ut");
 
-                DataRow postsRow = db.Query(query).Rows[0];
+                System.Data.Common.DbDataReader postsReader = db.ReaderQuery(query);
 
-                long before = (long)postsRow["total"];
-                long after = Posts - before;
+                long before = 0;
+                long after = 0;
+
+                if (postsReader.HasRows)
+                {
+                    postsReader.Read();
+
+                    before = (long)postsReader["total"];
+                    after = Posts - before;
+                }
+
+                postsReader.Close();
+                postsReader.Dispose();
 
                 /*if (item.CommentSortOrder == SortOrder.Ascending)
                 {*/

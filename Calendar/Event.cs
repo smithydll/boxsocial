@@ -273,7 +273,37 @@ namespace BoxSocial.Applications.Calendar
             loadItemInfo(eventRow);
         }
 
+        public Event(Core core, System.Data.Common.DbDataReader eventRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Event_ItemLoad);
+
+            loadItemInfo(eventRow);
+        }
+
         protected override void loadItemInfo(DataRow eventRow)
+        {
+            loadValue(eventRow, "event_id", out eventId);
+            loadValue(eventRow, "event_subject", out subject);
+            loadValue(eventRow, "event_description", out description);
+            loadValue(eventRow, "event_views", out views);
+            loadValue(eventRow, "event_attendees", out attendeeCount);
+            loadValue(eventRow, "event_maybes", out maybeCount);
+            loadValue(eventRow, "event_item", out ownerKey);
+            loadValue(eventRow, "user_id", out userId);
+            loadValue(eventRow, "event_time_start_ut", out startTimeRaw);
+            loadValue(eventRow, "event_time_end_ut", out endTimeRaw);
+            loadValue(eventRow, "event_all_day", out allDay);
+            loadValue(eventRow, "event_invitees", out invitees);
+            loadValue(eventRow, "event_category", out category);
+            loadValue(eventRow, "event_location", out location);
+            loadValue(eventRow, "event_simple_permissions", out simplePermissions);
+
+            itemLoaded(eventRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader eventRow)
         {
             loadValue(eventRow, "event_id", out eventId);
             loadValue(eventRow, "event_subject", out subject);

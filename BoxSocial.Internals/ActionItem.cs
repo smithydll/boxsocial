@@ -73,14 +73,22 @@ namespace BoxSocial.Internals
             query.AddCondition("item_id", itemId);
             query.AddCondition("item_type_id", itemTypeId);
 
-            DataTable actionItemTable = db.Query(query);
+            System.Data.Common.DbDataReader actionReader = db.ReaderQuery(query);
 
-            if (actionItemTable.Rows.Count == 1)
+            if (actionReader.HasRows)
             {
-                loadItemInfo(actionItemTable.Rows[0]);
+                actionReader.Read();
+
+                loadItemInfo(actionReader);
+
+                actionReader.Close();
+                actionReader.Dispose();
             }
             else
             {
+                actionReader.Close();
+                actionReader.Dispose();
+
                 throw new InvalidActionItemException();
             }
         }

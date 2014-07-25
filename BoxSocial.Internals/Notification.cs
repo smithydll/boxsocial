@@ -330,6 +330,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public Notification(Core core, Primitive owner, System.Data.Common.DbDataReader notificationRow)
+            : base(core)
+        {
+            this.recipient = owner;
+
+            try
+            {
+                loadItemInfo(notificationRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidNotificationException();
+            }
+        }
+
         private Notification(Core core, Primitive owner, long notificationId, string subject, string body, long timeRaw, int applicationId)
             : base(core)
         {
@@ -342,6 +357,50 @@ namespace BoxSocial.Internals
             this.body = body;
             this.ownerKey = new ItemKey(owner.Id, owner.TypeId);
             this.timeRaw = timeRaw;
+        }
+
+        protected override void loadItemInfo(DataRow inviteRow)
+        {
+            loadValue(inviteRow, "notification_id", out notificationId);
+            loadValue(inviteRow, "notification_title", out title);
+            loadValue(inviteRow, "notification_body", out body);
+            loadValue(inviteRow, "notification_application", out applicationId);
+            loadValue(inviteRow, "notification_primitive", out ownerKey);
+            loadValue(inviteRow, "notification_item", out itemKey);
+            loadValue(inviteRow, "notification_item_owner", out itemOwnerKey);
+            loadValue(inviteRow, "notification_user_id", out userId);
+            loadValue(inviteRow, "notification_user_count", out userCount);
+            loadValue(inviteRow, "notification_time_ut", out timeRaw);
+            loadValue(inviteRow, "notification_read", out read);
+            loadValue(inviteRow, "notification_seen", out seen);
+            loadValue(inviteRow, "notification_verb", out verb);
+            loadValue(inviteRow, "notification_action", out action);
+            loadValue(inviteRow, "notification_url", out url);
+            loadValue(inviteRow, "notification_verification_string", out verificationString);
+
+            itemLoaded(inviteRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader inviteRow)
+        {
+            loadValue(inviteRow, "notification_id", out notificationId);
+            loadValue(inviteRow, "notification_title", out title);
+            loadValue(inviteRow, "notification_body", out body);
+            loadValue(inviteRow, "notification_application", out applicationId);
+            loadValue(inviteRow, "notification_primitive", out ownerKey);
+            loadValue(inviteRow, "notification_item", out itemKey);
+            loadValue(inviteRow, "notification_item_owner", out itemOwnerKey);
+            loadValue(inviteRow, "notification_user_id", out userId);
+            loadValue(inviteRow, "notification_user_count", out userCount);
+            loadValue(inviteRow, "notification_time_ut", out timeRaw);
+            loadValue(inviteRow, "notification_read", out read);
+            loadValue(inviteRow, "notification_seen", out seen);
+            loadValue(inviteRow, "notification_verb", out verb);
+            loadValue(inviteRow, "notification_action", out action);
+            loadValue(inviteRow, "notification_url", out url);
+            loadValue(inviteRow, "notification_verification_string", out verificationString);
+
+            itemLoaded(inviteRow);
         }
 
         public DateTime GetTime(UnixTime tz)
@@ -490,12 +549,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Descending, "notification_time_ut");
             query.LimitCount = 128;
 
-            DataTable notificationsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader notificationsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in notificationsTable.Rows)
+            while(notificationsReader.Read())
             {
-                notificationItems.Add(new Notification(core, core.Session.LoggedInMember, dr));
+                notificationItems.Add(new Notification(core, core.Session.LoggedInMember, notificationsReader));
             }
+
+            notificationsReader.Close();
+            notificationsReader.Dispose();
 
             return notificationItems;
         }
@@ -517,9 +579,21 @@ namespace BoxSocial.Internals
             query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
 
-            DataTable notificationsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader notificationsReader = core.Db.ReaderQuery(query);
 
-            return (long)notificationsTable.Rows[0]["total"];
+            long newNotifications = 0;
+
+            if (notificationsReader.HasRows)
+            {
+                notificationsReader.Read();
+
+                newNotifications = (long)notificationsReader["total"];
+            }
+
+            notificationsReader.Close();
+            notificationsReader.Dispose();
+
+            return newNotifications;
         }
 
         public override long Id

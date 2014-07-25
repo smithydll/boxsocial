@@ -175,13 +175,16 @@ namespace BoxSocial.Applications.News
 			query.AddSort(SortOrder.Descending, "article_time_ut");
             query.LimitStart = (currentPage - 1) * count;
             query.LimitCount = count;
+
+            System.Data.Common.DbDataReader articlesReader = db.ReaderQuery(query);
 			
-			DataTable articlesDataTable = db.Query(query);
-			
-			foreach (DataRow dr in articlesDataTable.Rows)
+			while(articlesReader.Read())
 			{
-				articles.Add(new Article(core, dr));
+                articles.Add(new Article(core, articlesReader));
 			}
+
+            articlesReader.Close();
+            articlesReader.Dispose();
 			
 			foreach (Article article in articles)
             {

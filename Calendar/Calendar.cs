@@ -232,7 +232,7 @@ namespace BoxSocial.Applications.Calendar
         public List<Event> GetEvents(Core core, Primitive owner, long startTimeRaw, long endTimeRaw)
         {
             List<Event> events = new List<Event>();
-			
+
             SelectQuery sQuery = Item.GetSelectQueryStub(typeof(Event));
             sQuery.AddCondition("event_item_id", owner.Id);
             sQuery.AddCondition("event_item_type_id", owner.TypeId);
@@ -244,11 +244,16 @@ namespace BoxSocial.Applications.Calendar
             sqc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
             sQuery.AddSort(SortOrder.Ascending, "event_time_start_ut");
 
-            DataTable eventsTable = db.Query(sQuery);
-
-            foreach (DataRow dr in eventsTable.Rows)
             {
-                events.Add(new Event(core, dr));
+                System.Data.Common.DbDataReader eventsReader = db.ReaderQuery(sQuery);
+
+                while (eventsReader.Read())
+                {
+                    events.Add(new Event(core, eventsReader));
+                }
+
+                eventsReader.Close();
+                eventsReader.Dispose();
             }
 
             if (owner.TypeId == ItemKey.GetTypeId(typeof(User)))
@@ -266,13 +271,15 @@ namespace BoxSocial.Applications.Calendar
                 QueryCondition qc4 = qc3.AddCondition(ConditionRelations.Or, "event_time_start_ut", ConditionEquality.LessThan, startTimeRaw);
                 qc4.AddCondition("event_time_end_ut", ConditionEquality.GreaterThan, endTimeRaw);
 
-                eventsTable = db.Query(query);
+                System.Data.Common.DbDataReader eventsReader = db.ReaderQuery(sQuery);
 
-                foreach (DataRow dr in eventsTable.Rows)
+                while (eventsReader.Read())
                 {
-                    events.Add(new Event(core, dr));
+                    events.Add(new Event(core, eventsReader));
                 }
 
+                eventsReader.Close();
+                eventsReader.Dispose();
 
                 User user = (User)owner;
                 List<UserRelation> friends = user.GetFriendsBirthdays(startTimeRaw, endTimeRaw);
@@ -316,21 +323,29 @@ namespace BoxSocial.Applications.Calendar
                 QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "task_due_date_ut", ConditionEquality.LessThan, UnixTime.UnixTimeStamp());
                 qc2.AddCondition("task_percent_complete", ConditionEquality.LessThan, 100);
 
-                DataTable tasksTable = db.Query(query);
+                System.Data.Common.DbDataReader tasksReader = db.ReaderQuery(query);
 
-                foreach (DataRow dr in tasksTable.Rows)
+                while (tasksReader.Read())
                 {
-                    tasks.Add(new Task(core, owner, dr));
+                    tasks.Add(new Task(core, owner, tasksReader));
                 }
+
+                tasksReader.Close();
+                tasksReader.Dispose();
             }
             else
             {
                 DataTable tasksTable = db.Query(query);
 
-                foreach (DataRow dr in tasksTable.Rows)
+                System.Data.Common.DbDataReader tasksReader = db.ReaderQuery(query);
+
+                while (tasksReader.Read())
                 {
-                    tasks.Add(new Task(core, owner, dr));
+                    tasks.Add(new Task(core, owner, tasksReader));
                 }
+
+                tasksReader.Close();
+                tasksReader.Dispose();
             }
 
             return tasks;

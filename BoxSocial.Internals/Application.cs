@@ -54,25 +54,25 @@ namespace BoxSocial.Internals
             query.AddField(new DataField("applications", "application_update"));
             query.AddField(new DataField("applications", "application_primitive"));
 
-            DataTable applicationDataTable = db.Query(query);
+            System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
 
-            foreach (DataRow row in applicationDataTable.Rows)
+            while (applicationReader.Read())
             {
-                long applicationId = (long)row["application_id"];
-                string assemblyName = (string)row["application_assembly_name"];
+                long applicationId = (long)applicationReader["application_id"];
+                string assemblyName = (string)applicationReader["application_assembly_name"];
                 bool isPrimitive = false;
 
-                if (row["application_primitive"] is bool)
+                if (applicationReader["application_primitive"] is bool)
                 {
-                    isPrimitive = (bool)row["application_primitive"];
+                    isPrimitive = (bool)applicationReader["application_primitive"];
                 }
-                else if (row["application_primitive"] is byte)
+                else if (applicationReader["application_primitive"] is byte)
                 {
-                    isPrimitive = ((byte)row["application_primitive"] > 0) ? true : false;
+                    isPrimitive = ((byte)applicationReader["application_primitive"] > 0) ? true : false;
                 }
-                else if (row["application_primitive"] is sbyte)
+                else if (applicationReader["application_primitive"] is sbyte)
                 {
-                    isPrimitive = ((sbyte)row["application_primitive"] > 0) ? true : false;
+                    isPrimitive = ((sbyte)applicationReader["application_primitive"] > 0) ? true : false;
                 }
                 else
                 {
@@ -110,6 +110,9 @@ namespace BoxSocial.Internals
                     AssemblyNames.Add(assemblyName, applicationId);
                 }
             }
+
+            applicationReader.Close();
+            applicationReader.Dispose();
         }
 
         public Application(Core core)

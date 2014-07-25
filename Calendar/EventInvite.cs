@@ -142,27 +142,47 @@ namespace BoxSocial.Applications.Calendar
         {
             this.ItemLoad += new ItemLoadHandler(EventInvite_ItemLoad);
 
+            SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+            query.AddCondition("event_id", eventId);
+            query.AddCondition("item_id", invitee.Id);
+            query.AddCondition("item_type_id", invitee.TypeId);
+
+            System.Data.Common.DbDataReader inviteReader = db.ReaderQuery(query);
+
             try
             {
-                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
-                query.AddCondition("event_id", eventId);
-                query.AddCondition("item_id", invitee.Id);
-                query.AddCondition("item_type_id", invitee.TypeId);
-
-                DataTable inviteTable = db.Query(query);
-
-                if (inviteTable.Rows.Count == 1)
+                if (inviteReader.HasRows)
                 {
-                    loadItemInfo(inviteTable.Rows[0]);
+                    inviteReader.Read();
+
+                    loadItemInfo(inviteReader);
                 }
+
+                inviteReader.Close();
+                inviteReader.Dispose();
             }
             catch (InvalidItemException)
             {
+                inviteReader.Close();
+                inviteReader.Dispose();
+
                 throw new InvalidEventInviteException();
             }
         }
 
         protected override void loadItemInfo(DataRow inviteRow)
+        {
+            loadValue(inviteRow, "event_id", out eventId);
+            loadValue(inviteRow, "item", out ownerKey);
+            loadValue(inviteRow, "inviter_id", out inviterId);
+            loadValue(inviteRow, "invite_date_ut", out inviteTimeRaw);
+            loadValue(inviteRow, "invite_accepted", out inviteAccepted);
+            loadValue(inviteRow, "invite_status", out inviteStatus);
+
+            itemLoaded(inviteRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader inviteRow)
         {
             loadValue(inviteRow, "event_id", out eventId);
             loadValue(inviteRow, "item", out ownerKey);

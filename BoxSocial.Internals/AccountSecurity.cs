@@ -114,17 +114,20 @@ namespace BoxSocial.Internals
             SelectQuery query = SessionKey.GetSelectQueryStub(typeof(SessionKey));
             query.AddCondition(new DataField(typeof(SessionKey), "user_id"), LoggedInMember.Id);
 
-            DataTable sessionsTable = db.Query(query);
+            System.Data.Common.DbDataReader sessionsReader = db.ReaderQuery(query);
 
-            foreach (DataRow sessionRow in sessionsTable.Rows)
+            while (sessionsReader.Read())
             {
-                SessionKey sessionKey = new SessionKey(core, sessionRow);
+                SessionKey sessionKey = new SessionKey(core, sessionsReader);
 
                 VariableCollection sessionsVariableCollection = template.CreateChild("sessions_list");
 
                 sessionsVariableCollection.Parse("IP", sessionKey.Ip);
                 sessionsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(sessionKey.GetVisit(core.Tz)));
             }
+
+            sessionsReader.Close();
+            sessionsReader.Dispose();
         }
 
         void AccountSecurity_Save(object sender, EventArgs e)

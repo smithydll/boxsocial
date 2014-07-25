@@ -120,6 +120,8 @@ namespace BoxSocial.Internals
 
         public static bool IsSubscribed(Core core, ItemKey itemKey)
         {
+            bool subscribed = false;
+
             if (core.Session.SignedIn)
             {
                 SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
@@ -127,14 +129,15 @@ namespace BoxSocial.Internals
                 query.AddCondition("subscription_item_type_id", itemKey.TypeId);
                 query.AddCondition("user_id", core.LoggedInMemberId);
 
-                DataTable subscriptionDataTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader subscriptionReader = core.Db.ReaderQuery(query);
 
-                return (subscriptionDataTable.Rows.Count > 0);
+                subscribed = subscriptionReader.HasRows;
+
+                subscriptionReader.Close();
+                subscriptionReader.Dispose();
             }
-            else
-            {
-                return false;
-            }
+
+            return subscribed;
         }
 
         public static bool SubscribeToItem(Core core, ItemKey itemKey)

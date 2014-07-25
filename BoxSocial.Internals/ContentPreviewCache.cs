@@ -86,6 +86,50 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ContentPreviewCache(Core core, System.Data.Common.DbDataReader cacheRow)
+            : base(core)
+        {
+
+            try
+            {
+                loadItemInfo(typeof(ContentPreviewCache), cacheRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidContentPreviewCacheException();
+            }
+        }
+
+        protected override void loadItemInfo(DataRow permissionRow)
+        {
+            loadValue(permissionRow, "cache_id", out cacheId);
+            loadValue(permissionRow, "content_domain", out domain);
+            loadValue(permissionRow, "content_unique", out unique);
+            loadValue(permissionRow, "content_language", out language);
+            loadValue(permissionRow, "content_title", out title);
+            loadValue(permissionRow, "content_body", out body);
+            loadValue(permissionRow, "content_image", out image);
+            loadValue(permissionRow, "content_cached_time", out cachedTimeRaw);
+
+            itemLoaded(permissionRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader permissionRow)
+        {
+            loadValue(permissionRow, "cache_id", out cacheId);
+            loadValue(permissionRow, "content_domain", out domain);
+            loadValue(permissionRow, "content_unique", out unique);
+            loadValue(permissionRow, "content_language", out language);
+            loadValue(permissionRow, "content_title", out title);
+            loadValue(permissionRow, "content_body", out body);
+            loadValue(permissionRow, "content_image", out image);
+            loadValue(permissionRow, "content_cached_time", out cachedTimeRaw);
+
+            itemLoaded(permissionRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         public static void Create(Core core, string domain, string unique, string title, string body, string language)
         {
             Create(core, domain, unique, title, body, language, string.Empty);
@@ -116,12 +160,17 @@ namespace BoxSocial.Internals
             query.AddCondition("content_unique", unique);
             query.AddCondition("content_language", language);
 
-            DataTable previewDataTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader previewReader = core.Db.ReaderQuery(query);
 
-            if (previewDataTable.Rows.Count == 1)
+            if (previewReader.HasRows)
             {
-                preview = new ContentPreviewCache(core, previewDataTable.Rows[0]);
+                previewReader.Read();
+
+                preview = new ContentPreviewCache(core, previewReader);
             }
+
+            previewReader.Close();
+            previewReader.Dispose();
 
             return preview;
         }

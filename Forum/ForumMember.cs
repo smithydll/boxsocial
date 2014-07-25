@@ -121,13 +121,22 @@ namespace BoxSocial.Applications.Forum
 
             try
             {
-                DataTable memberDataTable = core.Db.Query(sQuery);
-                if (memberDataTable.Rows.Count == 1)
+                System.Data.Common.DbDataReader memberReader = core.Db.ReaderQuery(sQuery);
+
+                if (memberReader.HasRows)
                 {
-                    loadItemInfo(memberDataTable.Rows[0]);
+                    memberReader.Read();
+
+                    loadItemInfo(memberReader);
+
+                    memberReader.Close();
+                    memberReader.Dispose();
                 }
                 else
                 {
+                    memberReader.Close();
+                    memberReader.Dispose();
+
                     throw new InvalidForumMemberException();
                 }
             }
@@ -138,6 +147,14 @@ namespace BoxSocial.Applications.Forum
         }
 
         public ForumMember(Core core, DataRow memberRow, UserLoadOptions loadOptions)
+            : base(core, memberRow, loadOptions)
+        {
+            ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
+
+            loadItemInfo(memberRow);
+        }
+
+        public ForumMember(Core core, System.Data.Common.DbDataReader memberRow, UserLoadOptions loadOptions)
             : base(core, memberRow, loadOptions)
         {
             ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
@@ -186,6 +203,25 @@ namespace BoxSocial.Applications.Forum
         }
 
         protected override void loadItemInfo(DataRow memberRow)
+        {
+            try
+            {
+                loadValue(memberRow, "user_id", out userId);
+                loadValue(memberRow, "item", out itemKey);
+                loadValue(memberRow, "posts", out forumPosts);
+                loadValue(memberRow, "rank", out forumRank);
+                loadValue(memberRow, "signature", out forumSignature);
+
+                itemLoaded(memberRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader memberRow)
         {
             try
             {
@@ -278,7 +314,12 @@ namespace BoxSocial.Applications.Forum
         {
             SelectQuery query = GetSelectQueryStub(typeof(ForumMember));
             query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
+
+            TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(ForumMember), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
                 query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
@@ -313,14 +354,17 @@ namespace BoxSocial.Applications.Forum
 			sQuery.AddCondition("user_keys.user_id", ConditionEquality.In, userIds);
 			sQuery.AddCondition("item_id", forumOwner.Id);
 			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
+
+            System.Data.Common.DbDataReader membersReader = core.Db.ReaderQuery(sQuery);
 			
-			DataTable membersTable = core.Db.Query(sQuery);
-			
-			foreach (DataRow dr in membersTable.Rows)
+			while (membersReader.Read())
 			{
-				ForumMember fm = new ForumMember(core, dr, UserLoadOptions.All);
+                ForumMember fm = new ForumMember(core, membersReader, UserLoadOptions.All);
 				forumMembers.Add(fm.Id, fm);
 			}
+
+            membersReader.Close();
+            membersReader.Dispose();
 			
 			return forumMembers;
 		}
@@ -347,13 +391,16 @@ namespace BoxSocial.Applications.Forum
             sQuery.LimitCount = perPage;
             sQuery.LimitStart = (page - 1) * perPage;
 
-            DataTable membersTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader membersReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in membersTable.Rows)
+            while (membersReader.Read())
             {
-                ForumMember fm = new ForumMember(core, dr, UserLoadOptions.All);
+                ForumMember fm = new ForumMember(core, membersReader, UserLoadOptions.All);
                 forumMembers.Add(fm.Id, fm);
             }
+
+            membersReader.Close();
+            membersReader.Dispose();
 
             return forumMembers;
         }

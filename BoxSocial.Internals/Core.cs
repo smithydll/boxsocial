@@ -840,12 +840,13 @@ namespace BoxSocial.Internals
                     SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
                     query.AddCondition("application_assembly_name", ConditionEquality.In, applicationNames);
 
-                    DataTable applicationDataTable = db.Query(query);
+                    System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
 
                     ItemCache.RegisterType(typeof(ApplicationEntry));
-                    foreach (DataRow dr in applicationDataTable.Rows)
+
+                    while (applicationReader.Read())
                     {
-                        ApplicationEntry ae = new ApplicationEntry(this, dr);
+                        ApplicationEntry ae = new ApplicationEntry(this, applicationReader);
                         ItemCache.RegisterItem(ae);
                         loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
 
@@ -854,6 +855,9 @@ namespace BoxSocial.Internals
                             Prose.AddApplication(ae.Key);
                         }
                     }
+
+                    applicationReader.Close();
+                    applicationReader.Dispose();
 
                     if (loadedAssemblies != null)
                     {

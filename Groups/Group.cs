@@ -2388,19 +2388,27 @@ namespace BoxSocial.Groups
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", GroupInfo.CoverPhotoId);
 
-                    DataTable coverTable = db.Query(query);
+                    System.Data.Common.DbDataReader coverReader = db.ReaderQuery(query);
 
-                    if (coverTable.Rows.Count == 1)
+                    if (coverReader.HasRows)
                     {
-                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        coverReader.Read();
+
+                        if (!(coverReader["gallery_item_uri"] is DBNull))
                         {
                             groupCoverPhotoUri = string.Format("/{0}/{1}",
-                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+                                (string)coverReader["gallery_item_parent_path"], (string)coverReader["gallery_item_uri"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
 
                             return string.Format("{0}images/_cover{1}",
                                 UriStub, groupCoverPhotoUri);
                         }
                     }
+
+                    coverReader.Close();
+                    coverReader.Dispose();
 
                     groupCoverPhotoUri = "FALSE";
                     return "FALSE";
@@ -2428,19 +2436,27 @@ namespace BoxSocial.Groups
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", GroupInfo.CoverPhotoId);
 
-                    DataTable coverTable = db.Query(query);
+                    System.Data.Common.DbDataReader coverReader = db.ReaderQuery(query);
 
-                    if (coverTable.Rows.Count == 1)
+                    if (coverReader.HasRows)
                     {
-                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        coverReader.Read();
+
+                        if (!(coverReader["gallery_item_uri"] is DBNull))
                         {
                             groupCoverPhotoUri = string.Format("/{0}/{1}",
-                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+                                (string)coverReader["gallery_item_parent_path"], (string)coverReader["gallery_item_uri"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
 
                             return string.Format("{0}images/_mcover{1}",
                                 UriStub, groupCoverPhotoUri);
                         }
                     }
+
+                    coverReader.Close();
+                    coverReader.Dispose();
 
                     groupCoverPhotoUri = "FALSE";
                     return "FALSE";

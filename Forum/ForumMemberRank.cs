@@ -189,7 +189,37 @@ namespace BoxSocial.Applications.Forum
 			}
 		}
 
+        public ForumMemberRank(Core core, System.Data.Common.DbDataReader rankDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ForumMemberRank_ItemLoad);
+
+            try
+            {
+                loadItemInfo(rankDataRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidForumMemberRankException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow rankRow)
+        {
+            loadValue(rankRow, "rank_id", out rankId);
+            loadValue(rankRow, "rank_owner", out rankOwner);
+            loadValue(rankRow, "rank_colour", out rankColour);
+            loadValue(rankRow, "rank_title", out rankTitleText);
+            loadValue(rankRow, "rank_posts", out rankPosts);
+            loadValue(rankRow, "rank_special", out rankSpecial);
+            loadValue(rankRow, "rank_image_id", out rankImageId);
+            loadValue(rankRow, "rank_simple_permissions", out simplePermissions);
+
+            itemLoaded(rankRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader rankRow)
         {
             loadValue(rankRow, "rank_id", out rankId);
             loadValue(rankRow, "rank_owner", out rankOwner);
@@ -250,14 +280,17 @@ namespace BoxSocial.Applications.Forum
 			sQuery.AddCondition("rank_owner_id", forumOwner.Id);
 			sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 			sQuery.AddCondition("rank_id", ConditionEquality.In, rankIds);
+
+            System.Data.Common.DbDataReader ranksReader = core.Db.ReaderQuery(sQuery);
 			
-			DataTable ranksTable = core.Db.Query(sQuery);
-			
-			foreach (DataRow dr in ranksTable.Rows)
+			while(ranksReader.Read())
 			{
-				ForumMemberRank fmr = new ForumMemberRank(core, dr);
+				ForumMemberRank fmr = new ForumMemberRank(core, ranksReader);
 				ranks.Add(fmr.Id, fmr);
 			}
+
+            ranksReader.Close();
+            ranksReader.Dispose();
 			
 			return ranks;
 		}
@@ -270,13 +303,16 @@ namespace BoxSocial.Applications.Forum
             sQuery.AddCondition("rank_owner_id", forumOwner.Id);
             sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 
-            DataTable ranksTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader ranksReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in ranksTable.Rows)
+            while (ranksReader.Read())
             {
-                ForumMemberRank fmr = new ForumMemberRank(core, dr);
+                ForumMemberRank fmr = new ForumMemberRank(core, ranksReader);
                 ranks.Add(fmr.Id, fmr);
             }
+
+            ranksReader.Close();
+            ranksReader.Dispose();
 
             return ranks;
         }

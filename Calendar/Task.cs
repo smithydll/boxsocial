@@ -234,7 +234,45 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
+        public Task(Core core, Primitive owner, System.Data.Common.DbDataReader taskRow)
+            : base(core)
+        {
+            this.owner = owner;
+
+            ItemLoad += new ItemLoadHandler(Task_ItemLoad);
+
+            try
+            {
+                loadItemInfo(taskRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidTaskException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow taskRow)
+        {
+            loadValue(taskRow, "task_id", out taskId);
+            loadValue(taskRow, "task_topic", out topic);
+            loadValue(taskRow, "task_description", out description);
+            loadValue(taskRow, "task_views", out views);
+            loadValue(taskRow, "task_item", out ownerKey);
+            loadValue(taskRow, "user_id", out userId);
+            loadValue(taskRow, "task_due_date_ut", out dueTimeRaw);
+            loadValue(taskRow, "task_time_completed_ut", out completedTimeRaw);
+            loadValue(taskRow, "task_category", out category);
+            loadValue(taskRow, "task_status", out status);
+            loadValue(taskRow, "task_percent_complete", out percentageComplete);
+            loadValue(taskRow, "task_priority", out priority);
+            loadValue(taskRow, "task_simple_permissions", out simplePermissions);
+            loadValue(taskRow, "task_assignee_id", out assigneeId);
+
+            itemLoaded(taskRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader taskRow)
         {
             loadValue(taskRow, "task_id", out taskId);
             loadValue(taskRow, "task_topic", out topic);

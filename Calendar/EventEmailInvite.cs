@@ -132,6 +132,27 @@ namespace BoxSocial.Applications.Calendar
             loadItemInfo(eventInviteDataRow);
         }
 
+        public EventEmailInvite(Core core, System.Data.Common.DbDataReader eventInviteDataRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(EventEmailInvite_ItemLoad);
+
+            loadItemInfo(eventInviteDataRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader eventRow)
+        {
+            loadValue(eventRow, "event_id", out eventId);
+            loadValue(eventRow, "invite_email", out inviteEmail);
+            loadValue(eventRow, "invite_key", out inviteEmailKey);
+            loadValue(eventRow, "inviter_id", out inviterId);
+            loadValue(eventRow, "invite_date_ut", out inviteTimeRaw);
+            loadValue(eventRow, "invite_accepted", out inviteAccepted);
+            loadValue(eventRow, "invite_status", out inviteStatus);
+
+            itemLoaded(eventRow);
+        }
+
         void EventEmailInvite_ItemLoad()
         {
         }

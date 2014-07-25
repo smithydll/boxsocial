@@ -282,6 +282,34 @@ namespace BoxSocial.Internals
             loadItemInfo(keyRow);
         }
 
+        internal SessionKey(Core core, System.Data.Common.DbDataReader keyRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(SessionKey_ItemLoad);
+
+            loadItemInfo(keyRow);
+        }
+
+        protected override void loadItemInfo(DataRow keyRow)
+        {
+            loadValue(keyRow, "key_id", out keyId);
+            loadValue(keyRow, "user_id", out userId);
+            loadValue(keyRow, "key_last_ip", out lastIp);
+            loadValue(keyRow, "key_last_visit_ut", out lastVisitRaw);
+
+            itemLoaded(keyRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader keyRow)
+        {
+            loadValue(keyRow, "key_id", out keyId);
+            loadValue(keyRow, "user_id", out userId);
+            loadValue(keyRow, "key_last_ip", out lastIp);
+            loadValue(keyRow, "key_last_visit_ut", out lastVisitRaw);
+
+            itemLoaded(keyRow);
+        }
+
         void SessionKey_ItemLoad()
         {
             
@@ -656,11 +684,17 @@ namespace BoxSocial.Internals
                     query.AddCondition("user_active", true);
                     query.AddCondition("key_id", SessionState.SessionMd5(sessionData.autoLoginId));
 
-                    DataTable userSessionTable = db.Query(query);
+                    System.Data.Common.DbDataReader userReader = db.ReaderQuery(query);
 
-                    if (userSessionTable.Rows.Count == 1)
+                    if (userReader.HasRows)
                     {
-                        loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
+                        userReader.Read();
+
+                        loggedInMember = new User(core, userReader, UserLoadOptions.Info);
+
+                        userReader.Close();
+                        userReader.Dispose();
+
                         enableAutologin = isLoggedIn = true;
                         if (loggedInMember.UserInfo.TwoFactorAuthVerified && twoFactor)
                         {
@@ -673,6 +707,9 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
+                        userReader.Close();
+                        userReader.Dispose();
+
                         core.Template.Parse("REDIRECT_URI", "/");
 
                         if (record == null)
@@ -726,11 +763,17 @@ namespace BoxSocial.Internals
                         query.AddCondition("user_active", true);
                         query.AddCondition("user_keys.user_id", userId);
 
-                        DataTable userSessionTable = db.Query(query);
+                        System.Data.Common.DbDataReader userSessionReader = db.ReaderQuery(query);
 
-                        if (userSessionTable.Rows.Count == 1)
+                        if (userSessionReader.HasRows)
                         {
-                            loggedInMember = new User(core, userSessionTable.Rows[0], UserLoadOptions.Info);
+                            userSessionReader.Read();
+
+                            loggedInMember = new User(core, userSessionReader, UserLoadOptions.Info);
+
+                            userSessionReader.Close();
+                            userSessionReader.Dispose();
+
                             isLoggedIn = true;
                             //signInState = SessionSignInState.SignedIn;
                             if (loggedInMember.UserInfo.TwoFactorAuthVerified && twoFactor)
@@ -744,6 +787,9 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
+                            userSessionReader.Close();
+                            userSessionReader.Dispose();
+
                             // TODO: activation
                             //core.Display.ShowMessage("Inactive account", "You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
                             Response.Write("You have attempted to use an inactive account. If you have just registered, check for an e-mail with an activation link at the e-mail address you provided.");
@@ -782,12 +828,17 @@ namespace BoxSocial.Internals
                     SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
                     query.AddCondition("user_keys.user_id", userId);
 
-                    DataTable userTable = db.Query(query);
+                    System.Data.Common.DbDataReader userReader = db.ReaderQuery(query);
 
-                    if (userTable.Rows.Count == 1)
+                    if (userReader.HasRows)
                     {
-                        loggedInMember = new User(core, userTable.Rows[0], UserLoadOptions.Info);
+                        userReader.Read();
+
+                        loggedInMember = new User(core, userReader, UserLoadOptions.Info);
                     }
+
+                    userReader.Close();
+                    userReader.Dispose();
                 }
             }
 

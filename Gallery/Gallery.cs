@@ -808,14 +808,22 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_item_id", owner.Id);
             query.AddCondition("gallery_item_type_id", owner.TypeId);
 
-            DataTable galleryTable = db.Query(query);
+            System.Data.Common.DbDataReader galleryReader = db.ReaderQuery(query);
 
-            if (galleryTable.Rows.Count == 1)
+            if (galleryReader.HasRows)
             {
-                loadItemInfo(galleryTable.Rows[0]);
+                galleryReader.Read();
+
+                loadItemInfo(galleryReader);
+
+                galleryReader.Close();
+                galleryReader.Dispose();
             }
             else
             {
+                galleryReader.Close();
+                galleryReader.Dispose();
+
                 throw new InvalidGalleryException();
             }
         }
@@ -1104,10 +1112,17 @@ namespace BoxSocial.Applications.Gallery
 		{
 			List<GalleryItem> items = new List<GalleryItem>();
 
-            foreach (DataRow dr in GetItemDataRows(core))
+            SelectQuery query = GetItemQuery(core);
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+
+            while (reader.Read())
             {
-                items.Add(new GalleryItem(core, owner, dr));
+                items.Add(new GalleryItem(core, owner, reader));
             }
+
+            reader.Close();
+            reader.Dispose();
 
             return items;
 		}
@@ -1123,11 +1138,17 @@ namespace BoxSocial.Applications.Gallery
 		{
 			List<GalleryItem> items = new List<GalleryItem>();
 
-            DataRowCollection drc = GetItemDataRows(core, currentPage, perPage, currentOffset);
-            foreach (DataRow dr in drc)
+            SelectQuery query = GetItemQuery(core, currentPage, perPage, currentOffset);
+
+            System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
+
+            while (reader.Read())
             {
-                items.Add(new GalleryItem(core, owner, dr));
+                items.Add(new GalleryItem(core, owner, reader));
             }
+
+            reader.Close();
+            reader.Dispose();
 
             return items;
 		}
@@ -1137,9 +1158,9 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <returns>Raw data for a list of gallery photos</returns>
-        protected DataRowCollection GetItemDataRows(Core core)
+        protected SelectQuery GetItemQuery(Core core)
         {
-            return GetItemDataRows(core, 1, 12, 0);
+            return GetItemQuery(core, 1, 12, 0);
         }
 
         /// <summary>
@@ -1149,7 +1170,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="currentPage">Current page</param>
         /// <param name="perPage">Number to show on each page</param>
         /// <returns>Raw data for a list of gallery photos</returns>
-        protected DataRowCollection GetItemDataRows(Core core, int currentPage, int perPage, long currentOffset)
+        protected SelectQuery GetItemQuery(Core core, int currentPage, int perPage, long currentOffset)
         {
             db = core.Db;
 
@@ -1171,9 +1192,7 @@ namespace BoxSocial.Applications.Gallery
             }
             query.LimitCount = perPage;
 
-            DataTable photoTable = db.Query(query);
-
-            return photoTable.Rows;
+            return query;
         }
 
         /// <summary>

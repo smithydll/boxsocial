@@ -424,24 +424,37 @@ namespace BoxSocial.Internals
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
 
-                    DataTable coverTable = db.Query(query);
+                    System.Data.Common.DbDataReader coverReader = db.ReaderQuery(query);
 
-                    if (coverTable.Rows.Count == 1)
+                    if (coverReader.HasRows)
                     {
-                        if (core.Settings.UseCdn && (byte)coverTable.Rows[0]["gallery_item_cover_exists"] > 0)
+                        coverReader.Read();
+
+                        if (core.Settings.UseCdn && (byte)coverReader["gallery_item_cover_exists"] > 0)
                         {
-                            return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnCoverBucketDomain, (string)coverTable.Rows[0]["gallery_item_storage_path"]);
+                            string uri = string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnCoverBucketDomain, (string)coverReader["gallery_item_storage_path"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
+
+                            return uri;
                         }
 
-                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        if (!(coverReader["gallery_item_uri"] is DBNull))
                         {
                             userCoverPhotoUri = string.Format("/{0}/{1}",
-                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+                                (string)coverReader["gallery_item_parent_path"], (string)coverReader["gallery_item_uri"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
 
                             return string.Format("{0}images/_cover{1}",
                                 UriStub, userCoverPhotoUri);
                         }
                     }
+
+                    coverReader.Close();
+                    coverReader.Dispose();
 
                     userCoverPhotoUri = "FALSE";
                     return "FALSE";
@@ -474,24 +487,37 @@ namespace BoxSocial.Internals
                     query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
                     query.AddCondition("gallery_item_id", UserInfo.CoverPhotoId);
 
-                    DataTable coverTable = db.Query(query);
+                    System.Data.Common.DbDataReader coverReader = db.ReaderQuery(query);
 
-                    if (coverTable.Rows.Count == 1)
+                    if (coverReader.HasRows)
                     {
-                        if (core.Settings.UseCdn && (byte)coverTable.Rows[0]["gallery_item_mobile_cover_exists"] > 0)
+                        coverReader.Read();
+
+                        if (core.Settings.UseCdn && (byte)coverReader["gallery_item_mobile_cover_exists"] > 0)
                         {
-                            return string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnMobileCoverBucketDomain, (string)coverTable.Rows[0]["gallery_item_storage_path"]);
+                            string uri = string.Format(core.Http.DefaultProtocol + "{0}/{1}", core.Settings.CdnMobileCoverBucketDomain, (string)coverReader["gallery_item_storage_path"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
+
+                            return uri;
                         }
 
-                        if (!(coverTable.Rows[0]["gallery_item_uri"] is DBNull))
+                        if (!(coverReader["gallery_item_uri"] is DBNull))
                         {
                             userCoverPhotoUri = string.Format("/{0}/{1}",
-                                (string)coverTable.Rows[0]["gallery_item_parent_path"], (string)coverTable.Rows[0]["gallery_item_uri"]);
+                                (string)coverReader["gallery_item_parent_path"], (string)coverReader["gallery_item_uri"]);
+
+                            coverReader.Close();
+                            coverReader.Dispose();
 
                             return string.Format("{0}images/_mcover{1}",
                                 UriStub, userCoverPhotoUri);
                         }
                     }
+
+                    coverReader.Close();
+                    coverReader.Dispose();
 
                     userCoverPhotoUri = "FALSE";
                     return "FALSE";
@@ -997,12 +1023,15 @@ namespace BoxSocial.Internals
             query.AddSort(SortOrder.Descending, "subscription_time_ut");
             query.LimitCount = count;
 
-            DataTable subscriptionsTable = db.Query(query);
+            System.Data.Common.DbDataReader subscriptionsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in subscriptionsTable.Rows)
+            while (subscriptionsReader.Read())
             {
-                subscriptionIds.Add((long)dr["subscription_item_id"]);
+                subscriptionIds.Add((long)subscriptionsReader["subscription_item_id"]);
             }
+
+            subscriptionsReader.Close();
+            subscriptionsReader.Dispose();
 
             return subscriptionIds;
         }

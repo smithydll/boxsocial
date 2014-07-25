@@ -122,13 +122,17 @@ namespace BoxSocial.Applications.Profile
             query.AddFields("*");
             query.AddSort(SortOrder.Ascending, "country_name");
 
-            DataTable countriesTable = db.Query(query);
+            System.Data.Common.DbDataReader countriesReader = db.ReaderQuery(query);
 
             countriesSelectBox.Add(new SelectBoxItem("", "Unspecified"));
-            foreach (DataRow countryRow in countriesTable.Rows)
+
+            while (countriesReader.Read())
             {
-                countriesSelectBox.Add(new SelectBoxItem((string)countryRow["country_iso"], (string)countryRow["country_name"]));
+                countriesSelectBox.Add(new SelectBoxItem((string)countriesReader["country_iso"], (string)countriesReader["country_name"]));
             }
+
+            countriesReader.Close();
+            countriesReader.Dispose();
 
 			if (LoggedInMember.Profile.CountryIso != null)
 			{

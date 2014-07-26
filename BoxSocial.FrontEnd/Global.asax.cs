@@ -359,8 +359,6 @@ namespace BoxSocial.FrontEnd
                         WebConfigurationManager.AppSettings["mysql-database"],
                         WebConfigurationManager.AppSettings["mysql-host"]);
 
-                    DataTable dnsTable = db.Query(query);
-
                     long userTypeId = 0;
                     long groupTypeId = 0;
 
@@ -402,22 +400,25 @@ namespace BoxSocial.FrontEnd
                         query2.AddFields("type_id", "type_namespace");
                         query2.AddCondition("type_primitive", true);
 
-                        DataTable typeTable = db.Query(query2);
+                        System.Data.Common.DbDataReader typeReader = db.ReaderQuery(query2);
 
-                        primitiveTypeIds = new Dictionary<string, long>(StringComparer.Ordinal);
-                        foreach (DataRow dr in typeTable.Rows)
+                        primitiveTypeIds = new Dictionary<string, long>(256, StringComparer.Ordinal);
+                        while(typeReader.Read())
                         {
-                            primitiveTypeIds.Add((string)dr["type_namespace"], (long)dr["type_id"]);
+                            primitiveTypeIds.Add((string)typeReader["type_namespace"], (long)typeReader["type_id"]);
 
-                            if ((string)dr["type_namespace"] == typeof(User).FullName)
+                            if ((string)typeReader["type_namespace"] == typeof(User).FullName)
                             {
-                                userTypeId = (long)dr["type_id"];
+                                userTypeId = (long)typeReader["type_id"];
                             }
-                            else if ((string)dr["type_namespace"] == typeof(UserGroup).FullName)
+                            else if ((string)typeReader["type_namespace"] == typeof(UserGroup).FullName)
                             {
-                                groupTypeId = (long)dr["type_id"];
+                                groupTypeId = (long)typeReader["type_id"];
                             }
                         }
+
+                        typeReader.Close();
+                        typeReader.Dispose();
 
                         if (cache != null)
                         {
@@ -425,23 +426,31 @@ namespace BoxSocial.FrontEnd
                         }
                     }
 
-                    if (dnsTable.Rows.Count == 1)
+                    System.Data.Common.DbDataReader dnsReader = db.ReaderQuery(query);
+
+                    if (dnsReader.HasRows)
                     {
-                        long typeId = (long)dnsTable.Rows[0]["dns_owner_type"];
+                        dnsReader.Read();
+                        long typeId = (long)dnsReader["dns_owner_type"];
+                        string dnsOwnerKey = (string)dnsReader["dns_owner_key"];
+
+                        dnsReader.Close();
+                        dnsReader.Dispose();
+
                         if (typeId == groupTypeId)
                         {
                                 patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
-                                patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/groupstyle.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?gn={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?gn={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", dnsOwnerKey), string.Format(@"/groupstyle.aspx?gn={0}", dnsOwnerKey) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1", dnsOwnerKey) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1&retina=true", dnsOwnerKey) });
 
-                                patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/account(/|)$", string.Format(@"/groupaccount.aspx?gn={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", dnsOwnerKey) });
+                                patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", dnsOwnerKey) });
+                                patterns.Add(new string[] { @"^/account(/|)$", string.Format(@"/groupaccount.aspx?gn={0}", dnsOwnerKey) });
 
-                                patterns.Add(new string[] { @"^(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                                patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                                patterns.Add(new string[] { @"^(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=", dnsOwnerKey) });
+                                patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/grouppage.aspx?gn={0}&path=$1", dnsOwnerKey) });
                         }
                         if (typeId == userTypeId)
                         {
@@ -461,20 +470,23 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { @"^/api/feed(/|)$", @"/functions.aspx?fun=feed" });
                             patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
 
-                            patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/userstyle.aspx?un={0}", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", (string)dnsTable.Rows[0]["dns_owner_key"]), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                            patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", dnsOwnerKey), string.Format(@"/userstyle.aspx?un={0}", dnsOwnerKey) });
+                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1", dnsOwnerKey) });
+                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", dnsOwnerKey) });
 
                             patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                             patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
                             patterns.Add(new string[] { @"^/account(/|)$", @"/account.aspx" });
 
-                            patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", (string)dnsTable.Rows[0]["dns_owner_key"]) });
-                            patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", (string)dnsTable.Rows[0]["dns_owner_key"]) });
+                            patterns.Add(new string[] { @"^(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=", dnsOwnerKey) });
+                            patterns.Add(new string[] { @"^/(.+)(/|)$", string.Format(@"/memberpage.aspx?un={0}&path=$1", dnsOwnerKey) });
                         }
                     }
                     else
                     {
+                        dnsReader.Close();
+                        dnsReader.Dispose();
+
                         return;
                     }
 

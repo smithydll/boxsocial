@@ -113,7 +113,7 @@ namespace BoxSocial.Internals
             long userTypeId = ItemKey.GetTypeId(typeof(User));
 
             List<string> usernameList = new List<string>();
-            Dictionary<string, long> userIds = new Dictionary<string, long>(StringComparer.Ordinal);
+            Dictionary<string, long> userIds = new Dictionary<string, long>(8, StringComparer.Ordinal);
             foreach (string username in usernames)
             {
                 PrimitiveKey key = new PrimitiveKey(username.ToLower(), userTypeId);

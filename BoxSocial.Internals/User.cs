@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -919,8 +920,16 @@ namespace BoxSocial.Internals
             loadValue(userRow, "user_simple_permissions", out simplePermissions);
 
             itemLoaded(userRow);
+#if DEBUG
+            Stopwatch httpTimer = new Stopwatch();
+            httpTimer.Start();
+#endif
             core.ItemCache.RegisterItem((NumberedItem)this);
             core.PrimitiveCache.RegisterItem((Primitive)this);
+#if DEBUG
+            httpTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- User {1} cached in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0, userName));
+#endif
         }
 
         void User_ItemLoad()
@@ -1342,26 +1351,37 @@ namespace BoxSocial.Internals
                 return Relation.Owner;
             }
 
-            DataTable relationMe = db.Query(string.Format("SELECT relation_type, relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1};",
-                    userId, member.Id));
+            SelectQuery query = new SelectQuery(typeof(UserRelation));
+            query.AddField(new DataField(typeof(UserRelation), "relation_type"));
+            query.AddField(new DataField(typeof(UserRelation), "relation_order"));
+            query.AddCondition(new DataField(typeof(UserRelation), "relation_me"), userId);
+            query.AddCondition(new DataField(typeof(UserRelation), "relation_you"), member.Id);
 
-            for (int i = 0; i < relationMe.Rows.Count; i++)
+            System.Data.Common.DbDataReader relationReader = db.ReaderQuery(query);
+
+            /*string.Format("SELECT relation_type, relation_order FROM user_relations WHERE relation_me = {0} AND relation_you = {1};",
+                    userId, member.Id)*/
+
+            while (relationReader.Read())
             {
-                if ((string)relationMe.Rows[i]["relation_type"] == "FRIEND")
+                if ((string)relationReader["relation_type"] == "FRIEND")
                 {
                     returnValue |= Relation.Friend;
                 }
 
-                if ((string)relationMe.Rows[i]["relation_type"] == "FAMILY")
+                if ((string)relationReader["relation_type"] == "FAMILY")
                 {
                     returnValue |= Relation.Family;
                 }
 
-                if ((string)relationMe.Rows[i]["relation_type"] == "BLOCKED")
+                if ((string)relationReader["relation_type"] == "BLOCKED")
                 {
                     returnValue |= Relation.Blocked;
                 }
             }
+
+            relationReader.Close();
+            relationReader.Dispose();
 
             return returnValue;
         }
@@ -1461,6 +1481,10 @@ namespace BoxSocial.Internals
 
         public static SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
         {
+#if DEBUG
+            Stopwatch httpTimer = new Stopwatch();
+            httpTimer.Start();
+#endif
             long typeId = ItemType.GetTypeId(typeof(User));
             if (loadOptions == UserLoadOptions.All && QueryCache.HasQuery(typeId))
             {
@@ -1503,6 +1527,11 @@ namespace BoxSocial.Internals
                         query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
                     }
                 }
+
+#if DEBUG
+                httpTimer.Stop();
+                HttpContext.Current.Response.Write(string.Format("<!-- Build user query stub in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
+#endif
 
                 if (loadOptions == UserLoadOptions.All)
                 {

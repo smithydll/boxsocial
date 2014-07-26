@@ -68,12 +68,15 @@ namespace BoxSocial.Applications.Pages
             }
             query.AddSort(SortOrder.Ascending, "page_order");
 
-            DataTable pagesTable = db.Query(query);
+            System.Data.Common.DbDataReader pagesReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in pagesTable.Rows)
+            while(pagesReader.Read())
             {
-                pages.Add(new Page(core, owner, dr));
+                pages.Add(new Page(core, owner, pagesReader));
             }
+
+            pagesReader.Close();
+            pagesReader.Dispose();
 
             return pages;
         }

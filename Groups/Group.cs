@@ -737,11 +737,13 @@ namespace BoxSocial.Groups
             query.AddCondition("group_id", groupId);
             query.AddCondition("user_id", itemKey.Id);
 
-            DataTable memberTable = db.Query(query);
+            System.Data.Common.DbDataReader memberReader = db.ReaderQuery(query);
 
-            if (memberTable.Rows.Count > 0)
+            if (memberReader.HasRows)
             {
-                switch ((GroupMemberApproval)(byte)memberTable.Rows[0]["group_member_approved"])
+                memberReader.Read();
+
+                switch ((GroupMemberApproval)(byte)memberReader["group_member_approved"])
                 {
                     case GroupMemberApproval.Pending:
                         groupMemberCache.Add(itemKey, false);
@@ -770,6 +772,9 @@ namespace BoxSocial.Groups
                 groupMemberBannedCache.Add(itemKey, false);
                 groupMemberAbsoluteCache.Add(itemKey, false);
             }
+
+            memberReader.Close();
+            memberReader.Dispose();
         }
 
         public bool IsGroupMemberAbsolute(ItemKey member)
@@ -850,16 +855,31 @@ namespace BoxSocial.Groups
                 }
                 else
                 {
-                    DataTable operatorTable = db.Query(string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
-                        groupId, member.Id));
+                    SelectQuery query = new SelectQuery(typeof(GroupOperator));
+                    query.AddField(new DataField(typeof(GroupOperator), "user_id"));
+                    query.AddCondition(new DataField(typeof(GroupOperator), "group_id"), groupId);
+                    query.AddCondition(new DataField(typeof(GroupOperator), "user_id"), member.Id);
 
-                    if (operatorTable.Rows.Count > 0)
+                    System.Data.Common.DbDataReader operatorReader = db.ReaderQuery(query);
+
+                    /*
+                     string.Format("SELECT user_id FROM group_operators WHERE group_id = {0} AND user_id = {1}",
+                        groupId, member.Id)
+                     */
+
+                    if (operatorReader.HasRows)
                     {
+                        operatorReader.Close();
+                        operatorReader.Dispose();
+
                         groupOperatorCache.Add(member, true);
                         return true;
                     }
                     else
                     {
+                        operatorReader.Close();
+                        operatorReader.Dispose();
+
                         groupOperatorCache.Add(member, false);
                         return false;
                     }

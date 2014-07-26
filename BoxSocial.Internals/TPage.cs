@@ -280,13 +280,15 @@ namespace BoxSocial.Internals
                 }
             }
 
+#if DEBUG
             Stopwatch httpTimer = new Stopwatch();
             httpTimer.Start();
+#endif
             session = new SessionState(Core, db, User, HttpContext.Current.Request, HttpContext.Current.Response);
             loggedInMember = session.LoggedInMember;
-            httpTimer.Stop();
 #if DEBUG
-            //HttpContext.Current.Response.Write(string.Format("<!-- section A in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
+            httpTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
 #endif
 
             tz = new UnixTime(core, UnixTime.UTC_CODE);
@@ -425,7 +427,7 @@ namespace BoxSocial.Internals
                 double pageEndSeconds = (timer.ElapsedTicks - pageEnd) / 10000000.0;
                 if (core != null)
                 {
-                    if (core.LoggedInMemberId <= 2 && core.LoggedInMemberId != 0)
+                    //if (core.LoggedInMemberId <= 2 && core.LoggedInMemberId != 0)
                     {
                         HttpContext.Current.Response.Write(string.Format("\r\n<!-- {0} seconds (initilised in {4} seconds assemblies loaded in {6}, ended in {5} seconds) - {1} queries in {2} seconds - template in {3} seconds -->\r\n", seconds, db.GetQueryCount(), db.GetQueryTime(), templateSeconds, initTime / 10000000.0, pageEndSeconds, loadTime / 10000000.0));
 #if DEBUG

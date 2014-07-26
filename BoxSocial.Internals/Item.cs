@@ -1828,9 +1828,14 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- slow dbreader path -->\r\n");
+                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- slow dbreader path -->\r\n");
             }
 #endif
+        }
+
+        protected virtual void loadItemInfo(HibernateItem reader)
+        {
+            throw new NotImplementedException();
         }
 
         private Dictionary<string, FieldInfo> propertyFields = null;
@@ -2066,7 +2071,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
+                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
             }
 #endif
         }
@@ -2143,12 +2148,29 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected static void loadValue(HibernateItem row, string field, out string value)
+        {
+            if (!(row[field] is DBNull))
+            {
+                value = (string)row[field];
+            }
+            else
+            {
+                value = null;
+            }
+        }
+
         protected static void loadValue(DataRow row, string field, out ItemKey value)
         {
             value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ItemKey value)
+        {
+            value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out ItemKey value)
         {
             value = new ItemKey((long)row[field + "_id"], (long)row[field + "_type_id"]);
         }
@@ -2193,12 +2215,37 @@ namespace BoxSocial.Internals
             }
         }
 
+        protected static void loadValue(HibernateItem row, string field, out bool value)
+        {
+            if (row[field] is bool)
+            {
+                value = (bool)row[field];
+            }
+            else if (row[field] is byte)
+            {
+                value = ((byte)row[field] > 0) ? true : false;
+            }
+            else if (row[field] is sbyte)
+            {
+                value = ((sbyte)row[field] > 0) ? true : false;
+            }
+            else
+            {
+                value = false;
+            }
+        }
+
         protected static void loadValue(DataRow row, string field, out ulong value)
         {
             value = (ulong)row[field];
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ulong value)
+        {
+            value = (ulong)row[field];
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out ulong value)
         {
             value = (ulong)row[field];
         }
@@ -2213,12 +2260,22 @@ namespace BoxSocial.Internals
             value = (long)row[field];
         }
 
+        protected static void loadValue(HibernateItem row, string field, out long value)
+        {
+            value = (long)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out uint value)
         {
             value = (uint)row[field];
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out uint value)
+        {
+            value = (uint)row[field];
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out uint value)
         {
             value = (uint)row[field];
         }
@@ -2233,12 +2290,22 @@ namespace BoxSocial.Internals
             value = (int)row[field];
         }
 
+        protected static void loadValue(HibernateItem row, string field, out int value)
+        {
+            value = (int)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out ushort value)
         {
             value = (ushort)row[field];
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out ushort value)
+        {
+            value = (ushort)row[field];
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out ushort value)
         {
             value = (ushort)row[field];
         }
@@ -2253,12 +2320,22 @@ namespace BoxSocial.Internals
             value = (short)row[field];
         }
 
+        protected static void loadValue(HibernateItem row, string field, out short value)
+        {
+            value = (short)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out sbyte value)
         {
             value = (sbyte)row[field];
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out sbyte value)
+        {
+            value = (sbyte)row[field];
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out sbyte value)
         {
             value = (sbyte)row[field];
         }
@@ -2273,12 +2350,22 @@ namespace BoxSocial.Internals
             value = (byte)row[field];
         }
 
+        protected static void loadValue(HibernateItem row, string field, out byte value)
+        {
+            value = (byte)row[field];
+        }
+
         protected static void loadValue(DataRow row, string field, out double value)
         {
             value = (double)row[field];
         }
 
         protected static void loadValue(System.Data.Common.DbDataReader row, string field, out double value)
+        {
+            value = (double)row[field];
+        }
+
+        protected static void loadValue(HibernateItem row, string field, out double value)
         {
             value = (double)row[field];
         }
@@ -2293,6 +2380,11 @@ namespace BoxSocial.Internals
             value = (float)row[field];
         }
 
+        protected static void loadValue(HibernateItem row, string field, out float value)
+        {
+            value = (float)row[field];
+        }
+
         protected void itemLoaded(DataRow itemRow)
         {
             Type type = this.GetType();
@@ -2302,7 +2394,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
 #endif
 
@@ -2361,7 +2453,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
+                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- dbreader path -->\r\n");
             }
 #endif
 
@@ -2420,6 +2512,68 @@ namespace BoxSocial.Internals
                 ItemLoad();
             }
         }
+
+        protected void itemLoaded(HibernateItem itemRow)
+        {
+            Type type = this.GetType();
+
+#if DEBUG
+            long timerElapsed = timer.ElapsedTicks;
+            timer.Stop();
+            if (HttpContext.Current != null)
+            {
+                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- hibernate path -->\r\n");
+            }
+#endif
+
+            // the column most likely to be unique
+            bool hasItemInfo = itemRow.ContainsKey("info_item_time_ut");
+
+            if (hasItemInfo)
+            {
+                if (type.IsSubclassOf(typeof(NumberedItem)) && (!type.Equals(typeof(ItemInfo))))
+                {
+                    if (typeof(ICommentableItem).IsAssignableFrom(type) ||
+                        typeof(ILikeableItem).IsAssignableFrom(type) ||
+                        typeof(IRateableItem).IsAssignableFrom(type) ||
+                        typeof(ITagableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type) ||
+                        typeof(ISubscribeableItem).IsAssignableFrom(type) ||
+                        typeof(IShareableItem).IsAssignableFrom(type) ||
+                        typeof(IViewableItem).IsAssignableFrom(type))
+                    {
+
+                        try
+                        {
+                            if (((NumberedItem)this).info == null)
+                            {
+                                ((NumberedItem)this).info = new ItemInfo(core, itemRow);
+                            }
+                        }
+                        catch (InvalidIteminfoException)
+                        {
+                            // not all rows will have one yet, but be ready
+                        }
+                        catch
+                        {
+                            // catch all remaining errors
+                        }
+                    }
+                }
+#if DEBUG
+                if (type.Equals(typeof(ItemInfo)))
+                {
+                    //HttpContext.Current.Response.Write("<!-- " + itemRow["info_item_type_id"].ToString() + "," + itemRow["info_item_id"].ToString() + " --><!-- hibernate path -->\r\n");
+                }
+#endif
+            }
+
+            if (ItemLoad != null)
+            {
+                ItemLoad();
+            }
+        }
+
     }
 
     public enum ItemChangeAction

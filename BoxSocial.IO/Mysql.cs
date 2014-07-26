@@ -85,14 +85,14 @@ namespace BoxSocial.IO
         private void PushQuery(string query, double time)
         {
 #if DEBUG
-            string[] stacktrace = Environment.StackTrace.Split(new char[] { '\n' });
+            /*string[] stacktrace = Environment.StackTrace.Split(new char[] { '\n' });
             if (stacktrace.Length > 7)
             {
-                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n\r\n" + stacktrace[4].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[5].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[6].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[7].TrimEnd(new char[] { '\r' }) + "\r\n--------------------\r\n");
+                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n\r\n" + stacktrace[4].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[5].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[6].TrimEnd(new char[] { '\r' }) + "\r\n" + stacktrace[7].TrimEnd(new char[] { '\r' }) + "\r\n====================\r\n");
             }
-            else
+            else*/
             {
-                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n--------------------\r\n");
+                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n====================r\n");
             }
             //QueryList.Push(query);
 
@@ -221,6 +221,12 @@ namespace BoxSocial.IO
 
             timer.Stop();
             queryTime += timer.ElapsedTicks;
+#if DEBUG
+            if (HttpContext.Current != null)
+            {
+                //HttpContext.Current.Response.Write(string.Format("<!-- Query rendered in {0} seconds ({1}) -->\r\n", timer.ElapsedTicks / 10000000.0, query.Tables[0]));
+            }
+#endif
 
             return UpdateQuery(q);
         }

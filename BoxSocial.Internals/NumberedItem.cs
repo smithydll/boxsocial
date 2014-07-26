@@ -33,17 +33,20 @@ namespace BoxSocial.Internals
     public sealed class NumberedItemId : ItemKey, IComparable
     {
         private Type type;
+        int hashCode = 0;
 
         public NumberedItemId(long itemId, long typeId)
             : base(itemId, typeId)
         {
             this.type = null;
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
         public NumberedItemId(long itemId, Type type)
             : base(itemId, type)
         {
             this.type = type;
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
         public new int CompareTo(object obj)
@@ -70,7 +73,7 @@ namespace BoxSocial.Internals
 
         public override int GetHashCode()
         {
-            return TypeId.GetHashCode() ^ Id.GetHashCode();
+            return hashCode;
         }
 
         public override string ToString()

@@ -834,7 +834,7 @@ namespace BoxSocial.Internals
                     break;
             }
 
-            Dictionary<string, string> loopVars = new Dictionary<string, string>(StringComparer.Ordinal);
+            Dictionary<string, string> loopVars = new Dictionary<string, string>(20, StringComparer.Ordinal);
 
             loopVars.Add("STAR_ONE", one);
             loopVars.Add("STAR_TWO", two);

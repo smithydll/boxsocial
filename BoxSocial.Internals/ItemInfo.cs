@@ -187,6 +187,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemInfo(Core core, HibernateItem itemReader)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
+
+            try
+            {
+                loadItemInfo(itemReader);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidIteminfoException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow itemRow)
         {
             loadValue(itemRow, "info_item", out itemKey);
@@ -209,6 +224,27 @@ namespace BoxSocial.Internals
         }
 
         protected override void loadItemInfo(System.Data.Common.DbDataReader itemRow)
+        {
+            loadValue(itemRow, "info_item", out itemKey);
+            loadValue(itemRow, "info_shortkey", out shortUrlKey);
+            comments = (long)itemRow["info_comments"];
+            likes = (long)itemRow["info_likes"];
+            dislikes = (long)itemRow["info_dislikes"];
+            rating = (float)itemRow["info_rating"];
+            subscribers = (long)itemRow["info_subscribers"];
+            tags = (long)itemRow["info_tags"];
+            sharedTimes = (long)itemRow["info_shared_times"];
+            viewedTimes = (long)itemRow["info_viewed_times"];
+            tweetId = (long)itemRow["info_tweet_id"];
+            loadValue(itemRow, "info_tweet_uri", out tweetUri);
+            loadValue(itemRow, "info_facebook_post_id", out facebookPostId);
+            tumblrPostId = (long)itemRow["info_tumblr_post_id"];
+            timeRaw = (long)itemRow["info_item_time_ut"];
+
+            itemLoaded(itemRow);
+        }
+
+        protected override void loadItemInfo(HibernateItem itemRow)
         {
             loadValue(itemRow, "info_item", out itemKey);
             loadValue(itemRow, "info_shortkey", out shortUrlKey);

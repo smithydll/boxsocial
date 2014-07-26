@@ -31,6 +31,7 @@ namespace BoxSocial.Internals
     {
         private string key;
         private long typeId;
+        int hashCode = 0;
 
         public string Key
         {
@@ -52,6 +53,7 @@ namespace BoxSocial.Internals
         {
             this.typeId = typeId;
             this.key = key;
+            hashCode = typeId.GetHashCode() ^ key.GetHashCode();
         }
 
         public int CompareTo(object obj)
@@ -71,13 +73,13 @@ namespace BoxSocial.Internals
 
             if (typeId != pk.typeId)
                 return false;
-            if (key != pk.Key) return false;
+            if (key != pk.key) return false;
             return true;
         }
 
         public override int GetHashCode()
         {
-            return typeId.GetHashCode() ^ key.GetHashCode();
+            return hashCode;
         }
 
     }

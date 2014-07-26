@@ -131,6 +131,7 @@
     <Compile Include="Embed.cs" />
     <Compile Include="Emoticon.cs" />
     <Compile Include="Facebook.cs" />
+    <Compile Include="HibernateItem.cs" />
     <Compile Include="IEmbeddableItem.cs" />
     <Compile Include="INotifiableItem.cs" />
     <Compile Include="IPermissibleControlPanelSubModule.cs" />

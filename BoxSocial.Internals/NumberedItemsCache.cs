@@ -143,7 +143,7 @@ namespace BoxSocial.Internals
                 itemsCached.Add(itemKey, item);
             }
 
-            Type typeToGet;
+            /*Type typeToGet;
 
             typeToGet = typesAccessed[itemKey.TypeId];
 
@@ -156,7 +156,7 @@ namespace BoxSocial.Internals
                         itemsPersisted.Add(itemKey, item);
                     }
                 }
-            }
+            }*/
             batchedItemIds.Remove(itemKey);
         }
 

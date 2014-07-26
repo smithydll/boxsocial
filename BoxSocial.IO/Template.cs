@@ -48,8 +48,8 @@ namespace BoxSocial.IO
     {
         private DisplayMedium medium;
         private string loopName;
-        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(4, StringComparer.Ordinal);
-        private Dictionary<string, string> variables = new Dictionary<string, string>(128, StringComparer.Ordinal);
+        private Dictionary<string, List<VariableCollection>> childLoops = new Dictionary<string, List<VariableCollection>>(8, StringComparer.Ordinal);
+        private Dictionary<string, string> variables = new Dictionary<string, string>(256, StringComparer.Ordinal);
         private VariableCollection parentCollection = null;
 
         public DisplayMedium Medium
@@ -116,10 +116,11 @@ namespace BoxSocial.IO
 
         public void Parse(string key, string value)
         {
-            if (!variables.ContainsKey(key))
+            /*if (!variables.ContainsKey(key))
             {
                 variables.Add(key, HttpUtility.HtmlEncode(value));
-            }
+            }*/
+            variables[key] = HttpUtility.HtmlEncode(value);
         }
 
         public void Parse(string key, long value)
@@ -193,20 +194,19 @@ namespace BoxSocial.IO
 
         public void ParseVariables(string key, string value)
         {
-            try
+            /*if (!variables.ContainsKey(key))
             {
                 variables.Add(key, value);
-            }
-            catch
-            {
-            }
+            }*/
+            variables[key] = value;
         }
 
         public void ParseVariables(Dictionary<string, string> vars)
         {
             foreach (string key in vars.Keys)
             {
-                variables.Add(key, vars[key]);
+                /*variables.Add(key, vars[key]);*/
+                variables[key] = vars[key];
             }
         }
 
@@ -315,7 +315,7 @@ namespace BoxSocial.IO
 
         private DisplayMedium medium;
 
-        private Dictionary<string, int> instances = new Dictionary<string,int>();
+        private Dictionary<string, int> instances = new Dictionary<string, int>(8, StringComparer.Ordinal);
         
         public static string Path
         {

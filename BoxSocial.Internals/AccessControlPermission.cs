@@ -313,12 +313,15 @@ namespace BoxSocial.Internals
             sQuery.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             sQuery.AddSort(SortOrder.Ascending, "permission_type");
 
-            DataTable permissionsTable = core.Db.Query(sQuery);
+            System.Data.Common.DbDataReader permissionsReader = core.Db.ReaderQuery(sQuery);
 
-            foreach (DataRow dr in permissionsTable.Rows)
+            while (permissionsReader.Read())
             {
-                permissions.Add(new AccessControlPermission(core, dr));
+                permissions.Add(new AccessControlPermission(core, permissionsReader));
             }
+
+            permissionsReader.Close();
+            permissionsReader.Dispose();
 
             return permissions;
         }

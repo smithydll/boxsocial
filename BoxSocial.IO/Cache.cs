@@ -29,5 +29,6 @@ namespace BoxSocial.IO
 {
     public abstract class Cache
     {
+
     }
 }

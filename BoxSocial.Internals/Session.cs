@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography;
@@ -449,7 +450,15 @@ namespace BoxSocial.Internals
             this.signInState = SessionSignInState.SignedOut;
 
             ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
+#if DEBUG
+            Stopwatch httpTimer = new Stopwatch();
+            httpTimer.Start();
+#endif
             SessionPagestart(ipAddress.ToString());
+#if DEBUG
+            httpTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A.1 in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
+#endif
             return;
             
         }
@@ -470,66 +479,72 @@ namespace BoxSocial.Internals
 			ipAddress = new IPAddress(0);
 		}
 
-        private Dictionary<string, string> bots = new Dictionary<string, string>();
+        private static object botsLock = new object();
+        private static Dictionary<string, string> bots = null;
 
         private string IsBotUserAgent(string ua)
         {
-            /* This list of bots from phpBB 3.0.12*/
+            /* This list of bots from phpBB 3.0.12 */
 
-            if (bots.Count == 0)
+            lock (botsLock)
             {
-                bots.Add("AdsBot-Google", "Google AdsBot");
-                bots.Add("ia_archiver", "Alexa");
-                bots.Add("Scooter/", "Alta Vista");
-                bots.Add("Ask Jeeves", "Ask Jeeves");
-                bots.Add("Baiduspider", "Baidu");
-                bots.Add("bingbot/", "Bing");
-                bots.Add("Exabot", "Exabot");
-                bots.Add("FAST Enterprise Crawler", "FAST Enterprise");
-                bots.Add("FAST-WebCrawler/", "FAST WebCrawler");
-                bots.Add("http://www.neomo.de/", "Francis");
-                bots.Add("Gigabot/", "Gigabot");
-                bots.Add("Mediapartners-Google", "Google Adsense");
-                bots.Add("Google Desktop", "Google Desktop");
-                bots.Add("Feedfetcher-Google", "Google Feedfetcher");
-                bots.Add("Googlebot", "Google");
-                bots.Add("heise-IT-Markt-Crawler", "Heise IT-Markt");
-                bots.Add("heritrix/1.", "Heritrix");
-                bots.Add("ibm.com/cs/crawler", "IBM Research");
-                bots.Add("ICCrawler - ICjobs", "ICCrawler");
-                bots.Add("ichiro/", "ichiro");
-                bots.Add("MJ12bot/", "Majestic-12");
-                bots.Add("MetagerBot/", "Metager");
-                bots.Add("msnbot-NewsBlogs/", "MSN NewsBlogs");
-                bots.Add("msnbot/", "MSN");
-                bots.Add("msnbot-media/", "MSNbot Media");
-                bots.Add("http://lucene.apache.org/nutch/", "Nutch");
-                bots.Add("online link validator", "Online link");
-                bots.Add("psbot/0", "psbot");
-                bots.Add("Sensis Web Crawler", "Sensis");
-                bots.Add("SEO search Crawler/", "SEO");
-                bots.Add("Seoma [SEO Crawler]", "Seoma");
-                bots.Add("SEOsearch/", "SEOSearch");
-                bots.Add("Snappy/1.1 ( http://www.urltrends.com/ )", "Snappy");
-                bots.Add("http://www.tkl.iis.u-tokyo.ac.jp/~crawler/", "Steeler");
-                bots.Add("crawleradmin.t-info@telekom.de", "Telekom");
-                bots.Add("TurnitinBot/", "TurnitinBot");
-                bots.Add("voyager/", "Voyager");
-                bots.Add("W3 SiteSearch Crawler", "W3");
-                bots.Add("W3C-checklink/", "W3C");
-                bots.Add("W3C_Validator", "W3C");
-                bots.Add("yacybot", "YaCy");
-                bots.Add("Yahoo-MMCrawler/", "Yahoo MMCrawler");
-                bots.Add("Yahoo! DE Slurp", "Yahoo Slurp");
-                bots.Add("Yahoo! Slurp", "Yahoo");
-                bots.Add("YahooSeeker/", "YahooSeeker");
-            }
-
-            foreach (string key in bots.Keys)
-            {
-                if ((!string.IsNullOrEmpty(key)) && Regex.IsMatch(ua, key.Replace("#", "\\#").Replace("\\*", ".*?"), RegexOptions.IgnoreCase))
+                if (bots == null)
                 {
-                    return bots[key];
+                    bots = new Dictionary<string, string>(128, StringComparer.Ordinal);
+
+                    bots.Add("AdsBot-Google", "Google AdsBot");
+                    bots.Add("ia_archiver", "Alexa");
+                    bots.Add("Scooter/", "Alta Vista");
+                    bots.Add("Ask Jeeves", "Ask Jeeves");
+                    bots.Add("Baiduspider", "Baidu");
+                    bots.Add("bingbot/", "Bing");
+                    bots.Add("Exabot", "Exabot");
+                    bots.Add("FAST Enterprise Crawler", "FAST Enterprise");
+                    bots.Add("FAST-WebCrawler/", "FAST WebCrawler");
+                    bots.Add("http://www.neomo.de/", "Francis");
+                    bots.Add("Gigabot/", "Gigabot");
+                    bots.Add("Mediapartners-Google", "Google Adsense");
+                    bots.Add("Google Desktop", "Google Desktop");
+                    bots.Add("Feedfetcher-Google", "Google Feedfetcher");
+                    bots.Add("Googlebot", "Google");
+                    bots.Add("heise-IT-Markt-Crawler", "Heise IT-Markt");
+                    bots.Add("heritrix/1.", "Heritrix");
+                    bots.Add("ibm.com/cs/crawler", "IBM Research");
+                    bots.Add("ICCrawler - ICjobs", "ICCrawler");
+                    bots.Add("ichiro/", "ichiro");
+                    bots.Add("MJ12bot/", "Majestic-12");
+                    bots.Add("MetagerBot/", "Metager");
+                    bots.Add("msnbot-NewsBlogs/", "MSN NewsBlogs");
+                    bots.Add("msnbot/", "MSN");
+                    bots.Add("msnbot-media/", "MSNbot Media");
+                    bots.Add("http://lucene.apache.org/nutch/", "Nutch");
+                    bots.Add("online link validator", "Online link");
+                    bots.Add("psbot/0", "psbot");
+                    bots.Add("Sensis Web Crawler", "Sensis");
+                    bots.Add("SEO search Crawler/", "SEO");
+                    bots.Add("Seoma [SEO Crawler]", "Seoma");
+                    bots.Add("SEOsearch/", "SEOSearch");
+                    bots.Add("Snappy/1.1 ( http://www.urltrends.com/ )", "Snappy");
+                    bots.Add("http://www.tkl.iis.u-tokyo.ac.jp/~crawler/", "Steeler");
+                    bots.Add("crawleradmin.t-info@telekom.de", "Telekom");
+                    bots.Add("TurnitinBot/", "TurnitinBot");
+                    bots.Add("voyager/", "Voyager");
+                    bots.Add("W3 SiteSearch Crawler", "W3");
+                    bots.Add("W3C-checklink/", "W3C");
+                    bots.Add("W3C_Validator", "W3C");
+                    bots.Add("yacybot", "YaCy");
+                    bots.Add("Yahoo-MMCrawler/", "Yahoo MMCrawler");
+                    bots.Add("Yahoo! DE Slurp", "Yahoo Slurp");
+                    bots.Add("Yahoo! Slurp", "Yahoo");
+                    bots.Add("YahooSeeker/", "YahooSeeker");
+                }
+
+                foreach (string key in bots.Keys)
+                {
+                    if ((!string.IsNullOrEmpty(key)) && Regex.IsMatch(ua, key.Replace("#", "\\#").Replace("\\*", ".*?"), RegexOptions.IgnoreCase))
+                    {
+                        return bots[key];
+                    }
                 }
             }
 
@@ -612,12 +627,12 @@ namespace BoxSocial.Internals
 
                     if (Request.Cookies[cookieName + "_data"] != null)
                     {
-                        xs = new XmlSerializer(typeof(SessionCookie));
-                        StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
+                        /*xs = new XmlSerializer(typeof(SessionCookie));
+                        StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));*/
 
                         try
                         {
-                            sessionData = (SessionCookie)xs.Deserialize(sr);
+                            sessionData = new SessionCookie(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value)); //(SessionCookie)xs.Deserialize(sr);
                         }
                         catch
                         {
@@ -936,18 +951,19 @@ namespace BoxSocial.Internals
             {
 				Response.Cookies.Clear();
 				
-                xs = new XmlSerializer(typeof(SessionCookie));
+                /*xs = new XmlSerializer(typeof(SessionCookie));
                 StringBuilder sb = new StringBuilder();
                 stw = new StringWriter(sb);
 
-                HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
                 xs.Serialize(stw, sessionData);
                 stw.Flush();
-                stw.Close();
+                stw.Close();*/
+
+                HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
 
                 //newSessionDataCookie.Domain = core.Hyperlink.CurrentDomain; // DO NOT DO THIS, exposes cookie to sub domains
                 newSessionDataCookie.Path = "/";
-                newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
+                newSessionDataCookie.Value = sessionData.ToString().Replace("\r", "").Replace("\n", "");
                 newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                 newSessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
                 newSessionDataCookie.HttpOnly = true;
@@ -973,9 +989,11 @@ namespace BoxSocial.Internals
 
         public void SessionPagestart(string userIp)
         {
+            long nowUt = UnixTime.UnixTimeStamp();
+
             string cookieName = "hailToTheChef";
-            XmlSerializer xs;
-            StringWriter stw;
+            /*XmlSerializer xs;
+            StringWriter stw;*/
 
             string protocol = "http://";
             if (core.Settings.UseSecureCookies)
@@ -1002,12 +1020,12 @@ namespace BoxSocial.Internals
 
                 if (Request.Cookies[cookieName + "_data"] != null)
                 {
-                    xs = new XmlSerializer(typeof(SessionCookie));
-                    StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));
+                    /*xs = new XmlSerializer(typeof(SessionCookie));
+                    StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));*/
 
                     try
                     {
-                        sessionData = (SessionCookie)xs.Deserialize(sr);
+                        sessionData = new SessionCookie(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value)); //(SessionCookie)xs.Deserialize(sr);
                     }
                     catch
                     {
@@ -1064,8 +1082,6 @@ namespace BoxSocial.Internals
                 }
             }
 
-            DateTime lastVisit = new DateTime(1000, 1, 1);
-
             if (!string.IsNullOrEmpty(sessionId))
             {
                 //
@@ -1119,13 +1135,10 @@ namespace BoxSocial.Internals
                     // we will use complete matches in BoxSocial
                     if (sessionIp == userIp)
                     {
-                        UnixTime tzz = new UnixTime(core, UnixTime.UTC_CODE); // UTC
-                        TimeSpan tss = DateTime.UtcNow - tzz.DateTimeFromMysql(sessionTimeUt);
-
                         //
                         // Only update session DB a minute or so after last update
                         //
-                        if (tss.TotalMinutes >= 1)
+                        if (nowUt - sessionTimeUt >= 60)
                         {
                             long changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP() WHERE session_string = '{0}';",
                                 sessionId));
@@ -1156,15 +1169,17 @@ namespace BoxSocial.Internals
 						
 						Response.Cookies.Clear();
 
-                        xs = new XmlSerializer(typeof(SessionCookie));
+                        /*xs = new XmlSerializer(typeof(SessionCookie));
                         StringBuilder sb = new StringBuilder();
                         stw = new StringWriter(sb);
 
-                        HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
                         xs.Serialize(stw, sessionData);
                         stw.Flush();
-                        stw.Close();
-                        newSessionDataCookie.Value = sb.ToString().Replace("\r", "").Replace("\n", "");
+                        stw.Close();*/
+
+                        HttpCookie newSessionDataCookie = new HttpCookie(cookieName + "_data");
+
+                        newSessionDataCookie.Value = sessionData.ToString().Replace("\r", "").Replace("\n", "");
                         newSessionDataCookie.Path = "/";
                         newSessionDataCookie.Expires = DateTime.Now.AddYears(1);
                         newSessionDataCookie.Secure = core.Settings.UseSecureCookies && core.Hyperlink.CurrentDomain == Hyperlink.Domain;
@@ -1261,13 +1276,16 @@ namespace BoxSocial.Internals
                 query.AddCondition("user_id", userId);
                 query.AddCondition("session_domain", record.Domain);
 
-                DataTable sessionDataTable = db.Query(query);
+                System.Data.Common.DbDataReader sessionReader = db.ReaderQuery(query);
 
                 List<string> rootSessionIds = new List<string>();
-                foreach (DataRow dr in sessionDataTable.Rows)
+                while (sessionReader.Read())
                 {
-                    rootSessionIds.Add((string)dr["session_root_string"]);
+                    rootSessionIds.Add((string)sessionReader["session_root_string"]);
                 }
+
+                sessionReader.Close();
+                sessionReader.Dispose();
 
                 if (rootSessionIds.Count > 0)
                 {
@@ -1564,6 +1582,39 @@ namespace BoxSocial.Internals
         {
             autoLoginId = "";
             userId = 0;
+        }
+
+        public SessionCookie(string cookie)
+        {
+            string[] parts = cookie.Split(new char[] { '>', '<' });
+
+            bool autoLoginIdFound = false;
+            bool userIdFound = false;
+
+            string last = string.Empty;
+            for (int i = 0; i < parts.Length; i++)
+            {
+                if (last == "autologinid" && !autoLoginIdFound)
+                {
+                    autoLoginId = parts[i];
+                    autoLoginIdFound = true;
+                }
+                if (last == "userid" && !userIdFound)
+                {
+                    long.TryParse(parts[i], out userId);
+                    userIdFound = true;
+                }
+                if (autoLoginIdFound && userIdFound)
+                {
+                    break;
+                }
+                last = parts[i];
+            }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("<?xml version=\"1.0\" encoding=\"utf-8\"?><boxsocial-cookie><autologinid>{0}</autologinid><userid>{1}</userid></boxsocial-cookie>", autoLoginId, userId);
         }
     }
 

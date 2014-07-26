@@ -41,7 +41,7 @@ namespace BoxSocial.Internals
         protected Core core;
 
         public static volatile Dictionary<long, Assembly> LoadedAssemblies = new Dictionary<long,Assembly>(16);
-        public static volatile Dictionary<string, long> AssemblyNames = new Dictionary<string, long>(16);
+        public static volatile Dictionary<string, long> AssemblyNames = new Dictionary<string, long>(16, StringComparer.Ordinal);
 
         public static void LoadAssemblies(Mysql db)
         {
@@ -119,7 +119,14 @@ namespace BoxSocial.Internals
         {
             this.core = core;
 
-            RegisterPages();
+            if (core.page is PPage)
+            {
+                RegisterPages(false);
+            }
+            else
+            {
+                RegisterPages(true);
+            }
         }
 
         public virtual bool ExecuteJob(Job job)
@@ -171,7 +178,7 @@ namespace BoxSocial.Internals
             return slugs;
         }
 
-        public void RegisterPages()
+        public void RegisterPages(bool staticPages)
         {
 #if DEBUG
             // Profile this method
@@ -187,35 +194,40 @@ namespace BoxSocial.Internals
             }
 
             int i = 0;
-            foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic))
+            foreach (MethodInfo mi in type.GetMethods(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly))
             {
-                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
+                if (!staticPages)
                 {
-                    /*if (((ShowAttribute)attr).Primitives & primitives != primitives)
+                    foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(ShowAttribute)))
                     {
-                        continue;
-                    }*/
-                    if (((ShowAttribute)attr).Order > 0)
-                    {
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order, false);
-                    }
-                    else
-                    {
-                        i++;
-                        core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, false);
+                        /*if (((ShowAttribute)attr).Primitives & primitives != primitives)
+                        {
+                            continue;
+                        }*/
+                        if (((ShowAttribute)attr).Order > 0)
+                        {
+                            core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((ShowAttribute)attr).Order, false);
+                        }
+                        else
+                        {
+                            i++;
+                            core.RegisterApplicationPage(((ShowAttribute)attr).Primitives, ((ShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, false);
+                        }
                     }
                 }
-
-                foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
+                else
                 {
-                    if (((StaticShowAttribute)attr).Order > 0)
+                    foreach (Attribute attr in Attribute.GetCustomAttributes(mi, typeof(StaticShowAttribute)))
                     {
-                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((StaticShowAttribute)attr).Order, true);
-                    }
-                    else
-                    {
-                        i++;
-                        core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, true);
+                        if (((StaticShowAttribute)attr).Order > 0)
+                        {
+                            core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), ((StaticShowAttribute)attr).Order, true);
+                        }
+                        else
+                        {
+                            i++;
+                            core.RegisterApplicationPage(AppPrimitives.None, ((StaticShowAttribute)attr).Slug, (Core.PageHandler)Core.PageHandler.CreateDelegate(typeof(Core.PageHandler), this, mi), i, true);
+                        }
                     }
                 }
             }
@@ -225,7 +237,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                //HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
 #endif
         }
@@ -703,8 +715,11 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
+#if DEBUG
             Stopwatch load = new Stopwatch();
             load.Start();
+#endif
+
             foreach (ApplicationEntry ae in applicationsList)
             {
                 if (!core.LoadedApplication(ae))
@@ -713,15 +728,6 @@ namespace BoxSocial.Internals
                     {
                         try
                         {
-                            string assemblyPath;
-                            if (ae.IsPrimitive)
-                            {
-                                assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", ae.AssemblyName));
-                            }
-                            else
-                            {
-                                assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", ae.AssemblyName)));
-                            }
                             Assembly assembly = LoadedAssemblies[ae.Id];
 
                             Type[] types = assembly.GetTypes();
@@ -729,7 +735,13 @@ namespace BoxSocial.Internals
                             {
                                 if (type.IsSubclassOf(typeof(Application)))
                                 {
+#if DEBUG
+                                    long startInit = load.ElapsedTicks;
+#endif
                                     Application newApplication = System.Activator.CreateInstance(type, new object[] { core }) as Application;
+#if DEBUG
+                                    HttpContext.Current.Response.Write(string.Format("<!-- Activated {1} in {0} -->\r\n", (load.ElapsedTicks - startInit) / 10000000.0, newApplication.Title));
+#endif
 
                                     if (newApplication != null)
                                     {
@@ -768,10 +780,9 @@ namespace BoxSocial.Internals
                     }
                 }
             }
-            load.Stop();
-
 #if DEBUG
-            //HttpContext.Current.Response.Write(string.Format("<!-- Application.LoadApplications in {0} -->\r\n", load.ElapsedTicks / 10000000.0));
+            load.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- Application.LoadApplications in {0} -->\r\n", load.ElapsedTicks / 10000000.0));
 #endif
         }
 

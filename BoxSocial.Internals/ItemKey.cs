@@ -42,6 +42,7 @@ namespace BoxSocial.Internals
 		private string itemType;
         private Type type;
         private ItemType typeRow;
+        private int hashCode;
 		
 		public long Id
 		{
@@ -241,6 +242,8 @@ namespace BoxSocial.Internals
                 //this.applicationId = itemApplicationCache[itemType];
             }
             this.type = null;
+
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
 		}
 		
 		public ItemKey(long itemId, long itemTypeId)
@@ -271,6 +274,8 @@ namespace BoxSocial.Internals
                 this.applicationId = itemApplicationCache[this.itemType];
             }
             this.type = null;
+
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
 		}
 
         public ItemKey(long itemId, Type itemType)
@@ -292,6 +297,8 @@ namespace BoxSocial.Internals
                 this.applicationId = itemApplicationCache[this.itemType];
             }
             this.type = itemType;
+
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
         
         public ItemKey(string key)
@@ -316,6 +323,8 @@ namespace BoxSocial.Internals
                 this.applicationId = itemApplicationCache[this.itemType];
             }
             this.type = null;
+
+            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
         public static Dictionary<long, ItemType> PrimitiveTypes
@@ -469,7 +478,7 @@ namespace BoxSocial.Internals
 
         public override int GetHashCode()
         {
-            return TypeId.GetHashCode() ^ Id.GetHashCode();
+            return hashCode;
         }
 
         public int CompareTo(object obj)

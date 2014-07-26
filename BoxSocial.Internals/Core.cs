@@ -456,12 +456,22 @@ namespace BoxSocial.Internals
                     {
                     }
 
-                    if (o != null && o is List<Emoticon>)
+                    List<HibernateItem> cachedEmoticons = null;
+
+                    if (o != null && o is List<HibernateItem>)
                     {
-                        emoticons = (List<Emoticon>)o;
+                        cachedEmoticons = (List<HibernateItem>)o;
+                        emoticons = new List<Emoticon>();
+
+                        foreach (HibernateItem item in cachedEmoticons)
+                        {
+                            emoticons.Add(new Emoticon(this, item));
+                        }
+
                         return emoticons;
                     }
 
+                    cachedEmoticons = new List<HibernateItem>();
                     emoticons = new List<Emoticon>();
 
                     SelectQuery query = Emoticon.GetSelectQueryStub(typeof(Emoticon));
@@ -470,6 +480,7 @@ namespace BoxSocial.Internals
                     while(emoticonsReader.Read())
                     {
                         emoticons.Add(new Emoticon(this, emoticonsReader));
+                        cachedEmoticons.Add(new HibernateItem(emoticonsReader));
                     }
 
                     emoticonsReader.Close();
@@ -477,7 +488,7 @@ namespace BoxSocial.Internals
 
                     try
                     {
-                        //cache.Add("Emoticons", emoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
+                        cache.Add("Emoticons", cachedEmoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
                     }
                     catch (NullReferenceException)
                     {
@@ -823,7 +834,7 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
-                        loadedAssemblies = new Dictionary<string, ItemKey>(16);
+                        loadedAssemblies = new Dictionary<string, ItemKey>(16, StringComparer.Ordinal);
                     }
 
                     AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
@@ -1139,7 +1150,7 @@ namespace BoxSocial.Internals
                 {
                     if ((page.Primitives & primitive) == primitive || primitive == AppPrimitives.Any)
                     {
-                        Regex rex = new Regex(page.Expression, RegexOptions.Compiled);
+                        Regex rex = new Regex(page.Expression);
                         //HttpContext.Current.Response.Write("<br />" + page.Expression + " &nbsp; " + PagePath);
                         Match pathMatch = rex.Match(PagePath);
                         if (pathMatch.Success)

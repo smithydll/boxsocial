@@ -70,14 +70,6 @@ namespace BoxSocial.Internals
             feedReader.Close();
             feedReader.Dispose();
 
-            /*DataTable feedDataTable = core.Db.Query(query);
-
-            foreach (DataRow feedRow in feedDataTable.Rows)
-            {
-                Action action = new Action(core, owner, feedRow);
-                tempActions.Add(action);
-            }*/
-
             foreach (Action action in tempActions)
             {
                 core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
@@ -158,14 +150,6 @@ namespace BoxSocial.Internals
 
             feedReader.Close();
             feedReader.Dispose();
-
-            /*DataTable feedDataTable = core.Db.Query(query);
-
-            foreach (DataRow feedRow in feedDataTable.Rows)
-            {
-                Action action = new Action(core, owner, feedRow);
-                tempActions.Add(action);
-            }*/
 
             foreach (Action action in tempActions)
             {
@@ -257,20 +241,6 @@ namespace BoxSocial.Internals
                         List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(perPage);
                         List<Action> tempActions = new List<Action>(perPage);
 
-                        /*DataTable feedTable = core.Db.Query(query);
-
-                        if (feedTable.Rows.Count == 0)
-                        {
-                            break;
-                        }
-
-                        foreach (DataRow row in feedTable.Rows)
-                        {
-                            Action action = new Action(core, owner, row);
-                            tempActions.Add(action);
-                            core.ItemCache.RequestItem(action.ActionItemKey);
-                        }*/
-
                         System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
                         if (!feedReader.HasRows)
@@ -289,17 +259,9 @@ namespace BoxSocial.Internals
                         feedReader.Close();
                         feedReader.Dispose();
 
-                        /**/
-                        DataTable feedDataTable = core.Db.Query(query);
-/*
-                        foreach (DataRow feedRow in feedDataTable.Rows)
-                        {
-                            Action action = new Action(core, owner, feedRow);
-                            tempActions.Add(action);
-                        }*/
-                        
                         foreach (Action action in tempActions)
                         {
+                            core.PrimitiveCache.LoadPrimitiveProfile(action.OwnerKey);
                             core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
                         }
 
@@ -364,56 +326,6 @@ namespace BoxSocial.Internals
                         }
                     }
                 }
-
-                //DataTable feedTable = core.Db.Query(query);
-
-                /*foreach (DataRow dr in feedTable.Rows)
-                {
-                    feedItems.Add(new Action(core, owner, dr));
-                }*/
-
-                //int offset = 0;
-                //int i = 0;
-
-                //while (i < limitStart + perPage + 1 && offset < feedTable.Rows.Count)
-                /*{
-                    List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
-                    List<Action> tempActions = new List<Action>();
-                    int j = 0;
-                    for (j = offset; j < Math.Min(offset + perPage * 2, feedTable.Rows.Count); j++)
-                    {
-                        Action action = new Action(core, owner, feedTable.Rows[j]);
-                        tempActions.Add(action);
-                    }
-
-                    if (tempMessages.Count > 0)
-                    {
-                        core.AcessControlCache.CacheGrants(tempMessages);
-
-                        foreach (IPermissibleItem message in tempMessages)
-                        {
-                            if (message.Access.Can("VIEW"))
-                            {
-                                if (i >= limitStart + perPage)
-                                {
-                                    moreContent = true;
-                                    break;
-                                }
-                                if (i >= limitStart)
-                                {
-                                    feedItems.Add((Action)message);
-                                }
-                                i++;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        //break;
-                    }
-
-                    offset = j;
-                }*/
             }
 
             return feedItems;

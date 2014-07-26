@@ -114,44 +114,6 @@ namespace BoxSocial.Internals
             {
                 if (assembly == null)
                 {
-                    string assemblyPath;
-                    if (IsPrimitive)
-                    {
-                        if (core.Http != null)
-                        {
-                            assemblyPath = Path.Combine(core.Http.AssemblyPath, string.Format("{0}.dll", AssemblyName));
-                        }
-                        else
-                        {
-                            if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
-                            {
-                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", AssemblyName + ".dll");
-                            }
-                            else
-                            {
-                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, AssemblyName + ".dll");
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (core.Http != null)
-                        {
-                            assemblyPath = Path.Combine(core.Http.AssemblyPath, Path.Combine("applications", string.Format("{0}.dll", AssemblyName)));
-                        }
-                        else
-                        {
-                            if (Directory.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin")))
-                            {
-                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "bin", "applications", AssemblyName + ".dll");
-                            }
-                            else
-                            {
-                                assemblyPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "applications", AssemblyName + ".dll");
-                            }
-                        }
-                    }
-
                     assembly = Application.LoadedAssemblies[Id];
                 }
                 return assembly;
@@ -503,7 +465,7 @@ namespace BoxSocial.Internals
             {
                 foreach (string slugEx in slugExs)
                 {
-                    Regex rex = new Regex(slugEx, RegexOptions.Compiled);
+                    Regex rex = new Regex(slugEx);
                     Match pathMatch = rex.Match(uri);
                     if (pathMatch.Success)
                     {

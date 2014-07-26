@@ -684,7 +684,9 @@ namespace BoxSocial.Internals
             return output.Trim(new char[] { '\n' });
         }
 
-        Regex urlRegex = null;
+        private static volatile Regex urlRegex = null;
+        private static volatile Regex urlRegex2 = null;
+
         public string ParseUrls(string input)
         {
             if (urlRegex == null)
@@ -1210,7 +1212,7 @@ namespace BoxSocial.Internals
         {
             BbcodeAttributes attr = new BbcodeAttributes(tag.Attributes);
             if (!attr.HasAttributes()) return true;
-            if (Regex.IsMatch(attr.GetAttribute("default"), "^(circle|square)|([aAiI1]{1})$", RegexOptions.Compiled))
+            if (Regex.IsMatch(attr.GetAttribute("default"), "^(circle|square)|([aAiI1]{1})$"))
                 return true;
             return false;
         }
@@ -1221,7 +1223,7 @@ namespace BoxSocial.Internals
             {
                 if (!string.IsNullOrEmpty(emoticon.Code))
                 {
-                    input = input.Replace(emoticon.Code, "<img alt=\"" + emoticon.Title + "\" title=\"" + emoticon.Title + "\" src=\"" + emoticon.Uri + "\" />");
+                    input = input.Replace(emoticon.Code, emoticon.ToString());
                 }
             }
             return input;
@@ -1553,7 +1555,7 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (e.Attributes.GetAttribute("default") != null)
                     {
-                        if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^[aA1iI]{1}$", RegexOptions.Compiled))
+                        if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^[aA1iI]{1}$"))
                         {
                             if (!e.InList)
                             {
@@ -1566,7 +1568,7 @@ namespace BoxSocial.Internals
                                 e.SuffixText = "</ol>";
                             }
                         }
-                        else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(circle|square)$", RegexOptions.Compiled))
+                        else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(circle|square)$"))
                         {
                             if (!e.InList)
                             {
@@ -1795,7 +1797,7 @@ namespace BoxSocial.Internals
                     e.SuffixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$", RegexOptions.Compiled))
+                    if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right|center|justify)$"))
                         e.AbortParse();
                     e.PrefixText = "</p><p style=\"text-align: " + e.Attributes.GetAttribute("default") + "\">";
                     e.SuffixText = "</p><p>";
@@ -1824,7 +1826,7 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (!e.InList)
                     {
-                        if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$", RegexOptions.Compiled))
+                        if (!Regex.IsMatch(e.Attributes.GetAttribute("default"), "^(left|right)$"))
                             e.AbortParse();
                         string styles = string.Empty;
                         switch (e.Attributes.GetAttribute("default"))
@@ -1882,6 +1884,11 @@ namespace BoxSocial.Internals
 
             e.SetHandled();
 
+            if (urlRegex2 == null)
+            {
+                urlRegex2 = new Regex("^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled);
+            }
+
             switch (e.Mode)
             {
                 case BbcodeParseMode.Tldr:
@@ -1907,11 +1914,11 @@ namespace BoxSocial.Internals
                 case BbcodeParseMode.Normal:
                     if (e.Attributes.HasAttributes())
                     {
-                        if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
+                        if (urlRegex2.IsMatch(e.Attributes.GetAttribute("default"))) // "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled
                         {
                             e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
                         }
-                        else if (Regex.IsMatch(e.Attributes.GetAttribute("default"), "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
+                        else if (urlRegex2.IsMatch(e.Attributes.GetAttribute("default"))) // "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled
                         {
                             e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
                         }
@@ -1924,11 +1931,11 @@ namespace BoxSocial.Internals
                     else
                     {
                         //"(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)"
-                        if (Regex.IsMatch(e.Contents, "^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
+                        if (urlRegex2.IsMatch(e.Contents))
                         {
                             e.PrefixText = "<a href=\"" + e.Contents + "\">";
                         }
-                        else if (Regex.IsMatch(e.Contents, "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled))
+                        else if (urlRegex2.IsMatch(e.Contents))
                         {
                             e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
                         }

@@ -63,7 +63,7 @@ namespace BoxSocial.Internals
         private CultureInfo culture;
         private Dictionary<string, ResourceManager> languageResources;
         private static Object stringCacheLock = new object();
-        private static Dictionary<string, string> stringCache = new Dictionary<string,string>(StringComparer.Ordinal);
+        private static Dictionary<string, string> stringCache = new Dictionary<string, string>(256, StringComparer.Ordinal);
 
         public string Language
         {

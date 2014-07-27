@@ -686,6 +686,7 @@ namespace BoxSocial.Internals
 
         private static volatile Regex urlRegex = null;
         private static volatile Regex urlRegex2 = null;
+        private static volatile Regex urlRegex3 = null;
 
         public string ParseUrls(string input)
         {
@@ -1887,6 +1888,7 @@ namespace BoxSocial.Internals
             if (urlRegex2 == null)
             {
                 urlRegex2 = new Regex("^([\\w]+?://[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled);
+                urlRegex3 = new Regex("^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled);
             }
 
             switch (e.Mode)
@@ -1918,7 +1920,7 @@ namespace BoxSocial.Internals
                         {
                             e.PrefixText = "<a href=\"" + e.Attributes.GetAttribute("default") + "\">";
                         }
-                        else if (urlRegex2.IsMatch(e.Attributes.GetAttribute("default"))) // "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled
+                        else if (urlRegex3.IsMatch(e.Attributes.GetAttribute("default"))) // "^((www|ftp)\\.[\\w\\#$%&~/.\\-;:=,?@\\(\\)\\[\\]+]*?)$", RegexOptions.Compiled
                         {
                             e.PrefixText = "<a href=\"http://" + e.Attributes.GetAttribute("default") + "\">";
                         }
@@ -1930,22 +1932,52 @@ namespace BoxSocial.Internals
                     }
                     else
                     {
+                        Uri url = null;
                         //"(^|\\s)((http(s)?://|ftp://|www\\.)([\\w+?\\.\\w+]+)([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?)"
                         if (urlRegex2.IsMatch(e.Contents))
                         {
-                            e.PrefixText = "<a href=\"" + e.Contents + "\">";
+                            url = new Uri(e.Contents);
+                            e.PrefixText = "<a href=\"" + e.Contents + "\">" + UriToString(e.Core, url);
                         }
-                        else if (urlRegex2.IsMatch(e.Contents))
+                        else if (urlRegex3.IsMatch(e.Contents))
                         {
-                            e.PrefixText = "<a href=\"http://" + e.Contents + "\">";
+                            url = new Uri("http://" + e.Contents);
+                            e.PrefixText = "<a href=\"http://" + e.Contents + "\">" + UriToString(e.Core, url);
                         }
                         else
                         {
                             e.AbortParse();
                         }
+                        e.RemoveContents();
                         e.SuffixText = "</a>";
                     }
                     break;
+            }
+        }
+
+        public static string UriToString(Core core, Uri url)
+        {
+            int maxLength = 40;
+            if (core.IsMobile)
+            {
+                maxLength = 20;
+            }
+
+            if (url.AbsolutePath.Length > maxLength)
+            {
+                return url.Host + "/" + "..." + url.AbsolutePath.Substring(url.AbsolutePath.Length - maxLength - 1, maxLength);
+            }
+            else if (url.PathAndQuery == "/")
+            {
+                return url.Host;
+            }
+            else if (url.PathAndQuery.Length <= maxLength)
+            {
+                return url.Host + url.PathAndQuery;
+            }
+            else
+            {
+                return url.Host + "/" + url.AbsolutePath;
             }
         }
 

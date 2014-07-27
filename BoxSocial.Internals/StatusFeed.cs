@@ -70,20 +70,26 @@ namespace BoxSocial.Internals
 
                 while (feedItems.Count <= perPage)
                 {
-                    DataTable feedTable = core.Db.Query(query);
+                    System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
                     List<IPermissibleItem> tempMessages = new List<IPermissibleItem>();
 
-                    if (feedTable.Rows.Count == 0)
+                    if (!feedReader.HasRows)
                     {
+                        feedReader.Close();
+                        feedReader.Dispose();
+
                         break;
                     }
 
-                    foreach (DataRow row in feedTable.Rows)
+                    while(feedReader.Read())
                     {
-                        StatusMessage entry = new StatusMessage(core, owner, row);
+                        StatusMessage entry = new StatusMessage(core, owner, feedReader);
                         tempMessages.Add(entry);
                     }
+
+                    feedReader.Close();
+                    feedReader.Dispose();
 
                     core.AcessControlCache.CacheGrants(tempMessages);
 
@@ -206,13 +212,17 @@ namespace BoxSocial.Internals
                     // WHERE current
                 }
 
-                DataTable feedTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
                 core.LoadUserProfiles(friendIds);
-                foreach (DataRow dr in feedTable.Rows)
+
+                while(feedReader.Read())
                 {
-                    feedItems.Add(new StatusMessage(core, core.PrimitiveCache[(long)dr["user_id"]], dr));
+                    feedItems.Add(new StatusMessage(core, core.PrimitiveCache[(long)feedReader["user_id"]], feedReader));
                 }
+
+                feedReader.Close();
+                feedReader.Dispose();
             }
 
             return feedItems;
@@ -230,14 +240,24 @@ namespace BoxSocial.Internals
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 1;
 
-            DataTable feedTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
 
-            if (feedTable.Rows.Count == 1)
+            if (feedReader.HasRows)
             {
-                return new StatusMessage(core, owner, feedTable.Rows[0]);
+                feedReader.Read();
+
+                StatusMessage newMessage = new StatusMessage(core, owner, feedReader);
+
+                feedReader.Close();
+                feedReader.Dispose();
+
+                return newMessage;
             }
             else
             {
+                feedReader.Close();
+                feedReader.Dispose();
+
                 return null;
             }
         }

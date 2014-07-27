@@ -33,7 +33,7 @@ namespace BoxSocial.Internals
     public sealed class NumberedItemId : ItemKey, IComparable
     {
         private Type type;
-        int hashCode = 0;
+        private int hashCode = 0;
 
         public NumberedItemId(long itemId, long typeId)
             : base(itemId, typeId)

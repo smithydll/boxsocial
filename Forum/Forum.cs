@@ -1052,14 +1052,17 @@ namespace BoxSocial.Applications.Forum
             query.LimitStart = (currentPge - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable topicsTable = db.Query(query);
+            System.Data.Common.DbDataReader topicsReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in topicsTable.Rows)
+            while(topicsReader.Read())
             {
-                ForumTopic topic = new ForumTopic(core, dr);
+                ForumTopic topic = new ForumTopic(core, topicsReader);
                 core.ItemCache.RequestItem(new ItemKey(topic.ForumId, ItemType.GetTypeId(typeof(Forum))));
                 topics.Add(topic);
             }
+
+            topicsReader.Close();
+            topicsReader.Dispose();
 
             return topics;
         }

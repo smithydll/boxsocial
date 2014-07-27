@@ -165,6 +165,21 @@ namespace BoxSocial.Internals
                 throw new InvalidItemTypeException();
             }
         }
+
+        internal ItemType(Core core, System.Data.Common.DbDataReader typeRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemType_ItemLoad);
+
+            try
+            {
+                loadItemInfo(typeRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidItemTypeException();
+            }
+        }
 		
 		public ItemType(Core core, long typeId)
 			: base(core)
@@ -197,6 +212,22 @@ namespace BoxSocial.Internals
 		}
 
         protected override void loadItemInfo(DataRow typeRow)
+        {
+            loadValue(typeRow, "type_id", out typeId);
+            loadValue(typeRow, "type_namespace", out typeNamespace);
+            loadValue(typeRow, "type_application_id", out applicationId);
+            loadValue(typeRow, "type_primitive", out typeInheritsPrimitive);
+            loadValue(typeRow, "type_likeable", out typeImplementsILikeable);
+            loadValue(typeRow, "type_commentable", out typeImplementsICommentable);
+            loadValue(typeRow, "type_rateable", out typeImplementsIRateable);
+            loadValue(typeRow, "type_subscribeable", out typeImplementsISubscribeable);
+            loadValue(typeRow, "type_shareable", out typeImplementsIShareable);
+            loadValue(typeRow, "type_viewable", out typeImplementsIViewable);
+            loadValue(typeRow, "type_notifiable", out typeImplementsINotifiable);
+            loadValue(typeRow, "type_embeddable", out typeImplementsIEmbeddable);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader typeRow)
         {
             loadValue(typeRow, "type_id", out typeId);
             loadValue(typeRow, "type_namespace", out typeNamespace);

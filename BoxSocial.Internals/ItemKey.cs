@@ -225,6 +225,12 @@ namespace BoxSocial.Internals
 		
 		public ItemKey(long itemId, string itemType)
 		{
+#if DEBUG
+            if (HttpContext.Current != null)
+            {
+                HttpContext.Current.Response.Write("<!-- keying : " + itemType + ", " + itemId.ToString() + "-->\r\n");
+            }
+#endif
 			this.itemId = itemId;
 			this.itemType = itemType;
             lock (itemTypeCacheLock)
@@ -400,26 +406,35 @@ namespace BoxSocial.Internals
                     itemApplicationCache = new Dictionary<string, long>(256, StringComparer.Ordinal);
                     SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
 
-                    DataTable typesTable;
+                    System.Data.Common.DbDataReader typesReader = null;
 
                     try
                     {
-                        typesTable = core.Db.Query(query);
+                        typesReader = core.Db.ReaderQuery(query);
                     }
                     catch
                     {
+                        if (typesReader != null)
+                        {
+                            typesReader.Close();
+                            typesReader.Dispose();
+                        }
+
                         return;
                     }
 
-                    foreach (DataRow dr in typesTable.Rows)
+                    while (typesReader.Read())
                     {
-                        ItemType typeItem = new ItemType(core, dr);
+                        ItemType typeItem = new ItemType(core, typesReader);
                         if (!(itemTypeCache.ContainsKey(typeItem.TypeNamespace)))
                         {
                             itemTypeCache.Add(typeItem.TypeNamespace, typeItem);
                             itemApplicationCache.Add(typeItem.TypeNamespace, typeItem.ApplicationId);
                         }
                     }
+
+                    typesReader.Close();
+                    typesReader.Dispose();
 
                     if (cache != null)
                     {

@@ -96,7 +96,7 @@ namespace BoxSocial.Internals
             this.core = core;
             Language = language;
 
-            languageResources = new Dictionary<string, ResourceManager>(StringComparer.Ordinal);
+            languageResources = new Dictionary<string, ResourceManager>(16, StringComparer.Ordinal);
 
             AddApplication("Internals");
         }

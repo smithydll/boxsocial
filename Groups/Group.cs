@@ -1727,16 +1727,16 @@ namespace BoxSocial.Groups
                 query.AddCondition("group_member_approved", false);
                 query.AddSort(SortOrder.Ascending, "group_member_date_ut");
 
-                DataTable approvalTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader approvalReader = core.Db.ReaderQuery(query);
 
-                if (approvalTable.Rows.Count > 0)
+                if (approvalReader.HasRows)
                 {
                     core.Template.Parse("IS_WAITING_APPROVAL", "TRUE");
                 }
 
-                for (int i = 0; i < approvalTable.Rows.Count; i++)
+                while(approvalReader.Read())
                 {
-                    GroupMember approvalMember = new GroupMember(core, approvalTable.Rows[i], UserLoadOptions.Profile);
+                    GroupMember approvalMember = new GroupMember(core, approvalReader, UserLoadOptions.Profile);
 
                     VariableCollection approvalVariableCollection = core.Template.CreateChild("approval_list");
 
@@ -1744,6 +1744,9 @@ namespace BoxSocial.Groups
                     approvalVariableCollection.Parse("U_PROFILE", approvalMember.Uri);
                     approvalVariableCollection.Parse("U_APPROVE", approvalMember.ApproveMemberUri);
                 }
+
+                approvalReader.Close();
+                approvalReader.Dispose();
 
             }
 

@@ -985,6 +985,11 @@ namespace BoxSocial.Internals
             userInfo = new UserInfo(core, userRow);
         }
 
+        protected void loadUserInfo(System.Data.Common.DbDataReader userRow)
+        {
+            userInfo = new UserInfo(core, userRow);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -998,6 +1003,15 @@ namespace BoxSocial.Internals
         }
 
         protected void loadUserIcon(DataRow userRow)
+        {
+            if (!(userRow["gallery_item_uri"] is DBNull))
+            {
+                userIconUri = string.Format("/{0}/{1}",
+                    (string)userRow["gallery_item_parent_path"], (string)userRow["gallery_item_uri"]);
+            }
+        }
+
+        protected void loadUserIcon(System.Data.Common.DbDataReader userRow)
         {
             if (!(userRow["gallery_item_uri"] is DBNull))
             {

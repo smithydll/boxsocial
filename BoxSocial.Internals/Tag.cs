@@ -95,6 +95,36 @@ namespace BoxSocial.Internals
             loadItemInfo(tagRow);
         }
 
+        public Tag(Core core, System.Data.Common.DbDataReader tagRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Tag_ItemLoad);
+
+            loadItemInfo(tagRow);
+        }
+
+        protected override void loadItemInfo(DataRow tagRow)
+        {
+            loadValue(tagRow, "tag_id", out tagId);
+            loadValue(tagRow, "tag_text", out text);
+            loadValue(tagRow, "tag_text_normalised", out textNormalised);
+            loadValue(tagRow, "tag_items", out tagItems);
+
+            itemLoaded(tagRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader tagRow)
+        {
+            loadValue(tagRow, "tag_id", out tagId);
+            loadValue(tagRow, "tag_text", out text);
+            loadValue(tagRow, "tag_text_normalised", out textNormalised);
+            loadValue(tagRow, "tag_items", out tagItems);
+
+            itemLoaded(tagRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void Tag_ItemLoad()
         {
         }
@@ -152,12 +182,15 @@ namespace BoxSocial.Internals
             query.AddCondition("item_type_id", item.ItemKey.TypeId);
             query.AddSort(SortOrder.Ascending, "tag_text_normalised");
 
-            DataTable tagsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader tagsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in tagsTable.Rows)
+            while (tagsReader.Read())
             {
-                tags.Add(new Tag(core, dr));
+                tags.Add(new Tag(core, tagsReader));
             }
+
+            tagsReader.Close();
+            tagsReader.Dispose();
 
             return tags;
         }
@@ -194,12 +227,15 @@ namespace BoxSocial.Internals
                 query.AddCondition("item_type_id", itemTypeId);
                 query.AddSort(SortOrder.Ascending, "tag_text_normalised");
 
-                DataTable tagsTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader tagsReader = core.Db.ReaderQuery(query);
 
-                foreach (DataRow dr in tagsTable.Rows)
+                while(tagsReader.Read())
                 {
-                    tags[new ItemKey((long)dr["item_id"], itemTypeId)].Add(new Tag(core, dr));
+                    tags[new ItemKey((long)tagsReader["item_id"], itemTypeId)].Add(new Tag(core, tagsReader));
                 }
+
+                tagsReader.Close();
+                tagsReader.Dispose();
             }
 
             return tags;
@@ -222,12 +258,15 @@ namespace BoxSocial.Internals
             SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
             query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
 
-            DataTable tagsTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader tagsReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow dr in tagsTable.Rows)
+            while(tagsReader.Read())
             {
-                tagList.Add(new Tag(core, dr));
+                tagList.Add(new Tag(core, tagsReader));
             }
+
+            tagsReader.Close();
+            tagsReader.Dispose();
 
             return tagList;
         }
@@ -247,12 +286,15 @@ namespace BoxSocial.Internals
 
                 query.LimitCount = 20;
 
-                DataTable tagsTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader tagsReader = core.Db.ReaderQuery(query);
 
-                foreach (DataRow dr in tagsTable.Rows)
+                while (tagsReader.Read())
                 {
-                    tags.Add(new Tag(core, dr));
+                    tags.Add(new Tag(core, tagsReader));
                 }
+
+                tagsReader.Close();
+                tagsReader.Dispose();
             }
 
             return tags;

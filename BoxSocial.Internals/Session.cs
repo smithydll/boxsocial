@@ -586,8 +586,8 @@ namespace BoxSocial.Internals
         public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor, DnsRecord record)
         {
             string cookieName = "hailToTheChef";
-            XmlSerializer xs;
-            StringWriter stw;
+            /*XmlSerializer xs;
+            StringWriter stw;*/
 
             string protocol = "http://";
             if (core.Settings.UseSecureCookies)
@@ -678,8 +678,6 @@ namespace BoxSocial.Internals
             {
                 sessionMethod = SessionMethods.Get;
             }
-
-	        DateTime lastVisit = new DateTime(1000, 1, 1);
 
             // 
             // First off attempt to join with the autologin value if we have one

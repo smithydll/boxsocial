@@ -86,16 +86,24 @@ namespace BoxSocial.Groups
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("group_members.group_id", group.GroupId);
 
-            DataTable memberTable = db.Query(query);
+            System.Data.Common.DbDataReader memberReader = db.ReaderQuery(query);
 
-            if (memberTable.Rows.Count == 1)
+            if (memberReader.HasRows)
             {
-                loadMemberInfo(memberTable.Rows[0]);
-                loadUserInfo(memberTable.Rows[0]);
-                loadUserIcon(memberTable.Rows[0]);
+                memberReader.Read();
+
+                loadItemInfo(memberReader);
+                loadUserInfo(memberReader);
+                loadUserIcon(memberReader);
+
+                memberReader.Close();
+                memberReader.Dispose();
             }
             else
             {
+                memberReader.Close();
+                memberReader.Dispose();
+
                 throw new InvalidUserException();
             }
         }
@@ -122,6 +130,12 @@ namespace BoxSocial.Groups
             }*/
         }
 
+        public GroupMember(Core core, System.Data.Common.DbDataReader memberRow, UserLoadOptions loadOptions)
+            : base(core, memberRow, loadOptions)
+        {
+            loadItemInfo(memberRow);
+        }
+
         public GroupMember(Core core, DataRow memberRow)
             : base(core)
         {
@@ -146,6 +160,14 @@ namespace BoxSocial.Groups
             }*/
         }
 
+        public GroupMember(Core core, System.Data.Common.DbDataReader memberRow)
+            : base(core)
+        {
+            loadItemInfo(memberRow);
+            core.LoadUserProfile(userId);
+            loadUserFromUser(core.PrimitiveCache[userId]);
+        }
+
         protected override void loadItemInfo(DataRow memberRow)
         {
             try
@@ -157,6 +179,36 @@ namespace BoxSocial.Groups
                 loadValue(memberRow, "group_member_approved", out memberApproval);
                 loadValue(memberRow, "group_member_colour", out memberColour);
                 loadValue(memberRow, "group_default_subgroup", out memberDefaultSubGroup);
+
+                itemLoaded(memberRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader memberRow)
+        {
+            try
+            {
+                loadValue(memberRow, "user_id", out userId);
+                loadValue(memberRow, "group_id", out groupId);
+                loadValue(memberRow, "group_member_date_ut", out memberJoinDateRaw);
+                loadValue(memberRow, "group_member_ip", out memberJoinIp);
+                loadValue(memberRow, "group_member_approved", out memberApproval);
+                loadValue(memberRow, "group_member_colour", out memberColour);
+                loadValue(memberRow, "group_default_subgroup", out memberDefaultSubGroup);
+
+                for (int i = 0; i < memberRow.FieldCount; i++)
+                {
+                    if (memberRow.GetName(i) == "user_id_go")
+                    {
+                        isOperator = true;
+                        break;
+                    }
+                }
 
                 itemLoaded(memberRow);
                 core.ItemCache.RegisterItem((NumberedItem)this);

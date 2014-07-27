@@ -640,11 +640,13 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_item_item_id", owner.Id);
             query.AddCondition("gallery_item_item_type_id", owner.TypeId);
 
-            DataTable galleryItemTable = db.Query(query);
+            System.Data.Common.DbDataReader galleryItemReader = db.ReaderQuery(query);
 
-            if (galleryItemTable.Rows.Count == 1)
+            if (galleryItemReader.HasRows)
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
+                galleryItemReader.Read();
+
+                loadItemInfo(galleryItemReader);
                 /*try
                 {
                     licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
@@ -652,9 +654,15 @@ namespace BoxSocial.Applications.Gallery
                 catch (InvalidLicenseException)
                 {
                 }*/
+
+                galleryItemReader.Close();
+                galleryItemReader.Dispose();
             }
             else
             {
+                galleryItemReader.Close();
+                galleryItemReader.Dispose();
+
                 throw new GalleryItemNotFoundException();
             }
         }
@@ -825,12 +833,15 @@ namespace BoxSocial.Applications.Gallery
             query.AddCondition("gallery_item_item_id", owner.Id);
             query.AddCondition("gallery_item_item_type_id", owner.TypeId);
 
-            DataTable galleryItemTable = db.Query(query);
+            System.Data.Common.DbDataReader galleryItemReader = db.ReaderQuery(query);
 
             try
             {
-                loadItemInfo(galleryItemTable.Rows[0]);
-                //licenseInfo = new ContentLicense(core, galleryItemTable.Rows[0]);
+                if (galleryItemReader.HasRows)
+                {
+                    galleryItemReader.Read();
+                    loadItemInfo(galleryItemReader);
+                }
             }
             catch (InvalidItemException)
             {
@@ -842,6 +853,11 @@ namespace BoxSocial.Applications.Gallery
             catch (IndexOutOfRangeException)
             {
                 throw new GalleryItemNotFoundException();
+            }
+            finally
+            {
+                galleryItemReader.Close();
+                galleryItemReader.Dispose();
             }
         }
 
@@ -1795,19 +1811,29 @@ namespace BoxSocial.Applications.Gallery
                 prevQuery.AddSort(SortOrder.Descending, "gallery_item_id");
                 prevQuery.LimitCount = 1;
 
-                DataTable nextDataTable = e.Db.Query(nextQuery);
+                System.Data.Common.DbDataReader nextDataReader = e.Db.ReaderQuery(nextQuery);
 
-                if (nextDataTable.Rows.Count == 1)
+                if (nextDataReader.HasRows)
                 {
-                    nextItem = new GalleryItem(e.Core, nextDataTable.Rows[0]);
+                    nextDataReader.Read();
+
+                    nextItem = new GalleryItem(e.Core, nextDataReader);
                 }
 
-                DataTable prevDataTable = e.Db.Query(prevQuery);
+                nextDataReader.Close();
+                nextDataReader.Dispose();
 
-                if (prevDataTable.Rows.Count == 1)
+                System.Data.Common.DbDataReader prevDataReader = e.Db.ReaderQuery(prevQuery);
+
+                if (prevDataReader.HasRows)
                 {
-                    prevItem = new GalleryItem(e.Core, prevDataTable.Rows[0]);
+                    prevDataReader.Read();
+
+                    prevItem = new GalleryItem(e.Core, prevDataReader);
                 }
+
+                prevDataReader.Close();
+                prevDataReader.Dispose();
 
                 if (nextItem != null)
                 {

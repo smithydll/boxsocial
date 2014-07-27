@@ -101,6 +101,36 @@ namespace BoxSocial.Internals
             loadItemInfo(itemTagRow);
         }
 
+        public ItemTag(Core core, System.Data.Common.DbDataReader itemTagRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemTag_ItemLoad);
+
+            loadItemInfo(itemTagRow);
+        }
+
+        protected override void loadItemInfo(DataRow itemTagRow)
+        {
+            loadValue(itemTagRow, "item_tag_id", out itemTagId);
+            loadValue(itemTagRow, "item_id", out itemId);
+            loadValue(itemTagRow, "item_type_id", out itemTypeId);
+            loadValue(itemTagRow, "tag_id", out tagId);
+
+            itemLoaded(itemTagRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader itemTagRow)
+        {
+            loadValue(itemTagRow, "item_tag_id", out itemTagId);
+            loadValue(itemTagRow, "item_id", out itemId);
+            loadValue(itemTagRow, "item_type_id", out itemTypeId);
+            loadValue(itemTagRow, "tag_id", out tagId);
+
+            itemLoaded(itemTagRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
         private void ItemTag_ItemLoad()
         {
         }

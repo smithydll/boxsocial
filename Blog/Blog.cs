@@ -625,15 +625,17 @@ namespace BoxSocial.Applications.Blog
         {
             List<BlogRollEntry> blogRollEntries = new List<BlogRollEntry>();
             SelectQuery query = new SelectQuery("blog_roll_entries bre");
-            //query.AddFields();
             query.AddCondition("bre.user_id", userId);
 
-            DataTable blogRollTable = db.Query(query);
+            System.Data.Common.DbDataReader blogRollReader = db.ReaderQuery(query);
 
-            foreach (DataRow dr in blogRollTable.Rows)
+            while(blogRollReader.Read())
             {
-                blogRollEntries.Add(new BlogRollEntry(core, dr));
+                blogRollEntries.Add(new BlogRollEntry(core, blogRollReader));
             }
+
+            blogRollReader.Close();
+            blogRollReader.Dispose();
 
             return blogRollEntries;
         }
@@ -1002,6 +1004,14 @@ namespace BoxSocial.Applications.Blog
             {
                 int postsOnPage = 0;
 
+                List<NumberedItem> tagItems = new List<NumberedItem>();
+
+                for (int i = 0; i < blogEntries.Count; i++)
+                {
+                    tagItems.Add(blogEntries[i]);
+                }
+
+                Dictionary<ItemKey, List<Tag>> tags = Tag.GetTags(core, tagItems);
 
                 for (int i = 0; i < blogEntries.Count; i++)
                 {
@@ -1059,14 +1069,15 @@ namespace BoxSocial.Applications.Blog
                         core.Template.Parse("BLOGPOST_ID", blogEntries[i].PostId.ToString());
                     }
 
-                    List<Tag> tags = Tag.GetTags(core, blogEntries[i]);
-
-                    foreach (Tag t in tags)
+                    if (tags.ContainsKey(blogEntries[i].ItemKey))
                     {
-                        VariableCollection tagsVariableCollection = blogPostVariableCollection.CreateChild("tags_list");
+                        foreach (Tag t in tags[blogEntries[i].ItemKey])
+                        {
+                            VariableCollection tagsVariableCollection = blogPostVariableCollection.CreateChild("tags_list");
 
-                        tagsVariableCollection.Parse("U_SEARCH", t.Uri);
-                        tagsVariableCollection.Parse("TEXT", t.TagText);
+                            tagsVariableCollection.Parse("U_SEARCH", t.Uri);
+                            tagsVariableCollection.Parse("TEXT", t.TagText);
+                        }
                     }
 
                     if (post > 0)

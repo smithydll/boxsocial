@@ -150,7 +150,7 @@ namespace BoxSocial.Internals
             loadValue(emoticonRow, "emoticon_category", out category);
 
             itemLoaded(emoticonRow);
-            core.ItemCache.RegisterItem((NumberedItem)this);
+            //core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         protected override void loadItemInfo(System.Data.Common.DbDataReader emoticonRow)
@@ -162,7 +162,7 @@ namespace BoxSocial.Internals
             loadValue(emoticonRow, "emoticon_category", out category);
 
             itemLoaded(emoticonRow);
-            core.ItemCache.RegisterItem((NumberedItem)this);
+            //core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         protected override void loadItemInfo(HibernateItem emoticonRow)
@@ -174,7 +174,7 @@ namespace BoxSocial.Internals
             loadValue(emoticonRow, "emoticon_category", out category);
 
             itemLoaded(emoticonRow);
-            core.ItemCache.RegisterItem((NumberedItem)this);
+            //core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void Emoticon_ItemLoad()

@@ -167,7 +167,38 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public GallerySettings(Core core, System.Data.Common.DbDataReader settingsRow)
+            : base(core)
+        {
+
+            ItemLoad += new ItemLoadHandler(GallerySettings_ItemLoad);
+
+            try
+            {
+                loadItemInfo(settingsRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidGallerySettingsException();
+            }
+        }
+
         protected override void loadItemInfo(DataRow settingsRow)
+        {
+            loadValue(settingsRow, "gallery_settings_id", out settingsId);
+            loadValue(settingsRow, "gallery_item", out ownerKey);
+            loadValue(settingsRow, "gallery_comments", out comments);
+            loadValue(settingsRow, "gallery_items", out galleryItems);
+            loadValue(settingsRow, "gallery_bytes", out bytes);
+            loadValue(settingsRow, "gallery_allow_items_root", out allowItemsAtRoot);
+            loadValue(settingsRow, "gallery_items_root", out galleryItemsAtRoot);
+            loadValue(settingsRow, "gallery_simple_permissions", out simplePermissions);
+
+            itemLoaded(settingsRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader settingsRow)
         {
             loadValue(settingsRow, "gallery_settings_id", out settingsId);
             loadValue(settingsRow, "gallery_item", out ownerKey);

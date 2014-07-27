@@ -42,11 +42,37 @@ namespace BoxSocial.Groups
 
             foreach (Category category in categories)
             {
-                VariableCollection categoriesVariableCollection = e.Template.CreateChild("category_list");
+                if (category.Groups > 0)
+                {
+                    VariableCollection categoriesVariableCollection = e.Template.CreateChild("category_list");
 
-                categoriesVariableCollection.Parse("TITLE", category.Title);
-                categoriesVariableCollection.Parse("GROUPS", category.Groups.ToString());
-                categoriesVariableCollection.Parse("U_GROUP_CATEGORY", UserGroup.BuildCategoryUri(e.Core, category));
+                    categoriesVariableCollection.Parse("TITLE", category.Title);
+                    categoriesVariableCollection.Parse("GROUPS", category.Groups.ToString());
+                    categoriesVariableCollection.Parse("U_GROUP_CATEGORY", UserGroup.BuildCategoryUri(e.Core, category));
+
+                    List<UserGroup> groups = UserGroup.GetUserGroups(e.Core, category, 1, 3);
+
+                    foreach (UserGroup group in groups)
+                    {
+                        VariableCollection groupsVariableCollection = categoriesVariableCollection.CreateChild("group_list");
+
+                        groupsVariableCollection.Parse("GROUP_DISPLAY_NAME", group.DisplayName);
+                        groupsVariableCollection.Parse("U_PROFILE", group.Uri);
+                        groupsVariableCollection.Parse("ICON", group.Icon);
+                        groupsVariableCollection.Parse("TILE", group.Tile);
+                        groupsVariableCollection.Parse("MOBILE_COVER", group.MobileCoverPhoto);
+
+                        groupsVariableCollection.Parse("ID", group.Id);
+                        groupsVariableCollection.Parse("TYPE", group.TypeId);
+                        e.Core.Display.ParseBbcode(groupsVariableCollection, "DESCRIPTION", group.GroupInfo.Description);
+                        groupsVariableCollection.Parse("MEMBERS", e.Core.Functions.LargeIntegerToString(group.Members));
+
+                        if (e.Core.Session.IsLoggedIn && !group.IsGroupMember(e.Core.LoggedInMemberItemKey))
+                        {
+                            groupsVariableCollection.Parse("U_JOIN", group.JoinUri);
+                        }
+                    }
+                }
             }
 
             List<string[]> breadCrumbParts = new List<string[]>();
@@ -78,16 +104,29 @@ namespace BoxSocial.Groups
 
             List<UserGroup> groups = UserGroup.GetUserGroups(e.Core, category, e.Page.TopLevelPageNumber);
 
+            VariableCollection categoriesVariableCollection = e.Template.CreateChild("category_list");
+
             e.Template.Parse("GROUPS", groups.Count.ToString());
 
             foreach (UserGroup group in groups)
             {
-                VariableCollection groupsVariableCollection = e.Template.CreateChild("groups_list");
+                VariableCollection groupsVariableCollection = categoriesVariableCollection.CreateChild("group_list");
 
-                groupsVariableCollection.Parse("TITLE", group.DisplayName);
-                groupsVariableCollection.Parse("U_GROUP", group.Uri);
+                groupsVariableCollection.Parse("GROUP_DISPLAY_NAME", group.DisplayName);
+                groupsVariableCollection.Parse("U_PROFILE", group.Uri);
                 groupsVariableCollection.Parse("ICON", group.Icon);
                 groupsVariableCollection.Parse("TILE", group.Tile);
+                groupsVariableCollection.Parse("MOBILE_COVER", group.MobileCoverPhoto);
+
+                groupsVariableCollection.Parse("ID", group.Id);
+                groupsVariableCollection.Parse("TYPE", group.TypeId);
+                e.Core.Display.ParseBbcode(groupsVariableCollection, "DESCRIPTION", group.GroupInfo.Description);
+                groupsVariableCollection.Parse("MEMBERS", e.Core.Functions.LargeIntegerToString(group.Members));
+
+                if (e.Core.Session.IsLoggedIn && !group.IsGroupMember(e.Core.LoggedInMemberItemKey))
+                {
+                    groupsVariableCollection.Parse("U_JOIN", group.JoinUri);
+                }
             }
 
             e.Core.Display.ParsePagination(UserGroup.BuildCategoryUri(e.Core, category), UserGroup.GROUPS_PER_PAGE, category.Groups);

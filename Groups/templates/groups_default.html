@@ -8,80 +8,67 @@
 <div id="content">
 <h2>Groups</h2>
 
-<span id="create-group" class="post-button"><a href="{U_CREATE_GROUP}">Create a New Group</a></span>
-<!-- IF CATEGORIES -->
-<h3>Categories</h3>
+<!-- IF LOGGED_IN -->
 <!-- IF $_IS_MOBILE -->
-<ul class="list">
+    <ul id="actions-menu" class="popup-menu">
+        <li><a href="{U_CREATE_GROUP}">{L_CREATE_NEW_GROUP}</a></li>
+    </ul>
 <!-- ELSE -->
-<ul>
+	<div id="new-stuff">
+    <span id="create-group" class="post-button"><a href="{U_CREATE_GROUP}">{L_CREATE_NEW_GROUP}</a></span>
+	</div>
 <!-- ENDIF -->
+<!-- ENDIF -->
+
 	<!-- BEGIN category_list -->
+  <!-- IF CATEGORY_TITLE -->
+  <h3>{CATEGORY_TITLE}</h3>
+  <!-- ELSE -->
+  <h3><a href="{category_list.U_GROUP_CATEGORY}">{category_list.TITLE}</a> ({category_list.GROUPS})</h3>
+  <!-- ENDIF -->
+
+  <ul id="group">
+  <!-- BEGIN category_list.group_list -->
     <!-- IF $_IS_MOBILE -->
     <li class="list-item icon">
-    <!-- ELSE -->
-	<li>
-    <!-- ENDIF -->
-        <a href="{category_list.U_GROUP_CATEGORY}">
-            {category_list.TITLE}
-            <span class="count">({category_list.GROUPS})</span>
-        </a>
     </li>
-	<!-- END category_list -->
-</ul>
-<!-- ENDIF -->
-
-<!-- IF CATEGORY_TITLE -->
-<h3>{CATEGORY_TITLE}</h3>
-<!-- IF NOT GROUPS -->
-<p>There are no groups in this category yet <span id="create-group-c" class="post-button"><a href="{U_CREATE_GROUP_C}">Start One</a></span>!</p>
-<!-- ENDIF -->
-<!-- ENDIF -->
-<!-- IF GROUPS -->
-
-<!-- IF PAGINATION -->
-<p>
-  <strong>Go to page:</strong> {PAGINATION}
-</p>
-<!-- ENDIF -->
-
-<!-- IF $_IS_MOBILE -->
-<ul class="list">
-<!-- ELSE -->
-<ul>
-<!-- ENDIF -->
-	<!-- BEGIN groups_list -->
-    <!-- IF $_IS_MOBILE -->
-    <li class="list-item icon">
     <!-- ELSE -->
-	<li>
-    <!-- ENDIF -->
-        <a href="{groups_list.U_GROUP}">
-        <!-- IF $_IS_MOBILE -->
-            <!-- IF groups_list.ICON -->
-		    <img src="{groups_list.ICON}" alt="{groups_list.TITLE}" />
-		    <!-- ELSE -->
-		    <img src="/images/no_picture_100.png" alt="{groups_list.TITLE}" />
-		    <!-- ENDIF -->
-        <!-- ELSE -->
-            <!-- IF groups_list.TILE -->
-		    <img src="{groups_list.TILE}" alt="{groups_list.TITLE}" />
-		    <!-- ELSE -->
-		    <img src="/images/no_picture_100.png" alt="{groups_list.TITLE}" />
-		    <!-- ENDIF -->
+	  <li style="width: 20%; height: auto; position: relative; float: left;">
+      <div class="contact-card-container" style="width: auto; margin: 5px;">
+        <div class="contact-card" style="width: 100%; position: relative; z-index: auto; box-shadow: none; border: 1px solid #cccccc;">
+      <!-- IF category_list.group_list.MOBILE_COVER -->
+          <div style="height: 80px; background-image: url('{category_list.group_list.MOBILE_COVER}'); background-position: center; background-color: #333333; background-size: cover; width: auto;">
+      <!-- ELSE -->
+          <div style="height: 80px; background-color: #333333; background-size: cover; width: auto;">
+      <!-- ENDIF -->
+      <!-- IF category_list.group_list.ICON -->
+		    <img src="{category_list.group_list.ICON}" alt="{category_list.group_list.USER_DISPLAY_NAME}" />
+      <!-- ELSE -->
+            <img src="/images/no_picture_100.png" alt="{category_list.group_list.USER_DISPLAY_NAME}" />
+      <!-- ENDIF -->
+          </div>
+          <div style="width: auto;">
+            <p><strong><a href="{category_list.group_list.U_PROFILE}">{category_list.group_list.GROUP_DISPLAY_NAME}</a></strong></p>
+      <!-- IF LOGGED_IN -->
+        <!-- IF friend_list.U_JOIN -->
+            <p><span class="post-button"><a href="{category_list.group_list.U_JOIN}">{L_JOIN}</a></span></p>
         <!-- ENDIF -->
-        {groups_list.TITLE}
-        </a>
-    </li>
-	<!-- END groups_list -->
-</ul>
-
-<!-- IF PAGINATION -->
-<p>
-  <strong>Go to page:</strong> {PAGINATION}
-</p>
-<!-- ENDIF -->
-
-<!-- ENDIF -->
+      <!-- ENDIF -->
+            <p><em>{category_list.group_list.MEMBERS} {L__MEMBERS}</em></p>
+      <!-- IF category_list.group_list.DESCRIPTION -->
+            <p><em>{category_list.group_list.DESCRIPTION}</em></p>
+      <!-- ENDIF -->
+          </div>
+        </div>
+      </div>
+      </li>
+    <!-- ENDIF -->
+  	<!-- END category_list.group_list -->
+  </ul>
+	<!-- END category_list -->
+	<div class="cheat-clear-left"></div>
+	<!-- IF PAGINATION -->
+	<p><strong>Go to page:</strong> {PAGINATION}</p>
+	<!-- ENDIF -->
 </div>
 <!-- INCLUDE page_footer.html -->

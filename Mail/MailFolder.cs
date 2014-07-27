@@ -138,6 +138,21 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
+        public MailFolder(Core core, System.Data.Common.DbDataReader folderRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MailFolder_ItemLoad);
+
+            try
+            {
+                loadItemInfo(folderRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMailFolderException();
+            }
+        }
+
         public MailFolder(Core core, User user, string name)
             : base(core)
         {
@@ -151,6 +166,38 @@ namespace BoxSocial.Applications.Mail
             {
                 throw new InvalidMailFolderException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow folderRow)
+        {
+            loadValue(folderRow, "folder_id", out folderId);
+            loadValue(folderRow, "owner_id", out ownerId);
+            loadValue(folderRow, "folder_name", out folderName);
+            loadValue(folderRow, "folder_parent", out parentId);
+            loadValue(folderRow, "folder_order", out folderOrder);
+            loadValue(folderRow, "folder_level", out folderLevel);
+            loadValue(folderRow, "folder_parents", out parents);
+            loadValue(folderRow, "folder_messages", out folderMessages);
+            loadValue(folderRow, "folder_type", out folderType);
+
+            itemLoaded(folderRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader folderRow)
+        {
+            loadValue(folderRow, "folder_id", out folderId);
+            loadValue(folderRow, "owner_id", out ownerId);
+            loadValue(folderRow, "folder_name", out folderName);
+            loadValue(folderRow, "folder_parent", out parentId);
+            loadValue(folderRow, "folder_order", out folderOrder);
+            loadValue(folderRow, "folder_level", out folderLevel);
+            loadValue(folderRow, "folder_parents", out parents);
+            loadValue(folderRow, "folder_messages", out folderMessages);
+            loadValue(folderRow, "folder_type", out folderType);
+
+            itemLoaded(folderRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void MailFolder_ItemLoad()
@@ -209,12 +256,15 @@ namespace BoxSocial.Applications.Mail
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable messagesDataTable = db.Query(query);
+            System.Data.Common.DbDataReader messagesReader = db.ReaderQuery(query);
 
-            foreach (DataRow row in messagesDataTable.Rows)
+            while (messagesReader.Read())
             {
-                messages.Add(new Message(core, row));
+                messages.Add(new Message(core, messagesReader));
             }
+
+            messagesReader.Close();
+            messagesReader.Dispose();
 
             return messages;
         }
@@ -237,12 +287,15 @@ namespace BoxSocial.Applications.Mail
             /*HttpContext.Current.Response.Write(query.ToString());
             HttpContext.Current.Response.End();*/
 
-            DataTable messagesDataTable = db.Query(query);
+            System.Data.Common.DbDataReader messagesReader = db.ReaderQuery(query);
 
-            foreach (DataRow row in messagesDataTable.Rows)
+            while (messagesReader.Read())
             {
-                messages.Add(new Message(core, row));
+                messages.Add(new Message(core, messagesReader));
             }
+
+            messagesReader.Close();
+            messagesReader.Dispose();
 
             return messages;
         }
@@ -253,14 +306,24 @@ namespace BoxSocial.Applications.Mail
             query.AddCondition("folder_type", (byte)folder);
             query.AddCondition("owner_id", user.Id);
 
-            DataTable inboxDataTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader inboxReader = core.Db.ReaderQuery(query);
 
-            if (inboxDataTable.Rows.Count == 1)
+            if (inboxReader.HasRows)
             {
-                return new MailFolder(core, inboxDataTable.Rows[0]);
+                inboxReader.Read();
+
+                MailFolder newFolder = new MailFolder(core, inboxReader);
+
+                inboxReader.Close();
+                inboxReader.Dispose();
+
+                return newFolder;
             }
             else
             {
+                inboxReader.Close();
+                inboxReader.Dispose();
+
                 throw new InvalidMailFolderException();
             }
         }
@@ -271,14 +334,24 @@ namespace BoxSocial.Applications.Mail
             query.AddCondition("folder_type", (byte)folder);
             query.AddCondition("owner_id", user.UserId);
 
-            DataTable inboxDataTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader inboxReader = core.Db.ReaderQuery(query);
 
-            if (inboxDataTable.Rows.Count == 1)
+            if (inboxReader.HasRows)
             {
-                return new MailFolder(core, inboxDataTable.Rows[0]);
+                inboxReader.Read();
+
+                MailFolder newFolder = new MailFolder(core, inboxReader);
+
+                inboxReader.Close();
+                inboxReader.Dispose();
+
+                return newFolder;
             }
             else
             {
+                inboxReader.Close();
+                inboxReader.Dispose();
+
                 throw new InvalidMailFolderException();
             }
         }
@@ -289,12 +362,15 @@ namespace BoxSocial.Applications.Mail
             SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
             query.AddCondition("owner_id", user.Id);
 
-            DataTable inboxDataTable = core.Db.Query(query);
+            System.Data.Common.DbDataReader inboxReader = core.Db.ReaderQuery(query);
 
-            foreach (DataRow row in inboxDataTable.Rows)
+            while(inboxReader.Read())
             {
-                folders.Add(new MailFolder(core, row));
+                folders.Add(new MailFolder(core, inboxReader));
             }
+
+            inboxReader.Close();
+            inboxReader.Dispose();
 
             return folders;
         }

@@ -145,7 +145,10 @@ namespace BoxSocial.Internals
             {
                 if (userInfo == null)
                 {
-                    userInfo = new UserInfo(core, userId);
+                    ItemKey userInfoKey = new ItemKey(Id, typeof(UserInfo));
+                    core.ItemCache.RequestItem(userInfoKey);
+
+                    userInfo = (UserInfo)core.ItemCache[userInfoKey];
                 }
                 return userInfo;
             }
@@ -157,7 +160,10 @@ namespace BoxSocial.Internals
             {
                 if (userProfile == null)
                 {
-                    userProfile = new UserProfile(core, this);
+                    ItemKey userProfileKey = new ItemKey(Id, typeof(UserProfile));
+                    core.ItemCache.RequestItem(userProfileKey);
+
+                    userProfile = (UserProfile)core.ItemCache[userProfileKey];
                 }
                 return userProfile;
             }

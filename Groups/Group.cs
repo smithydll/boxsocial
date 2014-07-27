@@ -613,7 +613,8 @@ namespace BoxSocial.Groups
             List<GroupMember> members = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_members");
-            query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
             query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
             query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_members", "user_id"), new DataField("group_operators", "user_id"));
@@ -628,21 +629,15 @@ namespace BoxSocial.Groups
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
 
-            DataTable membersTable = db.Query(query);
+            System.Data.Common.DbDataReader membersReader = db.ReaderQuery(query);
 
-            List<long> memberIds = new List<long>();
-
-            foreach (DataRow dr in membersTable.Rows)
+            while (membersReader.Read())
             {
-                memberIds.Add((long)dr["user_id"]);
+                members.Add(new GroupMember(core, membersReader));
             }
 
-            core.LoadUserProfiles(memberIds);
-
-            foreach (DataRow dr in membersTable.Rows)
-            {
-                members.Add(new GroupMember(core, dr));
-            }
+            membersReader.Close();
+            membersReader.Dispose();
 
             return members;
         }
@@ -657,26 +652,23 @@ namespace BoxSocial.Groups
             List<GroupMember> operators = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_operators");
-            query.AddField(new DataField("group_operators", "user_id"));
             query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
+            query.AddField(new DataField("group_operators", "user_id"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_operators", "user_id"), new DataField("group_members", "user_id"));
+            tj.AddCondition(new DataField("group_members", "group_id"), groupId);
             query.AddCondition(new DataField("group_operators", "group_id"), groupId);
 
-            DataTable membersTable = db.Query(query);
+            System.Data.Common.DbDataReader membersReader = db.ReaderQuery(query);
 
-            List<long> memberIds = new List<long>();
-
-            foreach (DataRow dr in membersTable.Rows)
+            while(membersReader.Read())
             {
-                memberIds.Add((long)dr["user_id"]);
+                operators.Add(new GroupMember(core, membersReader));
             }
 
-            core.LoadUserProfiles(memberIds);
-
-            foreach (DataRow dr in membersTable.Rows)
-            {
-                operators.Add(new GroupMember(core, dr));
-            }
+            membersReader.Close();
+            membersReader.Dispose();
 
             return operators;
         }
@@ -691,28 +683,25 @@ namespace BoxSocial.Groups
             List<GroupOfficer> officers = new List<GroupOfficer>();
 
             SelectQuery query = new SelectQuery("group_officers");
+            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
             query.AddField(new DataField("group_officers", "user_id"));
             query.AddField(new DataField("group_officers", "officer_title"));
             query.AddField(new DataField("group_officers", "group_id"));
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_officers", "user_id"), new DataField("group_members", "user_id"));
+            tj.AddCondition(new DataField("group_members", "group_id"), groupId);
             query.AddCondition(new DataField("group_officers", "group_id"), groupId);
 
-            DataTable membersTable = db.Query(query);
+            System.Data.Common.DbDataReader membersReader = db.ReaderQuery(query);
 
-            List<long> memberIds = new List<long>();
-
-            foreach (DataRow dr in membersTable.Rows)
+            while (membersReader.Read())
             {
-                memberIds.Add((long)dr["user_id"]);
+                officers.Add(new GroupOfficer(core, membersReader));
             }
 
-            core.LoadUserProfiles(memberIds);
-
-            foreach (DataRow dr in membersTable.Rows)
-            {
-                officers.Add(new GroupOfficer(core, dr));
-            }
+            membersReader.Close();
+            membersReader.Dispose();
 
             return officers;
         }
@@ -1541,12 +1530,17 @@ namespace BoxSocial.Groups
 
         public static List<UserGroup> GetUserGroups(Core core, Category category, int page)
         {
+            return GetUserGroups(core, category, page, GROUPS_PER_PAGE);
+        }
+
+        public static List<UserGroup> GetUserGroups(Core core, Category category, int page, int perPage)
+        {
             List<UserGroup> groups = new List<UserGroup>();
 
             SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
             query.AddCondition("group_category", category.Id);
-            query.LimitStart = (page - 1) * GROUPS_PER_PAGE;
-            query.LimitCount = GROUPS_PER_PAGE;
+            query.LimitStart = (page - 1) * perPage;
+            query.LimitCount = perPage;
 
             System.Data.Common.DbDataReader groupsReader = core.Db.ReaderQuery(query);
 

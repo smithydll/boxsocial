@@ -206,6 +206,65 @@ namespace BoxSocial.Applications.Mail
                 throw new InvalidMessageException();
             }
         }
+
+        public Message(Core core, System.Data.Common.DbDataReader messageRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Message_ItemLoad);
+
+            try
+            {
+                loadItemInfo(messageRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMessageException();
+            }
+        }
+
+        protected override void loadItemInfo(DataRow messageRow)
+        {
+            loadValue(messageRow, "message_id", out messageId);
+            loadValue(messageRow, "sender_id", out senderId);
+            loadValue(messageRow, "message_draft", out draft);
+            loadValue(messageRow, "message_read", out read);
+            loadValue(messageRow, "message_to", out to);
+            loadValue(messageRow, "message_cc", out cc);
+            loadValue(messageRow, "message_bcc", out bcc);
+            loadValue(messageRow, "message_subject", out subject);
+            loadValue(messageRow, "message_text", out text);
+            loadValue(messageRow, "message_time_ut", out messageTime);
+            loadValue(messageRow, "message_time_last_ut", out messageTimeLast);
+            loadValue(messageRow, "message_ip", out messageIp);
+            loadValue(messageRow, "message_thread_start_id", out messageThreadStartId);
+            loadValue(messageRow, "message_last_id", out messagelastId);
+            loadValue(messageRow, "message_replies", out messageReplies);
+
+            itemLoaded(messageRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader messageRow)
+        {
+            loadValue(messageRow, "message_id", out messageId);
+            loadValue(messageRow, "sender_id", out senderId);
+            loadValue(messageRow, "message_draft", out draft);
+            loadValue(messageRow, "message_read", out read);
+            loadValue(messageRow, "message_to", out to);
+            loadValue(messageRow, "message_cc", out cc);
+            loadValue(messageRow, "message_bcc", out bcc);
+            loadValue(messageRow, "message_subject", out subject);
+            loadValue(messageRow, "message_text", out text);
+            loadValue(messageRow, "message_time_ut", out messageTime);
+            loadValue(messageRow, "message_time_last_ut", out messageTimeLast);
+            loadValue(messageRow, "message_ip", out messageIp);
+            loadValue(messageRow, "message_thread_start_id", out messageThreadStartId);
+            loadValue(messageRow, "message_last_id", out messagelastId);
+            loadValue(messageRow, "message_replies", out messageReplies);
+
+            itemLoaded(messageRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
+        }
 		
 		void Message_ItemLoad()
 		{
@@ -512,12 +571,15 @@ namespace BoxSocial.Applications.Mail
             query.LimitCount = 10;
             query.LimitOrder = SortOrder.Descending;
 
-            DataTable messagesDataTable = db.Query(query);
+            System.Data.Common.DbDataReader messagesReader = db.ReaderQuery(query);
 
-            foreach (DataRow row in messagesDataTable.Rows)
+            while(messagesReader.Read())
             {
-                messages.Add(new Message(core, row));
+                messages.Add(new Message(core, messagesReader));
             }
+
+            messagesReader.Close();
+            messagesReader.Dispose();
 
             return messages;
         }

@@ -59,6 +59,52 @@ namespace BoxSocial.Groups
             ItemLoad += new ItemLoadHandler(GroupOfficer_ItemLoad);
 
             loadItemInfo(officerRow);
+            loadGroupMember(officerRow);
+            loadUser(officerRow);
+        }
+
+        internal GroupOfficer(Core core, System.Data.Common.DbDataReader officerRow)
+            : base(core, officerRow)
+        {
+            ItemLoad += new ItemLoadHandler(GroupOfficer_ItemLoad);
+
+            loadItemInfo(officerRow);
+            loadGroupMember(officerRow);
+            loadUser(officerRow);
+        }
+
+        protected override void loadItemInfo(DataRow officerRow)
+        {
+            try
+            {
+                loadValue(officerRow, "group_id", out groupId);
+                loadValue(officerRow, "user_id", out userId);
+                loadValue(officerRow, "officer_title", out title);
+
+                itemLoaded(officerRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader officerRow)
+        {
+            try
+            {
+                loadValue(officerRow, "group_id", out groupId);
+                loadValue(officerRow, "user_id", out userId);
+                loadValue(officerRow, "officer_title", out title);
+
+                itemLoaded(officerRow);
+                core.ItemCache.RegisterItem((NumberedItem)this);
+            }
+            catch
+            {
+                throw new InvalidItemException();
+            }
         }
 
         void GroupOfficer_ItemLoad()

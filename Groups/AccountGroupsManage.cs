@@ -81,15 +81,22 @@ namespace BoxSocial.Groups
             query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(UserGroup)), "group_id"), new DataField(Item.GetTable(typeof(UserGroupInfo)), "group_id"));
             query.AddCondition("user_id", LoggedInMember.Id);
 
-            DataTable groupsTable = db.Query(query);
+            System.Data.Common.DbDataReader groupsReader = db.ReaderQuery(query);
                 /*db.Query(string.Format("SELECT {1} FROM group_operators go INNER JOIN group_keys gk ON go.group_id = gk.group_id INNER JOIN group_info gi ON gk.group_id = gi.group_id WHERE go.user_id = {0}",
                 LoggedInMember.Id, UserGroup.GROUP_INFO_FIELDS));*/
 
-            for (int i = 0; i < groupsTable.Rows.Count; i++)
+            List<UserGroup> groups = new List<UserGroup>();
+            while(groupsReader.Read())
+            {
+                groups.Add(new UserGroup(core, groupsReader, UserGroupLoadOptions.Common));
+            }
+
+            groupsReader.Close();
+            groupsReader.Dispose();
+
+            foreach (UserGroup thisGroup in groups)
             {
                 VariableCollection groupVariableCollection = template.CreateChild("group_list");
-
-                UserGroup thisGroup = new UserGroup(core, groupsTable.Rows[i], UserGroupLoadOptions.Common);
 
                 groupVariableCollection.Parse("GROUP_DISPLAY_NAME", thisGroup.DisplayName);
                 groupVariableCollection.Parse("MEMBERS", thisGroup.Members.ToString());

@@ -589,12 +589,15 @@ namespace BoxSocial.Internals
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
-                DataTable modulesTable = core.Db.Query(query);
+                System.Data.Common.DbDataReader modulesReader = core.Db.ReaderQuery(query);
 
-                foreach (DataRow moduleRow in modulesTable.Rows)
+                while(modulesReader.Read())
                 {
-                    applicationsDictionary[(int)moduleRow["application_id"]].AddModule((string)moduleRow["module_module"]);
+                    applicationsDictionary[(int)modulesReader["application_id"]].AddModule((string)modulesReader["module_module"]);
                 }
+
+                modulesReader.Close();
+                modulesReader.Dispose();
             }
             else
             {

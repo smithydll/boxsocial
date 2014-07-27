@@ -163,13 +163,16 @@ namespace BoxSocial.Applications.Mail
                 query.AddCondition("user_id", core.Session.LoggedInMember.Id);
                 query.AddCondition("message_id", ConditionEquality.In, lastMessageIds);
 
-                DataTable recipientDataTable = db.Query(query);
+                System.Data.Common.DbDataReader recipientReader = db.ReaderQuery(query);
 
-                foreach (DataRow row in recipientDataTable.Rows)
+                while(recipientReader.Read())
                 {
-                    MessageRecipient recipient = new MessageRecipient(core, row);
+                    MessageRecipient recipient = new MessageRecipient(core, recipientReader);
                     readStatus.Add(recipient.MessageId, recipient);
                 }
+
+                recipientReader.Close();
+                recipientReader.Dispose();
             }
 
             foreach (Message message in messages)

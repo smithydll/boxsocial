@@ -243,7 +243,6 @@
     <Content Include="templates\viewapplications.html" />
     <Content Include="templates\viewfeed.html" />
     <Content Include="templates\viewfriends.html" />
-    <Content Include="templates\viewgroups.html" />
     <Content Include="templates\viewmusicians.html" />
     <Content Include="templates\viewnetworks.html" />
     <Content Include="templates\viewprofile.html" />

@@ -706,6 +706,38 @@ namespace BoxSocial.Internals
             }
         }
 
+        public UserProfile(Core core, DataRow memberRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+            ItemUpdated += new EventHandler(UserProfile_ItemUpdated);
+
+            try
+            {
+                loadItemInfo(memberRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
+        }
+
+        public UserProfile(Core core, System.Data.Common.DbDataReader memberRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(UserProfile_ItemLoad);
+            ItemUpdated += new EventHandler(UserProfile_ItemUpdated);
+
+            try
+            {
+                loadItemInfo(memberRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidUserException();
+            }
+        }
+
         public UserProfile(Core core, User user, DataRow memberRow, UserLoadOptions loadOptions)
             : this(core, user, memberRow)
         {

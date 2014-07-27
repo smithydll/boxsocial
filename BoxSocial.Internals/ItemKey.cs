@@ -228,7 +228,7 @@ namespace BoxSocial.Internals
 #if DEBUG
             if (HttpContext.Current != null)
             {
-                HttpContext.Current.Response.Write("<!-- keying : " + itemType + ", " + itemId.ToString() + "-->\r\n");
+                //HttpContext.Current.Response.Write("<!-- keying: " + itemType + ", " + itemId.ToString() + "-->\r\n");
             }
 #endif
 			this.itemId = itemId;

@@ -231,7 +231,12 @@ namespace BoxSocial.Internals
 
                 while(tagsReader.Read())
                 {
-                    tags[new ItemKey((long)tagsReader["item_id"], itemTypeId)].Add(new Tag(core, tagsReader));
+                    ItemKey key = new ItemKey((long)tagsReader["item_id"], itemTypeId);
+                    if (!tags.ContainsKey(key))
+                    {
+                        tags.Add(key, new List<Tag>());
+                    }
+                    tags[key].Add(new Tag(core, tagsReader));
                 }
 
                 tagsReader.Close();

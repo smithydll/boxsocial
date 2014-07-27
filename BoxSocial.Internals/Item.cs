@@ -97,6 +97,11 @@ namespace BoxSocial.Internals
 
         public static string GetPrimaryKey(Type type)
         {
+            if (type == typeof(UserInfo) || type == typeof(UserProfile))
+            {
+                return "user_id";
+            }
+
             List<DataFieldInfo> fields = GetFields(type);
             string keyField = string.Empty;
 
@@ -2071,7 +2076,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "--><!-- default path \r\n" + Environment.StackTrace+ "\r\n-->\r\n");
             }
 #endif
         }
@@ -2394,7 +2399,7 @@ namespace BoxSocial.Internals
             timer.Stop();
             if (HttpContext.Current != null)
             {
-                //HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
+                HttpContext.Current.Response.Write("<!-- Time loading " + type.Name + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
 #endif
 

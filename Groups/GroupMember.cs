@@ -164,11 +164,23 @@ namespace BoxSocial.Groups
             : base(core)
         {
             loadItemInfo(memberRow);
-            core.LoadUserProfile(userId);
-            loadUserFromUser(core.PrimitiveCache[userId]);
+            loadUser(memberRow);
+            //core.LoadUserProfile(userId);
+            //loadUserFromUser(core.PrimitiveCache[userId]);
+            core.ItemCache.RequestItem(new ItemKey(Id, typeof(UserInfo)));
         }
 
-        protected override void loadItemInfo(DataRow memberRow)
+        protected override void loadItemInfo(DataRow userRow)
+        {
+            loadGroupMember(userRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader userRow)
+        {
+            loadGroupMember(userRow);
+        }
+
+        protected void loadGroupMember(DataRow memberRow)
         {
             try
             {
@@ -189,9 +201,9 @@ namespace BoxSocial.Groups
             }
         }
 
-        protected override void loadItemInfo(System.Data.Common.DbDataReader memberRow)
+        protected void loadGroupMember(System.Data.Common.DbDataReader memberRow)
         {
-            try
+            //try
             {
                 loadValue(memberRow, "user_id", out userId);
                 loadValue(memberRow, "group_id", out groupId);
@@ -213,10 +225,10 @@ namespace BoxSocial.Groups
                 itemLoaded(memberRow);
                 core.ItemCache.RegisterItem((NumberedItem)this);
             }
-            catch
+            /*catch
             {
                 throw new InvalidItemException();
-            }
+            }*/
         }
 
         private void loadMemberInfo(DataRow memberRow)

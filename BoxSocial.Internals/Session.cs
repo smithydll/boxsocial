@@ -1232,7 +1232,15 @@ namespace BoxSocial.Internals
             }
             else
             {
+#if DEBUG
+                Stopwatch httpTimer = new Stopwatch();
+                httpTimer.Start();
+#endif
                 SessionBegin(userId, true);
+#if DEBUG
+                httpTimer.Stop();
+                HttpContext.Current.Response.Write(string.Format("<!-- section A.1.a in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
+#endif
             }
         }
 

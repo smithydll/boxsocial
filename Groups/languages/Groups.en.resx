@@ -177,4 +177,7 @@
   <data name="_INVITED_YOU_TO_JOIN_A_GROUP" xml:space="preserve">
     <value>has invited you to join a group: {1}</value>
   </data>
+  <data name="_MEMBERS" xml:space="preserve">
+    <value>members</value>
+  </data>
 </root>

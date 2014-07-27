@@ -127,6 +127,21 @@ namespace BoxSocial.Applications.Mail
             }
         }
 
+        public MessageRecipient(Core core, System.Data.Common.DbDataReader recipientRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(MessageRecipient_ItemLoad);
+
+            try
+            {
+                loadItemInfo(recipientRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidMessageRecipientException();
+            }
+        }
+
         public MessageRecipient(Core core, User recipient, long messageId)
             : base(core)
         {
@@ -140,6 +155,40 @@ namespace BoxSocial.Applications.Mail
             {
                 throw new InvalidMessageRecipientException();
             }
+        }
+
+        protected override void loadItemInfo(DataRow recipientRow)
+        {
+            loadValue(recipientRow, "message_id", out messageId);
+            loadValue(recipientRow, "user_id", out userId);
+            loadValue(recipientRow, "sender_id", out senderId);
+            loadValue(recipientRow, "is_deleted", out isDeleted);
+            loadValue(recipientRow, "is_read", out isRead);
+            loadValue(recipientRow, "has_replied", out hasReplied);
+            loadValue(recipientRow, "is_flagged", out isFlagged);
+            loadValue(recipientRow, "has_forwarded", out hasForwarded);
+            loadValue(recipientRow, "message_folder_id", out messageFolderId);
+            loadValue(recipientRow, "recipient_type", out recipientType);
+            loadValue(recipientRow, "recipient_read_time_ut", out readTime);
+
+            itemLoaded(recipientRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader recipientRow)
+        {
+            loadValue(recipientRow, "message_id", out messageId);
+            loadValue(recipientRow, "user_id", out userId);
+            loadValue(recipientRow, "sender_id", out senderId);
+            loadValue(recipientRow, "is_deleted", out isDeleted);
+            loadValue(recipientRow, "is_read", out isRead);
+            loadValue(recipientRow, "has_replied", out hasReplied);
+            loadValue(recipientRow, "is_flagged", out isFlagged);
+            loadValue(recipientRow, "has_forwarded", out hasForwarded);
+            loadValue(recipientRow, "message_folder_id", out messageFolderId);
+            loadValue(recipientRow, "recipient_type", out recipientType);
+            loadValue(recipientRow, "recipient_read_time_ut", out readTime);
+
+            itemLoaded(recipientRow);
         }
 		
 		void MessageRecipient_ItemLoad()

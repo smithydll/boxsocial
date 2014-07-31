@@ -206,7 +206,7 @@ namespace BoxSocial.FrontEnd
             core.Session.SetBot();
 
             string shareUrlStub = core.Hyperlink.StripScheme(core.Hyperlink.StripSid(core.Hyperlink.AppendAbsoluteSid("/s/")));
-            if ((!string.IsNullOrEmpty(url)) && url.StartsWith(shareUrlStub))
+            if ((!string.IsNullOrEmpty(url)) && url.StartsWith(shareUrlStub, StringComparison.Ordinal))
             {
                 key = url.Substring(shareUrlStub.Length).Trim(new char[] { '/' });
             }

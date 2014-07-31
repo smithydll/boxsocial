@@ -1930,7 +1930,7 @@ namespace BoxSocial.Applications.Gallery
 
             //photoName.
 
-            if (photoName.StartsWith(IconPrefix))
+            if (photoName.StartsWith(IconPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 6);
                 if (!retinaModifier)
@@ -1946,7 +1946,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Tile;
                 }
             }
-            else if (photoName.StartsWith(TilePrefix))
+            else if (photoName.StartsWith(TilePrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 6);
                 if (!retinaModifier)
@@ -1962,7 +1962,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Square;
                 }
             }
-            else if (photoName.StartsWith(SquarePrefix))
+            else if (photoName.StartsWith(SquarePrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 8);
                 if (!retinaModifier)
@@ -1978,7 +1978,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.High;
                 }
             }
-            else if (photoName.StartsWith(HighPrefix))
+            else if (photoName.StartsWith(HighPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 6);
                 highRequest = true;
@@ -1986,7 +1986,7 @@ namespace BoxSocial.Applications.Gallery
                 scale = PictureScale.High;
                 // There is no retina version of high, it is the retina version
             }
-            else if (photoName.StartsWith(TinyPrefix))
+            else if (photoName.StartsWith(TinyPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 6);
                 if (!retinaModifier)
@@ -2002,7 +2002,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Thumbnail;
                 }
             }
-            else if (photoName.StartsWith(ThumbnailPrefix))
+            else if (photoName.StartsWith(ThumbnailPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 7);
                 if (!retinaModifier)
@@ -2018,7 +2018,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Mobile;
                 }
             }
-            else if (photoName.StartsWith(MobilePrefix))
+            else if (photoName.StartsWith(MobilePrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 8);
                 if (!retinaModifier)
@@ -2034,7 +2034,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Display;
                 }
             }
-            else if (photoName.StartsWith(DisplayPrefix))
+            else if (photoName.StartsWith(DisplayPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 9);
                 if (!retinaModifier)
@@ -2050,7 +2050,7 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Full;
                 }
             }
-            else if (photoName.StartsWith(FullPrefix))
+            else if (photoName.StartsWith(FullPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 6);
                 if (!retinaModifier)
@@ -2066,21 +2066,21 @@ namespace BoxSocial.Applications.Gallery
                     scale = PictureScale.Ultra;
                 }
             }
-            else if (photoName.StartsWith(UltraPrefix))
+            else if (photoName.StartsWith(UltraPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 7);
                 ultraRequest = true;
                 storagePrefix = UltraPrefix;
                 scale = PictureScale.Ultra;
             }
-            else if (photoName.StartsWith(CoverPrefix))
+            else if (photoName.StartsWith(CoverPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 7);
                 coverRequest = true;
                 storagePrefix = CoverPrefix;
                 scale = PictureScale.Cover;
             }
-            else if (photoName.StartsWith(MobileCoverPrefix))
+            else if (photoName.StartsWith(MobileCoverPrefix, StringComparison.Ordinal))
             {
                 photoName = photoName.Remove(0, 8);
                 if (!retinaModifier)

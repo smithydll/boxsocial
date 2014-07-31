@@ -236,7 +236,7 @@ namespace BoxSocial.Internals
                                     if (groupsSelectBox.ContainsKey(gsbk))
                                     {
                                         string text = groupsSelectBox[gsbk].Text;
-                                        if (text.StartsWith(" -- "))
+                                        if (text.StartsWith(" -- ", StringComparison.Ordinal))
                                         {
                                             text = text.Substring(4);
                                         }
@@ -857,7 +857,7 @@ namespace BoxSocial.Internals
                     }
                     foreach (string key in core.Http.Form.AllKeys)
                     {
-                        if (key.StartsWith("allow[") && key.EndsWith("]"))
+                        if (key.StartsWith("allow[", StringComparison.Ordinal) && key.EndsWith("]", StringComparison.Ordinal))
                         {
                             string[] parts = key.Substring(6, key.Length - 7).Split(new char[] { ',' });
 

@@ -96,7 +96,7 @@ namespace BoxSocial.Musician
                 template.Parse("USER_STYLE_SHEET", string.Format("music/{0}.css", primitive.Key));
             }
 
-            if (!core.PagePath.StartsWith("/account"))
+            if (!core.PagePath.StartsWith("/account", StringComparison.Ordinal))
             {
                 BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Musician, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, primitive));
 

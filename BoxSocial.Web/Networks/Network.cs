@@ -718,7 +718,7 @@ namespace BoxSocial.Networks
         {
             if (User.CheckEmailValid(networkEmail))
             {
-                if (networkEmail.ToLower().EndsWith(networkNetwork.ToString()))
+                if (networkEmail.ToLower().EndsWith(networkNetwork.ToString(), StringComparison.Ordinal))
                 {
                     return true;
                 }
@@ -805,7 +805,7 @@ namespace BoxSocial.Networks
                 {
                     output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                         parts[i][1], core.Hyperlink.AppendSid(path + "/" + parts[i][0].TrimStart(new char[] { '*', '!' })));
-                    if (!parts[i][0].StartsWith("*"))
+                    if (!parts[i][0].StartsWith("*", StringComparison.Ordinal))
                     {
                         path += "/" + parts[i][0];
                     }

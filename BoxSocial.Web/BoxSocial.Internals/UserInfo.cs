@@ -462,7 +462,7 @@ namespace BoxSocial.Internals
                 {
                     userNameOwnership = (!String.IsNullOrEmpty(userDisplayName)) ? userDisplayName : userName;
 
-                    if (userNameOwnership.EndsWith("s"))
+                    if (userNameOwnership.EndsWith("s", StringComparison.Ordinal))
                     {
                         userNameOwnership = userNameOwnership + "'";
                     }

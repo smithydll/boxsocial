@@ -40,8 +40,8 @@ namespace BoxSocial.IO
         private MySql.Data.MySqlClient.MySqlCommand sqlCommand;
         private bool inTransaction = false;
 
-        public Stack<string> QueryList = new Stack<string>();
-        public StringBuilder ErrorList = new StringBuilder();
+        public Stack<string> QueryList = new Stack<string>(64);
+        public StringBuilder ErrorList = new StringBuilder(8);
 
         public Mysql(string username, string database, string host)
         {
@@ -78,8 +78,8 @@ namespace BoxSocial.IO
 
         public void ResetQueryLog()
         {
-            QueryList = new Stack<string>();
-            ErrorList = new StringBuilder();
+            QueryList = new Stack<string>(64);
+            ErrorList = new StringBuilder(8);
         }
 
         private void PushQuery(string query, double time)
@@ -92,7 +92,7 @@ namespace BoxSocial.IO
             }
             else*/
             {
-                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n====================r\n");
+                QueryList.Push(QueryList.Count + ": query executed in " + time.ToString() + " seconds\r\n" + query + "\r\n====================\r\n");
             }
             //QueryList.Push(query);
 
@@ -292,7 +292,7 @@ namespace BoxSocial.IO
             queryTime += timer.ElapsedTicks;
             PushQuery(sqlquery, timer.ElapsedTicks / 10000000.0);
 
-            if (sqlquery.StartsWith("INSERT INTO"))
+            if (sqlquery.StartsWith("INSERT INTO", StringComparison.Ordinal))
             {
                 return sqlCommand.LastInsertedId;
             }
@@ -392,13 +392,17 @@ namespace BoxSocial.IO
 
         public override System.Data.Common.DbDataReader ReaderQuery(SelectQuery query)
         {
+#if DEBUG
             Stopwatch timer = new Stopwatch();
             timer.Start();
+#endif
 
             string q = query.ToString();
 
+#if DEBUG
             timer.Stop();
             queryTime += timer.ElapsedTicks;
+#endif
 
             return SelectReaderQuery(q);
         }
@@ -523,7 +527,7 @@ namespace BoxSocial.IO
         {
             type = type.ToLower();
 
-            bool unsigned = type.EndsWith("unsigned");
+            bool unsigned = type.EndsWith("unsigned", StringComparison.Ordinal);
             long length = 0;
             int indexOpenBracket = type.IndexOf("(");
             int indexCloseBracket = type.IndexOf(")");

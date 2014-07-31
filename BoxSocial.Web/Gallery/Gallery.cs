@@ -1567,107 +1567,107 @@ namespace BoxSocial.Applications.Gallery
                 matches++;
             }
 
-            if (slug.EndsWith(".aspx"))
+            if (slug.EndsWith(".aspx", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".asax"))
+            if (slug.EndsWith(".asax", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".php"))
+            if (slug.EndsWith(".php", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".html"))
+            if (slug.EndsWith(".html", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".gif"))
+            if (slug.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".png"))
+            if (slug.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".js"))
+            if (slug.EndsWith(".js", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".bmp"))
+            if (slug.EndsWith(".bmp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".jpg"))
+            if (slug.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".jpeg"))
+            if (slug.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".zip"))
+            if (slug.EndsWith(".zip", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".jsp"))
+            if (slug.EndsWith(".jsp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".cfm"))
+            if (slug.EndsWith(".cfm", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".exe"))
+            if (slug.EndsWith(".exe", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".jpeg"))
+            if (slug.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".jpg"))
+            if (slug.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".mpg"))
+            if (slug.EndsWith(".mpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".png"))
+            if (slug.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith(".gif"))
+            if (slug.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.StartsWith("."))
+            if (slug.StartsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (slug.EndsWith("."))
+            if (slug.EndsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }

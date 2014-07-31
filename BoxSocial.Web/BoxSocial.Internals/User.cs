@@ -2004,82 +2004,82 @@ namespace BoxSocial.Internals
                 matches++;
             }
 
-            if (userName.EndsWith(".aspx"))
+            if (userName.EndsWith(".aspx", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".asax"))
+            if (userName.EndsWith(".asax", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".php"))
+            if (userName.EndsWith(".php", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".html"))
+            if (userName.EndsWith(".html", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".gif"))
+            if (userName.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".png"))
+            if (userName.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".js"))
+            if (userName.EndsWith(".js", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".bmp"))
+            if (userName.EndsWith(".bmp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jpg"))
+            if (userName.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jpeg"))
+            if (userName.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".zip"))
+            if (userName.EndsWith(".zip", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jsp"))
+            if (userName.EndsWith(".jsp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".cfm"))
+            if (userName.EndsWith(".cfm", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".exe"))
+            if (userName.EndsWith(".exe", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.StartsWith("."))
+            if (userName.StartsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith("."))
+            if (userName.EndsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
@@ -2269,13 +2269,13 @@ namespace BoxSocial.Internals
             {
                 if (parts.Count > 1)
                 {
-                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!", StringComparison.Ordinal);
                     if (!lastAbsolute)
                     {
                         for (int i = 0; i < parts.Count - 2; i++)
                         {
-                            bool absolute = parts[i][0].StartsWith("!");
-                            bool ignore = parts[i][0].StartsWith("*");
+                            bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                            bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                             if ((!ignore) && (!absolute))
                             {
@@ -2307,8 +2307,8 @@ namespace BoxSocial.Internals
                 {
                     if (parts[i][0] != "")
                     {
-                        bool absolute = parts[i][0].StartsWith("!");
-                        bool ignore = parts[i][0].StartsWith("*");
+                        bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                        bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                             parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));

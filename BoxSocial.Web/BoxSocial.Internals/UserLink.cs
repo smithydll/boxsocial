@@ -138,7 +138,7 @@ namespace BoxSocial.Internals
             ub.Scheme = "http";
             ub.Port = 80;
 
-            if (ub.Host.ToLower().EndsWith("tumblr.com"))
+            if (ub.Host.ToLower().EndsWith("tumblr.com", StringComparison.Ordinal))
             {
                 favicon = "tumblr.com.png";
             }
@@ -149,7 +149,7 @@ namespace BoxSocial.Internals
                 UriBuilder fb = new UriBuilder(uri);
                 fb.Path = "favicon.ico";
 
-                if (ub.Host.ToLower().EndsWith("tumblr.com"))
+                if (ub.Host.ToLower().EndsWith("tumblr.com", StringComparison.Ordinal))
                 {
                     fb.Host = "tumblr.com";
                 }

@@ -1525,7 +1525,7 @@ namespace BoxSocial.Install
             }
 
             Console.WriteLine("Box Social will only install into the root directory of a domain. Everything in the root directory will be deleted. Do you want to continue? (y/n)");
-            if (Console.ReadLine().ToLower().StartsWith("y"))
+            if (Console.ReadLine().ToLower().StartsWith("y", StringComparison.Ordinal))
             {
                 Console.WriteLine("If you do not provide the root directory of a domain, Box Social will not install properly.");
                 Console.WriteLine("Please enter the root directory of the domain you want to use:");
@@ -2014,7 +2014,7 @@ namespace BoxSocial.Install
                     fs.Close();
                 }
 
-                if (filename.EndsWith(".svg"))
+                if (filename.EndsWith(".svg", StringComparison.Ordinal))
                 {
                     string[] parts = Path.GetDirectoryName(ze.Name).Split(new char[] { Path.DirectorySeparatorChar });
 

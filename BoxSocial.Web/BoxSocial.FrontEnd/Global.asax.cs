@@ -294,7 +294,7 @@ namespace BoxSocial.FrontEnd
                     cUri = new Uri(currentURI);
                     currentURI = cUri.AbsolutePath;
 
-                    if (currentURI.EndsWith("index.php"))
+                    if (currentURI.EndsWith("index.php", StringComparison.Ordinal))
                     {
                         currentURI = currentURI.Substring(0, currentURI.Length - 9);
                         Response.Redirect(currentURI, true);
@@ -302,7 +302,7 @@ namespace BoxSocial.FrontEnd
                         return;
                     }
 
-                    if (currentURI.EndsWith(".php"))
+                    if (currentURI.EndsWith(".php", StringComparison.Ordinal))
                     {
                         currentURI = currentURI.Substring(0, currentURI.Length - 4);
                         Response.Redirect(currentURI, true);

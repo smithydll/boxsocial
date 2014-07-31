@@ -1196,82 +1196,82 @@ namespace BoxSocial.Groups
                 matches++;
             }
 
-            if (groupName.EndsWith(".aspx"))
+            if (groupName.EndsWith(".aspx", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".asax"))
+            if (groupName.EndsWith(".asax", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".php"))
+            if (groupName.EndsWith(".php", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".html"))
+            if (groupName.EndsWith(".html", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".gif"))
+            if (groupName.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".png"))
+            if (groupName.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".js"))
+            if (groupName.EndsWith(".js", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".bmp"))
+            if (groupName.EndsWith(".bmp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".jpg"))
+            if (groupName.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".jpeg"))
+            if (groupName.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".zip"))
+            if (groupName.EndsWith(".zip", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".jsp"))
+            if (groupName.EndsWith(".jsp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".cfm"))
+            if (groupName.EndsWith(".cfm", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith(".exe"))
+            if (groupName.EndsWith(".exe", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.StartsWith("."))
+            if (groupName.StartsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (groupName.EndsWith("."))
+            if (groupName.EndsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }

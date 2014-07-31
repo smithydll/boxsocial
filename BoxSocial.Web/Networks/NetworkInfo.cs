@@ -79,7 +79,7 @@ namespace BoxSocial.Networks
                 {
                     displayNameOwnership = (displayName != "") ? displayName : networkNetwork;
 
-                    if (displayNameOwnership.EndsWith("s"))
+                    if (displayNameOwnership.EndsWith("s", StringComparison.Ordinal))
                     {
                         displayNameOwnership = displayNameOwnership + "'";
                     }

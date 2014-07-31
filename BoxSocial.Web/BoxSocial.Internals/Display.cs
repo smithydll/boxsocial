@@ -472,7 +472,7 @@ namespace BoxSocial.Internals
                     {
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                             parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
-                        if (!parts[i][0].StartsWith("*"))
+                        if (!parts[i][0].StartsWith("*", StringComparison.Ordinal))
                         {
                             path += parts[i][0] + "/";
                         }

@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Pages
 
                 if (pageId > 0)
                 {
-                    if (page.FullPath.StartsWith(pagePath))
+                    if (page.FullPath.StartsWith(pagePath, StringComparison.Ordinal))
                     {
                         item.Selectable = false;
                     }

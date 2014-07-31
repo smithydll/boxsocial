@@ -204,7 +204,7 @@ namespace BoxSocial.FrontEnd
                         }
                         if (!string.IsNullOrEmpty(redirect))
                         {
-                            if (redirect.StartsWith("/account"))
+                            if (redirect.StartsWith("/account", StringComparison.Ordinal))
                             {
                                 redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
                             }
@@ -319,7 +319,7 @@ namespace BoxSocial.FrontEnd
                                 }
                                 if (!string.IsNullOrEmpty(redirect))
                                 {
-                                    if (redirect.StartsWith("/account"))
+                                    if (redirect.StartsWith("/account", StringComparison.Ordinal))
                                     {
                                         redirect = core.Hyperlink.AppendSid(core.Hyperlink.StripSid(redirect), true);
                                     }

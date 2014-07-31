@@ -80,77 +80,77 @@ namespace BoxSocial.Internals
                 matches++;
             }
 
-            if (userName.EndsWith(".aspx"))
+            if (userName.EndsWith(".aspx", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".php"))
+            if (userName.EndsWith(".php", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".html"))
+            if (userName.EndsWith(".html", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".gif"))
+            if (userName.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".png"))
+            if (userName.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".js"))
+            if (userName.EndsWith(".js", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".bmp"))
+            if (userName.EndsWith(".bmp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jpg"))
+            if (userName.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jpeg"))
+            if (userName.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".zip"))
+            if (userName.EndsWith(".zip", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".jsp"))
+            if (userName.EndsWith(".jsp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".cfm"))
+            if (userName.EndsWith(".cfm", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith(".exe"))
+            if (userName.EndsWith(".exe", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.StartsWith("."))
+            if (userName.StartsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (userName.EndsWith("."))
+            if (userName.EndsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }

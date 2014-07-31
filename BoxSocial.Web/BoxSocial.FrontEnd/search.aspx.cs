@@ -62,7 +62,7 @@ namespace BoxSocial.FrontEnd
 
         private void showSearchBox()
         {
-            if (Request["q"] != null && Request["q"] != string.Empty && (!Request["q"].StartsWith("?")) && (!Request["q"].StartsWith("*")))
+            if (Request["q"] != null && Request["q"] != string.Empty && (!Request["q"].StartsWith("?", StringComparison.Ordinal)) && (!Request["q"].StartsWith("*", StringComparison.Ordinal)))
             {
                 showSearchResults();
             }

@@ -30,7 +30,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (value.StartsWith("url"))
+                if (value.StartsWith("url", StringComparison.Ordinal))
                 {
                     try
                     {
@@ -360,7 +360,7 @@ namespace BoxSocial.Internals
                     {
                         try
                         {
-                            if (line.StartsWith("/*") && line.EndsWith("*/"))
+                            if (line.StartsWith("/*", StringComparison.Ordinal) && line.EndsWith("*/", StringComparison.Ordinal))
                             {
                                 hue = int.Parse(line.Substring(2, line.Length - 4));
                             }

@@ -75,10 +75,10 @@ namespace BoxSocial.Internals
             bool pathIsRegex = false;
             string path = slug;
 
-            if (path.StartsWith(@"^") && path.EndsWith(@"$"))
+            if (path.StartsWith(@"^", StringComparison.Ordinal) && path.EndsWith(@"$", StringComparison.Ordinal))
             {
                 path = path.Substring(1, path.Length - 2).TrimStart(new char[] { '/' });
-                if (path.EndsWith("(|/)"))
+                if (path.EndsWith("(|/)", StringComparison.Ordinal))
                 {
                     path = path.Substring(0, path.Length - 4);
                 }

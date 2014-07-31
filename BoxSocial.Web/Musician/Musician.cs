@@ -814,82 +814,82 @@ namespace BoxSocial.Musician
                 matches++;
             }
 
-            if (musicianName.EndsWith(".aspx"))
+            if (musicianName.EndsWith(".aspx", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".asax"))
+            if (musicianName.EndsWith(".asax", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".php"))
+            if (musicianName.EndsWith(".php", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".html"))
+            if (musicianName.EndsWith(".html", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".gif"))
+            if (musicianName.EndsWith(".gif", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".png"))
+            if (musicianName.EndsWith(".png", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".js"))
+            if (musicianName.EndsWith(".js", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".bmp"))
+            if (musicianName.EndsWith(".bmp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".jpg"))
+            if (musicianName.EndsWith(".jpg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".jpeg"))
+            if (musicianName.EndsWith(".jpeg", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".zip"))
+            if (musicianName.EndsWith(".zip", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".jsp"))
+            if (musicianName.EndsWith(".jsp", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".cfm"))
+            if (musicianName.EndsWith(".cfm", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith(".exe"))
+            if (musicianName.EndsWith(".exe", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.StartsWith("."))
+            if (musicianName.StartsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
 
-            if (musicianName.EndsWith("."))
+            if (musicianName.EndsWith(".", StringComparison.Ordinal))
             {
                 matches++;
             }
@@ -1050,13 +1050,13 @@ namespace BoxSocial.Musician
             {
                 if (parts.Count > 1)
                 {
-                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!", StringComparison.Ordinal);
                     if (!lastAbsolute)
                     {
                         for (int i = 0; i < parts.Count - 2; i++)
                         {
-                            bool absolute = parts[i][0].StartsWith("!");
-                            bool ignore = parts[i][0].StartsWith("*");
+                            bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                            bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                             if ((!ignore) && (!absolute))
                             {
@@ -1088,8 +1088,8 @@ namespace BoxSocial.Musician
                 {
                     if (parts[i][0] != string.Empty)
                     {
-                        bool absolute = parts[i][0].StartsWith("!");
-                        bool ignore = parts[i][0].StartsWith("*");
+                        bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                        bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                             parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));

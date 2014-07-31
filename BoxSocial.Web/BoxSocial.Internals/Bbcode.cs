@@ -538,7 +538,7 @@ namespace BoxSocial.Internals
                     string path = match.Groups[5].Value;
                     string imageUri = string.Empty;
 
-                    if (domain.ToLower().EndsWith("instagram.com") && path.ToLower().Contains("/p/"))
+                    if (domain.ToLower().EndsWith("instagram.com", StringComparison.Ordinal) && path.ToLower().Contains("/p/"))
                     {
                         string instagramUrl = match.Groups[1].Value;
                         string instagramId = instagramUrl;
@@ -597,39 +597,39 @@ namespace BoxSocial.Internals
             {
                 string domain = match.Groups[4].Value;
                 string path = match.Groups[5].Value;
-                if (domain.ToLower().EndsWith("youtube.com") && path.ToLower().StartsWith("/watch?v="))
+                if (domain.ToLower().EndsWith("youtube.com", StringComparison.Ordinal) && path.ToLower().StartsWith("/watch?v=", StringComparison.Ordinal))
                 {
                     //output = output.Replace(match.Value, "\n[youtube]" + match.Groups[1].Value + "[/youtube]");
                     output = output.Insert(match.Groups[1].Index + offset, "\n[youtube]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 10, "[/youtube]");
                     offset += 20;
                 }
 
-                if (domain.ToLower().EndsWith("youtu.be"))
+                if (domain.ToLower().EndsWith("youtu.be", StringComparison.Ordinal))
                 {
                     //output = output.Replace(match.Value, "\n[youtube]" + match.Groups[1].Value + "[/youtube]");
                     output = output.Insert(match.Groups[1].Index + offset, "\n[youtube]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 10, "[/youtube]");
                     offset += 20;
                 }
 
-                if (domain.ToLower().EndsWith("twitter.com") && path.ToLower().Contains("/status/"))
+                if (domain.ToLower().EndsWith("twitter.com", StringComparison.Ordinal) && path.ToLower().Contains("/status/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[tweet]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/tweet]");
                     offset += 16;
                 }
 
-                if (domain.ToLower().EndsWith("soundcloud.com") && path.ToLower().Contains("/"))
+                if (domain.ToLower().EndsWith("soundcloud.com", StringComparison.Ordinal) && path.ToLower().Contains("/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[soundcloud]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 13, "[/soundcloud]");
                     offset += 16;
                 }
 
-                if (domain.ToLower().EndsWith("instagram.com") && path.ToLower().Contains("/p/"))
+                if (domain.ToLower().EndsWith("instagram.com", StringComparison.Ordinal) && path.ToLower().Contains("/p/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[instagram]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 12, "[/instagram]");
                     offset += 16;
                 }
 
-                if (domain.ToLower().EndsWith("plus.google.com") && path.ToLower().Contains("/posts/"))
+                if (domain.ToLower().EndsWith("plus.google.com", StringComparison.Ordinal) && path.ToLower().Contains("/posts/"))
                 {
                     output = output.Insert(match.Groups[1].Index + offset, "\n[gplus]").Insert(match.Groups[1].Index + match.Groups[1].Length + offset + 8, "[/gplus]");
                     offset += 16;
@@ -2269,7 +2269,7 @@ namespace BoxSocial.Internals
                     string youTubeUrl = e.Contents;
                     e.RemoveContents();
 
-                    if (youTubeUrl.ToLower().StartsWith("http://youtu.be/") || youTubeUrl.ToLower().StartsWith("https://youtu.be/") || youTubeUrl.ToLower().StartsWith("youtu.be/"))
+                    if (youTubeUrl.ToLower().StartsWith("http://youtu.be/", StringComparison.Ordinal) || youTubeUrl.ToLower().StartsWith("https://youtu.be/", StringComparison.Ordinal) || youTubeUrl.ToLower().StartsWith("youtu.be/", StringComparison.Ordinal))
                     {
                         char[] splitChars = { '/' };
                         string[] argh = youTubeUrl.Split(splitChars);
@@ -2282,7 +2282,7 @@ namespace BoxSocial.Internals
                             youTubeUrl = argh[argh.Length - 1];
                         }
                     }
-                    else if (youTubeUrl.ToLower().StartsWith("http://") || youTubeUrl.ToLower().StartsWith("https://"))
+                    else if (youTubeUrl.ToLower().StartsWith("http://", StringComparison.Ordinal) || youTubeUrl.ToLower().StartsWith("https://", StringComparison.Ordinal))
                     {
                         char[] splitChars = { '=', '?', '&' };
                         string[] argh = youTubeUrl.Split(splitChars);
@@ -2359,7 +2359,7 @@ namespace BoxSocial.Internals
                     string mapUrl = e.Contents;
                     e.RemoveContents();
 
-                    if (mapUrl.ToLower().StartsWith("http://") || mapUrl.ToLower().StartsWith("https://"))
+                    if (mapUrl.ToLower().StartsWith("http://", StringComparison.Ordinal) || mapUrl.ToLower().StartsWith("https://", StringComparison.Ordinal))
                     {
                         char[] splitChars = { '=', '?', '&' };
                         string[] argh = mapUrl.Split(splitChars);
@@ -2561,7 +2561,7 @@ namespace BoxSocial.Internals
 
                     e.RemoveContents();
 
-                    if (tweetUrl.ToLower().StartsWith("http://") || tweetUrl.ToLower().StartsWith("https://"))
+                    if (tweetUrl.ToLower().StartsWith("http://", StringComparison.Ordinal) || tweetUrl.ToLower().StartsWith("https://", StringComparison.Ordinal))
                     {
                         char[] splitChars = { '/' };
                         string[] argh = tweetUrl.Split(splitChars);

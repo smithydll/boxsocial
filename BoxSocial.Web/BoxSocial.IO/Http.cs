@@ -146,7 +146,7 @@ namespace BoxSocial.IO
 
             foreach (string value in current.Request.Form)
             {
-                if (value.StartsWith(var + "[") && value.EndsWith("]"))
+                if (value.StartsWith(var + "[", StringComparison.Ordinal) && value.EndsWith("]", StringComparison.Ordinal))
                 {
                     array.Add(value.Substring(var.Length + 1, value.Length - var.Length - 2));
                 }

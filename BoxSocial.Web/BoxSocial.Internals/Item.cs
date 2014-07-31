@@ -1702,14 +1702,14 @@ namespace BoxSocial.Internals
                             {*/
                             if (fi.FieldType == typeof(ItemKey))
                             {
-                                if (column.EndsWith("_type_id") && ikBufferId.ContainsKey(column.Substring(0, column.Length - 8)))
+                                if (column.EndsWith("_type_id", StringComparison.Ordinal) && ikBufferId.ContainsKey(column.Substring(0, column.Length - 8)))
                                 {
                                     if (setProperty(type, column, new ItemKey(ikBufferId[column.Substring(0, column.Length - 8)], (long)value)))
                                     {
                                         fieldsLoaded++;
                                     }
                                 }
-                                else if (column.EndsWith("_id") && ikBufferTypeId.ContainsKey(column.Substring(0, column.Length - 3)))
+                                else if (column.EndsWith("_id", StringComparison.Ordinal) && ikBufferTypeId.ContainsKey(column.Substring(0, column.Length - 3)))
                                 {
                                     if (setProperty(type, column, new ItemKey((long)value, ikBufferTypeId[column.Substring(0, column.Length - 3)])))
                                     {
@@ -1718,12 +1718,12 @@ namespace BoxSocial.Internals
                                 }
                                 else
                                 {
-                                    if (column.EndsWith("_id"))
+                                    if (column.EndsWith("_id", StringComparison.Ordinal))
                                     {
                                         ikBufferPrefix = column.Substring(0, column.Length - 3);
                                         ikBufferId.Add(ikBufferPrefix, (long)value);
                                     }
-                                    else if (column.EndsWith("_type_id"))
+                                    else if (column.EndsWith("_type_id", StringComparison.Ordinal))
                                     {
                                         ikBufferPrefix = column.Substring(0, column.Length - 8);
                                         ikBufferTypeId.Add(ikBufferPrefix, (long)value);

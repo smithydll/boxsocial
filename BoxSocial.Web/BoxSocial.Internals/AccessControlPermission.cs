@@ -135,7 +135,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (permissionDescription.StartsWith("{L_") && permissionDescription.EndsWith("}"))
+                if (permissionDescription.StartsWith("{L_", StringComparison.Ordinal) && permissionDescription.EndsWith("}", StringComparison.Ordinal))
                 {
                     string key = permissionDescription.Substring(3, permissionDescription.Length - 4);
                     /*if (core.Prose.ContainsKey(key))

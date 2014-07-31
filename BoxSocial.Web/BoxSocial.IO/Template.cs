@@ -553,7 +553,7 @@ namespace BoxSocial.IO
             bool loadedCache = populateTemplateCache();
             bool loadedFromCache = false;
 
-            if (templateAssembly != null && (!templateName.EndsWith(".html")))
+            if (templateAssembly != null && (!templateName.EndsWith(".html", StringComparison.Ordinal)))
             {
                 lock (templatesLock)
                 {
@@ -602,11 +602,11 @@ namespace BoxSocial.IO
                             else if (templateObject is byte[])
                             {
                                 template = System.Text.UTF8Encoding.UTF8.GetString((byte[])templateObject);
-                                if (template.StartsWith("\xEF\xBB\xBF"))
+                                if (template.StartsWith("\xEF\xBB\xBF", StringComparison.Ordinal))
                                 {
                                     template = template.Remove(0, 3);
                                 }
-                                if (template.StartsWith("\xBF"))
+                                if (template.StartsWith("\xBF", StringComparison.Ordinal))
                                 {
                                     template = template.Remove(0, 1);
                                 }
@@ -683,7 +683,9 @@ namespace BoxSocial.IO
             // If we didn't load the template from some form of cache, save it to the cache
             if (!loadedFromCache)
             {
+#if RELEASE
                 saveTemplateCache(templates);
+#endif
             }
 
             return template;
@@ -1153,7 +1155,7 @@ namespace BoxSocial.IO
 
                             }
                         }*/
-                        else if (prose != null && key.StartsWith("L_"))
+                        else if (prose != null && key.StartsWith("L_", StringComparison.Ordinal))
                         {
                             string proseKey = key.Substring(2).ToUpper();
                             string fragment = null;
@@ -1251,7 +1253,7 @@ namespace BoxSocial.IO
                 {
                     //string loopConditionVar = rm.Groups[1].Value;
                     string loopConditionVar = condition;
-                    if (loopConditionVar.StartsWith(variables.Path + "."))
+                    if (loopConditionVar.StartsWith(variables.Path + ".", StringComparison.Ordinal))
                     {
                         loopConditionVar = loopConditionVar.Substring(variables.Path.Length + 1);
                     }

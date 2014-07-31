@@ -47,7 +47,7 @@ namespace BoxSocial.IO
 
         public static Query FromStub(Type type, string stub)
         {
-            if (stub.StartsWith("SELECT"))
+            if (stub.StartsWith("SELECT", StringComparison.Ordinal))
             {
                 return new SelectQuery(type, new QueryStub(stub));
             }

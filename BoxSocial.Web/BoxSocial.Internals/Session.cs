@@ -541,14 +541,42 @@ namespace BoxSocial.Internals
 
                 foreach (string key in bots.Keys)
                 {
-                    if ((!string.IsNullOrEmpty(key)) && Regex.IsMatch(ua, key.Replace("#", "\\#").Replace("\\*", ".*?"), RegexOptions.IgnoreCase))
+                    if ((!string.IsNullOrEmpty(key)))
                     {
-                        return bots[key];
+                        if ((key.Contains("*") || key.Contains("#")) && Regex.IsMatch(ua, key.Replace("#", "\\#").Replace("\\*", ".*?"), RegexOptions.IgnoreCase))
+                        {
+                            return bots[key];
+                        }
+                        else
+                        {
+                            if (ua.ToLower().Contains(key.ToLower()))
+                            {
+                                return bots[key];
+                            }
+                        }
                     }
                 }
             }
 
             return null;
+        }
+
+        public bool IsValidSid(string sid)
+        {
+            if (sid.Length == 32)
+            {
+                foreach (char c in sid)
+                {
+                    if (!char.IsLetterOrDigit(c))
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         //
@@ -668,7 +696,7 @@ namespace BoxSocial.Internals
 
             if (!string.IsNullOrEmpty(sessionId))
             {
-                if (!Regex.IsMatch(sessionId, "^[A-Za-z0-9]*$"))
+                if (!IsValidSid(sessionId))
                 {
                     sessionId = "";
                 }
@@ -987,7 +1015,15 @@ namespace BoxSocial.Internals
 
         public void SessionPagestart(string userIp)
         {
+#if DEBUG
+            Stopwatch timeTimer = new Stopwatch();
+            timeTimer.Start();
+#endif
             long nowUt = UnixTime.UnixTimeStamp();
+#if DEBUG
+            timeTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A.1.b in {0} -->\r\n", timeTimer.ElapsedTicks / 10000000.0));
+#endif
 
             string cookieName = "hailToTheChef";
             /*XmlSerializer xs;
@@ -1002,28 +1038,39 @@ namespace BoxSocial.Internals
             sessionData = null;
             sessionId = null;
 
+#if DEBUG
+            Stopwatch botTimer = new Stopwatch();
+            botTimer.Start();
+#endif
             if (!String.IsNullOrEmpty(IsBotUserAgent(Request.UserAgent)))
             {
                 signInState = SessionSignInState.Bot;
                 core.Hyperlink.SidUrls = false;
                 return;
             }
+#if DEBUG
+            botTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A.1.c in {0} -->\r\n", botTimer.ElapsedTicks / 10000000.0));
+#endif
 
-            if (Request.Cookies[cookieName + "_sid"] != null || Request.Cookies[cookieName + "_data"] != null)
+            HttpCookie sidCookie = Request.Cookies[cookieName + "_sid"];
+            HttpCookie dataCookie = Request.Cookies[cookieName + "_data"];
+
+            if (sidCookie != null || dataCookie != null)
             {
-                if (Request.Cookies[cookieName + "_sid"] != null)
+                if (sidCookie != null)
                 {
-                    sessionId = Request.Cookies[cookieName + "_sid"].Value;
+                    sessionId = sidCookie.Value;
                 }
 
-                if (Request.Cookies[cookieName + "_data"] != null)
+                if (dataCookie != null)
                 {
                     /*xs = new XmlSerializer(typeof(SessionCookie));
                     StringReader sr = new StringReader(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value));*/
 
                     try
                     {
-                        sessionData = new SessionCookie(HttpUtility.UrlDecode(Request.Cookies[cookieName + "_data"].Value)); //(SessionCookie)xs.Deserialize(sr);
+                        sessionData = new SessionCookie(HttpUtility.UrlDecode(dataCookie.Value)); //(SessionCookie)xs.Deserialize(sr);
                     }
                     catch
                     {
@@ -1074,7 +1121,7 @@ namespace BoxSocial.Internals
 
             if (!string.IsNullOrEmpty(sessionId))
             {
-                if (!Regex.IsMatch(sessionId, "^[A-Za-z0-9]*$"))
+                if (!IsValidSid(sessionId))
                 {
                     sessionId = "";
                 }

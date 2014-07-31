@@ -146,7 +146,7 @@ namespace BoxSocial.Applications.Gallery
             int filesUploaded = 0;
             for (int i = 0; i < core.Http.Files.Count; i++)
             {
-                if (core.Http.Files.GetKey(i).StartsWith("photo-file"))
+                if (core.Http.Files.GetKey(i).StartsWith("photo-file", StringComparison.Ordinal))
                 {
                     filesUploaded++;
                     if (core.Http.Files[i] == null || core.Http.Files[i].ContentLength == 0)
@@ -221,7 +221,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     for (int i = 0; i < core.Http.Files.Count; i++)
                     {
-                        if (!core.Http.Files.GetKey(i).StartsWith("photo-file"))
+                        if (!core.Http.Files.GetKey(i).StartsWith("photo-file", StringComparison.Ordinal))
                         {
                             continue;
                         }

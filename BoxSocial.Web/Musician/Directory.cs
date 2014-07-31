@@ -105,7 +105,7 @@ namespace BoxSocial.Musician
             {
                 genrePath = string.Empty;
             }
-            if (!genrePath.StartsWith("/"))
+            if (!genrePath.StartsWith("/", StringComparison.Ordinal))
             {
                 genrePath = "/" + genrePath.TrimEnd(new char[] { '/' });
             }

@@ -76,7 +76,7 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (core.PagePath.StartsWith("/memberpage.aspx"))
+            if (core.PagePath.StartsWith("/memberpage.aspx", StringComparison.Ordinal))
             {
                 core.PagePath = core.PagePath.Substring(20 + User.UserName.Length + 1 + 5);
             }
@@ -86,7 +86,7 @@ namespace BoxSocial.Internals
                 {
                     core.PagePath = core.PagePath.Substring(User.UserName.Length + 1 + 5);
                 }
-                if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower()))
+                if (core.PagePath.ToLower().StartsWith("/" + User.UserName.ToLower(), StringComparison.Ordinal))
                 {
                     core.PagePath = core.PagePath.Substring(User.UserName.Length + 1);
                 }

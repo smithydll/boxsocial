@@ -209,7 +209,7 @@ namespace BoxSocial.Internals
                 {
                     displayNameOwnership = (title != string.Empty) ? title : assemblyName;
 
-                    if (displayNameOwnership.EndsWith("s"))
+                    if (displayNameOwnership.EndsWith("s", StringComparison.Ordinal))
                     {
                         displayNameOwnership = displayNameOwnership + "'";
                     }
@@ -1052,13 +1052,13 @@ namespace BoxSocial.Internals
             {
                 if (parts.Count > 1)
                 {
-                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!", StringComparison.Ordinal);
                     if (!lastAbsolute)
                     {
                         for (int i = 0; i < parts.Count - 2; i++)
                         {
-                            bool absolute = parts[i][0].StartsWith("!");
-                            bool ignore = parts[i][0].StartsWith("*");
+                            bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                            bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                             if ((!ignore) && (!absolute))
                             {
@@ -1090,8 +1090,8 @@ namespace BoxSocial.Internals
                 {
                     if (parts[i][0] != string.Empty)
                     {
-                        bool absolute = parts[i][0].StartsWith("!");
-                        bool ignore = parts[i][0].StartsWith("*");
+                        bool absolute = parts[i][0].StartsWith("!", StringComparison.Ordinal);
+                        bool ignore = parts[i][0].StartsWith("*", StringComparison.Ordinal);
 
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
                             parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));

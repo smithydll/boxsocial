@@ -1,0 +1,137 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6F6A5563-5CBA-4B1E-909D-B82C0F3DA66C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BoxSocial.Applications.EnterpriseResourcePlanning</RootNamespace>
+    <AssemblyName>EnterpriseResourcePlanning</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
+      <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
+      <Name>BoxSocial.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">
+      <Project>{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}</Project>
+      <Name>BoxSocial.Internals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">
+      <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
+      <Name>BoxSocial.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Groups\Groups.csproj">
+      <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
+      <Name>Groups</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountEnterpriseResourcePlanning.cs" />
+    <Compile Include="AccountEnterpriseResourcePlanningDocumentTemplates.cs" />
+    <Compile Include="AccountEnterpriseResourcePlanningPermissions.cs" />
+    <Compile Include="AccountEnterpriseResourcePlanningSettings.cs" />
+    <Compile Include="AppInfo.cs" />
+    <Compile Include="BillOfMaterials.cs" />
+    <Compile Include="Document.cs" />
+    <Compile Include="DocumentCustomField.cs" />
+    <Compile Include="DocumentCustomFieldFixedPointValue.cs" />
+    <Compile Include="DocumentCustomFieldFloatingPointValue.cs" />
+    <Compile Include="DocumentCustomFieldLongTextValue.cs" />
+    <Compile Include="DocumentCustomFieldShortTextValue.cs" />
+    <Compile Include="DocumentListPrice.cs" />
+    <Compile Include="DocumentProperty.cs" />
+    <Compile Include="DocumentRevision.cs" />
+    <Compile Include="DocumentSearchKeywords.cs" />
+    <Compile Include="DocumentTemplate.cs" />
+    <Compile Include="ErpSettings.cs" />
+    <Compile Include="Project.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="PurchaseItem.cs" />
+    <Compile Include="PurchaseOrder.cs" />
+    <Compile Include="Vendor.cs" />
+    <Compile Include="Templates.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="languages\EnterpriseResourcePlanning.en.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Templates.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="resources\enterpriseresourceplanning.svg" />
+    <Content Include="resources\script.js" />
+    <Content Include="resources\style.css" />
+    <Content Include="templates\account_erp_document_templates_add.html" />
+    <Content Include="templates\account_erp_document_templates_manage.html" />
+    <Content Include="templates\account_erp_permissions.html" />
+    <Content Include="templates\account_erp_settings.html" />
+    <Content Include="templates\viewdocument.html" />
+    <Content Include="templates\viewdocuments.html" />
+    <Content Include="templates\viewproject.html" />
+    <Content Include="templates\viewvendor.html" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\resgen.exe" "$(ProjectDir)languages\EnterpriseResourcePlanning.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\EnterpriseResourcePlanning.en.resx"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

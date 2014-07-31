@@ -1,0 +1,291 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{581891FE-D8AB-4A2E-82E1-D5A453B83BF7}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BoxSocial</RootNamespace>
+    <AssemblyName>BoxSocial</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include=".htaccess" />
+    <None Include="Web.Config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="404.aspx" />
+    <Content Include="about.aspx" />
+    <Content Include="account.aspx" />
+    <Content Include="acl.aspx" />
+    <Content Include="applicationmanage.aspx" />
+    <Content Include="applicationpage.aspx" />
+    <Content Include="captcha.aspx" />
+    <Content Include="comment.aspx" />
+    <Content Include="captcha%402x.aspx" />
+    <Content Include="scripts\ajax.common.js" />
+    <Content Include="scripts\ajax.desktop.js" />
+    <Content Include="scripts\canvas-to-blob.min.js" />
+    <Content Include="scripts\jquery-1.10.2.min.js" />
+    <Content Include="scripts\jquery-ui-1.10.3.boxsocial.min.js" />
+    <Content Include="scripts\jquery.fileupload-image.js" />
+    <Content Include="scripts\jquery.fileupload-process.js" />
+    <Content Include="scripts\jquery.fileupload.js" />
+    <Content Include="scripts\jquery.iframe-transport.js" />
+    <Content Include="scripts\load-image.min.js" />
+    <Content Include="shorturl.aspx" />
+    <Content Include="copyright.aspx" />
+    <Content Include="corners.aspx" />
+    <Content Include="default.aspx" />
+    <Content Include="error-handler.aspx" />
+    <Content Include="functions.aspx" />
+    <Content Include="Global.asax" />
+    <Content Include="groupaccount.aspx" />
+    <Content Include="grouppage.aspx" />
+    <Content Include="groupstyle.aspx" />
+    <Content Include="help.aspx" />
+    <Content Include="identicon.aspx" />
+    <Content Include="like.aspx" />
+    <Content Include="login.aspx" />
+    <Content Include="memberpage.aspx" />
+    <Content Include="musicaccount.aspx" />
+    <Content Include="musicpage.aspx" />
+    <Content Include="musicstyle.aspx" />
+    <Content Include="networkpage.aspx" />
+    <Content Include="privacy.aspx" />
+    <Content Include="rate.aspx" />
+    <Content Include="register.aspx" />
+    <Content Include="robots.txt" />
+    <Content Include="safety.aspx" />
+    <Content Include="scripts\ajax.mobile.js" />
+    <Content Include="scripts\colorwheel.js" />
+    <Content Include="scripts\jgestures.min.js" />
+    <Content Include="scripts\jquery.history.js" />
+    <Content Include="scripts\jquery.mobile-1.3.0.min.js" />
+    <Content Include="scripts\raphael-min.js" />
+    <Content Include="scripts\retina.js" />
+    <Content Include="search.aspx" />
+    <Content Include="session.aspx" />
+    <Content Include="share.aspx" />
+    <Content Include="sitemap.aspx" />
+    <Content Include="staticpage.aspx" />
+    <Content Include="styles\boxsocial.css" />
+    <Content Include="styles\boxsocial.min.css" />
+    <Content Include="styles\boxsocial.mobile.css" />
+    <Content Include="styles\boxsocial.tablet.css" />
+    <Content Include="styles\images\ajax-loader.gif" />
+    <Content Include="styles\images\dislike-000000.png" />
+    <Content Include="styles\images\dislike-0044aa.png" />
+    <Content Include="styles\images\dislike-888888.png" />
+    <Content Include="styles\images\dislike-ff0000.png" />
+    <Content Include="styles\images\dislike-ffaa00.png" />
+    <Content Include="styles\images\icons-18-black-pack.png" />
+    <Content Include="styles\images\icons-18-black.png" />
+    <Content Include="styles\images\icons-18-white-pack.png" />
+    <Content Include="styles\images\icons-18-white.png" />
+    <Content Include="styles\images\icons-36-black.png" />
+    <Content Include="styles\images\icons-36-white.png" />
+    <Content Include="styles\images\large thumbs\dislike-000000.png" />
+    <Content Include="styles\images\large thumbs\dislike-0044aa.png" />
+    <Content Include="styles\images\large thumbs\dislike-888888.png" />
+    <Content Include="styles\images\large thumbs\dislike-ff0000.png" />
+    <Content Include="styles\images\large thumbs\dislike-ffaa00.png" />
+    <Content Include="styles\images\large thumbs\like-000000.png" />
+    <Content Include="styles\images\large thumbs\like-0044aa.png" />
+    <Content Include="styles\images\large thumbs\like-007F00.png" />
+    <Content Include="styles\images\large thumbs\like-888888.png" />
+    <Content Include="styles\images\large thumbs\like-ffaa00.png" />
+    <Content Include="styles\images\like-000000.png" />
+    <Content Include="styles\images\like-0044aa.png" />
+    <Content Include="styles\images\like-007F00.png" />
+    <Content Include="styles\images\like-888888.png" />
+    <Content Include="styles\images\like-ffaa00.png" />
+    <Content Include="styles\images\permissions-000000.png" />
+    <Content Include="styles\images\permissions-0044aa.png" />
+    <Content Include="styles\images\permissions-888888.png" />
+    <Content Include="styles\images\permissions-red.png" />
+    <Content Include="styles\images\ui-bg_diagonals-thick_18_b81900_40x40.png" />
+    <Content Include="styles\images\ui-bg_diagonals-thick_20_666666_40x40.png" />
+    <Content Include="styles\images\ui-bg_flat_100_2244aa_40x100.png" />
+    <Content Include="styles\images\ui-bg_flat_10_000000_40x100.png" />
+    <Content Include="styles\images\ui-bg_flat_35_2244aa_40x100.png" />
+    <Content Include="styles\images\ui-bg_glass_100_ffffff_1x400.png" />
+    <Content Include="styles\images\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="styles\images\ui-bg_highlight-soft_100_eeeeee_1x100.png" />
+    <Content Include="styles\images\ui-bg_highlight-soft_75_88aaff_1x100.png" />
+    <Content Include="styles\images\ui-icons_0044aa_256x240.png" />
+    <Content Include="styles\images\ui-icons_222222_256x240.png" />
+    <Content Include="styles\images\ui-icons_888888_256x240.png" />
+    <Content Include="styles\images\ui-icons_ffaa00_256x240.png" />
+    <Content Include="styles\images\ui-icons_ffffff_256x240.png" />
+    <Content Include="styles\jquery-ui-1.10.3.boxsocial.min.css" />
+    <Content Include="subscribe.aspx" />
+    <Content Include="templates\1201.html" />
+    <Content Include="templates\1202.html" />
+    <Content Include="templates\1301.html" />
+    <Content Include="templates\1302.html" />
+    <Content Include="templates\403.html" />
+    <Content Include="templates\404.html" />
+    <Content Include="templates\account_applications.html" />
+    <Content Include="templates\account_application_settings.html" />
+    <Content Include="templates\account_footer.html" />
+    <Content Include="templates\account_header.html" />
+    <Content Include="templates\account_landing.html" />
+    <Content Include="templates\account_master.html" />
+    <Content Include="templates\account_password.html" />
+    <Content Include="templates\account_preferences.html" />
+    <Content Include="templates\account_security.html" />
+    <Content Include="templates\acl.html" />
+    <Content Include="templates\help_topic.html" />
+    <Content Include="templates\mobile\primitive_footer.html" />
+    <Content Include="templates\mobile\primitive_header.html" />
+    <Content Include="templates\mobile\viewsubscriptions.html" />
+    <Content Include="templates\mobile\viewsubscribers.html" />
+    <Content Include="templates\primitive_footer.html" />
+    <Content Include="templates\viewsubscriptions.html" />
+    <Content Include="templates\creategroup.html" />
+    <Content Include="templates\createmuiscian.html" />
+    <Content Include="templates\default.html" />
+    <Content Include="templates\emails\email_activation.html" />
+    <Content Include="templates\emails\email_footer.html" />
+    <Content Include="templates\emails\email_header.html" />
+    <Content Include="templates\emails\friend_invitation.html" />
+    <Content Include="templates\emails\friend_notification.html" />
+    <Content Include="templates\emails\join_network.html" />
+    <Content Include="templates\emails\new_password.html" />
+    <Content Include="templates\emails\notification.html" />
+    <Content Include="templates\emails\notification_footer.html" />
+    <Content Include="templates\emails\registration_welcome.html" />
+    <Content Include="templates\error.html" />
+    <Content Include="templates\help.html" />
+    <Content Include="templates\login.html" />
+    <Content Include="templates\login_two_factor_verify.html" />
+    <Content Include="templates\mobile\account_header.html" />
+    <Content Include="templates\mobile\account_master.html" />
+    <Content Include="templates\mobile\page_footer.html" />
+    <Content Include="templates\mobile\page_header.html" />
+    <Content Include="templates\mobile\pane.comment.html" />
+    <Content Include="templates\mobile\pane.comment.post.html" />
+    <Content Include="templates\mobile\pane.feeditem.html" />
+    <Content Include="templates\mobile\search_result.user.html" />
+    <Content Include="templates\mobile\today.html" />
+    <Content Include="templates\mobile\viewfeed.html" />
+    <Content Include="templates\mobile\viewfriends.html" />
+    <Content Include="templates\mobile\viewprofile.html" />
+    <Content Include="templates\page_footer.html" />
+    <Content Include="templates\page_header.html" />
+    <Content Include="templates\pane.comment.html" />
+    <Content Include="templates\pane.comment.post.html" />
+    <Content Include="templates\pane.comments.html" />
+    <Content Include="templates\pane.feeditem.html" />
+    <Content Include="templates\pane.share.post.html" />
+    <Content Include="templates\pane.statusmessage.html" />
+    <Content Include="templates\password_reset.html" />
+    <Content Include="templates\primitive_header.html" />
+    <Content Include="templates\register.html" />
+    <Content Include="templates\search.html" />
+    <Content Include="templates\search_result.statusmessage.html" />
+    <Content Include="templates\search_result.user.html" />
+    <Content Include="templates\search_results.html" />
+    <Content Include="templates\site_footer.html" />
+    <Content Include="templates\site_header.html" />
+    <Content Include="templates\statusmessagespanel.html" />
+    <Content Include="templates\std.acl.html" />
+    <Content Include="templates\std.classifications_box.html" />
+    <Content Include="templates\std.confirm.html" />
+    <Content Include="templates\std.message.html" />
+    <Content Include="templates\tablet\page_footer.html" />
+    <Content Include="templates\tablet\page_header.html" />
+    <Content Include="templates\today.html" />
+    <Content Include="templates\viewapplication.html" />
+    <Content Include="templates\viewapplications.html" />
+    <Content Include="templates\viewfeed.html" />
+    <Content Include="templates\viewfriends.html" />
+    <Content Include="templates\viewmusicians.html" />
+    <Content Include="templates\viewnetworks.html" />
+    <Content Include="templates\viewprofile.html" />
+    <Content Include="templates\viewsubscribers.html" />
+    <Content Include="templates\view_contact.html" />
+    <Content Include="templates\view_contacts.html" />
+    <Content Include="tos.aspx" />
+    <Content Include="userstyle.aspx" />
+    <Content Include="viewapplications.aspx" />
+    <Content Include="viewfriends.aspx" />
+    <Content Include="viewnetworks.aspx" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 Client Profile %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

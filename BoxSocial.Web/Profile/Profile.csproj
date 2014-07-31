@@ -1,0 +1,206 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{BC7327B8-F476-409B-BEFD-5E1C1D417A79}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>BoxSocial.Applications.Profile</RootNamespace>
+    <AssemblyName>Profile</AssemblyName>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>3</WarningLevel>
+    <NoWarn>649,169</NoWarn>
+    <OutputType>Library</OutputType>
+    <RootNamespace>BoxSocial.Applications.Profile</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>649 169</NoWarn>
+    <OutputType>Library</OutputType>
+    <DebugSymbols>true</DebugSymbols>
+    <RootNamespace>BoxSocial.Applications.Profile</RootNamespace>
+    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AccountGroupCoverPhoto.cs" />
+    <Compile Include="AccountBlocklistManage.cs" />
+    <Compile Include="AccountDisplayPic.cs" />
+    <Compile Include="AccountContactManage.cs" />
+    <Compile Include="AccountFamilyManage.cs" />
+    <Compile Include="AccountFriendInvite.cs" />
+    <Compile Include="AccountFriendManage.cs" />
+    <Compile Include="AccountFriends.cs" />
+    <Compile Include="AccountGroupDisplayPic.cs" />
+    <Compile Include="AccountLifestyle.cs" />
+    <Compile Include="AccountProfile.cs" />
+    <Compile Include="AccountProfileInfo.cs" />
+    <Compile Include="AccountProfileName.cs" />
+    <Compile Include="AccountProfilePermissions.cs" />
+    <Compile Include="AccountStatus.cs" />
+    <Compile Include="AccountStyle.cs" />
+    <Compile Include="AppInfo.cs" />
+    <Compile Include="AccountCoverPhoto.cs" />
+    <Compile Include="Default.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Templates1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Templates.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BoxSocial.Forms\BoxSocial.Forms.csproj">
+      <Project>{D073D777-367E-4DF6-B53E-B90DE1FD47CA}</Project>
+      <Name>BoxSocial.Forms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.Internals\BoxSocial.Internals.csproj">
+      <Project>{06617779-D3DE-4A43-8FD9-4BCEB63BF07C}</Project>
+      <Name>BoxSocial.Internals</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\BoxSocial.IO\BoxSocial.IO.csproj">
+      <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
+      <Name>BoxSocial.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gallery\Gallery.csproj">
+      <Project>{FEF04E07-92C9-4AB8-BB0B-4AC71D8BFFE0}</Project>
+      <Name>Gallery</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Groups\Groups.csproj">
+      <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
+      <Name>Groups</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Networks\Networks.csproj">
+      <Project>{5D75BF14-9C1D-4358-AF97-2C9EC7CD2F97}</Project>
+      <Name>Networks</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="languages\Profile.en.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="resources\profile.png" />
+    <None Include="resources\profile.svg" />
+    <Content Include="resources\script.js" />
+    <Content Include="resources\style.css" />
+    <Content Include="templates\account_address_edit.html" />
+    <Content Include="templates\account_blocklist_manage.html" />
+    <Content Include="templates\account_contact.html" />
+    <Content Include="templates\account_contact_manage.html" />
+    <Content Include="templates\account_display_picture.html" />
+    <Content Include="templates\account_email_edit.html" />
+    <Content Include="templates\account_family_manage.html" />
+    <Content Include="templates\account_friends_manage.html" />
+    <Content Include="templates\account_friend_groups_manage.html" />
+    <Content Include="templates\account_friend_invite.html" />
+    <Content Include="templates\account_group_icon.html" />
+    <Content Include="templates\account_lifestyle.html" />
+    <Content Include="templates\account_link_edit.html" />
+    <Content Include="templates\account_name.html" />
+    <Content Include="templates\account_permissions.html" />
+    <Content Include="templates\account_phone_edit.html" />
+    <Content Include="templates\account_profile.html" />
+    <Content Include="templates\account_style.html">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="templates\account_cover_photo.html" />
+    <Content Include="templates\account_group_cover_photo.html" />
+    <Content Include="templates\poststatusmessage.html" />
+    <Content Include="templates\todayfriendpanel.html" />
+    <Content Include="templates\viewfeed.html" />
+    <Content Include="templates\viewstatusfeed.html" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Templates.resx">
+      <SubType>Designer</SubType>
+      <LastGenOutput>Templates1.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Profile.en.resx"</PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Profile.en.resx"</PostBuildEvent>
+  </PropertyGroup>
+</Project>

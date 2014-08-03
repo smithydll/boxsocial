@@ -99,7 +99,7 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, long networkId, long memberId)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("network_members.user_id", memberId);
             query.AddCondition("network_id", networkId);
 
@@ -134,7 +134,7 @@ namespace BoxSocial.Networks
         public NetworkMember(Core core, Network theNetwork, User member)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", member.UserId);
             query.AddCondition("network_members.network_id", theNetwork.Id);
 
@@ -161,7 +161,7 @@ namespace BoxSocial.Networks
         {
             Dictionary<int, NetworkMember> networks = new Dictionary<int, NetworkMember>();
 
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", member.UserId);
             query.AddCondition("network_members.member_active", true);
 
@@ -188,19 +188,19 @@ namespace BoxSocial.Networks
             return true;
         }
 
-        public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        public static new SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
-            SelectQuery query = GetSelectQueryStub(typeof(NetworkMember));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            SelectQuery query = GetSelectQueryStub(core, typeof(NetworkMember));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
-                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
             }
             if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
             {
-                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));

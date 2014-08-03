@@ -84,7 +84,7 @@ namespace BoxSocial.Groups
 
             long groupTypeId = ItemKey.GetTypeId(typeof(UserGroup));
 
-            SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.Common);
+            SelectQuery query = GroupMember.GetSelectQueryStub(core, UserLoadOptions.Common);
             query.AddCondition("user_keys.user_id", LoggedInMember.Id);
 
             DataTable membershipGroupsTable = db.Query(query);

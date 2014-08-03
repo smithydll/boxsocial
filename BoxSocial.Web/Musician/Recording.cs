@@ -221,7 +221,7 @@ namespace BoxSocial.Musician
         {
             List<Sample> samples = new List<Sample>();
 
-            SelectQuery query = GetSelectQueryStub(typeof(Sample));
+            SelectQuery query = GetSelectQueryStub(core, typeof(Sample));
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(Sample), "recording_sampled_id"), new DataField(typeof(Recording), "recording_id"));
             query.AddCondition("recording_id", Id);
 

@@ -24,11 +24,15 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.OleDb;
 using System.Reflection;
+using System.Web;
+using System.Web.Caching;
 
 namespace BoxSocial.IO
 {
     public abstract class Cache
     {
+        public abstract object GetCached(string key);
 
+        public abstract void SetCached(string key, object value, TimeSpan expiresIn, CacheItemPriority priority);
     }
 }

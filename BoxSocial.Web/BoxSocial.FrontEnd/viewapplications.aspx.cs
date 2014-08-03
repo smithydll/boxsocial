@@ -73,7 +73,7 @@ namespace BoxSocial.FrontEnd
                 viewingPrimitive = AppPrimitives.Musician;
             }
 
-            SelectQuery query = ApplicationEntry.GetSelectQueryStub(typeof(ApplicationEntry));
+            SelectQuery query = ApplicationEntry.GetSelectQueryStub(core, typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + ((byte)viewingPrimitive).ToString(), (byte)viewingPrimitive);
             query.AddCondition("application_locked", false);
             query.AddSort(SortOrder.Ascending, "application_title");

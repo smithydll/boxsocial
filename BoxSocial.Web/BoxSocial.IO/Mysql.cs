@@ -233,7 +233,11 @@ namespace BoxSocial.IO
 
         public string Status()
         {
-            return sqlConnection.State.ToString() + ((inTransaction) ? " transaction" : String.Empty);
+#if DEBUG
+            return sqlConnection.State.ToString() + ((inTransaction) ? " transaction" : string.Empty);
+#else
+            return string.Empty;
+#endif
         }
 
         /// <summary>

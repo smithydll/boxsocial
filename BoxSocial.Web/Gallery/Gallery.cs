@@ -802,7 +802,7 @@ namespace BoxSocial.Applications.Gallery
             this.owner = owner;
             ItemLoad += new ItemLoadHandler(Gallery_ItemLoad);
 
-            SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
+            SelectQuery query = Gallery.GetSelectQueryStub(core, typeof(Gallery));
             query.AddCondition("gallery_parent_path", Gallery.GetParentPath(path));
             query.AddCondition("gallery_path", Gallery.GetNameFromPath(path));
             query.AddCondition("gallery_item_id", owner.Id);
@@ -1091,8 +1091,8 @@ namespace BoxSocial.Applications.Gallery
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
             //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
 
-            SelectQuery query = Gallery.GetSelectQueryStub(typeof(Gallery));
-            query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(GalleryItem)));
+            SelectQuery query = Gallery.GetSelectQueryStub(core, typeof(Gallery));
+            query.AddFields(GalleryItem.GetFieldsPrefixed(core, typeof(GalleryItem)));
             query.AddJoin(JoinTypes.Left, new DataField(typeof(Gallery), "gallery_highlight_id"), new DataField(typeof(GalleryItem), "gallery_item_id"));
             /*query.AddFields(GalleryItem.GetFieldsPrefixed(typeof(ContentLicense)));
             query.AddJoin(JoinTypes.Left, new DataField(typeof(GalleryItem), "gallery_item_license"), new DataField(typeof(ContentLicense), "license_id"));*/
@@ -1177,7 +1177,7 @@ namespace BoxSocial.Applications.Gallery
             //ushort readAccessLevel = owner.GetAccessLevel(core.Session.LoggedInMember);
             long loggedIdUid = User.GetMemberId(core.Session.LoggedInMember);
 
-            SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+            SelectQuery query = GalleryItem.GetSelectQueryStub(core, typeof(GalleryItem));
             query.AddCondition("gallery_id", galleryId);
             query.AddCondition("gallery_item_item_id", owner.Id);
             QueryCondition qc1 = query.AddCondition("gallery_item_item_type_id", owner.TypeId);
@@ -2625,7 +2625,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                 }
 
-                SelectQuery query = GalleryItem.GetSelectQueryStub(typeof(GalleryItem));
+                SelectQuery query = GalleryItem.GetSelectQueryStub(core, typeof(GalleryItem));
                 query.AddCondition("gallery_item_id", ConditionEquality.In, itemIds);
                 query.AddCondition("gallery_id", Id);
 

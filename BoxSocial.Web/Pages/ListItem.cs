@@ -108,7 +108,7 @@ namespace BoxSocial.Applications.Pages
             ItemLoad += new ItemLoadHandler(ListItem_ItemLoad);
 
             
-            SelectQuery query = ListItem_GetSelectQueryStub();
+            SelectQuery query = ListItem_GetSelectQueryStub(core);
             query.AddCondition("list_item_id", listItemId);
 
             DataTable listItemTable = db.Query(query);
@@ -137,11 +137,11 @@ namespace BoxSocial.Applications.Pages
         {
         }
 
-        public static SelectQuery ListItem_GetSelectQueryStub()
+        public static SelectQuery ListItem_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ListItem), false);
+            SelectQuery query = NumberedItem.GetSelectQueryStub(core, typeof(ListItem), false);
 
-            query.AddFields(ListItemText.GetFieldsPrefixed(typeof(ListItemText)));
+            query.AddFields(ListItemText.GetFieldsPrefixed(core, typeof(ListItemText)));
             query.AddJoin(JoinTypes.Inner, ListItemText.GetTable(typeof(ListItemText)), "list_item_text_id", "list_item_text_id");
 
             query.AddSort(SortOrder.Ascending, "list_item_text_normalised");

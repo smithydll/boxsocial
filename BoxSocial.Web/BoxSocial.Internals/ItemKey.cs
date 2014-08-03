@@ -404,7 +404,7 @@ namespace BoxSocial.Internals
                 {
                     itemTypeCache = new Dictionary<string, ItemType>(256, StringComparer.Ordinal);
                     itemApplicationCache = new Dictionary<string, long>(256, StringComparer.Ordinal);
-                    SelectQuery query = ItemType.GetSelectQueryStub(typeof(ItemType));
+                    SelectQuery query = ItemType.GetSelectQueryStub(core, typeof(ItemType));
 
                     System.Data.Common.DbDataReader typesReader = null;
 

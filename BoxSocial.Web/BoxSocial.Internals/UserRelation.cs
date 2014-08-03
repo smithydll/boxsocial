@@ -99,12 +99,12 @@ namespace BoxSocial.Internals
             core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
-        public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        public static new SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
             SelectQuery query = new SelectQuery("user_relations");
-            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(core, typeof(UserRelation)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
 
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
@@ -112,12 +112,12 @@ namespace BoxSocial.Internals
 
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
-                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             }
             if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
             {
-                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));

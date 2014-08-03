@@ -133,7 +133,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumMemberRank> ranks = new List<ForumMemberRank>();
 
-            SelectQuery query = ForumMemberRank.GetSelectQueryStub(typeof(ForumMemberRank));
+            SelectQuery query = ForumMemberRank.GetSelectQueryStub(core, typeof(ForumMemberRank));
             query.AddCondition("rank_owner_id", ownerKey.Id);
             query.AddCondition("rank_owner_type_id", ownerKey.TypeId);
 
@@ -408,7 +408,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_item_id", ownerKey.Id);
             query.AddCondition("forum_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Ascending, "forum_order");

@@ -557,8 +557,8 @@ namespace BoxSocial.Applications.Mail
         {
             List<Message> messages = new List<Message>();
 
-            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(core, typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(Message)));
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
             query.AddCondition("message_thread_start_id", Id);
             query.AddCondition("user_id", core.LoggedInMemberId);

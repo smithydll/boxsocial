@@ -98,7 +98,7 @@ namespace BoxSocial.Internals
             this.item = item;
             ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
 
-            SelectQuery query = ItemInfo.GetSelectQueryStub(typeof(ItemInfo));
+            SelectQuery query = ItemInfo.GetSelectQueryStub(core, typeof(ItemInfo));
             query.AddCondition("info_item_id", itemId);
             query.AddCondition("info_item_type_id", itemTypeId);
 
@@ -135,7 +135,7 @@ namespace BoxSocial.Internals
             this.item = item;
             ItemLoad += new ItemLoadHandler(ItemInfo_ItemLoad);
 
-            SelectQuery query = ItemInfo.GetSelectQueryStub(typeof(ItemInfo));
+            SelectQuery query = ItemInfo.GetSelectQueryStub(core, typeof(ItemInfo));
             query.AddCondition("info_shortkey", key);
 
             DataTable infoTable = db.Query(query);

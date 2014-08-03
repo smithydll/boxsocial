@@ -220,7 +220,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                query = Item.GetSelectQueryStub(typeToGet);
+                query = Item.GetSelectQueryStub(core, typeToGet);
             }
 
             if (!string.IsNullOrEmpty(sortColumn))
@@ -241,7 +241,7 @@ namespace BoxSocial.Internals
                 query.LimitCount = perPage;
             }
 
-            query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(this.GetType(), typeToGet), Id);
+            query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetParentField(core, this.GetType(), typeToGet), Id);
 
             if (!dataReader)
             {

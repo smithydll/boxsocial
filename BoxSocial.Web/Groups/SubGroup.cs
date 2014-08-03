@@ -522,7 +522,7 @@ namespace BoxSocial.Groups
 
         private void preLoadMemberCache(ItemKey key)
         {
-            SelectQuery query = SubGroupMember.GetSelectQueryStub(typeof(SubGroupMember));
+            SelectQuery query = SubGroupMember.GetSelectQueryStub(core, typeof(SubGroupMember));
             query.AddFields("user_id", "sub_group_member_approved");
             query.AddCondition("sub_group_id", Id);
             query.AddCondition("user_id", key.Id);
@@ -603,7 +603,7 @@ namespace BoxSocial.Groups
 
             SelectQuery query = new SelectQuery("sub_group_members");
             query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(SubGroupMember)));
             query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
             query.AddCondition("sub_group_member_is_leader", true);
             query.AddCondition("sub_group_member_approved", true);
@@ -639,7 +639,7 @@ namespace BoxSocial.Groups
 
             SelectQuery query = new SelectQuery("sub_group_members");
             query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(SubGroupMember)));
             query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
             query.AddCondition("sub_group_member_is_leader", false);
             query.AddCondition("sub_group_member_approved", true);
@@ -676,7 +676,7 @@ namespace BoxSocial.Groups
 
             SelectQuery query = new SelectQuery("sub_group_members");
             query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(SubGroupMember)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(SubGroupMember)));
             query.AddCondition("`sub_group_members`.`sub_group_id`", subGroupId);
             query.AddCondition("sub_group_member_is_leader", false);
             query.AddCondition("sub_group_member_approved", false);

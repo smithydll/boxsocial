@@ -22,11 +22,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Web;
+using System.Web.Caching;
 
 namespace BoxSocial.IO
 {
     public class Memcached : Cache
     {
         /* Eventually, .NET 4.0 caching is good enough when only using a single server */
+
+        public override object GetCached(string key)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void SetCached(string key, object value, TimeSpan expiresIn, CacheItemPriority priority)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

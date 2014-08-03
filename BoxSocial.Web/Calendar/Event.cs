@@ -536,7 +536,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<EventInvite> invites = new List<EventInvite>();
 
-            SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+            SelectQuery query = EventInvite.GetSelectQueryStub(core, typeof(EventInvite));
             query.AddCondition("event_id", EventId);
 
             DataTable invitesDataTable = db.Query(query);
@@ -553,7 +553,7 @@ namespace BoxSocial.Applications.Calendar
         {
             if (member != null)
             {
-                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+                SelectQuery query = EventInvite.GetSelectQueryStub(core, typeof(EventInvite));
                 query.AddCondition("event_id", EventId);
                 query.AddCondition("item_id", member.Id);
                 query.AddCondition("item_type_id", member.TypeId);
@@ -577,7 +577,7 @@ namespace BoxSocial.Applications.Calendar
         {
             if (member != null)
             {
-                SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+                SelectQuery query = EventInvite.GetSelectQueryStub(core, typeof(EventInvite));
                 query.AddCondition("event_id", EventId);
                 query.AddCondition("item_id", member.Id);
                 query.AddCondition("item_type_id", member.TypeId);

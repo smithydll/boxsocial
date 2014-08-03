@@ -472,7 +472,7 @@ namespace BoxSocial.Internals
 
             ItemLoad += new ItemLoadHandler(Page_ItemLoad);
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_slug", Page.GetNameFromPath(pageName));
             query.AddCondition("page_parent_path", Page.GetParentPath(pageName));
             query.AddCondition("page_item_id", owner.Id);
@@ -512,7 +512,7 @@ namespace BoxSocial.Internals
 
             ItemLoad += new ItemLoadHandler(Page_ItemLoad);
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_slug", pageName);
             query.AddCondition("page_parent_path", pageParentPath);
             query.AddCondition("page_item_id", owner.Id);
@@ -544,7 +544,7 @@ namespace BoxSocial.Internals
 
             ItemLoad += new ItemLoadHandler(Page_ItemLoad);
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_id", pageId);
 
             DataTable pageTable = db.Query(query);
@@ -574,7 +574,7 @@ namespace BoxSocial.Internals
 
             ItemLoad += new ItemLoadHandler(Page_ItemLoad);
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_id", pageId);
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);

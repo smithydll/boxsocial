@@ -518,13 +518,13 @@ namespace BoxSocial.Applications.Forum
 
         public static SelectQuery ForumTopic_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(core, typeof(ForumTopic), false);
 
-            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
                 tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
             }

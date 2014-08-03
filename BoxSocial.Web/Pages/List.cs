@@ -200,7 +200,7 @@ namespace BoxSocial.Applications.Pages
             ItemLoad += new ItemLoadHandler(List_ItemLoad);
 
             SelectQuery query = new SelectQuery(List.GetTable(typeof(List)));
-            query.AddFields(List.GetFieldsPrefixed(typeof(List)));
+            query.AddFields(List.GetFieldsPrefixed(core, typeof(List)));
             query.AddCondition("list_path", listName);
             query.AddCondition("user_id", owner.Id);
 
@@ -258,7 +258,7 @@ namespace BoxSocial.Applications.Pages
         {
             List<List> lists = new List<List>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(List));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(List));
             query.AddCondition("user_id", owner.Id);
 
             DataTable listsTable = core.Db.Query(query);

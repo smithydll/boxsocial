@@ -82,7 +82,7 @@ namespace BoxSocial.Groups
         {
             this.db = db;
 
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("group_members.group_id", group.GroupId);
 
@@ -312,22 +312,22 @@ namespace BoxSocial.Groups
             db.Query(query);
         }
 
-        public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        public static new SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
-            SelectQuery query = GetSelectQueryStub(typeof(GroupMember));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            SelectQuery query = GetSelectQueryStub(core, typeof(GroupMember));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
             query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
             TableJoin tj1 = query.AddJoin(JoinTypes.Left, "group_operators", "user_id", "user_id");
             tj1.AddCondition("group_operators.group_id", new DataField(GroupMember.GetTable(typeof(GroupMember)), "group_id"));
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
-                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
             }
             if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
             {
-                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));

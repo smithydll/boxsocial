@@ -411,7 +411,7 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
 
             SelectBox licensesSelectBox = new SelectBox("license");
-            System.Data.Common.DbDataReader licensesReader = core.Db.ReaderQuery(ContentLicense.GetSelectQueryStub(typeof(ContentLicense)));
+            System.Data.Common.DbDataReader licensesReader = core.Db.ReaderQuery(ContentLicense.GetSelectQueryStub(core, typeof(ContentLicense)));
 
             licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
             while(licensesReader.Read())
@@ -424,7 +424,7 @@ namespace BoxSocial.Applications.Blog
             licensesReader.Dispose();
 
             SelectBox categoriesSelectBox = new SelectBox("category");
-            SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
+            SelectQuery query = Category.GetSelectQueryStub(core, typeof(Category));
             query.AddSort(SortOrder.Ascending, "category_title");
 
             System.Data.Common.DbDataReader categoriesReader = core.Db.ReaderQuery(query);

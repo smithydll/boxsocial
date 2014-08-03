@@ -301,7 +301,7 @@ namespace BoxSocial.Applications.Profile
                         // ignore already a member, plough on
                         if (friendEmail.ToLower() != LoggedInMember.UserInfo.PrimaryEmail.ToLower())
                         {
-                            SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                            SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                             query.AddCondition("LCASE(user_alternate_email)", Mysql.Escape(friendEmail.ToLower()));
 
                             DataTable friendTable = db.Query(query);

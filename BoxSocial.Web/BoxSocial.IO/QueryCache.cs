@@ -33,8 +33,8 @@ namespace BoxSocial.IO
 {
     public class QueryCache
     {
-        private static Object queryLock = new object();
-        private static Dictionary<long, string> queries = new Dictionary<long, string>();
+        private static object queryLock = new object();
+        private static Dictionary<long, string> queries = new Dictionary<long, string>(256);
 
         public static Query GetQuery(Type type, long typeId)
         {
@@ -127,6 +127,12 @@ namespace BoxSocial.IO
                     {
                         queries.Add(typeId, query.ToString());
                         cache.Add("queries", queries, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(8, 0, 0), CacheItemPriority.High, null);
+#if DEBUG
+                        if (HttpContext.Current != null && HttpContext.Current.Response != null)
+                        {
+                            HttpContext.Current.Response.Write(string.Format("<!-- Cached query:\r\n {0}\r\n-->\r\n", query.ToString()));
+                        }
+#endif
                     }
                 }
             }

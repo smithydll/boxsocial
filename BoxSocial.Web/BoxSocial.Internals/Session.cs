@@ -719,7 +719,7 @@ namespace BoxSocial.Internals
                 //if (isset($sessiondata['autologinid']) && (string) $sessiondata['autologinid'] != '' && $user_id)
                 if (!string.IsNullOrEmpty(sessionData.autoLoginId) && userId > 0)
                 {
-                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                    SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                     query.AddJoin(JoinTypes.Inner, "session_keys", "user_id", "user_id");
                     query.AddCondition("user_keys.user_id", userId);
                     query.AddCondition("user_active", true);
@@ -800,7 +800,7 @@ namespace BoxSocial.Internals
 
                     if (userId > 0)
                     {
-                        SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                        SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                         query.AddCondition("user_active", true);
                         query.AddCondition("user_keys.user_id", userId);
 
@@ -866,7 +866,7 @@ namespace BoxSocial.Internals
 
                 if (userId > 0)
                 {
-                    SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                    SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                     query.AddCondition("user_keys.user_id", userId);
 
                     System.Data.Common.DbDataReader userReader = db.ReaderQuery(query);
@@ -1053,6 +1053,10 @@ namespace BoxSocial.Internals
             HttpContext.Current.Response.Write(string.Format("<!-- section A.1.c in {0} -->\r\n", botTimer.ElapsedTicks / 10000000.0));
 #endif
 
+#if DEBUG
+            Stopwatch cookieTimer = new Stopwatch();
+            cookieTimer.Start();
+#endif
             HttpCookie sidCookie = Request.Cookies[cookieName + "_sid"];
             HttpCookie dataCookie = Request.Cookies[cookieName + "_data"];
 
@@ -1118,7 +1122,15 @@ namespace BoxSocial.Internals
                     //return;
                 }
             }
+#if DEBUG
+            cookieTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A.1.d in {0} -->\r\n", cookieTimer.ElapsedTicks / 10000000.0));
+#endif
 
+#if DEBUG
+            Stopwatch sidTimer = new Stopwatch();
+            sidTimer.Start();
+#endif
             if (!string.IsNullOrEmpty(sessionId))
             {
                 if (!IsValidSid(sessionId))
@@ -1126,6 +1138,10 @@ namespace BoxSocial.Internals
                     sessionId = "";
                 }
             }
+#if DEBUG
+            sidTimer.Stop();
+            HttpContext.Current.Response.Write(string.Format("<!-- section A.1.e in {0} -->\r\n", sidTimer.ElapsedTicks / 10000000.0));
+#endif
 
             if (!string.IsNullOrEmpty(sessionId))
             {
@@ -1133,7 +1149,7 @@ namespace BoxSocial.Internals
                 // session_id exists so go ahead and attempt to grab all
                 // data in preparation
                 //
-                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+                SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                 query.AddFields("session_ip", "session_time_ut", "session_signed_in");
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_sessions", "user_id"));
                 query.AddCondition("session_string", sessionId);
@@ -1211,7 +1227,11 @@ namespace BoxSocial.Internals
 
                             SessionClean(sessionId);
                         }
-						
+
+#if DEBUG
+                        Stopwatch cookie2Timer = new Stopwatch();
+                        cookie2Timer.Start();
+#endif
 						Response.Cookies.Clear();
 
                         /*xs = new XmlSerializer(typeof(SessionCookie));
@@ -1245,6 +1265,11 @@ namespace BoxSocial.Internals
                         {
                             core.Hyperlink.SidUrls = true;
                         }
+
+#if DEBUG
+                        cookie2Timer.Stop();
+                        HttpContext.Current.Response.Write(string.Format("<!-- section A.1.f in {0} -->\r\n", cookie2Timer.ElapsedTicks / 10000000.0));
+#endif
 
                         return;
                     }
@@ -1304,7 +1329,7 @@ namespace BoxSocial.Internals
 
             if (!string.IsNullOrEmpty(sessionId))
             {
-                if (!Regex.IsMatch(sessionId, "^[A-Za-z0-9]*$"))
+                if (!IsValidSid(sessionId))
                 {
                     return;
                 }
@@ -1363,8 +1388,8 @@ namespace BoxSocial.Internals
             if (record == null)
             {
 				Response.Cookies.Clear();
-				
-                SelectQuery query = User.GetSelectQueryStub(UserLoadOptions.Info);
+
+                SelectQuery query = User.GetSelectQueryStub(core, UserLoadOptions.Info);
                 query.AddCondition("user_keys.user_id", 0);
 
                 DataTable userTable = db.Query(query);

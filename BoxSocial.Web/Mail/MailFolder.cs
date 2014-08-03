@@ -244,8 +244,8 @@ namespace BoxSocial.Applications.Mail
         {
             List<Message> messages = new List<Message>();
 
-            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(core, typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(Message)));
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
             query.AddCondition("message_folder_id", folderId);
             if (((FolderTypes)folderType) != FolderTypes.Draft)
@@ -273,8 +273,8 @@ namespace BoxSocial.Applications.Mail
         {
             List<Message> messages = new List<Message>();
 
-            SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(Message)));
+            SelectQuery query = MessageRecipient.GetSelectQueryStub(core, typeof(MessageRecipient));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(Message)));
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(MessageRecipient), "message_id"), new DataField(typeof(Message), "message_id"));
             query.AddCondition("message_thread_start_id", 0);
             QueryCondition qc1 = query.AddCondition("message_folder_id", folderId);
@@ -302,7 +302,7 @@ namespace BoxSocial.Applications.Mail
 
         public static MailFolder GetFolder(Core core, FolderTypes folder, User user)
         {
-            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            SelectQuery query = MailFolder.GetSelectQueryStub(core, typeof(MailFolder));
             query.AddCondition("folder_type", (byte)folder);
             query.AddCondition("owner_id", user.Id);
 
@@ -330,7 +330,7 @@ namespace BoxSocial.Applications.Mail
 
         public static MailFolder GetFolder(Core core, FolderTypes folder, MessageRecipient user)
         {
-            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            SelectQuery query = MailFolder.GetSelectQueryStub(core, typeof(MailFolder));
             query.AddCondition("folder_type", (byte)folder);
             query.AddCondition("owner_id", user.UserId);
 
@@ -359,7 +359,7 @@ namespace BoxSocial.Applications.Mail
         public static List<MailFolder> GetFolders(Core core, User user)
         {
             List<MailFolder> folders = new List<MailFolder>();
-            SelectQuery query = MailFolder.GetSelectQueryStub(typeof(MailFolder));
+            SelectQuery query = MailFolder.GetSelectQueryStub(core, typeof(MailFolder));
             query.AddCondition("owner_id", user.Id);
 
             System.Data.Common.DbDataReader inboxReader = core.Db.ReaderQuery(query);

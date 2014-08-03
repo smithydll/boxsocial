@@ -77,7 +77,7 @@ namespace BoxSocial.Applications.Pages
 
             ushort listPermissions = 0x1111;
 
-			SelectQuery query = List.GetSelectQueryStub(typeof(List));
+            SelectQuery query = List.GetSelectQueryStub(core, typeof(List));
 			query.AddCondition("user_id", Owner.Id); 
             DataTable listsTable = db.Query(query);
 

@@ -239,7 +239,7 @@ namespace BoxSocial.Networks
             else
             {
                 SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
-                query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+                query.AddFields(Network.GetFieldsPrefixed(core, typeof(Network)));
                 query.AddCondition("`network_keys`.`network_id`", networkId);
 
                 if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
@@ -247,7 +247,7 @@ namespace BoxSocial.Networks
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
-                    query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+                    query.AddFields(NetworkInfo.GetFieldsPrefixed(core, typeof(NetworkInfo)));
 
                     if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
                     {
@@ -311,7 +311,7 @@ namespace BoxSocial.Networks
             else
             {
                 SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
-                query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+                query.AddFields(Network.GetFieldsPrefixed(core, typeof(Network)));
                 query.AddCondition("`network_keys`.`network_network`", networkNetwork);
 
                 if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
@@ -319,7 +319,7 @@ namespace BoxSocial.Networks
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
-                    query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+                    query.AddFields(NetworkInfo.GetFieldsPrefixed(core, typeof(NetworkInfo)));
 
                     if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
                     {
@@ -410,7 +410,7 @@ namespace BoxSocial.Networks
             List<NetworkMember> members = new List<NetworkMember>();
 
             SelectQuery query = new SelectQuery(NetworkMember.GetTable(typeof(NetworkMember)));
-            query.AddFields(NetworkMember.GetFieldsPrefixed(typeof(NetworkMember)));
+            query.AddFields(NetworkMember.GetFieldsPrefixed(core, typeof(NetworkMember)));
             query.AddCondition("network_id", networkId);
             query.AddSort(SortOrder.Ascending, "member_join_date_ut");
             if (!string.IsNullOrEmpty(filter))
@@ -443,7 +443,7 @@ namespace BoxSocial.Networks
         {
             List<NetworkMember> memberships = new List<NetworkMember>();
 
-            SelectQuery query = NetworkMember.GetSelectQueryStub(UserLoadOptions.Key);
+            SelectQuery query = NetworkMember.GetSelectQueryStub(core, UserLoadOptions.Key);
             query.AddCondition("user_id", member.Id);
 
             DataTable membershipsTable = core.Db.Query(query);
@@ -460,7 +460,7 @@ namespace BoxSocial.Networks
         {
             List<Network> networks = new List<Network>();
 
-            SelectQuery query = Network.GetSelectQueryStub(NetworkLoadOptions.All);
+            SelectQuery query = Network.GetSelectQueryStub(core, NetworkLoadOptions.All);
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(Network), "network_id"), new DataField(typeof(NetworkMember), "network_id"));
             query.AddCondition("user_id", member.Id);
 
@@ -498,7 +498,7 @@ namespace BoxSocial.Networks
                     break;
             }
 
-            SelectQuery query = Network.GetSelectQueryStub(NetworkLoadOptions.All);
+            SelectQuery query = Network.GetSelectQueryStub(core, NetworkLoadOptions.All);
             query.AddCondition("network_type", typeString);
 
             DataTable networksTable = core.Db.Query(query);
@@ -588,15 +588,15 @@ namespace BoxSocial.Networks
             }
         }
 
-        public static SelectQuery GetSelectQueryStub(NetworkLoadOptions loadOptions)
+        public static SelectQuery GetSelectQueryStub(Core core, NetworkLoadOptions loadOptions)
         {
             SelectQuery query = new SelectQuery(Network.GetTable(typeof(Network)));
-            query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
+            query.AddFields(Network.GetFieldsPrefixed(core, typeof(Network)));
 
             if ((loadOptions & NetworkLoadOptions.Info) == NetworkLoadOptions.Info)
             {
                 query.AddJoin(JoinTypes.Inner, NetworkInfo.GetTable(typeof(NetworkInfo)), "network_id", "network_id");
-                query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+                query.AddFields(NetworkInfo.GetFieldsPrefixed(core, typeof(NetworkInfo)));
 
                 if ((loadOptions & NetworkLoadOptions.Icon) == NetworkLoadOptions.Icon)
                 {
@@ -612,9 +612,9 @@ namespace BoxSocial.Networks
             return query;
         }
 
-        public static SelectQuery Network_GetSelectQueryStub()
+        public static SelectQuery Network_GetSelectQueryStub(Core core)
         {
-            return GetSelectQueryStub(NetworkLoadOptions.All);
+            return GetSelectQueryStub(core, NetworkLoadOptions.All);
         }
 
         public NetworkMember Join(Core core, User member, string networkEmail)

@@ -156,7 +156,7 @@ namespace BoxSocial.Musician
         {
             List<MusicGenre> genres = new List<MusicGenre>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicGenre));
             query.AddCondition("genre_is_sub", false);
             query.AddCondition("parent_id", 0);
             query.AddSort(SortOrder.Ascending, "genre_slug");
@@ -195,7 +195,7 @@ namespace BoxSocial.Musician
                 }
             }
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicGenre));
             query.AddCondition("genre_id", ConditionEquality.In, genreIds);
             query.AddSort(SortOrder.Ascending, "genre_id");
 
@@ -214,7 +214,7 @@ namespace BoxSocial.Musician
         {
             List<MusicGenre> genres = new List<MusicGenre>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicGenre));
             query.AddCondition("genre_is_sub", false);
             query.AddSort(SortOrder.Ascending, "parent_id");
             query.AddSort(SortOrder.Ascending, "genre_slug");
@@ -233,7 +233,7 @@ namespace BoxSocial.Musician
         {
             List<MusicGenre> genres = new List<MusicGenre>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicGenre));
             query.AddCondition("genre_is_sub", true);
             query.AddCondition("parent_id", ConditionEquality.GreaterThan, 0);
             query.AddSort(SortOrder.Ascending, "parent_id");
@@ -253,7 +253,7 @@ namespace BoxSocial.Musician
         {
             List<MusicGenre> genres = new List<MusicGenre>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicGenre));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicGenre));
             query.AddCondition("genre_is_sub", true);
             query.AddCondition("parent_id", genreId);
             query.AddSort(SortOrder.Ascending, "genre_slug");

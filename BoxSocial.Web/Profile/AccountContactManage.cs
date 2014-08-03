@@ -89,7 +89,7 @@ namespace BoxSocial.Applications.Profile
             List<UserPhoneNumber> phoneNumbers = new List<UserPhoneNumber>();
             List<UserLink> links = LoggedInMember.GetLinks();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(UserPhoneNumber));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(UserPhoneNumber));
             query.AddCondition("phone_user_id", core.LoggedInMemberId);
 
             DataTable phoneNumbersDataTable = db.Query(query);
@@ -172,7 +172,7 @@ namespace BoxSocial.Applications.Profile
 
             List<Country> countries = new List<Country>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Country));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Country));
             query.AddSort(SortOrder.Ascending, "country_name");
 
             DataTable countryDataTable = db.Query(query);

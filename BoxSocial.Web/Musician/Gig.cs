@@ -465,7 +465,7 @@ namespace BoxSocial.Musician
         {
             List<Gig> gigs = new List<Gig>();
 
-            SelectQuery query = Gig.GetSelectQueryStub(typeof(Gig));
+            SelectQuery query = Gig.GetSelectQueryStub(core, typeof(Gig));
             query.AddCondition("musician_id", owner.Id);
 
             DataTable gigTable = core.Db.Query(query);

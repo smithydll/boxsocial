@@ -1036,7 +1036,7 @@ namespace BoxSocial.Internals
             //ushort readAccessLevel = owner.GetAccessLevel(loggedInMember);
             long loggedIdUid = User.GetMemberId(loggedInMember);
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);
             query.AddCondition("page_status", "PUBLISH");

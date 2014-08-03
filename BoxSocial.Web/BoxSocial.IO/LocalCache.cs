@@ -32,20 +32,18 @@ namespace BoxSocial.IO
     public class LocalCache : Cache
     {
         private System.Web.Caching.Cache cache;
+        private Http http;
 
-        public LocalCache()
+        public LocalCache(Http http)
         {
-            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+            this.http = http;
+            if (http != null && http.Cache != null)
             {
-                cache = HttpContext.Current.Cache;
-            }
-            else
-            {
-                cache = new System.Web.Caching.Cache();
+                cache = http.Cache;
             }
         }
 
-        public object GetCached(string key)
+        public override object GetCached(string key)
         {
             try
             {
@@ -61,9 +59,12 @@ namespace BoxSocial.IO
             return null;
         }
 
-        public void SetCached(string key, object value, TimeSpan expiresIn, CacheItemPriority priority)
+        public override void SetCached(string key, object value, TimeSpan expiresIn, CacheItemPriority priority)
         {
-            cache.Add(key, value, null, System.Web.Caching.Cache.NoAbsoluteExpiration, expiresIn, priority, null);
+            if (cache != null)
+            {
+                cache.Insert(key, value, null, System.Web.Caching.Cache.NoAbsoluteExpiration, expiresIn, priority, null);
+            }
         }
     }
 }

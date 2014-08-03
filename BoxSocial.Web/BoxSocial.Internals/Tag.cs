@@ -177,7 +177,7 @@ namespace BoxSocial.Internals
 
             List<Tag> tags = new List<Tag>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(ItemTag));
             query.AddCondition("item_id", item.Id);
             query.AddCondition("item_type_id", item.ItemKey.TypeId);
             query.AddSort(SortOrder.Ascending, "tag_text_normalised");
@@ -222,7 +222,7 @@ namespace BoxSocial.Internals
 
             foreach (long itemTypeId in itemIds.Keys)
             {
-                SelectQuery query = Item.GetSelectQueryStub(typeof(ItemTag));
+                SelectQuery query = Item.GetSelectQueryStub(core, typeof(ItemTag));
                 query.AddCondition("item_id", ConditionEquality.In, itemIds[itemTypeId]);
                 query.AddCondition("item_type_id", itemTypeId);
                 query.AddSort(SortOrder.Ascending, "tag_text_normalised");
@@ -260,7 +260,7 @@ namespace BoxSocial.Internals
                 return tagList;
             }
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Tag));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Tag));
             query.AddCondition("tag_text_normalised", ConditionEquality.In, tags);
 
             System.Data.Common.DbDataReader tagsReader = core.Db.ReaderQuery(query);
@@ -285,7 +285,7 @@ namespace BoxSocial.Internals
                 string normalisedText = string.Empty;
                 Tag.NormaliseTag(tagText, ref normalisedText);
 
-                SelectQuery query = Tag.GetSelectQueryStub(typeof(Tag));
+                SelectQuery query = Tag.GetSelectQueryStub(core, typeof(Tag));
                 query.AddCondition("tag_text_normalised", ConditionEquality.Like, QueryCondition.EscapeLikeness(normalisedText) + "%");
                 query.AddSort(SortOrder.Descending, "tag_items");
 

@@ -46,6 +46,21 @@ namespace BoxSocial.IO
             forceDomain = false;
             //HttpContext.Current = null;
         }
+
+        internal System.Web.Caching.Cache Cache
+        {
+            get
+            {
+                if (current != null)
+                {
+                    return current.Cache;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         
         public void SetToImageResponse(string contextType, DateTime lastModified)
         {

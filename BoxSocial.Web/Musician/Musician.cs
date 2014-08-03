@@ -449,10 +449,10 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static SelectQuery GetSelectQueryStub(MusicianLoadOptions loadOptions)
+        public static SelectQuery GetSelectQueryStub(Core core, MusicianLoadOptions loadOptions)
         {
             SelectQuery query = new SelectQuery(GetTable(typeof(Musician)));
-            query.AddFields(Musician.GetFieldsPrefixed(typeof(Musician)));
+            query.AddFields(Musician.GetFieldsPrefixed(core, typeof(Musician)));
 
             if ((loadOptions & MusicianLoadOptions.Icon) == MusicianLoadOptions.Icon)
             {
@@ -464,9 +464,9 @@ namespace BoxSocial.Musician
             return query;
         }
 
-        public static SelectQuery Musician_GetSelectQueryStub()
+        public static SelectQuery Musician_GetSelectQueryStub(Core core)
         {
-            return GetSelectQueryStub(MusicianLoadOptions.All);
+            return GetSelectQueryStub(core, MusicianLoadOptions.All);
         }
 
         public List<MusicianMember> GetMembers()
@@ -507,7 +507,7 @@ namespace BoxSocial.Musician
 
             SelectQuery query = new SelectQuery(typeof(Fan));
             query.AddJoin(JoinTypes.Inner, "user_keys", "user_id", "user_id");
-            query.AddFields(Fan.GetFieldsPrefixed(typeof(Fan)));
+            query.AddFields(Fan.GetFieldsPrefixed(core, typeof(Fan)));
             query.AddCondition("musician_id", musicianId);
             if (!string.IsNullOrEmpty(filter))
             {
@@ -1264,7 +1264,7 @@ namespace BoxSocial.Musician
         {
             List<Musician> musicians = new List<Musician>();
 
-            SelectQuery query = Musician.GetSelectQueryStub(typeof(Musician));
+            SelectQuery query = Musician.GetSelectQueryStub(core, typeof(Musician));
             //query.AddSort(SortOrder.Ascending, "musician_slug");
 
             return musicians;
@@ -1279,7 +1279,7 @@ namespace BoxSocial.Musician
         {
             List<Musician> musicians = new List<Musician>();
 
-            SelectQuery query = Musician.GetSelectQueryStub(typeof(Musician));
+            SelectQuery query = Musician.GetSelectQueryStub(core, typeof(Musician));
             if (genre != null)
             {
                 if (genre.IsSubGenre)

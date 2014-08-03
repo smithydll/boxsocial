@@ -345,7 +345,7 @@ namespace BoxSocial.Applications.Forum
 
             if (topicLastPostIds.Count > 0)
             {
-                SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
+                SelectQuery query = TopicPost.GetSelectQueryStub(core, typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, topicLastPostIds);
 
                 System.Data.Common.DbDataReader postsReader = core.Db.ReaderQuery(query);
@@ -375,7 +375,7 @@ namespace BoxSocial.Applications.Forum
 
             if (postIds.Count > 0)
             {
-                SelectQuery query = TopicPost.GetSelectQueryStub(typeof(TopicPost));
+                SelectQuery query = TopicPost.GetSelectQueryStub(core, typeof(TopicPost));
                 query.AddCondition("post_id", ConditionEquality.In, postIds);
 
                 System.Data.Common.DbDataReader postsReader = core.Db.ReaderQuery(query);

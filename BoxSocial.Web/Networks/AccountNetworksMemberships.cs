@@ -73,9 +73,9 @@ namespace BoxSocial.Networks
 
             List<Network> networks = new List<Network>();
 
-            SelectQuery query = NetworkMember.GetSelectQueryStub(typeof(NetworkMember));
-            query.AddFields(Network.GetFieldsPrefixed(typeof(Network)));
-            query.AddFields(NetworkInfo.GetFieldsPrefixed(typeof(NetworkInfo)));
+            SelectQuery query = NetworkMember.GetSelectQueryStub(core, typeof(NetworkMember));
+            query.AddFields(Network.GetFieldsPrefixed(core, typeof(Network)));
+            query.AddFields(NetworkInfo.GetFieldsPrefixed(core, typeof(NetworkInfo)));
             query.AddJoin(JoinTypes.Inner, "network_keys", "network_id", "network_id");
             query.AddJoin(JoinTypes.Inner, "network_info", "network_id", "network_id");
             query.AddCondition("user_id", LoggedInMember.Id);

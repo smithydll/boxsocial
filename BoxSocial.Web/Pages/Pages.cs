@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Pages
         {
             List<Page> pages = new List<Page>();
 
-            SelectQuery query = Page.GetSelectQueryStub(typeof(Page));
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
             query.AddCondition("page_item_id", owner.Id);
             query.AddCondition("page_item_type_id", owner.TypeId);
             if (!all)

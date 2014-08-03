@@ -155,7 +155,7 @@ namespace BoxSocial.Internals
             }
 
             /* after 7 days release the IP for dynamics ip fairness */
-            SelectQuery query = Like.GetSelectQueryStub(typeof(Like));
+            SelectQuery query = Like.GetSelectQueryStub(core, typeof(Like));
             query.AddCondition("like_item_id", itemKey.Id);
             query.AddCondition("like_item_type_id", itemKey.TypeId);
             QueryCondition qc1 = query.AddCondition("user_id", core.LoggedInMemberId);

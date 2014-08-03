@@ -124,7 +124,7 @@ namespace BoxSocial.Internals
 
             if (core.Session.SignedIn)
             {
-                SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+                SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
                 query.AddCondition("subscription_item_id", itemKey.Id);
                 query.AddCondition("subscription_item_type_id", itemKey.TypeId);
                 query.AddCondition("user_id", core.LoggedInMemberId);
@@ -149,7 +149,7 @@ namespace BoxSocial.Internals
 
             core.Db.BeginTransaction();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
             query.AddCondition("user_id", core.LoggedInMemberId);
@@ -192,7 +192,7 @@ namespace BoxSocial.Internals
 
             core.Db.BeginTransaction();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
             query.AddCondition("user_id", core.LoggedInMemberId);
@@ -226,12 +226,12 @@ namespace BoxSocial.Internals
         {
             List<User> subscribers = new List<User>();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
@@ -258,7 +258,7 @@ namespace BoxSocial.Internals
         {
             List<ItemKey> subscribers = new List<ItemKey>();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("subscription_item_id", itemKey.Id);
             query.AddCondition("subscription_item_type_id", itemKey.TypeId);
             query.AddSort(SortOrder.Ascending, "subscription_time_ut");
@@ -284,12 +284,12 @@ namespace BoxSocial.Internals
         {
             List<User> subscribers = new List<User>();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition(new DataField(typeof(Subscription), "user_id"), owner.Id);
             query.AddCondition("subscription_item_type_id", ItemKey.GetTypeId(typeof(User)));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "subscription_item_id", "user_id");

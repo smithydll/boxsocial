@@ -169,7 +169,7 @@ namespace BoxSocial.Applications.News
 		{
 			List<Article> articles = new List<Article>();
 
-			SelectQuery query = Article.GetSelectQueryStub(typeof(Article));
+            SelectQuery query = Article.GetSelectQueryStub(core, typeof(Article));
 			query.AddCondition("article_item_id", Owner.Id);
 			query.AddCondition("article_item_type_id", Owner.TypeId);
 			query.AddSort(SortOrder.Descending, "article_time_ut");
@@ -198,7 +198,7 @@ namespace BoxSocial.Applications.News
         {
             List<NewsIcon> icons = new List<NewsIcon>();
 
-            SelectQuery query = NewsIcon.GetSelectQueryStub(typeof(NewsIcon));
+            SelectQuery query = NewsIcon.GetSelectQueryStub(core, typeof(NewsIcon));
             ItemKey ik = new ItemKey(owner.Id, owner.GetType().FullName);
             query.AddCondition("icon_item_id", ik.Id);
             query.AddCondition("icon_item_type_id", ik.TypeId);

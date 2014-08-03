@@ -285,7 +285,7 @@ namespace BoxSocial.Groups
             else
             {
                 SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
-                query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                query.AddFields(UserGroup.GetFieldsPrefixed(core, typeof(UserGroup)));
                 query.AddCondition("`group_keys`.`group_id`", groupId);
 
                 if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
@@ -293,7 +293,7 @@ namespace BoxSocial.Groups
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
-                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(core, typeof(UserGroupInfo)));
 
                     if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
                     {
@@ -355,7 +355,7 @@ namespace BoxSocial.Groups
             else
             {
                 SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
-                query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
+                query.AddFields(UserGroup.GetFieldsPrefixed(core, typeof(UserGroup)));
                 query.AddCondition("`group_keys`.`group_name`", groupName);
 
                 if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
@@ -363,7 +363,7 @@ namespace BoxSocial.Groups
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
-                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+                    query.AddFields(UserGroupInfo.GetFieldsPrefixed(core, typeof(UserGroupInfo)));
 
                     if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
                     {
@@ -580,7 +580,7 @@ namespace BoxSocial.Groups
         {
             List<SubUserGroup> subGroups = new List<SubUserGroup>();
 
-            SelectQuery query = SubUserGroup.GetSelectQueryStub(typeof(SubUserGroup));
+            SelectQuery query = SubUserGroup.GetSelectQueryStub(core, typeof(SubUserGroup));
             query.AddCondition("sub_group_parent_id", Id);
             query.AddSort(SortOrder.Ascending, "sub_group_reg_date_ut");
             if (!string.IsNullOrEmpty(filter))
@@ -613,9 +613,9 @@ namespace BoxSocial.Groups
             List<GroupMember> members = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_members");
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(User)));
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(GroupMember)));
             query.AddField(new DataField("group_operators", "user_id", "user_id_go"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_members", "user_id"), new DataField("group_operators", "user_id"));
             tj.AddCondition(new DataField("group_members", "group_id"), new DataField("group_operators", "group_id"));
@@ -652,8 +652,8 @@ namespace BoxSocial.Groups
             List<GroupMember> operators = new List<GroupMember>();
 
             SelectQuery query = new SelectQuery("group_operators");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(GroupMember)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(User)));
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
             query.AddField(new DataField("group_operators", "user_id"));
             TableJoin tj = query.AddJoin(JoinTypes.Left, new DataField("group_operators", "user_id"), new DataField("group_members", "user_id"));
@@ -683,8 +683,8 @@ namespace BoxSocial.Groups
             List<GroupOfficer> officers = new List<GroupOfficer>();
 
             SelectQuery query = new SelectQuery("group_officers");
-            query.AddFields(GroupMember.GetFieldsPrefixed(typeof(GroupMember)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(GroupMember.GetFieldsPrefixed(core, typeof(GroupMember)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(User)));
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(User)), "user_id", "user_id");
             query.AddField(new DataField("group_officers", "user_id"));
             query.AddField(new DataField("group_officers", "officer_title"));
@@ -877,18 +877,18 @@ namespace BoxSocial.Groups
             return false;
         }
 
-        public static SelectQuery GetSelectQueryStub(UserGroupLoadOptions loadOptions)
+        public static SelectQuery GetSelectQueryStub(Core core, UserGroupLoadOptions loadOptions)
         {
             SelectQuery query = new SelectQuery(UserGroup.GetTable(typeof(UserGroup)));
-            query.AddFields(UserGroup.GetFieldsPrefixed(typeof(UserGroup)));
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            query.AddFields(UserGroup.GetFieldsPrefixed(core, typeof(UserGroup)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserGroup), "group_id"), new DataField(typeof(ItemInfo), "info_item_id"));
             join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(UserGroup)));
 
             if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
             {
                 query.AddJoin(JoinTypes.Inner, UserGroupInfo.GetTable(typeof(UserGroupInfo)), "group_id", "group_id");
-                query.AddFields(UserGroupInfo.GetFieldsPrefixed(typeof(UserGroupInfo)));
+                query.AddFields(UserGroupInfo.GetFieldsPrefixed(core, typeof(UserGroupInfo)));
 
                 if ((loadOptions & UserGroupLoadOptions.Icon) == UserGroupLoadOptions.Icon)
                 {
@@ -901,9 +901,9 @@ namespace BoxSocial.Groups
             return query;
         }
 
-        public static SelectQuery UserGroup_GetSelectQueryStub()
+        public static SelectQuery UserGroup_GetSelectQueryStub(Core core)
         {
-            return GetSelectQueryStub(UserGroupLoadOptions.All);
+            return GetSelectQueryStub(core, UserGroupLoadOptions.All);
         }
 
         public static UserGroup Create(Core core, string groupTitle, string groupSlug, string groupDescription, long groupCategory, string groupType)
@@ -1485,7 +1485,7 @@ namespace BoxSocial.Groups
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            SelectQuery query = GetSelectQueryStub(core, UserGroupLoadOptions.Common);
             query.AddJoin(JoinTypes.Left, GetTable(typeof(GroupMember)), "group_id", "group_id");
             query.AddCondition("user_id", member.Id);
             /*if ((!string.IsNullOrEmpty(filter)) && filter.Length == 1)
@@ -1512,7 +1512,7 @@ namespace BoxSocial.Groups
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            SelectQuery query = GetSelectQueryStub(core, UserGroupLoadOptions.Common);
             query.AddCondition("group_category", category.Id);
 
             System.Data.Common.DbDataReader groupsReader = core.Db.ReaderQuery(query);
@@ -1537,7 +1537,7 @@ namespace BoxSocial.Groups
         {
             List<UserGroup> groups = new List<UserGroup>();
 
-            SelectQuery query = GetSelectQueryStub(UserGroupLoadOptions.Common);
+            SelectQuery query = GetSelectQueryStub(core, UserGroupLoadOptions.Common);
             query.AddCondition("group_category", category.Id);
             query.LimitStart = (page - 1) * perPage;
             query.LimitCount = perPage;
@@ -1716,7 +1716,7 @@ namespace BoxSocial.Groups
             {
                 core.Template.Parse("GROUP_OPERATOR", "TRUE");
 
-                SelectQuery query = GroupMember.GetSelectQueryStub(UserLoadOptions.All);
+                SelectQuery query = GroupMember.GetSelectQueryStub(core, UserLoadOptions.All);
                 query.AddCondition("group_members.group_id", page.Group.Id);
                 query.AddCondition("group_member_approved", false);
                 query.AddSort(SortOrder.Ascending, "group_member_date_ut");
@@ -1872,7 +1872,7 @@ namespace BoxSocial.Groups
 
             SelectBox categoriesSelectBox = new SelectBox("category");
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Category));
+            SelectQuery query = Item.GetSelectQueryStub(e.Core, typeof(Category));
             query.AddSort(SortOrder.Ascending, "category_title");
 
             DataTable categoriesTable = e.Db.Query(query);

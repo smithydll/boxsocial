@@ -68,7 +68,7 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(ActionItem_ItemLoad);
 
-            SelectQuery query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+            SelectQuery query = ActionItem.GetSelectQueryStub(core, typeof(ActionItem));
             query.AddCondition("action_id", actionId);
             query.AddCondition("item_id", itemId);
             query.AddCondition("item_type_id", itemTypeId);

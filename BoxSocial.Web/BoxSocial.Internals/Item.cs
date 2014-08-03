@@ -95,14 +95,14 @@ namespace BoxSocial.Internals
             timer.Start();
         }
 
-        public static string GetPrimaryKey(Type type)
+        public static string GetPrimaryKey(Core core, Type type)
         {
             if (type == typeof(UserInfo) || type == typeof(UserProfile))
             {
                 return "user_id";
             }
 
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
             string keyField = string.Empty;
 
             foreach (DataFieldInfo field in fields)
@@ -134,7 +134,7 @@ namespace BoxSocial.Internals
             // 3. Fill results
 
             string tableName = GetTable(type);
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
 
             SelectQuery query = new SelectQuery(tableName);
 
@@ -154,16 +154,6 @@ namespace BoxSocial.Internals
             {
                 throw new NoUniqueKeyException();
             }
-
-            /*DataTable dataTable = core.Db.Query(query);
-            if (dataTable.Rows.Count == 1)
-            {
-                loadItemInfo(dataTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidItemException();
-            }*/
 
             System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
             if (reader.HasRows)
@@ -206,7 +196,7 @@ namespace BoxSocial.Internals
             // 4. Fill results
 
             string tableName = GetTable(type);
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
             string keyField = string.Empty;
 
             SelectQuery query = new SelectQuery(tableName);
@@ -237,16 +227,6 @@ namespace BoxSocial.Internals
                     query.AddCondition(fvp.Field, fvp.Value);
                 }
             }
-
-            /*DataTable dataTable = core.Db.Query(query);
-            if (dataTable.Rows.Count == 1)
-            {
-                loadItemInfo(dataTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidItemException(this.GetType().FullName);
-            }*/
 
             System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
             if (reader.HasRows)
@@ -286,7 +266,7 @@ namespace BoxSocial.Internals
             Type type = this.GetType();
 
             string tableName = GetTable(type);
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
             string keyField = string.Empty;
 
             SelectQuery query = new SelectQuery(tableName);
@@ -317,16 +297,6 @@ namespace BoxSocial.Internals
                 query.AddCondition(keyField, value);
             }
 
-            /*DataTable dataTable = core.Db.Query(query);
-            if (dataTable.Rows.Count == 1)
-            {
-                loadItemInfo(dataTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidItemException(type.FullName);
-            }*/
-
             System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
             if (reader.HasRows)
             {
@@ -353,7 +323,7 @@ namespace BoxSocial.Internals
             // 4. Fill results
 
             string tableName = GetTable(this.GetType());
-            List<DataFieldInfo> fields = GetFields(this.GetType());
+            List<DataFieldInfo> fields = GetFields(core, this.GetType());
 
             SelectQuery query = new SelectQuery(tableName);
 
@@ -380,16 +350,6 @@ namespace BoxSocial.Internals
                     query.AddCondition(fvp.Field, fvp.Value);
                 }
             }
-
-            /*DataTable dataTable = core.Db.Query(query);
-            if (dataTable.Rows.Count == 1)
-            {
-                loadItemInfo(dataTable.Rows[0]);
-            }
-            else
-            {
-                throw new InvalidItemException(this.GetType().FullName);
-            }*/
 
             System.Data.Common.DbDataReader reader = core.Db.ReaderQuery(query);
             if (reader.HasRows)
@@ -423,7 +383,7 @@ namespace BoxSocial.Internals
 
             foreach (Type type in allTypes)
             {
-                List<DataFieldInfo> fields = GetFields(type);
+                List<DataFieldInfo> fields = GetFields(core, type);
 
                 foreach (DataFieldInfo field in fields)
                 {
@@ -454,7 +414,7 @@ namespace BoxSocial.Internals
                 try
                 {
                     Type thisType = this.GetType();
-                    FieldInfo[] fis = getFieldInfo(thisType);
+                    FieldInfo[] fis = getFieldInfo(core, thisType);
 
                     foreach (FieldInfo fi in fis)
                     {
@@ -585,14 +545,14 @@ namespace BoxSocial.Internals
         /// </summary>
         /// <param name="parentType"></param>
         /// <returns></returns>
-        public static string GetParentField(Type parentType)
+        public static string GetParentField(Core core, Type parentType)
         {
             string returnValue = null;
 
             Type[] types = parentType.Assembly.GetTypes();
             foreach (Type type in types)
             {
-                List<DataFieldInfo> fields = GetFields(type);
+                List<DataFieldInfo> fields = GetFields(core, type);
 
                 foreach (DataFieldInfo field in fields)
                 {
@@ -622,11 +582,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static string GetParentField(Type parentType, Type childType)
+        public static string GetParentField(Core core, Type parentType, Type childType)
         {
             string returnValue = null;
 
-            List<DataFieldInfo> fields = GetFields(childType);
+            List<DataFieldInfo> fields = GetFields(core, childType);
 
             foreach (DataFieldInfo field in fields)
             {
@@ -657,12 +617,12 @@ namespace BoxSocial.Internals
 
         public SelectQuery GetSelectQueryStub()
         {
-            return GetSelectQueryStub(this.GetType());
+            return GetSelectQueryStub(core, this.GetType());
         }
 
-        public static SelectQuery GetSelectQueryStub(Type type)
+        public static SelectQuery GetSelectQueryStub(Core core, Type type)
         {
-            return GetSelectQueryStub(type, true);
+            return GetSelectQueryStub(core, type, true);
         }
 
         /// <summary>
@@ -671,7 +631,7 @@ namespace BoxSocial.Internals
         /// <param name="type"></param>
         /// <param name="check">Check for redefined _GetSelectQueryStub</param>
         /// <returns></returns>
-        public static SelectQuery GetSelectQueryStub(Type type, bool check)
+        public static SelectQuery GetSelectQueryStub(Core core, Type type, bool check)
         {
             long typeId = ItemType.GetTypeId(type);
             if (typeId > 0 && QueryCache.HasQuery(typeId))
@@ -682,14 +642,18 @@ namespace BoxSocial.Internals
             {
                 SelectQuery query;
 
-                if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
+                if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", new Type[] { typeof(Core) }) != null)
+                {
+                    query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }); //GetSelectQueryStub(typeToGet);
+                }
+                else if (check && type.GetMethod(type.Name + "_GetSelectQueryStub", Type.EmptyTypes) != null)
                 {
                     query = (SelectQuery)type.InvokeMember(type.Name + "_GetSelectQueryStub", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { }); //GetSelectQueryStub(typeToGet);
                 }
                 else
                 {
                     query = new SelectQuery(GetTable(type));
-                    query.AddFields(GetFieldsPrefixed(type));
+                    query.AddFields(GetFieldsPrefixed(core, type));
                     if (type.IsSubclassOf(typeof(NumberedItem)) && type.Name != "ItemInfo" &&
                         (typeof(ILikeableItem).IsAssignableFrom(type) ||
                         typeof(IRateableItem).IsAssignableFrom(type) ||
@@ -700,7 +664,7 @@ namespace BoxSocial.Internals
                         typeof(IShareableItem).IsAssignableFrom(type) ||
                         typeof(IViewableItem).IsAssignableFrom(type)))
                     {
-                        List<DataFieldInfo> fields = GetFields(type);
+                        List<DataFieldInfo> fields = GetFields(core, type);
                         bool foundKey = false;
                         bool continueJoin = true;
                         string idField = string.Empty;
@@ -729,7 +693,7 @@ namespace BoxSocial.Internals
 
                         if (continueJoin)
                         {
-                            query.AddFields(Item.GetFieldsPrefixed(typeof(ItemInfo)));
+                            query.AddFields(Item.GetFieldsPrefixed(core, typeof(ItemInfo)));
                             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(GetTable(type), idField), new DataField(typeof(ItemInfo), "info_item_id"));
                             join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(type));
                         }
@@ -744,11 +708,11 @@ namespace BoxSocial.Internals
                             /*  * /
                         }
                     }*/
-                }
 
-                if (check)
-                {
-                    QueryCache.AddQueryToCache(typeId, query);
+                    if (check)
+                    {
+                        QueryCache.AddQueryToCache(typeId, query);
+                    }
                 }
                 return query;
             }
@@ -759,193 +723,72 @@ namespace BoxSocial.Internals
             Type type = this.GetType();
 
             SelectQuery query = new SelectQuery(GetTable(type));
-            query.AddFields(GetFieldsPrefixed(type));
+            query.AddFields(GetFieldsPrefixed(core, type));
 
             return query;
         }
 
-        private static Object itemFieldInfoCacheLock = new Object();
-        private static Dictionary<long, FieldInfo[]> itemFieldInfoCache = null;
-
-        private static void populateItemFieldInfoCache()
-        {
-            object o = null;
-            System.Web.Caching.Cache cache;
-
-            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-            {
-                cache = HttpContext.Current.Cache;
-            }
-            else
-            {
-                cache = new System.Web.Caching.Cache();
-            }
-
-            try
-            {
-                if (cache != null)
-                {
-                    o = cache.Get("itemFieldInfo");
-                }
-            }
-            catch (NullReferenceException)
-            {
-            }
-
-            lock (itemFieldInfoCacheLock)
-            {
-                if (o != null && o is Dictionary<long, FieldInfo[]>)
-                {
-                    itemFieldInfoCache = (Dictionary<long, FieldInfo[]>)o;
-                }
-                else
-                {
-                    itemFieldInfoCache = new Dictionary<long, FieldInfo[]>(16);
-                }
-            }
-        }
-
-        public static FieldInfo[] saveToFieldInfoCache(Type type)
+        public static FieldInfo[] saveToFieldInfoCache(Core core, Type type)
         {
             FieldInfo[] fields = type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
             long typeId = ItemType.GetTypeId(type);
             if (typeId > 0)
             {
-                lock (itemFieldInfoCacheLock)
-                {
-                    if (!itemFieldInfoCache.ContainsKey(typeId))
-                    {
-                        itemFieldInfoCache.Add(typeId, fields);
-                    }
-                }
-
-                System.Web.Caching.Cache cache;
-
-                if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-                {
-                    cache = HttpContext.Current.Cache;
-                }
-                else
-                {
-                    cache = new System.Web.Caching.Cache();
-                }
-
-                if (cache != null)
-                {
-                    try
-                    {
-                        cache.Add("itemFieldInfo", itemFieldInfoCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
-                    }
-                    catch (NullReferenceException)
-                    {
-                    }
-                }
+                core.Cache.SetCached(string.Format("itemFieldInfo[{0}]", typeId), fields, new TimeSpan(12, 0, 0), CacheItemPriority.High);
             }
 
             return fields;
         }
 
-        public static FieldInfo[] getFieldInfo(Type type)
+        public static FieldInfo[] getFieldInfo(Core core, Type type)
         {
             FieldInfo[] fields = null;
             long typeId = ItemType.GetTypeId(type);
 
-            if (typeId > 0 && itemFieldInfoCache != null)
+            object o = null;
+            o = core.Cache.GetCached(string.Format("itemFieldInfo[{0}]", typeId));
+
+            if (o != null && o is FieldInfo[])
             {
-                if (!itemFieldInfoCache.TryGetValue(typeId, out fields))
-                {
-                    populateItemFieldInfoCache();
-                    fields = saveToFieldInfoCache(type);
-                }
+                fields = (FieldInfo[])o;
             }
-            
+
             if (fields == null)
             {
-                populateItemFieldInfoCache();
-                fields = saveToFieldInfoCache(type);
+                fields = saveToFieldInfoCache(core, type);
             }
 
             return fields;
         }
 
-        private static Object itemFieldsCacheLock = new Object();
-		private static Dictionary<long, List<DataFieldInfo>> itemFieldsCache = null;
-
-        private static void populateItemFieldsCache()
-        {
-            object o = null;
-            System.Web.Caching.Cache cache;
-
-            if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-            {
-                cache = HttpContext.Current.Cache;
-            }
-            else
-            {
-                cache = new System.Web.Caching.Cache();
-            }
-
-            try
-            {
-                if (cache != null)
-                {
-                    o = cache.Get("itemFields");
-                }
-            }
-            catch (NullReferenceException)
-            {
-            }
-
-            lock (itemFieldsCacheLock)
-            {
-                if (o != null && o is Dictionary<long, List<DataFieldInfo>>)
-                {
-                    itemFieldsCache = (Dictionary<long, List<DataFieldInfo>>)o;
-                }
-                else
-                {
-                    itemFieldsCache = new Dictionary<long, List<DataFieldInfo>>(16);
-                }
-            }
-        }
-		
-		internal protected static List<DataFieldInfo> GetFields(Type type)
+        internal protected static List<DataFieldInfo> GetFields(Core core, Type type)
 		{
-			return GetFields(type, false);
-		}
-		
-		internal protected static List<DataFieldInfo> GetRawFields(Type type)
-		{
-			return GetFields(type, true);
+			return GetFields(core, type, false);
 		}
 
-        internal protected static List<DataFieldInfo> GetFields(Type type, bool getRawFields)
+        internal protected static List<DataFieldInfo> GetRawFields(Core core, Type type)
+		{
+			return GetFields(core, type, true);
+		}
+
+        internal protected static List<DataFieldInfo> GetFields(Core core, Type type, bool getRawFields)
         {
             long typeId = ItemType.GetTypeId(type);
 
             List<DataFieldInfo> returnValue = new List<DataFieldInfo>(16);
 
-            if (itemFieldsCache != null && typeId > 0)
-			{
-				if (!getRawFields)
-				{
-                    List<DataFieldInfo> dfis = null;
+            object o = null;
+            o = core.Cache.GetCached(string.Format("itemFields[{0}]", typeId));
 
-                    if (itemFieldsCache.TryGetValue(typeId, out dfis))
-                    {
-                        return dfis;
-                    }
-				}
-			}
-			else
-			{
-				populateItemFieldsCache();
-			}
+            if (o != null && o is List<DataFieldInfo>)
+            {
+                return (List<DataFieldInfo>)o;
+            }
 
-            FieldInfo[] fields = getFieldInfo(type);
+            FieldInfo[] fields = getFieldInfo(core, type);
 
-            foreach (FieldInfo fi in fields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
+            foreach (FieldInfo fi in fields)
             {
                 List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
@@ -995,47 +838,16 @@ namespace BoxSocial.Internals
 
             }
 
-            if ((!itemFieldsCache.ContainsKey(typeId)) && (!getRawFields))
-            {
-                lock (itemFieldsCacheLock)
-                {
-                    if (!itemFieldsCache.ContainsKey(typeId))
-                    {
-                        itemFieldsCache.Add(typeId, returnValue);
-                    }
-                }
-            }
-
-            System.Web.Caching.Cache cache;
-			
-			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-			{
-				cache = HttpContext.Current.Cache;
-			}
-			else
-			{
-                cache = new System.Web.Caching.Cache();
-			}
-
-            if (cache != null)
-            {
-                try
-                {
-                    cache.Add("itemFields", itemFieldsCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
-                }
-                catch (NullReferenceException)
-                {
-                }
-            }
+            core.Cache.SetCached(string.Format("itemFields[{0}]", typeId), returnValue, new TimeSpan(12, 0, 0), CacheItemPriority.High);
 
             return returnValue;
         }
 
-        internal static object GetFieldValue(DataFieldInfo dfi, Item item)
+        internal static object GetFieldValue(Core core, DataFieldInfo dfi, Item item)
         {
-            FieldInfo[] fields = getFieldInfo(item.GetType());
+            FieldInfo[] fields = getFieldInfo(core, item.GetType());
 
-            foreach (FieldInfo fi in fields /*item.GetType().GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
+            foreach (FieldInfo fi in fields)
             {
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldAttribute)))
                 {
@@ -1053,10 +865,10 @@ namespace BoxSocial.Internals
             return 0;
         }
 
-        public static string[] GetFieldsPrefixed(Type type)
+        public static string[] GetFieldsPrefixed(Core core, Type type)
         {
             string tableName = GetTable(type);
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
             string[] returnValue = new string[fields.Count];
 
             for (int i = 0; i < fields.Count; i++)
@@ -1083,7 +895,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return GetFieldsPrefixed(this.GetType());
+                return GetFieldsPrefixed(core, this.GetType());
             }
         }
 
@@ -1166,8 +978,8 @@ namespace BoxSocial.Internals
             SelectQuery sQuery = new SelectQuery(Item.GetTable(type));
             UpdateQuery uQuery = new UpdateQuery(Item.GetTable(type));
 
-            FieldInfo[] ffields = getFieldInfo(type);
-            foreach (FieldInfo fi in ffields /*type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly)*/)
+            FieldInfo[] ffields = getFieldInfo(core, type);
+            foreach (FieldInfo fi in ffields)
             {
                 List<DataFieldKeyAttribute> additionalIndexes = new List<DataFieldKeyAttribute>();
                 foreach (Attribute attr in Attribute.GetCustomAttributes(fi, typeof(DataFieldKeyAttribute)))
@@ -1195,7 +1007,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            List<DataFieldInfo> fields = GetRawFields(type);
+            List<DataFieldInfo> fields = GetRawFields(core, type);
             bool foundKey = false;
             bool containsUniqueFields = false;
 
@@ -1205,8 +1017,8 @@ namespace BoxSocial.Internals
                 {
                     sQuery.AddFields(field.Name);
                     //sQuery.AddCondition(field.Name, ConditionEquality.NotEqual, GetFieldValue(field, this));
-                    sQuery.AddCondition(field.Name, GetFieldValue(field, this));
-                    uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                    sQuery.AddCondition(field.Name, GetFieldValue(core, field, this));
+                    uQuery.AddCondition(field.Name, GetFieldValue(core, field, this));
                     foundKey = true;
                 }
             }
@@ -1218,15 +1030,15 @@ namespace BoxSocial.Internals
                     containsUniqueFields = true;
 					if (field.Type == typeof(ItemKey))
 					{
-						sQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
-						sQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+						sQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(core, field, this)).Id);
+						sQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(core, field, this)).TypeId);
 						
 						//uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
 						//uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
 					}
 					else
 					{
-                    	sQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                    	sQuery.AddCondition(field.Name, GetFieldValue(core, field, this));
 						//uQuery.AddCondition(field.Name, GetFieldValue(field, this));
 					}
                 }
@@ -1240,12 +1052,12 @@ namespace BoxSocial.Internals
                     {
 						if (field.Type == typeof(ItemKey))
 						{
-							uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(field, this)).Id);
-							uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(field, this)).TypeId);
+							uQuery.AddCondition(field.Name + "_id", ((ItemKey)GetFieldValue(core, field, this)).Id);
+							uQuery.AddCondition(field.Name + "_type_id", ((ItemKey)GetFieldValue(core, field, this)).TypeId);
 						}
 						else
 						{
-                        	uQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                        	uQuery.AddCondition(field.Name, GetFieldValue(core, field, this));
 						}
                         if (updatedItems.Contains(field.Name))
                         {
@@ -1349,7 +1161,7 @@ namespace BoxSocial.Internals
 
             core.Db.BeginTransaction();
 
-            List<DataFieldInfo> itemFields = GetFields(type);
+            List<DataFieldInfo> itemFields = GetFields(core, type);
 			
 			InsertQuery iQuery = new InsertQuery(GetTable(type));
 			
@@ -1474,14 +1286,14 @@ namespace BoxSocial.Internals
 
             DeleteQuery dQuery = new DeleteQuery(Item.GetTable(type));
 
-            List<DataFieldInfo> fields = GetFields(type);
+            List<DataFieldInfo> fields = GetFields(core, type);
             bool foundKey = false;
 
             foreach (DataFieldInfo field in fields)
             {
                 if ((field.Key & (DataFieldKeys.Primary | DataFieldKeys.Unique)) != DataFieldKeys.None)
                 {
-                    dQuery.AddCondition(field.Name, GetFieldValue(field, this));
+                    dQuery.AddCondition(field.Name, GetFieldValue(core, field, this));
                     foundKey = true;
                 }
             }
@@ -1545,7 +1357,7 @@ namespace BoxSocial.Internals
 
                     if (item != null)
                     {
-                        SelectQuery query = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+                        SelectQuery query = ActionItem.GetSelectQueryStub(core, typeof(ActionItem));
                         query.AddCondition("action_id", actionId);
                         query.LimitCount = 3;
 
@@ -1620,7 +1432,7 @@ namespace BoxSocial.Internals
 
         protected void loadItemInfo(Type type, System.Data.Common.DbDataReader reader)
         {
-            FieldInfo[] ffields = getFieldInfo(type);
+            FieldInfo[] ffields = getFieldInfo(core, type);
 
             int fieldsLoaded = 0;
             int objectFields = 0;
@@ -1852,7 +1664,7 @@ namespace BoxSocial.Internals
 
         protected virtual bool setProperty(Type type, string column, object value)
         {
-            FieldInfo[] ffields = getFieldInfo(type);
+            FieldInfo[] ffields = getFieldInfo(core, type);
 
             if (propertyFields == null)
             {
@@ -1911,7 +1723,7 @@ namespace BoxSocial.Internals
             timer.Start();
 #endif
 
-            FieldInfo[] fields = getFieldInfo(type);
+            FieldInfo[] fields = getFieldInfo(core, type);
 
             //List<string> columns = new List<string>();
             List<string> columnsAttributed = new List<string>(fields.Length);
@@ -2124,7 +1936,7 @@ namespace BoxSocial.Internals
 
             UpdateQuery uQuery = new UpdateQuery(GetTable(type));
             uQuery.AddField(column, new QueryOperation(column, QueryOperations.Addition, value));
-            uQuery.AddCondition(GetPrimaryKey(type), id);
+            uQuery.AddCondition(GetPrimaryKey(core, type), id);
 
             core.Db.Query(uQuery);
         }

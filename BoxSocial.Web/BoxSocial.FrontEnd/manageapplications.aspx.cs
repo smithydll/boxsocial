@@ -60,8 +60,8 @@ namespace BoxSocial.FrontEnd
                 //List<Primitive> members = new List<Primitive>();
 
                 SelectQuery query = new SelectQuery("primitive_apps");
-                query.AddFields(ApplicationEntry.GetFieldsPrefixed(typeof(ApplicationEntry)));
-                query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
+                query.AddFields(ApplicationEntry.GetFieldsPrefixed(core, typeof(ApplicationEntry)));
+                query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(core, typeof(PrimitiveApplicationInfo)));
                 query.AddJoin(JoinTypes.Inner, new DataField("primitive_apps", "application_id"), new DataField("applications", "application_id"));
                 query.AddCondition("applications.application_assembly_name", assemblyName);
 
@@ -170,7 +170,7 @@ namespace BoxSocial.FrontEnd
                                 long updatedRaw = UnixTime.UnixTimeStamp();
                                 long applicationId = 0;
 
-                                SelectQuery query1 = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                                SelectQuery query1 = Item.GetSelectQueryStub(core, typeof(ApplicationEntry));
                                 query1.AddCondition("application_assembly_name", assemblyName);
 
                                 /*DataTable applicationTable = db.Query(string.Format(@"SELECT {0}

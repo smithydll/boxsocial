@@ -142,7 +142,7 @@ namespace BoxSocial.Applications.Calendar
         {
             this.ItemLoad += new ItemLoadHandler(EventInvite_ItemLoad);
 
-            SelectQuery query = EventInvite.GetSelectQueryStub(typeof(EventInvite));
+            SelectQuery query = EventInvite.GetSelectQueryStub(core, typeof(EventInvite));
             query.AddCondition("event_id", eventId);
             query.AddCondition("item_id", invitee.Id);
             query.AddCondition("item_type_id", invitee.TypeId);

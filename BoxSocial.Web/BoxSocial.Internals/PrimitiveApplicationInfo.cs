@@ -117,7 +117,7 @@ namespace BoxSocial.Internals
             ItemLoad += new ItemLoadHandler(PrimitiveApplicationInfo_ItemLoad);
 
             SelectQuery query = new SelectQuery(PrimitiveApplicationInfo.GetTable(typeof(PrimitiveApplicationInfo)));
-            query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(typeof(PrimitiveApplicationInfo)));
+            query.AddFields(PrimitiveApplicationInfo.GetFieldsPrefixed(core, typeof(PrimitiveApplicationInfo)));
             query.AddCondition("application_id", applicationId);
             query.AddCondition("item_id", owner.Id);
             query.AddCondition("item_type_id", owner.TypeId);

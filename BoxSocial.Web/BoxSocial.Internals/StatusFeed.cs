@@ -52,7 +52,7 @@ namespace BoxSocial.Internals
             int bpage = currentPage;
             int limitStart = (bpage - 1) * perPage;
 
-            SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+            SelectQuery query = StatusMessage.GetSelectQueryStub(core, typeof(StatusMessage));
             query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
             /*query.LimitCount = 50;
@@ -199,7 +199,7 @@ namespace BoxSocial.Internals
 
             if (friendIds.Count > 0)
             {
-                SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+                SelectQuery query = StatusMessage.GetSelectQueryStub(core, typeof(StatusMessage));
                 query.AddSort(SortOrder.Descending, "status_time_ut");
                 query.AddCondition("user_id", ConditionEquality.In, friendIds);
                 query.LimitCount = limit;
@@ -235,7 +235,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = StatusMessage.GetSelectQueryStub(typeof(StatusMessage));
+            SelectQuery query = StatusMessage.GetSelectQueryStub(core, typeof(StatusMessage));
             query.AddSort(SortOrder.Descending, "status_time_ut");
             query.AddCondition("user_id", owner.Id);
             query.LimitCount = 1;

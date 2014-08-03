@@ -70,7 +70,7 @@ namespace BoxSocial.Internals
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
 
-            SelectQuery sQuery = ApplicationDeveloper.GetSelectQueryStub(typeof(ApplicationDeveloper));
+            SelectQuery sQuery = ApplicationDeveloper.GetSelectQueryStub(core, typeof(ApplicationDeveloper));
 			sQuery.AddCondition("user_id", user.Id);
             sQuery.AddCondition("application_id", owner.Id);
 
@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
         public ApplicationDeveloper(Core core, ApplicationEntry owner, long userId, UserLoadOptions loadOptions)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("application_id", owner.Id);
 			
@@ -134,7 +134,7 @@ namespace BoxSocial.Internals
         public ApplicationDeveloper(Core core, ApplicationEntry owner, string username, UserLoadOptions loadOptions)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.username", username);
             query.AddCondition("application_id", owner.Id);
 

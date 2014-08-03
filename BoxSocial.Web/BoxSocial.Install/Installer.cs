@@ -546,7 +546,7 @@ namespace BoxSocial.Install
                 db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
                 core = new Core(null, db, null);
 
-                SelectQuery query = User.GetSelectQueryStub(typeof(User));
+                SelectQuery query = User.GetSelectQueryStub(core, typeof(User));
                 query.LimitStart = (int)offset;
                 query.LimitCount = 100;
                 query.AddSort(SortOrder.Ascending, "user_keys.user_id");
@@ -2814,7 +2814,7 @@ namespace BoxSocial.Install
                             WHERE application_assembly_name = '{1}'",
                                 ApplicationEntry.APPLICATION_FIELDS, Mysql.Escape(repo)));*/
 
-                            SelectQuery query1 = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                            SelectQuery query1 = Item.GetSelectQueryStub(core, typeof(ApplicationEntry));
                             query1.AddCondition("application_assembly_name", repo);
 
                             DataTable applicationTable = db.Query(query1);

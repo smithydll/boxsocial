@@ -296,7 +296,7 @@ namespace BoxSocial.Internals
 
             Dictionary<ItemKey, IPermissibleItem> itemDictionary = new Dictionary<ItemKey, IPermissibleItem>(items.Count);
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
             foreach (IPermissibleItem item in items)
             {
                     if (!itemDictionary.ContainsKey(item.ItemKey))
@@ -345,7 +345,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
             sQuery.AddCondition("grant_item_id", ConditionEquality.In, itemIds);
             sQuery.AddCondition("grant_item_type_id", itemTypeId);
 
@@ -371,7 +371,7 @@ namespace BoxSocial.Internals
 
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
             sQuery.AddCondition("grant_item_id", itemKey.Id);
             sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
 
@@ -396,8 +396,8 @@ namespace BoxSocial.Internals
             }
 
 			List<AccessControlGrant> grants = new List<AccessControlGrant>();
-			
-			SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
 			sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
 			sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
 
@@ -423,7 +423,7 @@ namespace BoxSocial.Internals
 
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
             sQuery.AddCondition("grant_item_id", itemKey.Id);
             sQuery.AddCondition("grant_item_type_id", itemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);
@@ -450,7 +450,7 @@ namespace BoxSocial.Internals
 
             List<AccessControlGrant> grants = new List<AccessControlGrant>();
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlGrant));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlGrant));
             sQuery.AddCondition("grant_item_id", item.ItemKey.Id);
             sQuery.AddCondition("grant_item_type_id", item.ItemKey.TypeId);
             sQuery.AddCondition("grant_permission_id", permissionId);

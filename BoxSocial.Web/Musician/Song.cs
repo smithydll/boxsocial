@@ -193,7 +193,7 @@ namespace BoxSocial.Musician
         {
             List<Recording> recordings = new List<Recording>();
 
-            SelectQuery query = Recording.GetSelectQueryStub(typeof(Recording));
+            SelectQuery query = Recording.GetSelectQueryStub(core, typeof(Recording));
             query.AddCondition("song_id", SongId);
             query.AddCondition("musician_id", MusicianId);
 

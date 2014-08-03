@@ -155,7 +155,7 @@ namespace BoxSocial.Internals
         {
             ContentPreviewCache preview = null;
 
-            SelectQuery query = ContentPreviewCache.GetSelectQueryStub(typeof(ContentPreviewCache));
+            SelectQuery query = ContentPreviewCache.GetSelectQueryStub(core, typeof(ContentPreviewCache));
             query.AddCondition("content_domain", domain);
             query.AddCondition("content_unique", unique);
             query.AddCondition("content_language", language);

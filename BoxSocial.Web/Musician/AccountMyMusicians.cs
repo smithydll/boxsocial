@@ -71,7 +71,7 @@ namespace BoxSocial.Musician
 
             template.Parse("U_REGISTER_MUSICIAN", core.Hyperlink.AppendSid("/music/register"));
 
-            SelectQuery query = Musician.GetSelectQueryStub(MusicianLoadOptions.Common);
+            SelectQuery query = Musician.GetSelectQueryStub(core, MusicianLoadOptions.Common);
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(Musician), "musician_id"), new DataField(typeof(MusicianMember), "musician_id"));
             query.AddCondition("user_id", LoggedInMember.Id);
             query.AddSort(SortOrder.Ascending, "musician_slug");

@@ -300,7 +300,7 @@ namespace BoxSocial.Musician
         {
             List<Tour> tours = new List<Tour>();
 
-            SelectQuery query = Tour.GetSelectQueryStub(typeof(Tour));
+            SelectQuery query = Tour.GetSelectQueryStub(core, typeof(Tour));
             query.AddCondition("musician_id", owner.Id);
 
             DataTable tourTable = core.Db.Query(query);

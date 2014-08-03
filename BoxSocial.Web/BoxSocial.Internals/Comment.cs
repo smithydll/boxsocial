@@ -324,7 +324,7 @@ namespace BoxSocial.Internals
 
             string sort = (commentSortOrder == SortOrder.Ascending) ? "ASC" : "DESC";
 
-            SelectQuery query = Comment.GetSelectQueryStub(typeof(Comment));
+            SelectQuery query = Comment.GetSelectQueryStub(core, typeof(Comment));
             query.AddCondition("comment_deleted", false);
             query.AddSort(commentSortOrder, "comment_time_ut");
             query.LimitStart = (currentPage - 1) * perPage;

@@ -145,7 +145,7 @@ namespace BoxSocial.Internals
 
             List<Category> categories = new List<Category>();
 
-            SelectQuery query = GetSelectQueryStub(typeof(Category));
+            SelectQuery query = GetSelectQueryStub(core, typeof(Category));
 
             System.Data.Common.DbDataReader categoriesReader = core.Db.ReaderQuery(query);
 

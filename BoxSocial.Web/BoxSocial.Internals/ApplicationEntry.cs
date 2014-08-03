@@ -764,7 +764,7 @@ namespace BoxSocial.Internals
         {
             if (owner != null)
             {
-                SelectQuery query = PrimitiveApplicationInfo.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
+                SelectQuery query = PrimitiveApplicationInfo.GetSelectQueryStub(core, typeof(PrimitiveApplicationInfo));
                 query.AddCondition("application_id", Id);
                 query.AddCondition("item_id", owner.Id);
                 query.AddCondition("item_type_id", owner.TypeId);
@@ -1309,7 +1309,7 @@ namespace BoxSocial.Internals
                 }
 
                 /* Post to Box Social feed, coalesce */
-                SelectQuery query2 = Action.GetSelectQueryStub(typeof(Action));
+                SelectQuery query2 = Action.GetSelectQueryStub(core, typeof(Action));
                 query2.AddCondition("action_primitive_id", owner.ItemKey.Id);
                 query2.AddCondition("action_primitive_type_id", owner.ItemKey.TypeId);
                 query2.AddCondition("action_item_id", itemKey.Id);
@@ -1326,7 +1326,7 @@ namespace BoxSocial.Internals
                     
                     Action action = new Action(core, owner, actionDataTable.Rows[0]);
 
-                    SelectQuery query3 = ActionItem.GetSelectQueryStub(typeof(ActionItem));
+                    SelectQuery query3 = ActionItem.GetSelectQueryStub(core, typeof(ActionItem));
                     query3.AddCondition("action_id", action.Id);
                     query3.LimitCount = 3;
 
@@ -1450,7 +1450,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.AddCondition("action_application", Id);
             query.AddCondition("action_primitive_id", owner.Id);

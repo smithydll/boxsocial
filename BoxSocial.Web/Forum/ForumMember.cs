@@ -113,8 +113,8 @@ namespace BoxSocial.Applications.Forum
             this.userName = user.UserName;
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
-			
-			SelectQuery sQuery = ForumMember.GetSelectQueryStub(typeof(ForumMember));
+
+            SelectQuery sQuery = ForumMember.GetSelectQueryStub(core, typeof(ForumMember));
 			sQuery.AddCondition("user_id", user.Id);
 			sQuery.AddCondition("item_id", owner.Id);
 			sQuery.AddCondition("item_type_id", owner.TypeId);
@@ -167,7 +167,7 @@ namespace BoxSocial.Applications.Forum
         {
             ItemLoad += new ItemLoadHandler(ForumMember_ItemLoad);
 
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("item_id", owner.Id);
             query.AddCondition("item_type_id", owner.TypeId);
@@ -310,11 +310,11 @@ namespace BoxSocial.Applications.Forum
             return new ForumMember(u);
         }*/
 		
-		public static new SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+		public static new SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
-            SelectQuery query = GetSelectQueryStub(typeof(ForumMember));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            SelectQuery query = GetSelectQueryStub(core, typeof(ForumMember));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
 
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(ForumMember), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
@@ -322,12 +322,12 @@ namespace BoxSocial.Applications.Forum
 
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {
-                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
             }
             if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
             {
-                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_religion"), new DataField("religions", "religion_id"));
@@ -350,7 +350,7 @@ namespace BoxSocial.Applications.Forum
             }
 
 			Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
-			SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery sQuery = ForumMember.GetSelectQueryStub(core, UserLoadOptions.All);
 			sQuery.AddCondition("user_keys.user_id", ConditionEquality.In, userIds);
 			sQuery.AddCondition("item_id", forumOwner.Id);
 			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
@@ -381,7 +381,7 @@ namespace BoxSocial.Applications.Forum
         public static Dictionary<long, ForumMember> GetMembers(Core core, Primitive forumOwner, string filter, int page, int perPage)
         {
             Dictionary<long, ForumMember> forumMembers = new Dictionary<long, ForumMember>();
-            SelectQuery sQuery = ForumMember.GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery sQuery = ForumMember.GetSelectQueryStub(core, UserLoadOptions.All);
 			sQuery.AddCondition("item_id", forumOwner.Id);
 			sQuery.AddCondition("item_type_id", forumOwner.TypeId);
             if (!string.IsNullOrEmpty(filter))

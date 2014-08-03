@@ -79,7 +79,7 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(ItemHashtag_ItemLoad);
 
-            SelectQuery query = ItemHashtag_GetSelectQueryStub();
+            SelectQuery query = ItemHashtag_GetSelectQueryStub(core);
             query.AddCondition("item_hashtag_id", itemTagId);
 
             DataTable itemTagTable = db.Query(query);
@@ -107,10 +107,10 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static SelectQuery ItemHashtag_GetSelectQueryStub()
+        public static SelectQuery ItemHashtag_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemHashtag), false);
-            query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
+            SelectQuery query = NumberedItem.GetSelectQueryStub(core, typeof(ItemHashtag), false);
+            query.AddFields(Tag.GetFieldsPrefixed(core, typeof(Tag)));
             query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "hashtag_id", "hashtag_id");
 
             query.AddSort(SortOrder.Ascending, "tag_text_normalised");

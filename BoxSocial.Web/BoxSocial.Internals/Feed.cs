@@ -35,7 +35,7 @@ namespace BoxSocial.Internals
         {
             int count = 0;
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 20;
 
@@ -116,7 +116,7 @@ namespace BoxSocial.Internals
         {
             List<Action> feedItems = new List<Action>(10);
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 20;
 
@@ -207,7 +207,7 @@ namespace BoxSocial.Internals
             List<Action> feedItems = new List<Action>(perPage);
             moreContent = false;
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 64;
 

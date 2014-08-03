@@ -74,9 +74,9 @@ namespace BoxSocial.Groups
 
             template.Parse("U_CREATE_GROUP", core.Hyperlink.AppendSid("/groups/register"));
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(GroupOperator));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(UserGroup)));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(UserGroupInfo)));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(GroupOperator));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(UserGroup)));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(UserGroupInfo)));
             query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(GroupOperator)), "group_id"), new DataField(Item.GetTable(typeof(UserGroup)), "group_id"));
             query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(UserGroup)), "group_id"), new DataField(Item.GetTable(typeof(UserGroupInfo)), "group_id"));
             query.AddCondition("user_id", LoggedInMember.Id);

@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -56,6 +57,7 @@ namespace BoxSocial.Internals
         private Storage storage;
         private JobQueue queue;
         private Search search;
+        private BoxSocial.IO.Cache cache;
         private List<Emoticon> emoticons;
 
         internal TPage page;
@@ -427,6 +429,25 @@ namespace BoxSocial.Internals
             }
         }
 
+        public BoxSocial.IO.Cache Cache
+        {
+            get
+            {
+                if (cache == null)
+                {
+                    if (Settings.SearchProvider == "memcached")
+                    {
+                        cache = new Memcached();
+                    }
+                    else
+                    {
+                        cache = new LocalCache(Http);
+                    }
+                }
+                return cache;
+            }
+        }
+
         public List<Emoticon> Emoticons
         {
             get
@@ -474,7 +495,7 @@ namespace BoxSocial.Internals
                     cachedEmoticons = new List<HibernateItem>();
                     emoticons = new List<Emoticon>();
 
-                    SelectQuery query = Emoticon.GetSelectQueryStub(typeof(Emoticon));
+                    SelectQuery query = Emoticon.GetSelectQueryStub(this, typeof(Emoticon));
                     System.Data.Common.DbDataReader emoticonsReader = db.ReaderQuery(query);
 
                     while(emoticonsReader.Read())
@@ -848,7 +869,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
-                    SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+                    SelectQuery query = Item.GetSelectQueryStub(this, typeof(ApplicationEntry));
                     query.AddCondition("application_assembly_name", ConditionEquality.In, applicationNames);
 
                     System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
@@ -1143,6 +1164,10 @@ namespace BoxSocial.Internals
         {
             LoadApplication(this, sender);
 
+#if DEBUG
+            Stopwatch httpTimer = new Stopwatch();
+            httpTimer.Start();
+#endif
             pages.Sort();
             foreach (PageHandle page in pages)
             {
@@ -1157,6 +1182,10 @@ namespace BoxSocial.Internals
                         {
                             //HttpContext.Current.Response.Write(" **match** ");
                             PagePathParts = pathMatch.Groups;
+#if DEBUG
+                            httpTimer.Stop();
+                            HttpContext.Current.Response.Write(string.Format("<!-- Invoke {1} in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0, PagePath));
+#endif
                             page.Execute(this, sender);
                             return;
                         }

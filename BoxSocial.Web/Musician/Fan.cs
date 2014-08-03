@@ -76,7 +76,7 @@ namespace BoxSocial.Musician
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
 
-            SelectQuery sQuery = Fan.GetSelectQueryStub(typeof(Fan));
+            SelectQuery sQuery = Fan.GetSelectQueryStub(core, typeof(Fan));
 			sQuery.AddCondition("user_id", user.Id);
             sQuery.AddCondition("musician_id", owner.Id);
 
@@ -115,7 +115,7 @@ namespace BoxSocial.Musician
         public Fan(Core core, Musician owner, long userId, UserLoadOptions loadOptions)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("musician_id", owner.Id);
 			

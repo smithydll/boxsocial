@@ -108,7 +108,7 @@ namespace BoxSocial.Musician
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
 
-            SelectQuery sQuery = MusicianMember.GetSelectQueryStub(typeof(MusicianMember));
+            SelectQuery sQuery = MusicianMember.GetSelectQueryStub(core, typeof(MusicianMember));
 			sQuery.AddCondition("user_id", user.Id);
             sQuery.AddCondition("musician_id", owner.Id);
 
@@ -147,7 +147,7 @@ namespace BoxSocial.Musician
         public MusicianMember(Core core, Musician owner, long userId, UserLoadOptions loadOptions)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("musician_id", owner.Id);
 			
@@ -172,7 +172,7 @@ namespace BoxSocial.Musician
         public MusicianMember(Core core, Musician owner, string username, UserLoadOptions loadOptions)
             : base(core)
         {
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.username", username);
             query.AddCondition("musician_id", owner.Id);
 
@@ -205,7 +205,7 @@ namespace BoxSocial.Musician
         {
             this.db = db;
 
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("musician_members.musician_id", musician.Id);
 
@@ -264,8 +264,8 @@ namespace BoxSocial.Musician
         {
             List<Instrument> instruments = new List<Instrument>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(MusicianInstruments));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(Instrument)));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(MusicianInstruments));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(Instrument)));
             query.AddCondition("musician_id", musicianId);
             query.AddCondition("user_id", userId);
             query.AddJoin(JoinTypes.Inner, new DataField(Item.GetTable(typeof(MusicianInstruments)), "instrument_id"), new DataField(Item.GetTable(typeof(Instrument)), "instrument_id"));

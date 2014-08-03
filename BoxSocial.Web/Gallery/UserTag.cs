@@ -168,7 +168,7 @@ namespace BoxSocial.Applications.Gallery
         {
             List<UserTag> tags = new List<UserTag>();
 
-            SelectQuery query = UserTag.GetSelectQueryStub(typeof(UserTag));
+            SelectQuery query = UserTag.GetSelectQueryStub(core, typeof(UserTag));
             query.AddCondition("gallery_item_id", galleryItem.ItemId);
 
             DataTable tagDataTable = core.Db.Query(query);

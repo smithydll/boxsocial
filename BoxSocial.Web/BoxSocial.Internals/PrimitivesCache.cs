@@ -126,9 +126,9 @@ namespace BoxSocial.Internals
             if (usernameList.Count > 0)
             {
                 SelectQuery query = new SelectQuery("user_keys");
-                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-                query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-                query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+                query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
+                query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
                 query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
                 query.AddJoin(JoinTypes.Left, new DataField("user_profile", "profile_country"), new DataField("countries", "country_iso"));

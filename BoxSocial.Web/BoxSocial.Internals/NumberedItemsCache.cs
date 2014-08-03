@@ -294,10 +294,10 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    query = Item.GetSelectQueryStub(typeToGet);
+                    query = Item.GetSelectQueryStub(core, typeToGet);
                 }
 
-                query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetPrimaryKey(typeToGet), ConditionEquality.In, itemId);
+                query.AddCondition(Item.GetTable(typeToGet) + "." + Item.GetPrimaryKey(core, typeToGet), ConditionEquality.In, itemId);
 
                 if (dataReader)
                 {

@@ -528,7 +528,7 @@ namespace BoxSocial.Applications.Blog
         {
             List<TrackBack> trackBacks = new List<TrackBack>();
 
-            SelectQuery query = TrackBack.GetSelectQueryStub(typeof(TrackBack));
+            SelectQuery query = TrackBack.GetSelectQueryStub(core, typeof(TrackBack));
             query.AddCondition("post_id", postId);
 
             DataTable trackBacksTable = db.Query(query);
@@ -551,7 +551,7 @@ namespace BoxSocial.Applications.Blog
         {
             List<PingBack> pingBacks = new List<PingBack>();
 
-            SelectQuery query = PingBack.GetSelectQueryStub(typeof(PingBack));
+            SelectQuery query = PingBack.GetSelectQueryStub(core, typeof(PingBack));
             query.AddCondition("post_id", postId);
 
             DataTable pingBacksTable = db.Query(query);

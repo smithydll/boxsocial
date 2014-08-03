@@ -43,7 +43,7 @@ namespace BoxSocial.Internals
             List<Action> feedItems = new List<Action>();
             moreContent = false;
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddSort(SortOrder.Descending, "action_time_ut");
             query.LimitCount = 64;
 

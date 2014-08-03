@@ -61,7 +61,11 @@ namespace BoxSocial.FrontEnd
             else
             {
 
-                core.Display.ShowMessage("Error Message", "An error occured" /*+ "\n\n" + ex.ToString(), ShowMessageOptions.Bbcode*/);
+#if DEBUG
+                core.Display.ShowMessage("Error Message", "An error occured" + "\n\n" + ex.ToString(), ShowMessageOptions.Bbcode);
+#else
+                core.Display.ShowMessage("Error Message", "An error occured");
+#endif
 
                 try
                 {

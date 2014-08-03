@@ -275,8 +275,8 @@ namespace BoxSocial.Applications.Forum
 		public static Dictionary<long, ForumMemberRank> GetRanks(Core core, Primitive forumOwner, List<long> rankIds)
 		{
 			Dictionary<long, ForumMemberRank> ranks = new Dictionary<long, ForumMemberRank>();
-			
-			SelectQuery sQuery = ForumMemberRank.GetSelectQueryStub(typeof(ForumMemberRank));
+
+            SelectQuery sQuery = ForumMemberRank.GetSelectQueryStub(core, typeof(ForumMemberRank));
 			sQuery.AddCondition("rank_owner_id", forumOwner.Id);
 			sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 			sQuery.AddCondition("rank_id", ConditionEquality.In, rankIds);
@@ -299,7 +299,7 @@ namespace BoxSocial.Applications.Forum
         {
             Dictionary<long, ForumMemberRank> ranks = new Dictionary<long, ForumMemberRank>();
 
-            SelectQuery sQuery = ForumMemberRank.GetSelectQueryStub(typeof(ForumMemberRank));
+            SelectQuery sQuery = ForumMemberRank.GetSelectQueryStub(core, typeof(ForumMemberRank));
             sQuery.AddCondition("rank_owner_id", forumOwner.Id);
             sQuery.AddCondition("rank_owner_type_id", forumOwner.TypeId);
 

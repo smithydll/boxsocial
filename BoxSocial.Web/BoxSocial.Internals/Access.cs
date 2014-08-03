@@ -614,7 +614,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = AccessControlPermission.GetSelectQueryStub(typeof(AccessControlPermission));
+            SelectQuery query = AccessControlPermission.GetSelectQueryStub(core, typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
             query.AddSort(SortOrder.Ascending, "permission_type");
@@ -635,7 +635,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            SelectQuery query = AccessControlPermission.GetSelectQueryStub(typeof(AccessControlPermission));
+            SelectQuery query = AccessControlPermission.GetSelectQueryStub(core, typeof(AccessControlPermission));
             query.AddCondition("permission_item_type_id", itemTypeId);
             query.AddCondition("permission_name", ConditionEquality.In, permissionNames);
             query.AddSort(SortOrder.Ascending, "permission_type");

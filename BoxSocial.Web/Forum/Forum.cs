@@ -708,11 +708,11 @@ namespace BoxSocial.Applications.Forum
 
         public static SelectQuery Forum_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Forum.GetSelectQueryStub(core, typeof(Forum), false);
 
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(ForumReadStatus.GetFieldsPrefixed(typeof(ForumReadStatus)));
+                query.AddFields(ForumReadStatus.GetFieldsPrefixed(core, typeof(ForumReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, ForumReadStatus.GetTable(typeof(ForumReadStatus)), "forum_id", "forum_id");
                 tj1.AddCondition("`forum_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -739,7 +739,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_item_id", ownerKey.Id);
             query.AddCondition("forum_item_type_id", ownerKey.TypeId);
             query.AddCondition("forum_parent_id", forumId);
@@ -769,7 +769,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
@@ -797,7 +797,7 @@ namespace BoxSocial.Applications.Forum
         {
             List<Forum> forums = new List<Forum>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_parent_id", ConditionEquality.In, forumIds);
             query.AddSort(SortOrder.Ascending, "forum_order");
 
@@ -824,8 +824,8 @@ namespace BoxSocial.Applications.Forum
 		public static List<Forum> GetForumLevels(Core core, Forum parent, int levels)
 		{
 			List<Forum> forums = new List<Forum>();
-			
-			SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
 			query.AddCondition("forum_item_id", parent.Owner.Id);
 			query.AddCondition("forum_item_type_id", parent.Owner.TypeId);
             query.AddCondition("forum_level", ConditionEquality.GreaterThan, parent.Level);
@@ -888,8 +888,8 @@ namespace BoxSocial.Applications.Forum
 
             sb.Add(new SelectBoxItem("", core.Prose.GetString("SELECT_A_FORUM")));
 			sb.Add(new SelectBoxItem("", "--------------------"));
-			
-			SelectQuery query = Item.GetSelectQueryStub(typeof(Forum));
+
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Forum));
 			query.AddCondition("forum_item_id", owner.Id);
 			query.AddCondition("forum_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "forum_order");
@@ -930,13 +930,13 @@ namespace BoxSocial.Applications.Forum
 
             //return getSubItems(typeof(ForumTopic), currentPage, perPage, true).ConvertAll<ForumTopic>(new Converter<Item, ForumTopic>(convertToForumTopic));
 
-            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(core, typeof(ForumTopic), false);
 
-            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
                 tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -967,13 +967,13 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(core, typeof(ForumTopic), false);
 
-            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
                 tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -1034,13 +1034,13 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(core, typeof(ForumTopic), false);
 
-            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
                 tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -1071,13 +1071,13 @@ namespace BoxSocial.Applications.Forum
         {
             List<ForumTopic> topics = new List<ForumTopic>();
 
-            SelectQuery query = ForumTopic.GetSelectQueryStub(typeof(ForumTopic));
+            SelectQuery query = ForumTopic.GetSelectQueryStub(core, typeof(ForumTopic));
 
-            query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicPost)));
+            query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicPost)));
             query.AddJoin(JoinTypes.Left, TopicPost.GetTable(typeof(TopicPost)), "topic_last_post_id", "post_id");
             if (core.LoggedInMemberId > 0)
             {
-                query.AddFields(TopicPost.GetFieldsPrefixed(typeof(TopicReadStatus)));
+                query.AddFields(TopicPost.GetFieldsPrefixed(core, typeof(TopicReadStatus)));
                 TableJoin tj1 = query.AddJoin(JoinTypes.Left, TopicReadStatus.GetTable(typeof(TopicReadStatus)), "topic_id", "topic_id");
                 tj1.AddCondition("`forum_topic_read_status`.`user_id`", core.LoggedInMemberId);
             }
@@ -1292,7 +1292,7 @@ namespace BoxSocial.Applications.Forum
                 return;
             }
 
-            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Forum.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
             query.AddCondition("forum_item_id", Owner.Id);
             query.AddCondition("forum_item_type_id", Owner.TypeId);
@@ -1335,7 +1335,7 @@ namespace BoxSocial.Applications.Forum
 
         public void MoveDown()
         {
-            SelectQuery query = Forum.GetSelectQueryStub(typeof(Forum));
+            SelectQuery query = Forum.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_parent_id", ParentId);
 			query.AddCondition("forum_item_id", Owner.Id);
 			query.AddCondition("forum_item_type_id", Owner.TypeId);
@@ -1366,7 +1366,7 @@ namespace BoxSocial.Applications.Forum
                 differenceBelow = record1.Order - record0.Order;
             }
 
-            query = Forum.GetSelectQueryStub(typeof(Forum));
+            query = Forum.GetSelectQueryStub(core, typeof(Forum));
             query.AddCondition("forum_order", ConditionEquality.GreaterThanEqual, Order);
             if (record0 != null)
             {
@@ -1375,7 +1375,7 @@ namespace BoxSocial.Applications.Forum
             else
             {
                 /* TODO: test */
-                query = Forum.GetSelectQueryStub(typeof(Forum));
+                query = Forum.GetSelectQueryStub(core, typeof(Forum));
                 query.AddCondition("forum_parent_id", ParentId); /* or any level below */
 				query.AddCondition("forum_item_id", Owner.Id);
 				query.AddCondition("forum_item_type_id", Owner.TypeId);
@@ -1416,7 +1416,7 @@ namespace BoxSocial.Applications.Forum
                 else
                 {
                     /* TODO: test */
-                    query = Forum.GetSelectQueryStub(typeof(Forum));
+                    query = Forum.GetSelectQueryStub(core, typeof(Forum));
                     query.AddCondition("forum_parent_id", ParentId); /* or any level below */
 					query.AddCondition("forum_item_id", Owner.Id);
 					query.AddCondition("forum_item_type_id", Owner.TypeId);

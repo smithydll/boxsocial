@@ -420,7 +420,7 @@ namespace BoxSocial.Applications.Blog
 
             if (string.IsNullOrEmpty(category) && string.IsNullOrEmpty(tag))
             {
-                query = Item.GetSelectQueryStub(typeof(BlogEntry));
+                query = Item.GetSelectQueryStub(core, typeof(BlogEntry));
                 query.AddField(new DataField(typeof(BlogEntry), "post_id"));
 
                 if (post > 0)
@@ -440,7 +440,7 @@ namespace BoxSocial.Applications.Blog
             }
             else if (string.IsNullOrEmpty(tag))
             {
-                query = Item.GetSelectQueryStub(typeof(BlogEntry));
+                query = Item.GetSelectQueryStub(core, typeof(BlogEntry));
                 query.AddField(new DataField(typeof(BlogEntry), "post_id"));
 
                 query.AddCondition("category_path", category);
@@ -448,8 +448,8 @@ namespace BoxSocial.Applications.Blog
             }
             else
             {
-                query = Item.GetSelectQueryStub(typeof(ItemTag));
-                query.AddFields(Item.GetFieldsPrefixed(typeof(BlogEntry)));
+                query = Item.GetSelectQueryStub(core, typeof(ItemTag));
+                query.AddFields(Item.GetFieldsPrefixed(core, typeof(BlogEntry)));
 
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(ItemTag), "item_id"), new DataField(typeof(BlogEntry), "post_id"));
                 query.AddCondition("item_type_id", ItemType.GetTypeId(typeof(BlogEntry)));
@@ -659,7 +659,7 @@ namespace BoxSocial.Applications.Blog
         {
             List<TrackBack> trackBacks = new List<TrackBack>();
 
-            SelectQuery query = TrackBack.GetSelectQueryStub(typeof(TrackBack));
+            SelectQuery query = TrackBack.GetSelectQueryStub(core, typeof(TrackBack));
             query.AddCondition("user_id", Id);
             query.AddCondition("trackback_spam", false);
             query.LimitStart = (currentPage - 1) * perPage;
@@ -688,7 +688,7 @@ namespace BoxSocial.Applications.Blog
         {
             List<PingBack> pingBacks = new List<PingBack>();
 
-            SelectQuery query = PingBack.GetSelectQueryStub(typeof(PingBack));
+            SelectQuery query = PingBack.GetSelectQueryStub(core, typeof(PingBack));
             query.AddCondition("blog_id", Id);
             query.LimitStart = (currentPage - 1) * perPage;
             query.LimitCount = perPage;

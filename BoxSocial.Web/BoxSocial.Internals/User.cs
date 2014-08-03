@@ -606,7 +606,7 @@ namespace BoxSocial.Internals
             else
             {
                 SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
-                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+                query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
                 query.AddCondition("`user_keys`.`user_id`", userId);
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
@@ -614,7 +614,7 @@ namespace BoxSocial.Internals
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
-                    query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                    query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
 
                     /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
@@ -631,7 +631,7 @@ namespace BoxSocial.Internals
                     containsProfileData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
-                    query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                    query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
 
                     if ((loadOptions & UserLoadOptions.Country) == UserLoadOptions.Country)
                     {
@@ -700,7 +700,7 @@ namespace BoxSocial.Internals
             else
             {
                 SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
-                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+                query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
                 query.AddCondition(new DataField("user_keys", "user_name_lower"), userName.ToLower());
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
@@ -708,7 +708,7 @@ namespace BoxSocial.Internals
                     containsInfoData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
-                    query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                    query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
 
                     /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
@@ -725,7 +725,7 @@ namespace BoxSocial.Internals
                     containsProfileData = true;
 
                     query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
-                    query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                    query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
 
                     if ((loadOptions & UserLoadOptions.Country) == UserLoadOptions.Country)
                     {
@@ -1046,7 +1046,7 @@ namespace BoxSocial.Internals
         {
             List<long> subscriptionIds = new List<long>();
 
-            SelectQuery query = Subscription.GetSelectQueryStub(typeof(Subscription));
+            SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("user_id", userId);
             query.AddCondition("subscription_item_type_id", ItemType.GetTypeId(typeof(User)));
             query.AddSort(SortOrder.Descending, "subscription_time_ut");
@@ -1139,13 +1139,13 @@ namespace BoxSocial.Internals
             List<Friend> friends = new List<Friend>();
 
             SelectQuery query = new SelectQuery("user_relations");
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
-            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(core, typeof(UserRelation)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
@@ -1190,13 +1190,13 @@ namespace BoxSocial.Internals
             List<Friend> friends = new List<Friend>();
 
             SelectQuery query = new SelectQuery("user_relations");
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-            query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
-            query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
-            query.AddFields(UserRelation.GetFieldsPrefixed(typeof(UserRelation)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+            query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
+            query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
+            query.AddFields(UserRelation.GetFieldsPrefixed(core, typeof(UserRelation)));
             query.AddField(new DataField("gallery_items", "gallery_item_uri"));
             query.AddField(new DataField("gallery_items", "gallery_item_parent_path"));
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "relation_you", "user_id");
             query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "relation_you", "user_id");
@@ -1249,7 +1249,7 @@ namespace BoxSocial.Internals
 
             List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = UserRelation.GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
             query.AddCondition("profile_date_of_birth_month_cache * 31 + profile_date_of_birth_day_cache", ConditionEquality.GreaterThanEqual, st.Month * 31 + st.Day);
@@ -1286,7 +1286,7 @@ namespace BoxSocial.Internals
         {
             List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = UserRelation.GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
             // last 15 minutes
@@ -1332,7 +1332,7 @@ namespace BoxSocial.Internals
         {
             List<UserRelation> friends = new List<UserRelation>();
 
-            SelectQuery query = UserRelation.GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = UserRelation.GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
 
@@ -1499,12 +1499,8 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static SelectQuery GetSelectQueryStub(UserLoadOptions loadOptions)
+        public static SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
-#if DEBUG
-            Stopwatch httpTimer = new Stopwatch();
-            httpTimer.Start();
-#endif
             long typeId = ItemType.GetTypeId(typeof(User));
             if (loadOptions == UserLoadOptions.All && QueryCache.HasQuery(typeId))
             {
@@ -1512,16 +1508,20 @@ namespace BoxSocial.Internals
             }
             else
             {
+#if DEBUG
+                Stopwatch httpTimer = new Stopwatch();
+                httpTimer.Start();
+#endif
                 SelectQuery query = new SelectQuery(GetTable(typeof(User)));
-                query.AddFields(User.GetFieldsPrefixed(typeof(User)));
-                query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+                query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
+                query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
                 TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(User), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
                 join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
                 {
                     query.AddJoin(JoinTypes.Inner, UserInfo.GetTable(typeof(UserInfo)), "user_id", "user_id");
-                    query.AddFields(UserInfo.GetFieldsPrefixed(typeof(UserInfo)));
+                    query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
 
                     /*if ((loadOptions & UserLoadOptions.Icon) == UserLoadOptions.Icon)
                     {
@@ -1534,7 +1534,7 @@ namespace BoxSocial.Internals
                 if ((loadOptions & UserLoadOptions.Profile) == UserLoadOptions.Profile)
                 {
                     query.AddJoin(JoinTypes.Inner, UserProfile.GetTable(typeof(UserProfile)), "user_id", "user_id");
-                    query.AddFields(UserProfile.GetFieldsPrefixed(typeof(UserProfile)));
+                    query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
 
                     // Countries are cached separately as they do not change
                     /*if ((loadOptions & UserLoadOptions.Country) == UserLoadOptions.Country)
@@ -1561,9 +1561,9 @@ namespace BoxSocial.Internals
             }
         }
 
-        public static SelectQuery User_GetSelectQueryStub()
+        public static SelectQuery User_GetSelectQueryStub(Core core)
         {
-            return GetSelectQueryStub(UserLoadOptions.All);
+            return GetSelectQueryStub(core, UserLoadOptions.All);
         }
 
         /// <summary>

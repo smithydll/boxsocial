@@ -159,7 +159,7 @@ namespace BoxSocial.Applications.Mail
                     }
                 }
 
-                SelectQuery query = MessageRecipient.GetSelectQueryStub(typeof(MessageRecipient));
+                SelectQuery query = MessageRecipient.GetSelectQueryStub(core, typeof(MessageRecipient));
                 query.AddCondition("user_id", core.Session.LoggedInMember.Id);
                 query.AddCondition("message_id", ConditionEquality.In, lastMessageIds);
 

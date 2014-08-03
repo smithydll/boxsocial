@@ -198,7 +198,7 @@ namespace BoxSocial.Applications.Blog
             template.Parse("S_POST_MINUTE", postTime.Minute.ToString());
 
             SelectBox licensesSelectBox = new SelectBox("license");
-            DataTable licensesTable = db.Query(ContentLicense.GetSelectQueryStub(typeof(ContentLicense)));
+            DataTable licensesTable = db.Query(ContentLicense.GetSelectQueryStub(core, typeof(ContentLicense)));
 
             licensesSelectBox.Add(new SelectBoxItem("0", "Default License"));
             foreach (DataRow licenseRow in licensesTable.Rows)
@@ -210,7 +210,7 @@ namespace BoxSocial.Applications.Blog
             licensesSelectBox.SelectedKey = licenseId.ToString();
 
             SelectBox categoriesSelectBox = new SelectBox("category");
-			SelectQuery query = Category.GetSelectQueryStub(typeof(Category));
+            SelectQuery query = Category.GetSelectQueryStub(core, typeof(Category));
 			query.AddSort(SortOrder.Ascending, "category_title");
 			
             DataTable categoriesTable = db.Query(query);

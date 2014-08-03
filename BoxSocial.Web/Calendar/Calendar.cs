@@ -233,7 +233,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<Event> events = new List<Event>();
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(Event));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(Event));
             sQuery.AddCondition("event_item_id", owner.Id);
             sQuery.AddCondition("event_item_type_id", owner.TypeId);
             QueryCondition sqc2 = sQuery.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
@@ -259,7 +259,7 @@ namespace BoxSocial.Applications.Calendar
             if (owner.TypeId == ItemKey.GetTypeId(typeof(User)))
             {
                 // now select events invited to
-                SelectQuery query = Event.GetSelectQueryStub(typeof(Event));
+                SelectQuery query = Event.GetSelectQueryStub(core, typeof(Event));
                 query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
                 query.AddJoin(JoinTypes.Left, new DataField(typeof(Event), "event_id"), new DataField("event_invites", "event_id"));
                 query.AddCondition("item_id", core.LoggedInMemberId);
@@ -311,7 +311,7 @@ namespace BoxSocial.Applications.Calendar
         {
             List<Task> tasks = new List<Task>();
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(Task));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(Task));
             query.AddCondition("task_item_id", owner.Id);
             query.AddCondition("task_item_type_id", owner.TypeId);
             QueryCondition qc1 = query.AddCondition("task_due_date_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);

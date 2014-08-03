@@ -78,7 +78,7 @@ namespace BoxSocial.Internals
             password = User.HashPassword(password);
 
             SelectQuery query = new SelectQuery(User.GetTable(typeof(User)));
-            query.AddFields(User.GetFieldsPrefixed(typeof(User)));
+            query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
             query.AddJoin(JoinTypes.Inner, new DataField(typeof(User), "user_id"), new DataField("user_info", "user_id"));
             query.AddCondition("user_keys.user_id", core.LoggedInMemberId);
             query.AddCondition("user_password", password);

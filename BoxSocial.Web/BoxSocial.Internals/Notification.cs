@@ -541,7 +541,7 @@ namespace BoxSocial.Internals
 
             List<Notification> notificationItems = new List<Notification>();
 
-            SelectQuery query = Notification.GetSelectQueryStub(typeof(Notification));
+            SelectQuery query = Notification.GetSelectQueryStub(core, typeof(Notification));
             query.AddCondition("notification_read", false);
             query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
             query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));

@@ -347,10 +347,10 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static SelectQuery Action_GetSelectQueryStub()
+        public static SelectQuery Action_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action), false);
-            query.AddFields(ItemInfo.GetFieldsPrefixed(typeof(ItemInfo)));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action), false);
+            query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(Action), "interact_item_id"), new DataField(typeof(ItemInfo), "info_item_id"));
             join.AddCondition(new DataField(typeof(Action), "interact_item_type_id"), new DataField(typeof(ItemInfo), "info_item_type_id"));
 
@@ -376,7 +376,7 @@ namespace BoxSocial.Internals
 
             List<Action> actions = new List<Action>();
 
-            SelectQuery query = Action.GetSelectQueryStub(typeof(Action));
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
             query.AddJoin(JoinTypes.Inner, ActionItem.GetTable(typeof(ActionItem)), "action_id", "action_id");
             query.AddCondition("user_id", user.Id);
             query.AddCondition("item_id", itemId);

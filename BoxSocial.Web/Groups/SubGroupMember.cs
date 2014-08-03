@@ -88,7 +88,7 @@ namespace BoxSocial.Groups
         {
             this.db = db;
 
-            SelectQuery query = GetSelectQueryStub(UserLoadOptions.All);
+            SelectQuery query = GetSelectQueryStub(core, UserLoadOptions.All);
             query.AddCondition("user_keys.user_id", userId);
             query.AddCondition("sub_group_members.sub_group_id", group.SubGroupId);
 

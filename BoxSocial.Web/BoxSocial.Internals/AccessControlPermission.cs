@@ -309,7 +309,7 @@ namespace BoxSocial.Internals
 
             List<AccessControlPermission> permissions = new List<AccessControlPermission>();
 
-            SelectQuery sQuery = Item.GetSelectQueryStub(typeof(AccessControlPermission));
+            SelectQuery sQuery = Item.GetSelectQueryStub(core, typeof(AccessControlPermission));
             sQuery.AddCondition("permission_item_type_id", item.ItemKey.TypeId);
             sQuery.AddSort(SortOrder.Ascending, "permission_type");
 

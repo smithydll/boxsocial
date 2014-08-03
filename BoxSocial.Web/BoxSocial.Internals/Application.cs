@@ -341,7 +341,7 @@ namespace BoxSocial.Internals
 
                     if (!string.IsNullOrEmpty(table))
                     {
-                        List<DataFieldInfo> dataFields = Item.GetFields(type);
+                        List<DataFieldInfo> dataFields = Item.GetFields(core, type);
                         if (core.Db.TableExists(table))
                         {
                             Dictionary<string, DataFieldInfo> columns = core.Db.GetColumns(table);
@@ -543,8 +543,8 @@ namespace BoxSocial.Internals
                     AND ap.application_primitives & {6:0}",
                 ApplicationEntry.APPLICATION_FIELDS, ApplicationEntry.USER_APPLICATION_FIELDS, owner.Id, readAccessLevel, loggedIdUid, owner.TypeId, (byte)owner.AppPrimitive, ItemKey.GetTypeId(typeof(User))));*/
 
-            SelectQuery query = Item.GetSelectQueryStub(typeof(PrimitiveApplicationInfo));
-            query.AddFields(Item.GetFieldsPrefixed(typeof(ApplicationEntry)));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(PrimitiveApplicationInfo));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(ApplicationEntry)));
             query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(ApplicationEntry)), "application_id", "application_id");
             query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_id"), owner.ItemKey.Id);
             query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_type_id"), owner.ItemKey.TypeId);
@@ -556,7 +556,7 @@ namespace BoxSocial.Internals
 
         private static DataTable GetStaticApplicationRows(Core core)
         {
-            SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationEntry));
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(ApplicationEntry));
 
             DataTable staticApplicationsTable = core.Db.Query(query);
 
@@ -585,7 +585,7 @@ namespace BoxSocial.Internals
                 userApplicationsReader.Close();
                 userApplicationsReader.Dispose();
 
-                SelectQuery query = ControlPanelModuleRegister.GetSelectQueryStub(typeof(ControlPanelModuleRegister));
+                SelectQuery query = ControlPanelModuleRegister.GetSelectQueryStub(core, typeof(ControlPanelModuleRegister));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddSort(SortOrder.Ascending, "application_id");
 
@@ -642,7 +642,7 @@ namespace BoxSocial.Internals
                     ORDER BY application_id;",
                     ApplicationEntry.APPLICATION_SLUG_FIELDS, applicationIds, (byte)owner.AppPrimitive));*/
 
-                SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
+                SelectQuery query = Item.GetSelectQueryStub(core, typeof(ApplicationSlug));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
                 query.AddCondition("slug_static", false);
@@ -693,7 +693,7 @@ namespace BoxSocial.Internals
                     ORDER BY application_id;",
                     ApplicationEntry.APPLICATION_SLUG_FIELDS, applicationIds, (byte)owner.AppPrimitive));*/
 
-                SelectQuery query = Item.GetSelectQueryStub(typeof(ApplicationSlug));
+                SelectQuery query = Item.GetSelectQueryStub(core, typeof(ApplicationSlug));
                 query.AddCondition("application_id", ConditionEquality.In, applicationIds);
                 //query.AddCondition(new QueryOperation("slug_primitives", QueryOperations.BinaryAnd, (byte)AppPrimitives.None), ConditionEquality.NotEqual, false);
                 // Zero anyway, could be anything

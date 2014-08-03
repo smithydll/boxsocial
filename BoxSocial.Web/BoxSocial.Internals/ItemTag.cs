@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
         {
             ItemLoad += new ItemLoadHandler(ItemTag_ItemLoad);
 
-            SelectQuery query = ItemTag_GetSelectQueryStub();
+            SelectQuery query = ItemTag_GetSelectQueryStub(core);
             query.AddCondition("item_tag_id", itemTagId);
 
             DataTable itemTagTable = db.Query(query);
@@ -135,7 +135,7 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static SelectQuery ItemTag_GetSelectQueryStub()
+        public static SelectQuery ItemTag_GetSelectQueryStub(Core core)
         {
             long typeId = ItemType.GetTypeId(typeof(ItemTag));
             if (QueryCache.HasQuery(typeId))
@@ -144,9 +144,9 @@ namespace BoxSocial.Internals
             }
             else
             {
-                SelectQuery query = NumberedItem.GetSelectQueryStub(typeof(ItemTag), false);
+                SelectQuery query = NumberedItem.GetSelectQueryStub(core, typeof(ItemTag), false);
 
-                query.AddFields(Tag.GetFieldsPrefixed(typeof(Tag)));
+                query.AddFields(Tag.GetFieldsPrefixed(core, typeof(Tag)));
                 query.AddJoin(JoinTypes.Inner, Tag.GetTable(typeof(Tag)), "tag_id", "tag_id");
 
                 return query;

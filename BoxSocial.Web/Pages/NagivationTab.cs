@@ -206,7 +206,7 @@ namespace BoxSocial.Applications.Pages
 
             byte maxOrder = 0;
 
-            SelectQuery query = GetSelectQueryStub(typeof(NagivationTab), false);
+            SelectQuery query = GetSelectQueryStub(core, typeof(NagivationTab), false);
             query.AddCondition("tab_item_id", ownerKey.Id);
             query.AddCondition("tab_item_type_id", ownerKey.TypeId);
             query.AddSort(SortOrder.Descending, "tab_order");
@@ -235,10 +235,10 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
-        public static SelectQuery NagivationTab_GetSelectQueryStub()
+        public static SelectQuery NagivationTab_GetSelectQueryStub(Core core)
         {
-            SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab), false);
-            query.AddFields(Page.GetFieldsPrefixed(typeof(Page)));
+            SelectQuery query = NagivationTab.GetSelectQueryStub(core, typeof(NagivationTab), false);
+            query.AddFields(Page.GetFieldsPrefixed(core, typeof(Page)));
             query.AddJoin(JoinTypes.Left, ContentLicense.GetTable(typeof(Page)), "tab_page_id", "page_id");
 
             return query;
@@ -253,7 +253,7 @@ namespace BoxSocial.Applications.Pages
 
             byte order = 0;
 
-            SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab));
+            SelectQuery query = NagivationTab.GetSelectQueryStub(core, typeof(NagivationTab));
             query.AddCondition("tab_item_id", page.Owner.Id);
             query.AddCondition("tab_item_type_id", page.Owner.TypeId);
             query.AddSort(SortOrder.Descending, "tab_order");
@@ -283,7 +283,7 @@ namespace BoxSocial.Applications.Pages
         {
             List<NagivationTab> tabs = new List<NagivationTab>();
 
-            SelectQuery query = NagivationTab.GetSelectQueryStub(typeof(NagivationTab));
+            SelectQuery query = NagivationTab.GetSelectQueryStub(core, typeof(NagivationTab));
             query.AddCondition("tab_item_id", owner.Id);
             query.AddCondition("tab_item_type_id", owner.TypeId);
             query.AddSort(SortOrder.Ascending, "tab_order");

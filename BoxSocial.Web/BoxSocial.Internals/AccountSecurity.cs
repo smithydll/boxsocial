@@ -111,7 +111,7 @@ namespace BoxSocial.Internals
             }
 
             // Show all active sessions
-            SelectQuery query = SessionKey.GetSelectQueryStub(typeof(SessionKey));
+            SelectQuery query = SessionKey.GetSelectQueryStub(core, typeof(SessionKey));
             query.AddCondition(new DataField(typeof(SessionKey), "user_id"), LoggedInMember.Id);
 
             System.Data.Common.DbDataReader sessionsReader = db.ReaderQuery(query);

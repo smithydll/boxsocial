@@ -154,7 +154,7 @@ namespace BoxSocial.Internals
 
                 foreach (PrimitivePermissionGroup ppg in itemKeys)
                 {
-                    if (ppg.ItemKey.InheritsPrimitive)
+                    if (ppg.ItemKey.GetType(core).IsPrimitive)
                     {
                         primitiveItemKeys.Add(ppg.ItemKey);
                     }
@@ -178,9 +178,9 @@ namespace BoxSocial.Internals
                     }
                     idList.AppendFormat("{0}-{1}", ppg.TypeId, ppg.ItemId);
 
-                    if (ppg.ItemKey.InheritsPrimitive)
+                    if (ppg.ItemKey.GetType(core).IsPrimitive)
                     {
-                        if (ppg.ItemKey.Id > 0 && ppg.ItemKey.Type == typeof(User))
+                        if (ppg.ItemKey.Id > 0 && ppg.ItemKey.TypeId == ItemType.GetTypeId(core, typeof(User)))
                         {
                             switch (medium)
                             {
@@ -344,7 +344,7 @@ namespace BoxSocial.Internals
                     if (limit > 0)
                     {
                         long id = core.PrimitiveCache.LoadUserProfile(username);
-                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, typeof(User)), string.Empty, string.Empty));
+                        groupIds.Add(new PrimitivePermissionGroup(new ItemKey(id, ItemType.GetTypeId(core, typeof(User))), string.Empty, string.Empty));
                         limit--;
                     }
                     else

@@ -82,7 +82,7 @@ namespace BoxSocial.Groups
         {
             SetTemplate("account_group_membership");
 
-            long groupTypeId = ItemKey.GetTypeId(typeof(UserGroup));
+            long groupTypeId = ItemKey.GetTypeId(core, typeof(UserGroup));
 
             SelectQuery query = GroupMember.GetSelectQueryStub(core, UserLoadOptions.Common);
             query.AddCondition("user_keys.user_id", LoggedInMember.Id);

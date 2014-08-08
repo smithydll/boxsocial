@@ -145,7 +145,7 @@ namespace BoxSocial.Internals
             {
                 if (userInfo == null)
                 {
-                    ItemKey userInfoKey = new ItemKey(Id, typeof(UserInfo));
+                    ItemKey userInfoKey = new ItemKey(Id, ItemType.GetTypeId(core, typeof(UserInfo)));
                     core.ItemCache.RequestItem(userInfoKey);
 
                     userInfo = (UserInfo)core.ItemCache[userInfoKey];
@@ -160,7 +160,7 @@ namespace BoxSocial.Internals
             {
                 if (userProfile == null)
                 {
-                    ItemKey userProfileKey = new ItemKey(Id, typeof(UserProfile));
+                    ItemKey userProfileKey = new ItemKey(Id, ItemType.GetTypeId(core, typeof(UserProfile)));
                     core.ItemCache.RequestItem(userProfileKey);
 
                     userProfile = (UserProfile)core.ItemCache[userProfileKey];
@@ -1048,7 +1048,7 @@ namespace BoxSocial.Internals
 
             SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition("user_id", userId);
-            query.AddCondition("subscription_item_type_id", ItemType.GetTypeId(typeof(User)));
+            query.AddCondition("subscription_item_type_id", ItemType.GetTypeId(core, typeof(User)));
             query.AddSort(SortOrder.Descending, "subscription_time_ut");
             query.LimitCount = count;
 
@@ -1152,7 +1152,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
 
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
-            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(core, typeof(User)));
 
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
@@ -1205,7 +1205,7 @@ namespace BoxSocial.Internals
             query.AddJoin(JoinTypes.Left, new DataField("user_info", "user_icon"), new DataField("gallery_items", "gallery_item_id"));
 
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserRelation), "relation_you"), new DataField(typeof(ItemInfo), "info_item_id"));
-            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(core, typeof(User)));
 
             query.AddCondition("relation_me", userId);
             query.AddCondition("relation_type", "FRIEND");
@@ -1501,7 +1501,7 @@ namespace BoxSocial.Internals
 
         public static SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
-            long typeId = ItemType.GetTypeId(typeof(User));
+            long typeId = ItemType.GetTypeId(core, typeof(User));
             if (loadOptions == UserLoadOptions.All && QueryCache.HasQuery(typeId))
             {
                 return (SelectQuery)QueryCache.GetQuery(typeof(User), typeId);
@@ -1516,7 +1516,7 @@ namespace BoxSocial.Internals
                 query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
                 query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
                 TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(User), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
-                join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+                join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(core, typeof(User)));
 
                 if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
                 {
@@ -1733,11 +1733,11 @@ namespace BoxSocial.Internals
             core.Email.SendEmail(eMail, "Activate your account. Welcome to " + core.Settings.SiteTitle, emailTemplate);
 
             Access.CreateAllGrantsForOwner(core, newUser);
-            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
-            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW_STATUS");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
+            Access.CreateGrantForPrimitive(core, newUser, User.GetEveryoneGroupKey(core), "VIEW");
+            Access.CreateGrantForPrimitive(core, newUser, User.GetEveryoneGroupKey(core), "VIEW_STATUS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFriendsGroupKey(core), "COMMENT");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFriendsGroupKey(core), "VIEW_FRIENDS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFamilyGroupKey(core), "VIEW_FAMILY");
 
             core.Search.Index(newUser);
 
@@ -2432,7 +2432,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return ItemKey.GetTypeId(typeof(User));
+                return ItemKey.GetTypeId(core, typeof(User));
             }
         }
 
@@ -2510,12 +2510,12 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.FriendsGroupKey, "FRIENDS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.FamilyGroupKey, "FAMILY_MEMBERS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(Friend.BlockedGroupKey, "BLOCKED_USERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetCreatorKey(core), "CREATOR", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetEveryoneGroupKey(core), "EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetRegisteredUsersGroupKey(core), "REGISTERED_USERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.GetFriendsGroupKey(core), "FRIENDS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.GetFamilyGroupKey(core), "FAMILY_MEMBERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Friend.GetBlockedGroupKey(core), "BLOCKED_USERS", null, string.Empty));
 
             return ppgs;
         }
@@ -2552,17 +2552,17 @@ namespace BoxSocial.Internals
         {
             List<ItemKey> ppgs = new List<ItemKey>();
 
-            ppgs.Add(User.EveryoneGroupKey);
-            ppgs.Add(User.RegisteredUsersGroupKey);
-            ppgs.Add(Friend.FriendsGroupKey);
-            ppgs.Add(Friend.FamilyGroupKey);
+            ppgs.Add(User.GetEveryoneGroupKey(core));
+            ppgs.Add(User.GetRegisteredUsersGroupKey(core));
+            ppgs.Add(Friend.GetFriendsGroupKey(core));
+            ppgs.Add(Friend.GetFamilyGroupKey(core));
 
             return ppgs;
         }
 
         public bool IsMemberOf(IPermissibleItem item, Type type, long subType)
         {
-            if (ItemType.GetTypeId(type) == ItemType.GetTypeId(typeof(Friend)))
+            if (ItemType.GetTypeId(core, type) == ItemType.GetTypeId(core, typeof(Friend)))
             {
                 switch (subType)
                 {
@@ -2587,7 +2587,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (ItemType.GetTypeId(type) == ItemType.GetTypeId(typeof(User)))
+            if (ItemType.GetTypeId(core, type) == ItemType.GetTypeId(core, typeof(User)))
             {
                 switch (subType)
                 {
@@ -2634,7 +2634,7 @@ namespace BoxSocial.Internals
                 return false;
             }
 
-            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(Friend)))
+            if (primitiveKey.TypeId == ItemType.GetTypeId(core, typeof(Friend)))
             {
                 switch (primitiveKey.Id)
                 {
@@ -2667,7 +2667,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(User)))
+            if (primitiveKey.TypeId == ItemType.GetTypeId(core, typeof(User)))
             {
                 switch (primitiveKey.Id)
                 {
@@ -2745,28 +2745,19 @@ namespace BoxSocial.Internals
             return permission;
         }
 
-        public static ItemKey CreatorKey
+        public static ItemKey GetCreatorKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(User)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(User)));
         }
 
-        public static ItemKey EveryoneGroupKey
+        public static ItemKey GetEveryoneGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-2, ItemType.GetTypeId(typeof(User)));
-            }
+            return new ItemKey(-2, ItemType.GetTypeId(core, typeof(User)));
         }
 
-        public static ItemKey RegisteredUsersGroupKey
+        public static ItemKey GetRegisteredUsersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-3, ItemType.GetTypeId(typeof(User)));
-            }
+            return new ItemKey(-3, ItemType.GetTypeId(core, typeof(User)));
         }
 
         public string IndexingString

@@ -59,7 +59,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(ownerId, BoxSocial.Internals.ItemType.GetTypeId(typeof(User)));
+                return new ItemKey(ownerId, BoxSocial.Internals.ItemType.GetTypeId(core, typeof(User)));
             }
         }
 
@@ -68,14 +68,6 @@ namespace BoxSocial.Internals
             get
             {
                 return itemKey.Id;
-            }
-        }
-
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
             }
         }
 
@@ -286,7 +278,7 @@ namespace BoxSocial.Internals
 
             SelectQuery query = Subscription.GetSelectQueryStub(core, typeof(Subscription));
             query.AddCondition(new DataField(typeof(Subscription), "user_id"), owner.Id);
-            query.AddCondition("subscription_item_type_id", ItemKey.GetTypeId(typeof(User)));
+            query.AddCondition("subscription_item_type_id", ItemKey.GetTypeId(core, typeof(User)));
             query.AddFields(User.GetFieldsPrefixed(core, typeof(User)));
             query.AddFields(UserInfo.GetFieldsPrefixed(core, typeof(UserInfo)));
             query.AddFields(UserProfile.GetFieldsPrefixed(core, typeof(UserProfile)));
@@ -334,14 +326,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
-            }
-        }
-
         public long ItemId
         {
             get
@@ -375,14 +359,6 @@ namespace BoxSocial.Internals
             get
             {
                 return itemKey;
-            }
-        }
-
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
             }
         }
 

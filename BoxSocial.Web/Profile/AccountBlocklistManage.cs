@@ -162,7 +162,7 @@ namespace BoxSocial.Applications.Profile
                 LoggedInMember.UserId));
 
             // also unsubscribe
-            Subscription.UnsubscribeFromItem(core, new ItemKey(blockId, ItemType.GetTypeId(typeof(User))));
+            Subscription.UnsubscribeFromItem(core, new ItemKey(blockId, ItemType.GetTypeId(core, typeof(User))));
 
             SetRedirectUri(BuildUri());
             core.Display.ShowMessage("Blocked Person", "You have blocked a person.");

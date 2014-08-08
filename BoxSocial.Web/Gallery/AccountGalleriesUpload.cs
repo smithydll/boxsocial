@@ -284,7 +284,7 @@ namespace BoxSocial.Applications.Gallery
                             feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
                             feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
 
-                            if (feedAction.ActionItemKey.ImplementsLikeable)
+                            if (feedAction.ActionItemKey.GetType(core).Likeable)
                             {
                                 feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
 
@@ -295,7 +295,7 @@ namespace BoxSocial.Applications.Gallery
                                 }
                             }
 
-                            if (feedAction.ActionItemKey.ImplementsCommentable)
+                            if (feedAction.ActionItemKey.GetType(core).Commentable)
                             {
                                 feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
 
@@ -309,7 +309,7 @@ namespace BoxSocial.Applications.Gallery
                             if (feedAction.PermissiveParent.Access.IsPublic())
                             {
                                 feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                                if (feedAction.ActionItemKey.ImplementsShareable)
+                                if (feedAction.ActionItemKey.GetType(core).Shareable)
                                 {
                                     feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
                                     //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);

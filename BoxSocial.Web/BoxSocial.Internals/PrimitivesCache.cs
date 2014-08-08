@@ -57,7 +57,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return (User)core.ItemCache[new ItemKey(key, typeof(User))];
+                return (User)core.ItemCache[new ItemKey(key, ItemType.GetTypeId(core, typeof(User)))];
             }
         }
 
@@ -81,13 +81,13 @@ namespace BoxSocial.Internals
         {
             foreach (long userId in userIds)
             {
-                core.ItemCache.RequestItem(new ItemKey(userId, typeof(User)));
+                core.ItemCache.RequestItem(new ItemKey(userId, ItemType.GetTypeId(core, typeof(User))));
             }
         }
 
         public void LoadUserProfile(long userId)
         {
-            core.ItemCache.RequestItem(new ItemKey(userId, typeof(User)));
+            core.ItemCache.RequestItem(new ItemKey(userId, ItemType.GetTypeId(core, typeof(User))));
         }
 
         public void LoadPrimitiveProfile(ItemKey key)
@@ -110,7 +110,7 @@ namespace BoxSocial.Internals
 
         public Dictionary<string, long> LoadUserProfiles(List<string> usernames)
         {
-            long userTypeId = ItemKey.GetTypeId(typeof(User));
+            long userTypeId = ItemKey.GetTypeId(core, typeof(User));
 
             List<string> usernameList = new List<string>();
             Dictionary<string, long> userIds = new Dictionary<string, long>(8, StringComparer.Ordinal);
@@ -160,7 +160,7 @@ namespace BoxSocial.Internals
 
         public long LoadUserProfile(string username)
         {
-            PrimitiveKey key = new PrimitiveKey(username, ItemKey.GetTypeId(typeof(User)));
+            PrimitiveKey key = new PrimitiveKey(username, ItemKey.GetTypeId(core, typeof(User)));
             PrimitiveId pid = null;
             if (primitivesKeysCached.TryGetValue(key, out pid))
             {

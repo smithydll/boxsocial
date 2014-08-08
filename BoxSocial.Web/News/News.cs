@@ -199,9 +199,8 @@ namespace BoxSocial.Applications.News
             List<NewsIcon> icons = new List<NewsIcon>();
 
             SelectQuery query = NewsIcon.GetSelectQueryStub(core, typeof(NewsIcon));
-            ItemKey ik = new ItemKey(owner.Id, owner.GetType().FullName);
-            query.AddCondition("icon_item_id", ik.Id);
-            query.AddCondition("icon_item_type_id", ik.TypeId);
+            query.AddCondition("icon_item_id", owner.ItemKey.Id);
+            query.AddCondition("icon_item_type_id", owner.ItemKey.TypeId);
 
             DataTable iconsDataTable = db.Query(query);
 

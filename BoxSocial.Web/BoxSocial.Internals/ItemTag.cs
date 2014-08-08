@@ -137,7 +137,7 @@ namespace BoxSocial.Internals
 
         public static SelectQuery ItemTag_GetSelectQueryStub(Core core)
         {
-            long typeId = ItemType.GetTypeId(typeof(ItemTag));
+            long typeId = ItemType.GetTypeId(core, typeof(ItemTag));
             if (QueryCache.HasQuery(typeId))
             {
                 return (SelectQuery)QueryCache.GetQuery(typeof(ItemTag), typeId);

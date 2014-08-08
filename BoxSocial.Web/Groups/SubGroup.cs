@@ -171,7 +171,7 @@ namespace BoxSocial.Groups
             {
                 if (parent == null || parent.Id != parentId)
                 {
-                    ItemKey key = new ItemKey(parentId, ItemType.GetTypeId(typeof(UserGroup)));
+                    ItemKey key = new ItemKey(parentId, ItemType.GetTypeId(core, typeof(UserGroup)));
                     core.PrimitiveCache.LoadPrimitiveProfile(key);
                     parent = (UserGroup)core.PrimitiveCache[key];
                 }

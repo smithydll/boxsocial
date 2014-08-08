@@ -415,7 +415,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return ItemType.GetTypeId(typeof(Page));
+                return ItemType.GetTypeId(core, typeof(Page));
             }
         }
 
@@ -1005,7 +1005,7 @@ namespace BoxSocial.Internals
             AccessControlPermission acpEdit = new AccessControlPermission(core, page.ItemKey.TypeId, "EDIT");
             AccessControlPermission acpView = new AccessControlPermission(core, page.ItemKey.TypeId, "VIEW");
             AccessControlGrant.Create(core, owner.ItemKey, page.ItemKey, acpEdit.PermissionId, AccessControlGrants.Allow);
-            AccessControlGrant.Create(core, User.EveryoneGroupKey, page.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
+            AccessControlGrant.Create(core, User.GetEveryoneGroupKey(core), page.ItemKey, acpView.PermissionId, AccessControlGrants.Allow);
 
             return page;
         }

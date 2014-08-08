@@ -633,12 +633,15 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public static SelectQuery GetSelectQueryStub(Core core, Type type, bool check)
         {
-            long typeId = ItemType.GetTypeId(type);
-            if (typeId > 0 && QueryCache.HasQuery(typeId))
+            if (type != typeof(ItemType))
             {
-                return (SelectQuery)QueryCache.GetQuery(type, typeId);
+                long typeId = ItemType.GetTypeId(core, type);
+                if (typeId > 0 && QueryCache.HasQuery(typeId))
+                {
+                    return (SelectQuery)QueryCache.GetQuery(type, typeId);
+                }
             }
-            else
+
             {
                 SelectQuery query;
 
@@ -695,7 +698,7 @@ namespace BoxSocial.Internals
                         {
                             query.AddFields(Item.GetFieldsPrefixed(core, typeof(ItemInfo)));
                             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(GetTable(type), idField), new DataField(typeof(ItemInfo), "info_item_id"));
-                            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(type));
+                            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemType.GetTypeId(core, type));
                         }
                     }
 
@@ -711,7 +714,11 @@ namespace BoxSocial.Internals
 
                     if (check)
                     {
-                        QueryCache.AddQueryToCache(typeId, query);
+                        if (type != typeof(ItemType))
+                        {
+                            long typeId = ItemType.GetTypeId(core, type);
+                            QueryCache.AddQueryToCache(typeId, query);
+                        }
                     }
                 }
                 return query;
@@ -732,10 +739,13 @@ namespace BoxSocial.Internals
         {
             FieldInfo[] fields = type.GetFields(BindingFlags.Default | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
-            long typeId = ItemType.GetTypeId(type);
-            if (typeId > 0)
+            if (type != typeof(ItemType))
             {
-                core.Cache.SetCached(string.Format("itemFieldInfo[{0}]", typeId), fields, new TimeSpan(12, 0, 0), CacheItemPriority.High);
+                long typeId = ItemType.GetTypeId(core, type);
+                if (typeId > 0)
+                {
+                    core.Cache.SetCached(string.Format("itemFieldInfo[{0}]", typeId), fields, new TimeSpan(12, 0, 0), CacheItemPriority.High);
+                }
             }
 
             return fields;
@@ -744,14 +754,18 @@ namespace BoxSocial.Internals
         public static FieldInfo[] getFieldInfo(Core core, Type type)
         {
             FieldInfo[] fields = null;
-            long typeId = ItemType.GetTypeId(type);
 
-            object o = null;
-            o = core.Cache.GetCached(string.Format("itemFieldInfo[{0}]", typeId));
-
-            if (o != null && o is FieldInfo[])
+            if (type != typeof(ItemType))
             {
-                fields = (FieldInfo[])o;
+                long typeId = ItemType.GetTypeId(core, type);
+
+                object o = null;
+                o = core.Cache.GetCached(string.Format("itemFieldInfo[{0}]", typeId));
+
+                if (o != null && o is FieldInfo[])
+                {
+                    fields = (FieldInfo[])o;
+                }
             }
 
             if (fields == null)
@@ -774,18 +788,19 @@ namespace BoxSocial.Internals
 
         internal protected static List<DataFieldInfo> GetFields(Core core, Type type, bool getRawFields)
         {
-            long typeId = ItemType.GetTypeId(type);
-
-            List<DataFieldInfo> returnValue = new List<DataFieldInfo>(16);
-
-            object o = null;
-            o = core.Cache.GetCached(string.Format("itemFields[{0}]", typeId));
-
-            if (o != null && o is List<DataFieldInfo>)
+            if (type != typeof(ItemType))
             {
-                return (List<DataFieldInfo>)o;
+                long typeId = ItemType.GetTypeId(core, type);
+                object o = null;
+                o = core.Cache.GetCached(string.Format("itemFields[{0}]", typeId));
+
+                if (o != null && o is List<DataFieldInfo>)
+                {
+                    return (List<DataFieldInfo>)o;
+                }
             }
 
+            List<DataFieldInfo> returnValue = new List<DataFieldInfo>(16);
             FieldInfo[] fields = getFieldInfo(core, type);
 
             foreach (FieldInfo fi in fields)
@@ -838,7 +853,11 @@ namespace BoxSocial.Internals
 
             }
 
-            core.Cache.SetCached(string.Format("itemFields[{0}]", typeId), returnValue, new TimeSpan(12, 0, 0), CacheItemPriority.High);
+            if (type != typeof(ItemType))
+            {
+                long typeId = ItemType.GetTypeId(core, type);
+                core.Cache.SetCached(string.Format("itemFields[{0}]", typeId), returnValue, new TimeSpan(12, 0, 0), CacheItemPriority.High);
+            }
 
             return returnValue;
         }

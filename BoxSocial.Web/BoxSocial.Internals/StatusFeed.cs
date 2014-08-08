@@ -364,7 +364,7 @@ namespace BoxSocial.Internals
                 {
                     statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
 
-                    if (item.ItemKey.ImplementsShareable)
+                    if (item.ItemKey.GetType(core).Shareable)
                     {
                         statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
                         statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
@@ -456,7 +456,7 @@ namespace BoxSocial.Internals
                 if (item.Access.IsPublic())
                 {
                     statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    if (item.ItemKey.ImplementsShareable)
+                    if (item.ItemKey.GetType(core).Shareable)
                     {
                         statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
                         statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);

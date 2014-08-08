@@ -704,7 +704,7 @@ namespace BoxSocial.Internals
 
         public string GetUri(long typeId, long id)
         {
-            if (typeId == ItemKey.GetTypeId(typeof(User)))
+            if (typeId == ItemKey.GetTypeId(core, typeof(User)))
             {
                 return Uri;
             }
@@ -1118,7 +1118,7 @@ namespace BoxSocial.Internals
 
         public void SendNotification(Core core, ItemKey donotNotify, User actionBy, ItemKey itemOwnerKey, ItemKey itemKey, string verb, string url)
         {
-            long userTypeId = ItemType.GetTypeId(typeof(User));
+            long userTypeId = ItemType.GetTypeId(core, typeof(User));
             List<ItemKey> receiverKeys = Subscription.GetSubscribers(core, itemKey, 0, 0);
 
             foreach (ItemKey receiverKey in receiverKeys)
@@ -1160,7 +1160,7 @@ namespace BoxSocial.Internals
                     core.Display.ParseBbcode(emailTemplate, "NOTIFICATION_MESSAGE", notification.NotificationString, receiver, false, string.Empty, string.Empty, true);
 
                     // TODO parse action links
-                    if (itemKey.ImplementsNotifiable)
+                    if (itemKey.GetType(core).Notifiable)
                     {
                         Dictionary<string, string> actions = notification.NotifiedItem.GetNotificationActions(action);
 
@@ -1259,7 +1259,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
-                    if (sharedItemKey.ImplementsShareable)
+                    if (sharedItemKey.GetType(core).Shareable)
                     {
                         bool publicItem = true;
 
@@ -1597,8 +1597,8 @@ namespace BoxSocial.Internals
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -1, "L_CREATOR", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(core, typeof(User)), -1, "L_CREATOR", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(core, typeof(User)), -2, "L_EVERYONE", null, string.Empty));
 
             return ppgs;
         }
@@ -1635,7 +1635,7 @@ namespace BoxSocial.Internals
 
         public override bool GetIsMemberOfPrimitive(ItemKey viewer, ItemKey primitiveKey)
         {
-            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(User)))
+            if (primitiveKey.TypeId == ItemType.GetTypeId(core, typeof(User)))
             {
 
                 switch (primitiveKey.Id)
@@ -1655,7 +1655,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            if (primitiveKey.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
+            if (primitiveKey.TypeId == ItemType.GetTypeId(core, typeof(ApplicationEntry)))
             {
                 if (primitiveKey.Id == Id)
                 {
@@ -1717,12 +1717,9 @@ namespace BoxSocial.Internals
             return permission;
         }
 
-        public static ItemKey ApplicationDevelopersGroupKey
+        public static ItemKey GetApplicationDevelopersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(ApplicationDeveloper)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(ApplicationDeveloper)));
         }
 
         public string Noun

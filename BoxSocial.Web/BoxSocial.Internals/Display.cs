@@ -718,7 +718,7 @@ namespace BoxSocial.Internals
                     lastId = comment.Id;
 
                     commentsVariableCollection.Parse("ID", comment.Id.ToString());
-                    commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(typeof(Comment)));
+                    commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(core, typeof(Comment)));
                     commentsVariableCollection.Parse("USERNAME", commentPoster.DisplayName);
                     commentsVariableCollection.Parse("USER_ID", commentPoster.Id.ToString());
                     commentsVariableCollection.Parse("USER_DISPLAY_NAME", commentPoster.DisplayName);

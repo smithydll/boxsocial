@@ -44,36 +44,24 @@ namespace BoxSocial.Internals
         {
         }
 
-        public static ItemKey FriendsGroupKey
+        public static ItemKey GetFriendsGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(Friend)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(Friend)));
         }
 
-        public static ItemKey FamilyGroupKey
+        public static ItemKey GetFamilyGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-2, ItemType.GetTypeId(typeof(Friend)));
-            }
+            return new ItemKey(-2, ItemType.GetTypeId(core, typeof(Friend)));
         }
 
-        public static ItemKey BlockedGroupKey
+        public static ItemKey GetBlockedGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-3, ItemType.GetTypeId(typeof(Friend)));
-            }
+            return new ItemKey(-3, ItemType.GetTypeId(core, typeof(Friend)));
         }
 
-        public static ItemKey ColleaguesGroupKey
+        public static ItemKey GetColleaguesGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-4, ItemType.GetTypeId(typeof(Friend)));
-            }
+            return new ItemKey(-4, ItemType.GetTypeId(core, typeof(Friend)));
         }
 	}
 }

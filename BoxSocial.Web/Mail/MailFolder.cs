@@ -104,7 +104,7 @@ namespace BoxSocial.Applications.Mail
         {
             get
             {
-                return ItemType.GetTypeId(typeof(MailFolder));
+                return ItemType.GetTypeId(core, typeof(MailFolder));
             }
         }
 

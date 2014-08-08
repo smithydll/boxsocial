@@ -206,36 +206,24 @@ namespace BoxSocial.Applications.Calendar
             }
         }
 
-        public static ItemKey InviteesGroupKey
+        public static ItemKey GetInviteesGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(EventInvite)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(EventInvite)));
         }
 
-        public static ItemKey AttendingGroupKey
+        public static ItemKey GetAttendingGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-2, ItemType.GetTypeId(typeof(EventInvite)));
-            }
+            return new ItemKey(-2, ItemType.GetTypeId(core, typeof(EventInvite)));
         }
 
-        public static ItemKey MaybeAttendingGroupKey
+        public static ItemKey GetMaybeAttendingGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-3, ItemType.GetTypeId(typeof(EventInvite)));
-            }
+            return new ItemKey(-3, ItemType.GetTypeId(core, typeof(EventInvite)));
         }
 
-        public static ItemKey NotAttendingGroupKey
+        public static ItemKey GetNotAttendingGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-4, ItemType.GetTypeId(typeof(EventInvite)));
-            }
+            return new ItemKey(-4, ItemType.GetTypeId(core, typeof(EventInvite)));
         }
     }
 

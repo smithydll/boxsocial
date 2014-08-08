@@ -119,7 +119,7 @@ namespace BoxSocial.Internals
                 TermQuery friendQuery = new TermQuery(new Term("item_public", "2"));
                 accessFriendQuery.Add(friendQuery, Occur.MUST);
 
-                string userTypeId =  ItemType.GetTypeId(typeof(User)).ToString();
+                string userTypeId =  ItemType.GetTypeId(core, typeof(User)).ToString();
                 foreach (long friendId in friends)
                 {
                     BooleanQuery ownerQuery = new BooleanQuery();
@@ -139,7 +139,7 @@ namespace BoxSocial.Internals
 
             if (filterByType != null)
             {
-                TermQuery typeQuery = new TermQuery(new Term("item_type_id", ItemType.GetTypeId(filterByType).ToString()));
+                TermQuery typeQuery = new TermQuery(new Term("item_type_id", ItemType.GetTypeId(core, filterByType).ToString()));
 
                 query.Add(typeQuery, Occur.MUST);
             }
@@ -274,7 +274,7 @@ namespace BoxSocial.Internals
             doc.Add(new Field("item_type_id", item.ItemKey.TypeId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("owner_id", item.Owner.Id.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             doc.Add(new Field("owner_type_id", item.Owner.ItemKey.TypeId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-            doc.Add(new Field("application_id", item.ItemKey.ApplicationId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+            doc.Add(new Field("application_id", item.ItemKey.GetType(core).ApplicationId.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             /* Because of the dynamic nature of ACLs, they can only be effectively evaluated when querying results */
             doc.Add(new Field("item_public", isPublic.ToString(), Field.Store.YES, Field.Index.NOT_ANALYZED));
             foreach (SearchField field in customFields)

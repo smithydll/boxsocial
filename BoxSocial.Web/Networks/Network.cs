@@ -1031,8 +1031,8 @@ namespace BoxSocial.Networks
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(NetworkMember)), -1, "L_MEMBER", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(User)), -2, "L_EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(core, typeof(NetworkMember)), -1, "L_MEMBER", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(core, typeof(User)), -2, "L_EVERYONE", null, string.Empty));
 
             return ppgs;
         }
@@ -1132,12 +1132,9 @@ namespace BoxSocial.Networks
             return permission;
         }
 
-        public static ItemKey NetworkMembersGroupKey
+        public static ItemKey GetNetworkMembersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(NetworkMember)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(NetworkMember)));
         }
 
         public string Noun

@@ -97,7 +97,7 @@ namespace BoxSocial.Internals
                 core.Display.ParseBbcode(notificationVariableCollection, "ACTION", notification.NotificationString, true, null, null);
                 core.Display.ParseBbcode(notificationVariableCollection, "DESCRIPTION", notification.Body, core.PrimitiveCache[core.LoggedInMemberId], true, null, null);
 
-                if (notification.NotificationItemKey.ImplementsNotifiable)
+                if (notification.NotificationItemKey.GetType(core).Notifiable)
                 {
                     Dictionary<string, string> actions = notification.NotifiedItem.GetNotificationActions(notification.Action);
 

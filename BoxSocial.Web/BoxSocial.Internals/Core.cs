@@ -454,28 +454,7 @@ namespace BoxSocial.Internals
             {
                 if (emoticons == null)
                 {
-                    object o = null;
-                    System.Web.Caching.Cache cache;
-
-                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-                    {
-                        cache = HttpContext.Current.Cache;
-                    }
-                    else
-                    {
-                        cache = new System.Web.Caching.Cache();
-                    }
-
-                    try
-                    {
-                        if (cache != null)
-                        {
-                            o = cache.Get("Emoticons");
-                        }
-                    }
-                    catch (NullReferenceException)
-                    {
-                    }
+                    object o = Cache.GetCached("Emoticons");
 
                     List<HibernateItem> cachedEmoticons = null;
 
@@ -507,12 +486,9 @@ namespace BoxSocial.Internals
                     emoticonsReader.Close();
                     emoticonsReader.Dispose();
 
-                    try
+                    if (Cache != null)
                     {
-                        cache.Add("Emoticons", cachedEmoticons, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(12, 0, 0), CacheItemPriority.High, null);
-                    }
-                    catch (NullReferenceException)
-                    {
+                        Cache.SetCached("Emoticons", cachedEmoticons, new TimeSpan(12, 0, 0), CacheItemPriority.High);
                     }
                 }
                 return emoticons;
@@ -704,12 +680,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        private static Object loadedAssembliesLock = new object();
-        private static Dictionary<string, ItemKey> loadedAssemblies = null;
+        private Dictionary<string, ItemKey> loadedAssemblies = null;
 
         public ApplicationEntry GetApplication(long applicationId)
         {
-            ItemKey ik = new ItemKey(applicationId, ItemType.GetTypeId(typeof(ApplicationEntry)));
+            ItemKey ik = new ItemKey(applicationId, ItemType.GetTypeId(this, typeof(ApplicationEntry)));
             ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
             ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
 
@@ -744,35 +719,12 @@ namespace BoxSocial.Internals
 
                 if (loadedAssemblies != null)
                 {
-                    lock (loadedAssembliesLock)
+                    if (!loadedAssemblies.ContainsKey(name))
                     {
-                        if (!loadedAssemblies.ContainsKey(name))
-                        {
-                            loadedAssemblies.Add(name, ae.ItemKey);
-                        }
+                        loadedAssemblies.Add(name, ae.ItemKey);
                     }
 
-                    System.Web.Caching.Cache cache;
-
-                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-                    {
-                        cache = HttpContext.Current.Cache;
-                    }
-                    else
-                    {
-                        cache = new System.Web.Caching.Cache();
-                    }
-
-                    if (cache != null)
-                    {
-                        try
-                        {
-                            cache.Add("Applications", loadedAssemblies, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
-                        }
-                        catch (NullReferenceException)
-                        {
-                        }
-                    }
+                    Cache.SetCached("Applications", loadedAssemblies, new TimeSpan(1, 0, 0), CacheItemPriority.Default);
                 }
 
                 if (Prose != null)
@@ -789,12 +741,9 @@ namespace BoxSocial.Internals
             loadAssemblies();
 
             List<string> keys = new List<string>();
-            lock (loadedAssembliesLock)
+            foreach (string key in loadedAssemblies.Keys)
             {
-                foreach (string key in loadedAssemblies.Keys)
-                {
-                    keys.Add(key);
-                }
+                keys.Add(key);
             }
 
             return keys;
@@ -806,14 +755,11 @@ namespace BoxSocial.Internals
 
             List<Assembly> asms = new List<Assembly>();
 
-            lock (loadedAssembliesLock)
+            foreach (string key in loadedAssemblies.Keys)
             {
-                foreach (string key in loadedAssemblies.Keys)
-                {
-                    ItemKey ik = loadedAssemblies[key];
-                    ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
-                    asms.Add(((ApplicationEntry)ItemCache[ik]).Assembly);
-                }
+                ItemKey ik = loadedAssemblies[key];
+                ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
+                asms.Add(((ApplicationEntry)ItemCache[ik]).Assembly);
             }
 
             return asms;
@@ -821,89 +767,55 @@ namespace BoxSocial.Internals
 
         private void loadAssemblies()
         {
-            lock (loadedAssembliesLock)
+            if (loadedAssemblies == null)
             {
-                if (loadedAssemblies == null)
+                object o = Cache.GetCached("Applications");
+
+                if (o != null && o is Dictionary<string, ItemKey>)
                 {
-                    object o = null;
-                    System.Web.Caching.Cache cache;
+                    loadedAssemblies = (Dictionary<string, ItemKey>)o;
+                }
+                else
+                {
+                    loadedAssemblies = new Dictionary<string, ItemKey>(16, StringComparer.Ordinal);
+                }
 
-                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
+                List<string> applicationNames = new List<string>();
+
+                foreach (AssemblyName an in assemblies)
+                {
+                    if (!loadedAssemblies.ContainsKey(an.Name))
                     {
-                        cache = HttpContext.Current.Cache;
+                        applicationNames.Add(an.Name);
                     }
-                    else
+                }
+
+                SelectQuery query = Item.GetSelectQueryStub(this, typeof(ApplicationEntry));
+                query.AddCondition("application_assembly_name", ConditionEquality.In, applicationNames);
+
+                System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
+
+                ItemCache.RegisterType(typeof(ApplicationEntry));
+
+                while (applicationReader.Read())
+                {
+                    ApplicationEntry ae = new ApplicationEntry(this, applicationReader);
+                    ItemCache.RegisterItem(ae);
+                    loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
+
+                    if (Prose != null)
                     {
-                        cache = new System.Web.Caching.Cache();
+                        Prose.AddApplication(ae.Key);
                     }
+                }
 
-                    try
-                    {
-                        if (cache != null)
-                        {
-                            o = cache.Get("Applications");
-                        }
-                    }
-                    catch (NullReferenceException)
-                    {
-                    }
+                applicationReader.Close();
+                applicationReader.Dispose();
 
-
-                    if (o != null && o is Dictionary<string, ItemKey>)
-                    {
-                        loadedAssemblies = (Dictionary<string, ItemKey>)o;
-                    }
-                    else
-                    {
-                        loadedAssemblies = new Dictionary<string, ItemKey>(16, StringComparer.Ordinal);
-                    }
-
-                    AssemblyName[] assemblies = Assembly.Load(new AssemblyName("BoxSocial.FrontEnd")).GetReferencedAssemblies();
-                    List<string> applicationNames = new List<string>();
-
-                    foreach (AssemblyName an in assemblies)
-                    {
-                        if (!loadedAssemblies.ContainsKey(an.Name))
-                        {
-                            applicationNames.Add(an.Name);
-                        }
-                    }
-
-                    SelectQuery query = Item.GetSelectQueryStub(this, typeof(ApplicationEntry));
-                    query.AddCondition("application_assembly_name", ConditionEquality.In, applicationNames);
-
-                    System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
-
-                    ItemCache.RegisterType(typeof(ApplicationEntry));
-
-                    while (applicationReader.Read())
-                    {
-                        ApplicationEntry ae = new ApplicationEntry(this, applicationReader);
-                        ItemCache.RegisterItem(ae);
-                        loadedAssemblies.Add(ae.AssemblyName, ae.ItemKey);
-
-                        if (Prose != null)
-                        {
-                            Prose.AddApplication(ae.Key);
-                        }
-                    }
-
-                    applicationReader.Close();
-                    applicationReader.Dispose();
-
-                    if (loadedAssemblies != null)
-                    {
-                        if (cache != null)
-                        {
-                            try
-                            {
-                                cache.Add("Applications", loadedAssemblies, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
-                            }
-                            catch (NullReferenceException)
-                            {
-                            }
-                        }
-                    }
+                if (loadedAssemblies != null)
+                {
+                    Cache.SetCached("Applications", loadedAssemblies, new TimeSpan(1, 0, 0), CacheItemPriority.Default);
                 }
             }
         }
@@ -1000,7 +912,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(User.GetMemberId(session.LoggedInMember), typeof(User));
+                return new ItemKey(User.GetMemberId(session.LoggedInMember), ItemKey.GetTypeId(this, typeof(User)));
             }
         }
 
@@ -1071,7 +983,7 @@ namespace BoxSocial.Internals
             itemsCache = new NumberedItemsCache(this);
             accessControlCache = new AccessControlCache(this);
 
-            primitiveTypes = ItemKey.PrimitiveTypes;
+            primitiveTypes = ItemKey.GetPrimitiveTypes(this);
         }
 
         public Core(OPage page, Mysql db)
@@ -1087,7 +999,7 @@ namespace BoxSocial.Internals
             itemsCache = new NumberedItemsCache(this);
             accessControlCache = new AccessControlCache(this);
 
-            primitiveTypes = ItemKey.PrimitiveTypes;
+            primitiveTypes = ItemKey.GetPrimitiveTypes(this);
         }
 
         public void DisposeOf()
@@ -1228,7 +1140,7 @@ namespace BoxSocial.Internals
         {
             ItemInfo ii = null;
 
-            if (itemKey.ImplementsCommentable)
+            if (itemKey.GetType(this).Commentable)
             {
                 try
                 {
@@ -1256,7 +1168,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (!itemKey.ImplementsSubscribeable)
+                if (!itemKey.GetType(this).Subscribeable)
                 {
                     throw new InvalidItemException();
                 }
@@ -1271,7 +1183,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                if (!itemKey.ImplementsSubscribeable)
+                if (!itemKey.GetType(this).Subscribeable)
                 {
                     throw new InvalidItemException();
                 }
@@ -1395,7 +1307,7 @@ namespace BoxSocial.Internals
                     if (iType.ApplicationId > 0)
                     {
                         ItemCache.RegisterType(typeof(ApplicationEntry));
-                        ItemKey applicationKey = new ItemKey(iType.ApplicationId, typeof(ApplicationEntry));
+                        ItemKey applicationKey = new ItemKey(iType.ApplicationId, ItemType.GetTypeId(this, typeof(ApplicationEntry)));
                         ItemCache.RequestItem(applicationKey);
                         //ApplicationEntry ae = new ApplicationEntry(core, ik.ApplicationId);
                         ApplicationEntry ae = (ApplicationEntry)ItemCache[applicationKey];

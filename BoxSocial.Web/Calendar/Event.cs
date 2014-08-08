@@ -386,7 +386,7 @@ namespace BoxSocial.Applications.Calendar
             }*/
 
             Access.CreateAllGrantsForOwner(core, newEvent);
-            Access.CreateGrantForPrimitive(core, newEvent, EventInvite.InviteesGroupKey, "VIEW", "COMMENT");
+            Access.CreateGrantForPrimitive(core, newEvent, EventInvite.GetInviteesGroupKey(core), "VIEW", "COMMENT");
 
             newEvent.IsSimplePermissions = true;
             newEvent.Update();
@@ -523,7 +523,7 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (DataRow dr in invitees.Rows)
             {
-                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(typeof(User)))
+                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(core, typeof(User)))
                 {
                     ids.Add((long)dr["item_id"]);
                 }
@@ -611,7 +611,7 @@ namespace BoxSocial.Applications.Calendar
 
             foreach (DataRow dr in invitees.Rows)
             {
-                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(typeof(User)))
+                if ((long)dr["item_type_id"] == ItemKey.GetTypeId(core, typeof(User)))
                 {
                     ids.Add((long)dr["item_id"]);
                 }
@@ -795,7 +795,7 @@ namespace BoxSocial.Applications.Calendar
                 int i = 0, j = 0, k = 0, l = 0;
                 foreach (EventInvite ei in invitees)
                 {
-                    if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
+                    if (ei.Invited.TypeId == ItemType.GetTypeId(e.Core, typeof(User)))
                     {
                         invitedCount++;
 
@@ -859,7 +859,7 @@ namespace BoxSocial.Applications.Calendar
                 i = j = k = l = 0;
                 foreach (EventInvite ei in invitees)
                 {
-                    if (ei.Invited.TypeId == ItemType.GetTypeId(typeof(User)))
+                    if (ei.Invited.TypeId == ItemType.GetTypeId(e.Core, typeof(User)))
                     {
                         VariableCollection listVariableCollection = null;
 
@@ -1031,24 +1031,24 @@ namespace BoxSocial.Applications.Calendar
         {
             List<PrimitivePermissionGroup> itemGroups = new List<PrimitivePermissionGroup>();
 
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.InviteesGroupKey, "Event Invitees", string.Empty));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.AttendingGroupKey, "Event Attending", string.Empty));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.MaybeAttendingGroupKey, "Event Maybe Attending", string.Empty));
-            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.NotAttendingGroupKey, "Event Not Attending", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.GetInviteesGroupKey(core), "Event Invitees", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.GetAttendingGroupKey(core), "Event Attending", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.GetMaybeAttendingGroupKey(core), "Event Maybe Attending", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(EventInvite.GetNotAttendingGroupKey(core), "Event Not Attending", string.Empty));
 
             return itemGroups;
         }
 
         public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
-            if (key == EventInvite.InviteesGroupKey)
+            if (key == EventInvite.GetInviteesGroupKey(core))
             {
                 if (IsInvitee(viewer))
                 {
                     return true;
                 }
             }
-            if (key == EventInvite.AttendingGroupKey)
+            if (key == EventInvite.GetAttendingGroupKey(core))
             {
                 if (IsAttending(viewer, EventAttendance.Yes))
                 {

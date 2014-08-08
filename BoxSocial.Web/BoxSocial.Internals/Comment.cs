@@ -116,14 +116,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
-            }
-        }
-
         public long ItemTypeId
         {
             get
@@ -284,7 +276,7 @@ namespace BoxSocial.Internals
 
             Relation relations = Relation.None;
             // A little bit of hard coding we can't avoid
-            if (itemKey.TypeString == typeof(User).FullName)
+            if (itemKey.TypeId == ItemKey.GetTypeId(core, typeof(User)))
             {
                 core.LoadUserProfile(itemKey.Id);
                 relations = core.PrimitiveCache[itemKey.Id].GetRelations(core.Session.LoggedInMember.ItemKey);
@@ -334,7 +326,7 @@ namespace BoxSocial.Internals
             {
                 if (commenters.Count == 2)
                 {
-                    if (itemKey.TypeString == typeof(User).FullName)
+                    if (itemKey.TypeId == BoxSocial.Internals.ItemType.GetTypeId(core, typeof(User)))
                     {
                         QueryCondition qc1 = query.AddCondition("comment_item_id", commenters[0].Id);
                         qc1.AddCondition("user_id", commenters[1].Id);
@@ -648,7 +640,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(UserId, ItemKey.GetTypeId(typeof(User)));
+                return new ItemKey(UserId, ItemKey.GetTypeId(core, typeof(User)));
             }
         }
 
@@ -737,14 +729,6 @@ namespace BoxSocial.Internals
 				return itemKey;
 			}
 		}
-
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
-            }
-        }
 
         public long ItemId
         {

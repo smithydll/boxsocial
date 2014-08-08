@@ -982,7 +982,20 @@ namespace BoxSocial.IO
                     string sql = string.Format("ALTER TABLE `{0}` DROP INDEX `{1}`",
                         tableName, key);
 
-                    UpdateQuery(sql);
+                    try
+                    {
+                        UpdateQuery(sql);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Table: " + tableName);
+                        Console.WriteLine("Query: " + sql);
+                        foreach (DataFieldInfo field in fields)
+                        {
+                            Console.WriteLine("  Field: " + field.Name);
+                        }
+                        throw ex;
+                    }
                 }
             }
 

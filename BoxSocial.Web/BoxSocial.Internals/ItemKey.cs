@@ -32,18 +32,10 @@ namespace BoxSocial.Internals
 {
 	public class ItemKey : IComparable
 	{
-        private static Object itemTypeCacheLock = new object();
-		private static Dictionary<string, ItemType> itemTypeCache = null;
-        private static Dictionary<string, long> itemApplicationCache = null;
-        private static Dictionary<long, ItemType> primitiveTypes = null;
 		private long itemId;
 		private long itemTypeId;
-        private long applicationId;
-		private string itemType;
-        private Type type;
-        private ItemType typeRow;
         private int hashCode;
-		
+
 		public long Id
 		{
 			get
@@ -60,350 +52,90 @@ namespace BoxSocial.Internals
 			}
 		}
 
-        public long ApplicationId
+        public ItemType GetType(Core core)
         {
-            get
-            {
-                return applicationId;
-            }
-        }
-		
-		public string TypeString
-		{
-			get
-			{
-				return itemType;
-			}
-		}
-
-        public Type Type
-        {
-            get
-            {
-                if (type == null)
-                {
-                    type = Type.GetType(ItemKey.GetItemType(TypeId).TypeNamespace);
-                }
-                return type;
-            }
+            return ItemType.GetType(core, this);
         }
 
-        public bool ImplementsLikeable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Likeable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsShareable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Shareable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsCommentable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Commentable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsRateable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Rateable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsSubscribeable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Subscribeable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsViewable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Viewable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsNotifiable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Notifiable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool ImplementsEmbeddable
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.Embeddable;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public bool InheritsPrimitive
-        {
-            get
-            {
-                if (typeRow != null)
-                {
-                    return typeRow.IsPrimitive;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-		
-		public ItemKey(long itemId, string itemType)
-		{
-#if DEBUG
-            if (HttpContext.Current != null)
-            {
-                //HttpContext.Current.Response.Write("<!-- keying: " + itemType + ", " + itemId.ToString() + "-->\r\n");
-            }
-#endif
-			this.itemId = itemId;
-			this.itemType = itemType;
-            lock (itemTypeCacheLock)
-            {
-                if (!itemTypeCache.TryGetValue(itemType, out this.typeRow))
-                {
-                    throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemTypeCache"));
-                }
-                if (!itemApplicationCache.TryGetValue(itemType, out this.applicationId))
-                {
-                    throw new Exception(string.Format("Cannot find key {0} in {1}", itemType, "itemApplicationCache"));
-                }
-                //this.typeRow = itemTypeCache[itemType];
-                this.itemTypeId = this.typeRow.TypeId;
-                //this.applicationId = itemApplicationCache[itemType];
-            }
-            this.type = null;
-
-            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
-		}
-		
 		public ItemKey(long itemId, long itemTypeId)
 		{
             if (itemTypeId < 1)
             {
                 this.itemId = itemId;
                 this.itemTypeId = 0;
-                this.applicationId = 0;
-                this.type = null;
-                this.typeRow = null;
                 return;
             }
 
 			this.itemId = itemId;
-            lock (itemTypeCacheLock)
-            {
-                foreach (string value in itemTypeCache.Keys)
-                {
-                    if (itemTypeCache[value].TypeId == itemTypeId)
-                    {
-                        this.itemType = value;
-                        break;
-                    }
-                }
-                this.typeRow = itemTypeCache[itemType];
-                this.itemTypeId = itemTypeId;
-                this.applicationId = itemApplicationCache[this.itemType];
-            }
-            this.type = null;
+            this.itemTypeId = itemTypeId;
 
             hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
 		}
 
-        public ItemKey(long itemId, Type itemType)
-        {
-            this.itemId = itemId;
-            long itemTypeId = GetTypeId(itemType);
-            lock (itemTypeCacheLock)
-            {
-                foreach (string value in itemTypeCache.Keys)
-                {
-                    if (itemTypeCache[value].TypeId == itemTypeId)
-                    {
-                        this.itemType = value;
-                        break;
-                    }
-                }
-                this.typeRow = itemTypeCache[this.itemType];
-                this.itemTypeId = itemTypeId;
-                this.applicationId = itemApplicationCache[this.itemType];
-            }
-            this.type = itemType;
-
-            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
-        }
-        
         public ItemKey(string key)
         {
-            string[] keys = key.Split(new char[] {','});
+            string[] keys = key.Split(new char[] { ',' });
             long itemId = long.Parse(keys[1]);
             long itemTypeId = long.Parse(keys[0]);
-            
+
             this.itemId = itemId;
-            lock (itemTypeCacheLock)
-            {
-                foreach (string value in itemTypeCache.Keys)
-                {
-                    if (itemTypeCache[value].TypeId == itemTypeId)
-                    {
-                        this.itemType = value;
-                        break;
-                    }
-                }
-                this.typeRow = itemTypeCache[this.itemType];
-                this.itemTypeId = itemTypeId;
-                this.applicationId = itemApplicationCache[this.itemType];
-            }
-            this.type = null;
+            this.itemTypeId = itemTypeId;
 
             hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
-        public static Dictionary<long, ItemType> PrimitiveTypes
+        public static Dictionary<long, ItemType> GetPrimitiveTypes(Core core)
         {
-            get
+            Dictionary<long, ItemType> primitiveTypes = null;
+            object o = core.Cache.GetCached("itemPrimitiveTypes");
+            Dictionary<long, string> primitiveTypesnames = null;
+
+            if (!(o != null && o is Dictionary<long, string>))
             {
-                lock (itemTypeCacheLock)
+                primitiveTypesnames = (Dictionary<long, string>)o;
+            }
+            else
+            {
+                primitiveTypesnames = populateItemTypeCache(core);
+            }
+
+            if (primitiveTypesnames != null)
+            {
+                primitiveTypes = new Dictionary<long, ItemType>();
+
+                foreach (long id in primitiveTypesnames.Keys)
                 {
-                    if (primitiveTypes == null)
+                    object p = core.Cache.GetCached(string.Format("itemTypes[{0}]", id));
+                    if (p != null && p is ItemType)
                     {
-                        primitiveTypes = new Dictionary<long, ItemType>(8);
-                        foreach (string key in itemTypeCache.Keys)
-                        {
-                            if (itemTypeCache[key].IsPrimitive)
-                            {
-                                primitiveTypes.Add(itemTypeCache[key].TypeId, itemTypeCache[key]);
-                            }
-                        }
+                        primitiveTypes.Add(id, (ItemType)p);
                     }
-                    return primitiveTypes;
+                    else
+                    {
+                        primitiveTypes.Add(id, updateItemTypeCache(core, id));
+                    }
                 }
             }
+
+            return primitiveTypes;
         }
-		
-		public static void populateItemTypeCache(Core core)
-		{
+
+        public static Dictionary<long, string> populateItemTypeCache(Core core)
+        {
             if (core == null)
             {
                 throw new NullCoreException();
             }
 
-            System.Web.Caching.Cache cache;
-			object o = null;
-            object b = null;
-			
-			if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-			{
-				cache = HttpContext.Current.Cache;
-			}
-			else
-			{
-                cache = new System.Web.Caching.Cache();
-			}
-			
-			if (cache != null)
-			{
-                try
-                {
-                    o = cache.Get("itemTypeIds");
-                }
-                catch (NullReferenceException)
-                {
-                }
-                try
-                {
-                    b = cache.Get("itemApplicationIds");
-                }
-                catch (NullReferenceException)
-                {
-                }
-			}
+            Dictionary<long, string> primitiveTypes = new Dictionary<long, string>();
 
-            lock (itemTypeCacheLock)
+            object o = core.Cache.GetCached("itemPrimitiveTypes");
+
+            if (o == null)
             {
-                if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, ItemType>))
+
+                if (core.Cache != null)
                 {
-                    itemTypeCache = (Dictionary<string, ItemType>)o;
-                    itemApplicationCache = (Dictionary<string, long>)b;
-                }
-                else
-                {
-                    itemTypeCache = new Dictionary<string, ItemType>(256, StringComparer.Ordinal);
-                    itemApplicationCache = new Dictionary<string, long>(256, StringComparer.Ordinal);
                     SelectQuery query = ItemType.GetSelectQueryStub(core, typeof(ItemType));
 
                     System.Data.Common.DbDataReader typesReader = null;
@@ -420,63 +152,125 @@ namespace BoxSocial.Internals
                             typesReader.Dispose();
                         }
 
-                        return;
+                        return primitiveTypes;
                     }
 
                     while (typesReader.Read())
                     {
                         ItemType typeItem = new ItemType(core, typesReader);
-                        if (!(itemTypeCache.ContainsKey(typeItem.TypeNamespace)))
+
+                        core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                        core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                        core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+
+                        if (typeItem.IsPrimitive)
                         {
-                            itemTypeCache.Add(typeItem.TypeNamespace, typeItem);
-                            itemApplicationCache.Add(typeItem.TypeNamespace, typeItem.ApplicationId);
+                            primitiveTypes.Add(typeItem.Id, typeItem.TypeNamespace);
                         }
                     }
 
+                    core.Cache.SetCached("itemPrimitiveTypes", primitiveTypes, new TimeSpan(4, 0, 0), CacheItemPriority.High);
+
                     typesReader.Close();
                     typesReader.Dispose();
-
-                    if (cache != null)
-                    {
-                        cache.Add("itemTypeIds", itemTypeCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
-                        cache.Add("itemApplicationIds", itemApplicationCache, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(4, 0, 0), CacheItemPriority.High, null);
-                    }
                 }
             }
-		}
 
-        public static long GetTypeId(Type type)
+            return primitiveTypes;
+        }
+
+        private static ItemType updateItemTypeCache(Core core, string typeNamespace)
         {
-            ItemType it = null;
+            ItemType typeItem = null;
 
-            if (itemTypeCache.TryGetValue(type.FullName, out it))
+            SelectQuery query = ItemType.GetSelectQueryStub(core, typeof(ItemType));
+            query.AddCondition("type_namespace", typeNamespace);
+
+            System.Data.Common.DbDataReader typesReader = core.Db.ReaderQuery(query);
+
+            if (typesReader.HasRows)
             {
-                return it.TypeId;
+                typesReader.Read();
+
+                typeItem = new ItemType(core, typesReader);
+
+                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+            }
+
+            typesReader.Close();
+            typesReader.Dispose();
+
+            return typeItem;
+        }
+
+        private static ItemType updateItemTypeCache(Core core, long typeId)
+        {
+            ItemType typeItem = null;
+
+            SelectQuery query = ItemType.GetSelectQueryStub(core, typeof(ItemType));
+            query.AddCondition("type_id", typeId);
+
+            System.Data.Common.DbDataReader typesReader = core.Db.ReaderQuery(query);
+
+            if (typesReader.HasRows)
+            {
+                typesReader.Read();
+
+                typeItem = new ItemType(core, typesReader);
+
+                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+            }
+
+            typesReader.Close();
+            typesReader.Dispose();
+
+            return typeItem;
+        }
+
+        public static long GetTypeId(Core core, Type type)
+        {
+            string typeNamespace = type.FullName;
+            object o = core.Cache.GetCached(string.Format("itemTypeIds[{0}]", typeNamespace));
+
+            if (o != null && o is long)
+            {
+                return (long)o;
             }
             else
             {
-                return 0;
+                ItemType itemType = updateItemTypeCache(core, typeNamespace);
+                if (itemType != null)
+                {
+                    return itemType.Id;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
-        public static ItemType GetItemType(long typeId)
+        public static ItemType GetItemType(Core core, long typeId)
         {
-            ItemType it = null;
+            object o = core.Cache.GetCached(string.Format("itemTypes[{0}]", typeId));
 
-            foreach (ItemType type in itemTypeCache.Values)
+            if (o != null && o is ItemType)
             {
-                if (type.Id == typeId)
-                {
-                    it = type;
-                }
+                return (ItemType)o;
             }
-
-            return it;
+            else
+            {
+                return null;
+            }
         }
         
         public override string ToString ()
         {
-            return string.Format("Type: {0}:{1}, Id: {2}", TypeId, TypeString, Id);
+            return string.Format("Type: {0}, Id: {1}", TypeId, Id);
         }
 
         public override bool Equals(object obj)

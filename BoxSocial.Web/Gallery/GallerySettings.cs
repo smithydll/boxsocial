@@ -240,31 +240,31 @@ namespace BoxSocial.Applications.Gallery
             if (owner is User)
             {
                 Access.CreateAllGrantsForOwner(core, settings);
-                settings.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
-                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
+                settings.Access.CreateGrantForPrimitive(Friend.GetFriendsGroupKey(core), "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                settings.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW", "VIEW_ITEMS");
             }
             if (owner is UserGroup)
             {
-                settings.Access.CreateAllGrantsForPrimitive(UserGroup.GroupOperatorsGroupKey);
-                settings.Access.CreateGrantForPrimitive(UserGroup.GroupMembersGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
-                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
+                settings.Access.CreateAllGrantsForPrimitive(UserGroup.GetGroupOperatorsGroupKey(core));
+                settings.Access.CreateGrantForPrimitive(UserGroup.GetGroupMembersGroupKey(core), "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
+                settings.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW", "VIEW_ITEMS");
             }
             if (owner is Musician.Musician)
             {
-                settings.Access.CreateAllGrantsForPrimitive(Musician.Musician.MusicianMembersGroupKey);
-                settings.Access.CreateGrantForPrimitive(Musician.Musician.MusicianFansGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
-                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
+                settings.Access.CreateAllGrantsForPrimitive(Musician.Musician.GetMusicianMembersGroupKey(core));
+                settings.Access.CreateGrantForPrimitive(Musician.Musician.GetMusicianFansGroupKey(core), "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
+                settings.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW", "VIEW_ITEMS");
             }
             if (owner is Network)
             {
-                settings.Access.CreateGrantForPrimitive(Network.NetworkMembersGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
-                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
+                settings.Access.CreateGrantForPrimitive(Network.GetNetworkMembersGroupKey(core), "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS", "CREATE_ITEMS");
+                settings.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW", "VIEW_ITEMS");
             }
             if (owner is ApplicationEntry)
             {
-                settings.Access.CreateAllGrantsForPrimitive(ApplicationEntry.ApplicationDevelopersGroupKey);
-                settings.Access.CreateGrantForPrimitive(User.RegisteredUsersGroupKey, "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
-                settings.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW", "VIEW_ITEMS");
+                settings.Access.CreateAllGrantsForPrimitive(ApplicationEntry.GetApplicationDevelopersGroupKey(core));
+                settings.Access.CreateGrantForPrimitive(User.GetRegisteredUsersGroupKey(core), "VIEW", "VIEW_ITEMS", "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                settings.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW", "VIEW_ITEMS");
             }
 
             return settings;

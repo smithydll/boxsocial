@@ -250,7 +250,7 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                return ItemType.GetTypeId(typeof(Forum));
+                return ItemType.GetTypeId(core, typeof(Forum));
             }
         }
 
@@ -1057,7 +1057,7 @@ namespace BoxSocial.Applications.Forum
             while(topicsReader.Read())
             {
                 ForumTopic topic = new ForumTopic(core, topicsReader);
-                core.ItemCache.RequestItem(new ItemKey(topic.ForumId, ItemType.GetTypeId(typeof(Forum))));
+                core.ItemCache.RequestItem(new ItemKey(topic.ForumId, ItemType.GetTypeId(core, typeof(Forum))));
                 topics.Add(topic);
             }
 
@@ -1271,15 +1271,15 @@ namespace BoxSocial.Applications.Forum
 
             if (parent.Owner is UserGroup)
             {
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "VIEW");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "VIEW_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "LIST_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "REPLY_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "CREATE_TOPICS");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupMembersGroupKey, "REPORT_POSTS");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOperatorsGroupKey, "CREATE_STICKY");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOfficersGroupKey, "CREATE_STICKY");
-                Access.CreateGrantForPrimitive(core, forum, UserGroup.GroupOperatorsGroupKey, "CREATE_ANNOUNCEMENT");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "VIEW");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "VIEW_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "LIST_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "REPLY_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "CREATE_TOPICS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupMembersGroupKey(core), "REPORT_POSTS");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupOperatorsGroupKey(core), "CREATE_STICKY");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupOfficersGroupKey(core), "CREATE_STICKY");
+                Access.CreateGrantForPrimitive(core, forum, UserGroup.GetGroupOperatorsGroupKey(core), "CREATE_ANNOUNCEMENT");
             }
 
             return forum;
@@ -2204,7 +2204,7 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    return new ItemKey(parentId, typeof(Forum));
+                    return new ItemKey(parentId, ItemType.GetTypeId(core, typeof(Forum)));
                 }
             }
         }

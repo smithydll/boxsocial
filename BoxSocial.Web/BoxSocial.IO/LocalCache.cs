@@ -41,6 +41,10 @@ namespace BoxSocial.IO
             {
                 cache = http.Cache;
             }
+            else
+            {
+                cache = new System.Web.Caching.Cache();
+            }
         }
 
         public override object GetCached(string key)

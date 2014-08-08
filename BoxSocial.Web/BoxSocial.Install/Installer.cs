@@ -700,32 +700,32 @@ namespace BoxSocial.Install
                     {
                         if (((ushort)dr["profile_access"] & 0x1000) == 0x1000) // Friends Read
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FriendsGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], Friend.GetFriendsGroupKey(core), "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
                         }
 
                         if (((ushort)dr["profile_access"] & 0x2000) == 0x2000) // Friends Comment
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FriendsGroupKey, "COMMENT");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], Friend.GetFriendsGroupKey(core), "COMMENT");
                         }
 
                         if (((ushort)dr["profile_access"] & 0x0100) == 0x0100) // Family Read
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FamilyGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], Friend.GetFamilyGroupKey(core), "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
                         }
 
                         if (((ushort)dr["profile_access"] & 0x0200) == 0x0200) // Family Comment
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], Friend.FamilyGroupKey, "COMMENT");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], Friend.GetFamilyGroupKey(core), "COMMENT");
                         }
 
                         if (((ushort)dr["profile_access"] & 0x0001) == 0x0001) // Everyone Read
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], User.EveryoneGroupKey, "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], User.GetEveryoneGroupKey(core), "VIEW", "VIEW_NAME", "VIEW_SEXUALITY", "VIEW_CONTACT_INFO", "VIEW_BIOGRAPHY", "VIEW_HOMEPAGE", "VIEW_GROUPS", "VIEW_NETWORKS", "VIEW_FRIENDS", "VIEW_FAMILY", "VIEW_COLLEAGUES");
                         }
 
                         if (((ushort)dr["profile_access"] & 0x0002) == 0x0002) // Everyone Comment
                         {
-                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(typeof(User)), (long)dr["user_id"], User.RegisteredUsersGroupKey, "COMMENT");
+                            Access.CreateGrantForPrimitive(core, ItemKey.GetTypeId(core, typeof(User)), (long)dr["user_id"], User.GetRegisteredUsersGroupKey(core), "COMMENT");
                         }
                     }
                 }
@@ -751,17 +751,17 @@ namespace BoxSocial.Install
                     {
                         if (((ushort)dr["page_access"] & 0x1000) == 0x1000) // Friends Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.FriendsGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.GetFriendsGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["page_access"] & 0x0100) == 0x0100) // Family Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.FamilyGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], Friend.GetFamilyGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["page_access"] & 0x0001) == 0x0001) // Everyone Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], User.EveryoneGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Internals.Page"], (long)dr["page_id"], User.GetEveryoneGroupKey(core), "VIEW");
                         }
                     }
                 }
@@ -787,32 +787,32 @@ namespace BoxSocial.Install
                     {
                         if (((ushort)dr["blog_access"] & 0x1000) == 0x1000) // Friends Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FriendsGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.GetFriendsGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["blog_access"] & 0x2000) == 0x2000) // Friends Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FriendsGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.GetFriendsGroupKey(core), "COMMENT_ITEMS", "RATE_ITEMS");
                         }
 
                         if (((ushort)dr["blog_access"] & 0x0100) == 0x0100) // Family Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FamilyGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.GetFamilyGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["blog_access"] & 0x0200) == 0x0200) // Family Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.FamilyGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], Friend.GetFamilyGroupKey(core), "COMMENT_ITEMS", "RATE_ITEMS");
                         }
 
                         if (((ushort)dr["blog_access"] & 0x0001) == 0x0001) // Everyone Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.EveryoneGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.GetEveryoneGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["blog_access"] & 0x0002) == 0x0002) // Everyone Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.RegisteredUsersGroupKey, "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Blog.Blog"], (long)dr["user_id"], User.GetRegisteredUsersGroupKey(core), "COMMENT_ITEMS", "RATE_ITEMS");
                         }
                     }
                 }
@@ -838,32 +838,32 @@ namespace BoxSocial.Install
                     {
                         if (((ushort)dr["gallery_access"] & 0x1000) == 0x1000) // Friends Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FriendsGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.GetFriendsGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["gallery_access"] & 0x2000) == 0x2000) // Friends Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FriendsGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.GetFriendsGroupKey(core), "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
                         }
 
                         if (((ushort)dr["gallery_access"] & 0x0100) == 0x0100) // Family Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FamilyGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.GetFamilyGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["gallery_access"] & 0x0200) == 0x0200) // Family Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.FamilyGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], Friend.GetFamilyGroupKey(core), "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
                         }
 
                         if (((ushort)dr["gallery_access"] & 0x0001) == 0x0001) // Everyone Read
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.EveryoneGroupKey, "VIEW");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.GetEveryoneGroupKey(core), "VIEW");
                         }
 
                         if (((ushort)dr["gallery_access"] & 0x0002) == 0x0002) // Everyone Comment
                         {
-                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.RegisteredUsersGroupKey, "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
+                            Access.CreateGrantForPrimitive(core, typeIds["BoxSocial.Applications.Gallery.Gallery"], (long)dr["gallery_id"], User.GetRegisteredUsersGroupKey(core), "COMMENT", "COMMENT_ITEMS", "RATE_ITEMS");
                         }
                     }
                 }
@@ -1459,8 +1459,8 @@ namespace BoxSocial.Install
                 SelectQuery query = new SelectQuery(typeof(User));
                 DataTable dt = db.Query(query);
 
-                AccessControlPermission acpView = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "VIEW");
-                AccessControlPermission acpComment = new AccessControlPermission(core, ItemType.GetTypeId(typeof(User)), "COMMENT");
+                AccessControlPermission acpView = new AccessControlPermission(core, ItemType.GetTypeId(core, typeof(User)), "VIEW");
+                AccessControlPermission acpComment = new AccessControlPermission(core, ItemType.GetTypeId(core, typeof(User)), "COMMENT");
 
                 /*foreach (DataRow dr in dt.Rows)
                 {
@@ -1476,14 +1476,14 @@ namespace BoxSocial.Install
                 query = new SelectQuery(typeof(Page));
                 dt = db.Query(query);
 
-                acpView = new AccessControlPermission(core, ItemType.GetTypeId(typeof(Page)), "VIEW");
+                acpView = new AccessControlPermission(core, ItemType.GetTypeId(core, typeof(Page)), "VIEW");
 
                 foreach (DataRow dr in dt.Rows)
                 {
                     Page page = new Page(core, null, dr);
 
                     // EVERYONE
-                    AccessControlGrant.Create(core, User.EveryoneGroupKey, page.ItemKey, acpView.Id, AccessControlGrants.Allow);
+                    AccessControlGrant.Create(core, User.GetEveryoneGroupKey(core), page.ItemKey, acpView.Id, AccessControlGrants.Allow);
                 }
 
                 return;
@@ -2661,11 +2661,11 @@ namespace BoxSocial.Install
             }
 
             Access.CreateAllGrantsForOwner(core, newUser);
-            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW");
-            Access.CreateGrantForPrimitive(core, newUser, User.EveryoneGroupKey, "VIEW_STATUS");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "COMMENT");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FriendsGroupKey, "VIEW_FRIENDS");
-            Access.CreateGrantForPrimitive(core, newUser, Friend.FamilyGroupKey, "VIEW_FAMILY");
+            Access.CreateGrantForPrimitive(core, newUser, User.GetEveryoneGroupKey(core), "VIEW");
+            Access.CreateGrantForPrimitive(core, newUser, User.GetEveryoneGroupKey(core), "VIEW_STATUS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFriendsGroupKey(core), "COMMENT");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFriendsGroupKey(core), "VIEW_FRIENDS");
+            Access.CreateGrantForPrimitive(core, newUser, Friend.GetFamilyGroupKey(core), "VIEW_FAMILY");
 
             return userId;
 		}

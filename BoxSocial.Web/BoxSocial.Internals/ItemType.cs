@@ -272,9 +272,19 @@ namespace BoxSocial.Internals
 			return it;
 		}
 
-        public static long GetTypeId(Type type)
+        public static long GetTypeId(Core core, Type type)
         {
-            return ItemKey.GetTypeId(type);
+            return ItemKey.GetTypeId(core, type);
+        }
+
+        public static ItemType GetType(Core core, long typeId)
+        {
+            return ItemKey.GetItemType(core, typeId);
+        }
+
+        public static ItemType GetType(Core core, ItemKey itemKey)
+        {
+            return ItemKey.GetItemType(core, itemKey.TypeId);
         }
 		
 		public override string Uri

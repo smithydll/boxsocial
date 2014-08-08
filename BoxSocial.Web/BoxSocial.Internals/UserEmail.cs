@@ -299,12 +299,12 @@ namespace BoxSocial.Internals
 
             UserEmail newEmail = new UserEmail(core, emailId);
 
-            Access.CreateGrantForPrimitive(core, newEmail, User.CreatorKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newEmail, User.GetCreatorKey(core), "VIEW");
             if (!isRegistration)
             {
-                Access.CreateGrantForPrimitive(core, newEmail, Friend.FriendsGroupKey, "VIEW");
+                Access.CreateGrantForPrimitive(core, newEmail, Friend.GetFriendsGroupKey(core), "VIEW");
             }
-            Access.CreateGrantForPrimitive(core, newEmail, User.EveryoneGroupKey, "RECIEVE_FROM");
+            Access.CreateGrantForPrimitive(core, newEmail, User.GetEveryoneGroupKey(core), "RECIEVE_FROM");
 
             return newEmail;
         }

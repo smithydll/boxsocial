@@ -63,14 +63,6 @@ namespace BoxSocial.Internals
             }
         }
 
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
-            }
-        }
-
         public long UserId
         {
             get
@@ -206,14 +198,6 @@ namespace BoxSocial.Internals
 				return itemKey;
 			}
 		}
-
-        public string ItemType
-        {
-            get
-            {
-                return itemKey.TypeString;
-            }
-        }
 
         public long ItemId
         {

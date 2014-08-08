@@ -391,7 +391,7 @@ namespace BoxSocial.Applications.Pages
 
                 /* LOAD THE DEFAULT ITEM PERMISSIONS */
                 list.Access.CreateAllGrantsForOwner();
-                list.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+                list.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW");
                 //Access.CreateAllGrantsForOwner(core, list);
                 //Access.CreateGrantForPrimitive(core, list, new ItemKey(-2, ItemType.GetTypeId(typeof(User))), "VIEW");
 
@@ -577,7 +577,7 @@ namespace BoxSocial.Applications.Pages
         {
             get
             {
-                return new ItemKey(ownerId, typeof(User));
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 

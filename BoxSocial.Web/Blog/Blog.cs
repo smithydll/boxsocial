@@ -299,8 +299,8 @@ namespace BoxSocial.Applications.Blog
                 Blog newBlog =  new Blog(core, core.Session.LoggedInMember);
 
                 Access.CreateAllGrantsForOwner(core, newBlog);
-                newBlog.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW", "COMMENT_ITEMS", "RATE_ITEMS");
-                newBlog.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
+                newBlog.Access.CreateGrantForPrimitive(Friend.GetFriendsGroupKey(core), "VIEW", "COMMENT_ITEMS", "RATE_ITEMS");
+                newBlog.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW");
 
                 return newBlog;
             }
@@ -452,7 +452,7 @@ namespace BoxSocial.Applications.Blog
                 query.AddFields(Item.GetFieldsPrefixed(core, typeof(BlogEntry)));
 
                 query.AddJoin(JoinTypes.Inner, new DataField(typeof(ItemTag), "item_id"), new DataField(typeof(BlogEntry), "post_id"));
-                query.AddCondition("item_type_id", ItemType.GetTypeId(typeof(BlogEntry)));
+                query.AddCondition("item_type_id", ItemType.GetTypeId(core, typeof(BlogEntry)));
                 query.AddCondition("tag_text_normalised", tag);
             }
 
@@ -1474,7 +1474,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return new ItemKey(userId, typeof(User));
+                return new ItemKey(userId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 

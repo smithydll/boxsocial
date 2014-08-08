@@ -1412,11 +1412,11 @@ namespace BoxSocial.Applications.Gallery
 
             /* LOAD THE DEFAULT ITEM PERMISSIONS */
             Access.CreateAllGrantsForOwner(core, gallery);
-            Access.CreateGrantForPrimitive(core, gallery, User.EveryoneGroupKey, "VIEW");
-            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "COMMENT");
-            Access.CreateGrantForPrimitive(core, gallery, User.EveryoneGroupKey, "VIEW_ITEMS");
-            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "COMMENT_ITEMS");
-            Access.CreateGrantForPrimitive(core, gallery, Friend.FriendsGroupKey, "RATE_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, User.GetEveryoneGroupKey(core), "VIEW");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.GetFriendsGroupKey(core), "COMMENT");
+            Access.CreateGrantForPrimitive(core, gallery, User.GetEveryoneGroupKey(core), "VIEW_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.GetFriendsGroupKey(core), "COMMENT_ITEMS");
+            Access.CreateGrantForPrimitive(core, gallery, Friend.GetFriendsGroupKey(core), "RATE_ITEMS");
 
             return gallery;
         }
@@ -2358,7 +2358,7 @@ namespace BoxSocial.Applications.Gallery
                 {
                     if (settingsId > 0)
                     {
-                        ItemKey gik = new ItemKey(settingsId, typeof(GallerySettings));
+                        ItemKey gik = new ItemKey(settingsId, ItemType.GetTypeId(core, typeof(GallerySettings)));
                         core.ItemCache.RequestItem(gik);
                         settings = (GallerySettings)core.ItemCache[gik];
                         //settings = (GallerySettings)NumberedItem.Reflect(core, new ItemKey(settingsId, typeof(GallerySettings)));
@@ -2482,7 +2482,7 @@ namespace BoxSocial.Applications.Gallery
                 }
                 else
                 {
-                    return new ItemKey(parentId, typeof(Gallery));
+                    return new ItemKey(parentId, ItemType.GetTypeId(core, typeof(Gallery)));
                 }
             }
         }
@@ -2512,7 +2512,7 @@ namespace BoxSocial.Applications.Gallery
         {
             get
             {
-                return ItemType.GetTypeId(typeof(Gallery));
+                return ItemType.GetTypeId(core, typeof(Gallery));
             }
         }
 
@@ -2614,7 +2614,7 @@ namespace BoxSocial.Applications.Gallery
             if (subItems.Count > 0)
             {
 
-                long galleryItemTypeId = ItemType.GetTypeId(typeof(GalleryItem));
+                long galleryItemTypeId = ItemType.GetTypeId(core, typeof(GalleryItem));
                 List<long> itemIds = new List<long>();
 
                 foreach (ItemKey il in subItems)

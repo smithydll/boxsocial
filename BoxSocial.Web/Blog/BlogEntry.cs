@@ -695,7 +695,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return new ItemKey(ownerId, typeof(Blog));
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(Blog)));
             }
         }
 
@@ -867,7 +867,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return new ItemKey(ownerId, ItemType.GetTypeId(typeof(User)));
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 

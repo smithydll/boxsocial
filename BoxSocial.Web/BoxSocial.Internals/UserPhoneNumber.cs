@@ -252,8 +252,8 @@ namespace BoxSocial.Internals
 
             UserPhoneNumber newPhoneNumber = new UserPhoneNumber(core, phoneId);
 
-            Access.CreateGrantForPrimitive(core, newPhoneNumber, User.CreatorKey, "VIEW");
-            Access.CreateGrantForPrimitive(core, newPhoneNumber, Friend.FriendsGroupKey, "VIEW");
+            Access.CreateGrantForPrimitive(core, newPhoneNumber, User.GetCreatorKey(core), "VIEW");
+            Access.CreateGrantForPrimitive(core, newPhoneNumber, Friend.GetFriendsGroupKey(core), "VIEW");
 
             return newPhoneNumber;
         }
@@ -307,7 +307,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(userId, typeof(User));
+                return new ItemKey(userId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 

@@ -129,7 +129,7 @@ namespace BoxSocial.Internals
 
         public override string ToString(Forms.DisplayMedium medium)
         {
-            long tagTypeId = ItemType.GetTypeId(typeof(Tag));
+            long tagTypeId = ItemType.GetTypeId(core, typeof(Tag));
 
             foreach (long tagId in tagIds)
             {

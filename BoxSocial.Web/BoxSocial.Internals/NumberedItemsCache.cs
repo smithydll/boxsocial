@@ -45,8 +45,7 @@ namespace BoxSocial.Internals
         /// A cache of items loaded.
         /// </summary>
         private Dictionary<NumberedItemId, NumberedItem> itemsCached = new Dictionary<NumberedItemId, NumberedItem>(128);
-        private static Object itemsPersistedLock = new object();
-        private static Dictionary<NumberedItemId, NumberedItem> itemsPersisted = null;
+        private Dictionary<NumberedItemId, NumberedItem> itemsPersisted = null;
 
         /// <summary>
         /// A list of item Ids for batched loading
@@ -60,57 +59,30 @@ namespace BoxSocial.Internals
 
             if (itemsPersisted == null)
             {
-                object o = null;
-                System.Web.Caching.Cache cache;
+                object o = core.Cache.GetCached("NumberedItems");
 
-                if (HttpContext.Current != null && HttpContext.Current.Cache != null)
+                if (o != null && o is Dictionary<NumberedItemId, NumberedItem>)
                 {
-                    cache = HttpContext.Current.Cache;
+                    itemsPersisted = (Dictionary<NumberedItemId, NumberedItem>)o;
                 }
                 else
                 {
-                    cache = new System.Web.Caching.Cache();
-                }
-
-                try
-                {
-                    if (cache != null)
-                    {
-                        o = cache.Get("NumberedItems");
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                }
-
-                lock (itemsPersistedLock)
-                {
-                    if (o != null && o is Dictionary<NumberedItemId, NumberedItem>)
-                    {
-                        itemsPersisted = (Dictionary<NumberedItemId, NumberedItem>)o;
-                    }
-                    else
-                    {
-                        itemsPersisted = new Dictionary<NumberedItemId, NumberedItem>(32);
-                    }
+                    itemsPersisted = new Dictionary<NumberedItemId, NumberedItem>(32);
                 }
             }
 
             if (itemsPersisted != null)
             {
-                lock (itemsPersistedLock)
+                foreach (NumberedItemId nii in itemsPersisted.Keys)
                 {
-                    foreach (NumberedItemId nii in itemsPersisted.Keys)
-                    {
-                        itemsCached.Add(nii, itemsPersisted[nii]);
-                    }
+                    itemsCached.Add(nii, itemsPersisted[nii]);
                 }
             }
         }
 
         public void RegisterType(Type type)
         {
-            long typeId = ItemType.GetTypeId(type);
+            long typeId = ItemType.GetTypeId(core, type);
             if (!typesAccessed.ContainsKey(typeId))
             {
                 typesAccessed.Add(typeId, type);
@@ -169,22 +141,22 @@ namespace BoxSocial.Internals
             if (!typesAccessed.ContainsKey(itemKey.TypeId))
             {
                 // We need to make sure that the application is loaded
-                if (itemKey.ApplicationId > 0)
+                if (itemKey.GetType(core).ApplicationId > 0)
                 {
                     core.ItemCache.RegisterType(typeof(ApplicationEntry));
 
-                    ItemKey applicationKey = new ItemKey(itemKey.ApplicationId, typeof(ApplicationEntry));
+                    ItemKey applicationKey = new ItemKey(itemKey.GetType(core).ApplicationId, ItemType.GetTypeId(core, typeof(ApplicationEntry)));
                     core.ItemCache.RequestItem(applicationKey);
 
                     ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
 
-                    typesAccessed.Add(itemKey.TypeId, ae.Assembly.GetType(itemKey.TypeString));
+                    typesAccessed.Add(itemKey.TypeId, ae.Assembly.GetType(itemKey.GetType(core).TypeNamespace));
                 }
                 else
                 {
                     try
                     {
-                        typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.TypeString));
+                        typesAccessed.Add(itemKey.TypeId, Type.GetType(itemKey.GetType(core).TypeNamespace));
                     }
                     catch
                     {
@@ -211,7 +183,7 @@ namespace BoxSocial.Internals
                 loadBatchedIds(key.TypeId, key.Id);
                 NumberedItem item = itemsCached[new NumberedItemId(key.Id, key.TypeId)];
 
-                if (key.TypeId == ItemType.GetTypeId(typeof(ApplicationEntry)))
+                if (key.TypeId == ItemType.GetTypeId(core, typeof(ApplicationEntry)))
                 {
                     ApplicationEntry ae = (ApplicationEntry)item;
 
@@ -308,7 +280,7 @@ namespace BoxSocial.Internals
                         // this may seem counter intuitive, but the items self-cache through the RegisterItem(NumberedItem) method
                         NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, reader }) as NumberedItem;
 
-                        NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
+                        NumberedItemId loadedId = new NumberedItemId(item.Id, ItemType.GetTypeId(core, typeToGet));
                         batchedItemIds.Remove(loadedId);
                     }
 
@@ -324,34 +296,14 @@ namespace BoxSocial.Internals
                         // this may seem counter intuitive, but the items self-cache through the RegisterItem(NumberedItem) method
                         NumberedItem item = Activator.CreateInstance(typeToGet, new object[] { core, dr }) as NumberedItem;
 
-                        NumberedItemId loadedId = new NumberedItemId(item.Id, typeToGet);
+                        NumberedItemId loadedId = new NumberedItemId(item.Id, ItemType.GetTypeId(core, typeToGet));
                         batchedItemIds.Remove(loadedId);
                     }
                 }
 
                 if (itemsPersisted != null)
                 {
-                    System.Web.Caching.Cache cache;
-
-                    if (HttpContext.Current != null && HttpContext.Current.Cache != null)
-                    {
-                        cache = HttpContext.Current.Cache;
-                    }
-                    else
-                    {
-                        cache = new System.Web.Caching.Cache();
-                    }
-
-                    if (cache != null)
-                    {
-                        try
-                        {
-                            cache.Add("NumberedItems", itemsPersisted, null, System.Web.Caching.Cache.NoAbsoluteExpiration, new TimeSpan(1, 0, 0), CacheItemPriority.Default, null);
-                        }
-                        catch (NullReferenceException)
-                        {
-                        }
-                    }
+                    core.Cache.SetCached("NumberedItems", itemsPersisted, new TimeSpan(1, 0, 0), CacheItemPriority.Default);
                 }
             }
         }

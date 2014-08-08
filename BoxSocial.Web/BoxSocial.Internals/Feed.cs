@@ -72,7 +72,7 @@ namespace BoxSocial.Internals
 
             foreach (Action action in tempActions)
             {
-                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.GetType(core).ApplicationId, ItemType.GetTypeId(core, typeof(ApplicationEntry))));
             }
 
             foreach (Action action in tempActions)
@@ -153,7 +153,7 @@ namespace BoxSocial.Internals
 
             foreach (Action action in tempActions)
             {
-                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.GetType(core).ApplicationId, ItemType.GetTypeId(core, typeof(ApplicationEntry))));
             }
 
             foreach (Action action in tempActions)
@@ -225,7 +225,7 @@ namespace BoxSocial.Internals
                 core.LoadUserProfiles(friendIds);
 
                 query.AddCondition("action_primitive_id", ConditionEquality.In, friendIds);
-                query.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+                query.AddCondition("action_primitive_type_id", ItemKey.GetTypeId(core, typeof(User)));
 
                 {
                     long lastId = 0;
@@ -262,7 +262,7 @@ namespace BoxSocial.Internals
                         foreach (Action action in tempActions)
                         {
                             core.PrimitiveCache.LoadPrimitiveProfile(action.OwnerKey);
-                            core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.ApplicationId, typeof(ApplicationEntry)));
+                            core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.GetType(core).ApplicationId, ItemKey.GetTypeId(core, typeof(ApplicationEntry))));
                         }
 
                         foreach (Action action in tempActions)
@@ -420,7 +420,7 @@ namespace BoxSocial.Internals
                         feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
                     }
 
-                    if (interactItemKey.ImplementsLikeable)
+                    if (interactItemKey.GetType(core).Likeable)
                     {
                         feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
 
@@ -431,7 +431,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
-                    if (interactItemKey.ImplementsCommentable)
+                    if (interactItemKey.GetType(core).Commentable)
                     {
                         feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
 
@@ -445,7 +445,7 @@ namespace BoxSocial.Internals
                     if (feedAction.PermissiveParent.Access.IsPublic())
                     {
                         feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                        if (interactItemKey.ImplementsShareable)
+                        if (interactItemKey.GetType(core).Shareable)
                         {
                             feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
                             //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);
@@ -505,7 +505,7 @@ namespace BoxSocial.Internals
                 feedItemVariableCollection.Parse("ID", feedAction.ActionItemKey.Id);
                 feedItemVariableCollection.Parse("TYPE_ID", feedAction.ActionItemKey.TypeId);
 
-                if (feedAction.ActionItemKey.ImplementsLikeable)
+                if (feedAction.ActionItemKey.GetType(core).Likeable)
                 {
                     feedItemVariableCollection.Parse("LIKEABLE", "TRUE");
 
@@ -516,7 +516,7 @@ namespace BoxSocial.Internals
                     }
                 }
 
-                if (feedAction.ActionItemKey.ImplementsCommentable)
+                if (feedAction.ActionItemKey.GetType(core).Commentable)
                 {
                     feedItemVariableCollection.Parse("COMMENTABLE", "TRUE");
 
@@ -530,7 +530,7 @@ namespace BoxSocial.Internals
                 if (feedAction.PermissiveParent.Access.IsPublic())
                 {
                     feedItemVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    if (feedAction.ActionItemKey.ImplementsShareable)
+                    if (feedAction.ActionItemKey.GetType(core).Shareable)
                     {
                         feedItemVariableCollection.Parse("SHAREABLE", "TRUE");
                         //feedItemVariableCollection.Parse("U_SHARE", feedAction.ShareUri);

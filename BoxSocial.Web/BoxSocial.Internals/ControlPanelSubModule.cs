@@ -538,7 +538,7 @@ namespace BoxSocial.Internals
                 query.AddFields("notification_primitive_type_id");
                 query.AddCondition("notification_verification_string", core.Http.Query["nvid"]);
                 query.AddCondition("notification_primitive_id", core.Session.LoggedInMember.Id);
-                query.AddCondition("notification_primitive_type_id", ItemType.GetTypeId(typeof(User)));
+                query.AddCondition("notification_primitive_type_id", ItemType.GetTypeId(core, typeof(User)));
 
                 if (core.Db.Query(query).Rows.Count == 0)
                 {

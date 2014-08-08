@@ -50,7 +50,7 @@ namespace BoxSocial.Musician
         {
             get
             {
-                ItemKey ownerKey = new ItemKey(musicianId, ItemKey.GetTypeId(typeof(Musician)));
+                ItemKey ownerKey = new ItemKey(musicianId, ItemKey.GetTypeId(core, typeof(Musician)));
                 if (musician == null || ownerKey.Id != musician.Id || ownerKey.TypeId != musician.TypeId)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
@@ -198,12 +198,9 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static ItemKey FanGroupKey
+        public static ItemKey GetFanGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(Fan)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(Fan)));
         }
     }
 

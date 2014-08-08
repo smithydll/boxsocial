@@ -42,13 +42,6 @@ namespace BoxSocial.Internals
             hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
         }
 
-        public NumberedItemId(long itemId, Type type)
-            : base(itemId, type)
-        {
-            this.type = type;
-            hashCode = TypeId.GetHashCode() ^ Id.GetHashCode();
-        }
-
         public new int CompareTo(object obj)
         {
             NumberedItemId pk = obj as NumberedItemId;
@@ -119,7 +112,7 @@ namespace BoxSocial.Internals
             {
                 if (key == null)
                 {
-                    key = new ItemKey(Id, this.GetType().FullName);
+                    key = new ItemKey(Id, ItemType.GetTypeId(core, this.GetType()));
                 }
                 return key;
             }
@@ -350,9 +343,9 @@ namespace BoxSocial.Internals
 
         public static NumberedItem Reflect(Core core, ItemKey ik)
         {
-            if (ik.Type != null)
+            if (ik.GetType(core) != null)
             {
-                if (ik.Type.IsSubclassOf(typeof(Primitive)))
+                if (ik.GetType(core).GetType().IsSubclassOf(typeof(Primitive)))
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ik);
                     return core.PrimitiveCache[ik];
@@ -370,19 +363,19 @@ namespace BoxSocial.Internals
             }
 
             Type tType = null;
-            
-            if (ik.ApplicationId > 0)
+
+            if (ik.GetType(core).ApplicationId > 0)
             {
                 core.ItemCache.RegisterType(typeof(ApplicationEntry));
-                ItemKey applicationKey = new ItemKey(ik.ApplicationId, typeof(ApplicationEntry));
+                ItemKey applicationKey = new ItemKey(ik.GetType(core).ApplicationId, ItemKey.GetTypeId(core, typeof(ApplicationEntry)));
                 core.ItemCache.RequestItem(applicationKey);
                 ApplicationEntry ae = (ApplicationEntry)core.ItemCache[applicationKey];
-    
-                tType = ae.Assembly.GetType(ik.TypeString);
+
+                tType = ae.Assembly.GetType(ik.GetType(core).TypeNamespace);
             }
             else
             {
-                tType = Type.GetType(ik.TypeString);
+                tType = Type.GetType(ik.GetType(core).TypeNamespace);
             }
 
             return (Activator.CreateInstance(tType, new object[] { core, ik.Id }) as NumberedItem);

@@ -318,7 +318,7 @@ namespace BoxSocial.Applications.Forum
             query.AddJoin(JoinTypes.Inner, User.GetTable(typeof(User)), "user_id", "user_id");
 
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(ForumMember), "user_id"), new DataField(typeof(ItemInfo), "info_item_id"));
-            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(User)));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(core, typeof(User)));
 
             if ((loadOptions & UserLoadOptions.Info) == UserLoadOptions.Info)
             {

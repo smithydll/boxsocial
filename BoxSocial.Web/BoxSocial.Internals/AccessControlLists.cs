@@ -646,18 +646,18 @@ namespace BoxSocial.Internals
                             foreach (PrimitivePermissionGroup ppg in groups)
                             {
                                 bool flag = true;
-                                if (ppg.ItemKey.Equals(User.EveryoneGroupKey) &&
+                                if (ppg.ItemKey.Equals(User.GetEveryoneGroupKey(core)) &&
                                     itemPermission.PermissionType == PermissionTypes.Interact)
                                 {
                                     flag = false;
 
                                     // Add registered users instead of everyone for interact by default
-                                    if (!keysGranted.Contains(User.RegisteredUsersGroupKey))
+                                    if (!keysGranted.Contains(User.GetRegisteredUsersGroupKey(core)))
                                     {
-                                        AccessControlGrant newACG = AccessControlGrant.Create(core, User.RegisteredUsersGroupKey, item.ItemKey, itemPermission.Id, AccessControlGrants.Allow);
+                                        AccessControlGrant newACG = AccessControlGrant.Create(core, User.GetRegisteredUsersGroupKey(core), item.ItemKey, itemPermission.Id, AccessControlGrants.Allow);
                                         itemGrants.Add(newACG);
                                     }
-                                    keysPosted.Add(User.RegisteredUsersGroupKey);
+                                    keysPosted.Add(User.GetRegisteredUsersGroupKey(core));
                                 }
 
                                 if (flag)

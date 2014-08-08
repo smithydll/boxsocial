@@ -51,24 +51,24 @@ namespace BoxSocial.FrontEnd
 
             AppPrimitives viewingPrimitive = AppPrimitives.None;
 
-            if (typeId == 0 || typeId == ItemKey.GetTypeId(typeof(User)))
+            if (typeId == 0 || typeId == ItemKey.GetTypeId(core, typeof(User)))
 			{
-				typeId = ItemKey.GetTypeId(typeof(User));
+				typeId = ItemKey.GetTypeId(core, typeof(User));
                 viewingPrimitive = AppPrimitives.Member;
 			}
-			else if (typeId == ItemKey.GetTypeId(typeof(UserGroup)))
+			else if (typeId == ItemKey.GetTypeId(core, typeof(UserGroup)))
 			{					
                 viewingPrimitive = AppPrimitives.Group;
 			}
-			else if (typeId == ItemKey.GetTypeId(typeof(Network)))
+			else if (typeId == ItemKey.GetTypeId(core, typeof(Network)))
 			{
                 viewingPrimitive = AppPrimitives.Network;
 			}
-			else if (typeId == ItemKey.GetTypeId(typeof(ApplicationEntry)))
+			else if (typeId == ItemKey.GetTypeId(core, typeof(ApplicationEntry)))
 			{
                 viewingPrimitive = AppPrimitives.Application;
 			}
-			else if (typeId == ItemKey.GetTypeId(typeof(Musician.Musician)))
+			else if (typeId == ItemKey.GetTypeId(core, typeof(Musician.Musician)))
 			{
                 viewingPrimitive = AppPrimitives.Musician;
             }

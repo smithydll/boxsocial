@@ -230,7 +230,7 @@ namespace BoxSocial.Internals
             }
 
             DataTable pagesTable = db.Query(string.Format("SELECT page_id, page_slug, page_parent_path FROM user_pages WHERE page_item_id = {0} AND page_item_type_id = {1} ORDER BY page_order ASC;",
-                LoggedInMember.UserId, ItemKey.GetTypeId(typeof(User))));
+                LoggedInMember.UserId, ItemKey.GetTypeId(core, typeof(User))));
 
             SelectBox pagesSelectBox = new SelectBox("homepage");
 

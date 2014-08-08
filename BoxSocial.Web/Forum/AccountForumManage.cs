@@ -116,11 +116,11 @@ namespace BoxSocial.Applications.Forum
                         settings = new ForumSettings(core, thisForum.Owner);
                     }
                     //ForumSettings settings = new ForumSettings(core, thisForum.Owner);
-                    template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", settings.Id, ItemType.GetTypeId(typeof(ForumSettings))), true));
+                    template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", settings.Id, ItemType.GetTypeId(core, typeof(ForumSettings))), true));
                 }
                 else
                 {
-                    template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", thisForum.Id, ItemType.GetTypeId(typeof(Forum))), true));
+                    template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", thisForum.Id, ItemType.GetTypeId(core, typeof(Forum))), true));
                 }
 
                 List<Forum> forums = thisForum.GetForums();
@@ -135,7 +135,7 @@ namespace BoxSocial.Applications.Forum
                     forumVariableCollection.Parse("U_EDIT", BuildUri("forum", "edit", forum.Id));
                     forumVariableCollection.Parse("U_MOVE_UP", BuildUri("forum", "move-up", forum.Id));
                     forumVariableCollection.Parse("U_MOVE_DOWN", BuildUri("forum", "move-down", forum.Id));
-                    forumVariableCollection.Parse("U_EDIT_PERMISSION", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", forum.Id, ItemType.GetTypeId(typeof(Forum))), true));
+                    forumVariableCollection.Parse("U_EDIT_PERMISSION", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", forum.Id, ItemType.GetTypeId(core, typeof(Forum))), true));
                     forumVariableCollection.Parse("U_DELETE", BuildUri("forum", "delete", forum.Id));
                 }
             }

@@ -165,7 +165,7 @@ namespace BoxSocial.Internals
                 string fragment = core.Prose.GetString(verb);
                 if (itemOwnerKey.Id > 0)
                 {
-                    if (itemOwnerKey.TypeId == ItemType.GetTypeId(typeof(User)))
+                    if (itemOwnerKey.TypeId == ItemType.GetTypeId(core, typeof(User)))
                     {
                         if (itemOwnerKey.Id == ownerKey.Id)
                         {
@@ -435,7 +435,7 @@ namespace BoxSocial.Internals
 
             InsertQuery iQuery = new InsertQuery("notifications");
             iQuery.AddField("notification_primitive_id", receiver.Id);
-            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(core, typeof(User)));
             if (itemKey != null)
             {
                 iQuery.AddField("notification_item_id", itemKey.Id);
@@ -487,7 +487,7 @@ namespace BoxSocial.Internals
 
             InsertQuery iQuery = new InsertQuery("notifications");
             iQuery.AddField("notification_primitive_id", receiver.Id);
-            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            iQuery.AddField("notification_primitive_type_id", ItemKey.GetTypeId(core, typeof(User)));
             if (itemKey != null)
             {
                 iQuery.AddField("notification_item_id", itemKey.Id);
@@ -544,7 +544,7 @@ namespace BoxSocial.Internals
             SelectQuery query = Notification.GetSelectQueryStub(core, typeof(Notification));
             query.AddCondition("notification_read", false);
             query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(core, typeof(User)));
             query.AddCondition("notification_time_ut", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp(DateTime.UtcNow.AddDays(-30)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
             query.LimitCount = 128;
@@ -576,7 +576,7 @@ namespace BoxSocial.Internals
             query.AddCondition("notification_read", false);
             query.AddCondition("notification_seen", false);
             query.AddCondition("notification_primitive_id", core.LoggedInMemberId);
-            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(typeof(User)));
+            query.AddCondition("notification_primitive_type_id", ItemKey.GetTypeId(core, typeof(User)));
             query.AddSort(SortOrder.Descending, "notification_time_ut");
 
             System.Data.Common.DbDataReader notificationsReader = core.Db.ReaderQuery(query);

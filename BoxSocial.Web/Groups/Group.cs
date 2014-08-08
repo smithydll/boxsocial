@@ -883,7 +883,7 @@ namespace BoxSocial.Groups
             query.AddFields(UserGroup.GetFieldsPrefixed(core, typeof(UserGroup)));
             query.AddFields(ItemInfo.GetFieldsPrefixed(core, typeof(ItemInfo)));
             TableJoin join = query.AddJoin(JoinTypes.Left, new DataField(typeof(UserGroup), "group_id"), new DataField(typeof(ItemInfo), "info_item_id"));
-            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(typeof(UserGroup)));
+            join.AddCondition(new DataField(typeof(ItemInfo), "info_item_type_id"), ItemKey.GetTypeId(core, typeof(UserGroup)));
 
             if ((loadOptions & UserGroupLoadOptions.Info) == UserGroupLoadOptions.Info)
             {
@@ -2079,12 +2079,12 @@ namespace BoxSocial.Groups
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(User.CreatorKey, "CREATOR", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(User.RegisteredUsersGroupKey, "REGISTERED_USERS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOperatorsGroupKey, "OPERATORS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupOfficersGroupKey, "OFFICERS", null, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GroupMembersGroupKey, "MEMBERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetCreatorKey(core), "CREATOR", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetEveryoneGroupKey(core), "EVERYONE", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetRegisteredUsersGroupKey(core), "REGISTERED_USERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GetGroupOperatorsGroupKey(core), "OPERATORS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GetGroupOfficersGroupKey(core), "OFFICERS", null, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(UserGroup.GetGroupMembersGroupKey(core), "MEMBERS", null, string.Empty));
 
             return ppgs;
         }
@@ -2237,28 +2237,19 @@ namespace BoxSocial.Groups
         }
 
 
-        public static ItemKey GroupOperatorsGroupKey
+        public static ItemKey GetGroupOperatorsGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupOperator)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(GroupOperator)));
         }
 
-        public static ItemKey GroupOfficersGroupKey
+        public static ItemKey GetGroupOfficersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupOfficer)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(GroupOfficer)));
         }
 
-        public static ItemKey GroupMembersGroupKey
+        public static ItemKey GetGroupMembersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(GroupMember)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(GroupMember)));
         }
 
         internal static string BuildCategoryUri(Core core, Internals.Category category)

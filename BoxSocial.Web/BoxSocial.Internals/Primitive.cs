@@ -161,7 +161,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return ItemKey.GetTypeId(this.GetType());
+                return ItemKey.GetTypeId(core, this.GetType());
             }
         }
 

@@ -647,9 +647,9 @@ namespace BoxSocial.Musician
             {
             }
 
-            Access.CreateGrantForPrimitive(core, newMusician, User.EveryoneGroupKey, "VIEW");
-            Access.CreateGrantForPrimitive(core, newMusician, User.RegisteredUsersGroupKey, "COMMENT");
-            Access.CreateGrantForPrimitive(core, newMusician, User.RegisteredUsersGroupKey, "COMMENT_GIGS");
+            Access.CreateGrantForPrimitive(core, newMusician, User.GetEveryoneGroupKey(core), "VIEW");
+            Access.CreateGrantForPrimitive(core, newMusician, User.GetRegisteredUsersGroupKey(core), "COMMENT");
+            Access.CreateGrantForPrimitive(core, newMusician, User.GetRegisteredUsersGroupKey(core), "COMMENT_GIGS");
 
             return newMusician;
         }
@@ -1181,9 +1181,9 @@ namespace BoxSocial.Musician
         {
             List<PrimitivePermissionGroup> ppgs = new List<PrimitivePermissionGroup>();
 
-            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(typeof(MusicianMember)), -1, "GROUP_MEMBERS", string.Empty, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(Fan.FanGroupKey, "FANS", string.Empty, string.Empty));
-            ppgs.Add(new PrimitivePermissionGroup(User.EveryoneGroupKey, "EVERYONE", string.Empty, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(ItemType.GetTypeId(core, typeof(MusicianMember)), -1, "GROUP_MEMBERS", string.Empty, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(Fan.GetFanGroupKey(core), "FANS", string.Empty, string.Empty));
+            ppgs.Add(new PrimitivePermissionGroup(User.GetEveryoneGroupKey(core), "EVERYONE", string.Empty, string.Empty));
 
             return ppgs;
         }
@@ -1484,20 +1484,14 @@ namespace BoxSocial.Musician
             }
         }
 
-        public static ItemKey MusicianMembersGroupKey
+        public static ItemKey GetMusicianMembersGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(MusicianMember)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(MusicianMember)));
         }
 
-        public static ItemKey MusicianFansGroupKey
+        public static ItemKey GetMusicianFansGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(Fan)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(Fan)));
         }
 
         public string Noun

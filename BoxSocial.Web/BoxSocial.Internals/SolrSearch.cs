@@ -97,7 +97,7 @@ namespace BoxSocial.Internals
                 TermQuery friendQuery = new TermQuery(new Term("item_public", "2"));
                 accessFriendQuery.Add(friendQuery, Occur.MUST);
 
-                string userTypeId = ItemType.GetTypeId(typeof(User)).ToString();
+                string userTypeId = ItemType.GetTypeId(core, typeof(User)).ToString();
                 foreach (long friendId in friends)
                 {
                     BooleanQuery ownerQuery = new BooleanQuery();
@@ -117,7 +117,7 @@ namespace BoxSocial.Internals
 
             if (filterByType != null)
             {
-                TermQuery typeQuery = new TermQuery(new Term("item_type_id", ItemType.GetTypeId(filterByType).ToString()));
+                TermQuery typeQuery = new TermQuery(new Term("item_type_id", ItemType.GetTypeId(core, filterByType).ToString()));
 
                 query.Add(typeQuery, Occur.MUST);
             }
@@ -370,7 +370,7 @@ namespace BoxSocial.Internals
                 writer.WritePropertyName("owner_type_id");
                 writer.WriteValue(item.Owner.ItemKey.TypeId.ToString());
                 writer.WritePropertyName("application_id");
-                writer.WriteValue(item.ItemKey.ApplicationId.ToString());
+                writer.WriteValue(item.ItemKey.GetType(core).ApplicationId.ToString());
                 writer.WritePropertyName("item_public");
                 writer.WriteValue(isPublic.ToString());
 

@@ -216,14 +216,14 @@ namespace BoxSocial.Applications.Calendar
             if (owner is User)
             {
                 Access.CreateAllGrantsForOwner(core, newCalendar);
-                newCalendar.Access.CreateGrantForPrimitive(Friend.FriendsGroupKey, "VIEW");
+                newCalendar.Access.CreateGrantForPrimitive(Friend.GetFriendsGroupKey(core), "VIEW");
             }
             if (owner is UserGroup)
             {
-                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOperatorsGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
-                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GroupOfficersGroupKey, "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
-                newCalendar.Access.CreateGrantForPrimitive(User.EveryoneGroupKey, "VIEW");
-                newCalendar.Access.CreateGrantForPrimitive(User.CreatorKey, "EDIT_EVENTS", "EDIT_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GetGroupOperatorsGroupKey(core), "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(UserGroup.GetGroupOfficersGroupKey(core), "VIEW", "CREATE_EVENTS", "CREATE_TASKS", "ASSIGN_TASKS", "EDIT_EVENTS", "EDIT_TASKS");
+                newCalendar.Access.CreateGrantForPrimitive(User.GetEveryoneGroupKey(core), "VIEW");
+                newCalendar.Access.CreateGrantForPrimitive(User.GetCreatorKey(core), "EDIT_EVENTS", "EDIT_TASKS");
             }
 
             return newCalendar;
@@ -256,14 +256,14 @@ namespace BoxSocial.Applications.Calendar
                 eventsReader.Dispose();
             }
 
-            if (owner.TypeId == ItemKey.GetTypeId(typeof(User)))
+            if (owner.TypeId == ItemKey.GetTypeId(core, typeof(User)))
             {
                 // now select events invited to
                 SelectQuery query = Event.GetSelectQueryStub(core, typeof(Event));
                 query.AddFields("event_invites.item_id", "event_invites.item_type_id", "event_invites.inviter_id", "event_invites.event_id");
                 query.AddJoin(JoinTypes.Left, new DataField(typeof(Event), "event_id"), new DataField("event_invites", "event_id"));
                 query.AddCondition("item_id", core.LoggedInMemberId);
-                query.AddCondition("item_type_id", ItemKey.GetTypeId(typeof(User)));
+                query.AddCondition("item_type_id", ItemKey.GetTypeId(core, typeof(User)));
                 QueryCondition qc2 = query.AddCondition("event_time_start_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);
                 qc2.AddCondition("event_time_start_ut", ConditionEquality.LessThanEqual, endTimeRaw);
                 QueryCondition qc3 = qc2.AddCondition(ConditionRelations.Or, "event_time_end_ut", ConditionEquality.GreaterThanEqual, startTimeRaw);

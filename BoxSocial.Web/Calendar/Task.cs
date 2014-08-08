@@ -353,7 +353,7 @@ namespace BoxSocial.Applications.Calendar
                     Task.BuildTaskUri(core, myTask), myTask.Topic));
             }*/
 
-            Access.CreateGrantForPrimitive(core, myTask, Task.AssigneeGroupKey, "EDIT");
+            Access.CreateGrantForPrimitive(core, myTask, Task.GetAssigneeGroupKey(core), "EDIT");
 
             return myTask;
         }
@@ -597,7 +597,7 @@ namespace BoxSocial.Applications.Calendar
 
         public bool IsItemGroupMember(ItemKey viewer, ItemKey key)
         {
-            if (key == Task.AssigneeGroupKey)
+            if (key == Task.GetAssigneeGroupKey(core))
             {
                 if (IsAssignee(viewer))
                 {
@@ -669,17 +669,14 @@ namespace BoxSocial.Applications.Calendar
         {
             List<PrimitivePermissionGroup> itemGroups = new List<PrimitivePermissionGroup>();
 
-            itemGroups.Add(new PrimitivePermissionGroup(Task.AssigneeGroupKey, "Task assignee", string.Empty));
+            itemGroups.Add(new PrimitivePermissionGroup(Task.GetAssigneeGroupKey(core), "Task assignee", string.Empty));
 
             return itemGroups;
         }
 
-        public static ItemKey AssigneeGroupKey
+        public static ItemKey GetAssigneeGroupKey(Core core)
         {
-            get
-            {
-                return new ItemKey(-1, ItemType.GetTypeId(typeof(Task)));
-            }
+            return new ItemKey(-1, ItemType.GetTypeId(core, typeof(Task)));
         }
 
         public string Noun

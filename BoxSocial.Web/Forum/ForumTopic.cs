@@ -122,7 +122,7 @@ namespace BoxSocial.Applications.Forum
                     }
                     else
                     {
-                        ItemKey forumKey = new ItemKey(ForumId, ItemType.GetTypeId(typeof(Forum)));
+                        ItemKey forumKey = new ItemKey(ForumId, ItemType.GetTypeId(core, typeof(Forum)));
                         core.ItemCache.RequestItem(forumKey);
                         forum = (Forum)core.ItemCache[forumKey];
                     }

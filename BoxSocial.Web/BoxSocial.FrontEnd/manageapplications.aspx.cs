@@ -255,7 +255,7 @@ namespace BoxSocial.FrontEnd
                                     {
                                         ApplicationEntry profileAe = new ApplicationEntry(core, "Profile");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
-                                            profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
+                                            profileAe.ApplicationId, applicationId, ItemKey.GetTypeId(core, typeof(ApplicationEntry))));
                                     }
                                     catch
                                     {
@@ -265,7 +265,7 @@ namespace BoxSocial.FrontEnd
                                     {
                                         ApplicationEntry guestbookAe = new ApplicationEntry(core, "GuestBook");
                                         db.UpdateQuery(string.Format(@"INSERT INTO primitive_apps (application_id, item_id, item_type_id) VALUES ({0}, {1}, '{2}');",
-                                            guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(typeof(ApplicationEntry))));
+                                            guestbookAe.ApplicationId, applicationId, ItemKey.GetTypeId(core, typeof(ApplicationEntry))));
                                     }
                                     catch
                                     {

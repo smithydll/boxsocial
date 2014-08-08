@@ -85,7 +85,7 @@ namespace BoxSocial.Applications.Blog
             {
                 template.Parse("U_WRITE_NEW_POST", BuildUri("write"));
             }
-            template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", myBlog.Id, ItemType.GetTypeId(typeof(Blog))), true));
+            template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", myBlog.Id, ItemType.GetTypeId(core, typeof(Blog))), true));
 
             List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, core.TopLevelPageNumber, 25);
 
@@ -102,7 +102,7 @@ namespace BoxSocial.Applications.Blog
                 blogVariableCollection.Parse("U_VIEW", core.Hyperlink.BuildBlogPostUri(LoggedInMember, postedTime.Year, postedTime.Month, be.Id));
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
-                blogVariableCollection.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", be.Id, ItemType.GetTypeId(typeof(BlogEntry))), true));
+                blogVariableCollection.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", be.Id, ItemType.GetTypeId(core, typeof(BlogEntry))), true));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 

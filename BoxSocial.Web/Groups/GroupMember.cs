@@ -167,7 +167,7 @@ namespace BoxSocial.Groups
             loadUser(memberRow);
             //core.LoadUserProfile(userId);
             //loadUserFromUser(core.PrimitiveCache[userId]);
-            core.ItemCache.RequestItem(new ItemKey(Id, typeof(UserInfo)));
+            core.ItemCache.RequestItem(new ItemKey(Id, ItemType.GetTypeId(core, typeof(UserInfo))));
         }
 
         protected override void loadItemInfo(DataRow userRow)

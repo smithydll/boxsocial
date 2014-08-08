@@ -78,7 +78,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(ownerId, ItemType.GetTypeId(typeof(User)));
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 
@@ -401,7 +401,7 @@ namespace BoxSocial.Internals
                 if (item.Access.IsPublic())
                 {
                     statusMessageVariableCollection.Parse("IS_PUBLIC", "TRUE");
-                    if (item.ItemKey.ImplementsShareable)
+                    if (item.ItemKey.GetType(e.Core).Shareable)
                     {
                         statusMessageVariableCollection.Parse("SHAREABLE", "TRUE");
                         statusMessageVariableCollection.Parse("U_SHARE", item.ShareUri);
@@ -526,7 +526,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return new ItemKey(ownerId, typeof(User));
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(User)));
             }
         }
 

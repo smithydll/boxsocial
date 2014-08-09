@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Globalization;
+using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
 using System.Text;
@@ -30,13 +31,28 @@ using System.Web.Configuration;
 
 namespace BoxSocial.IO
 {
-    public abstract class SmsGateway
+    public class HttpSmsGateway : SmsGateway
     {
-        abstract public void SendSms(string toNumber, string message);
+        private string smsEndpoint;
 
-        public bool IsPhoneNumber(string toNumber)
+        public HttpSmsGateway(string smsEndpoint)
         {
-            return true;
+            this.smsEndpoint = smsEndpoint;
+        }
+
+        public override void SendSms(string toNumber, string message)
+        {
+            if (message.Length > 160)
+            {
+                message = message.Substring(0, 160);
+            }
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(string.Format(smsEndpoint, HttpUtility.UrlEncode(toNumber), HttpUtility.UrlEncode(message)));
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.Method = "GET";
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
         }
     }
 }

@@ -81,6 +81,7 @@
     <Compile Include="AmazonSQS.cs" />
     <Compile Include="Cache.cs" />
     <Compile Include="Email.cs" />
+    <Compile Include="HttpSmsGateway.cs" />
     <Compile Include="Job.cs" />
     <Compile Include="JobQueue.cs" />
     <Compile Include="LocalCache.cs" />

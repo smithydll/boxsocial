@@ -106,9 +106,9 @@ namespace BoxSocial.Internals
                 foreach (long id in primitiveTypesnames.Keys)
                 {
                     object p = core.Cache.GetCached(string.Format("itemTypes[{0}]", id));
-                    if (p != null && p is ItemType)
+                    if (p != null && p is HibernateItem)
                     {
-                        primitiveTypes.Add(id, (ItemType)p);
+                        primitiveTypes.Add(id, new ItemType(core, (HibernateItem)p));
                     }
                     else
                     {
@@ -158,8 +158,9 @@ namespace BoxSocial.Internals
                     while (typesReader.Read())
                     {
                         ItemType typeItem = new ItemType(core, typesReader);
+                        HibernateItem typeItemHibernate = new HibernateItem(typesReader);
 
-                        core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                        core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItemHibernate, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                         core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                         core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
 
@@ -193,8 +194,9 @@ namespace BoxSocial.Internals
                 typesReader.Read();
 
                 typeItem = new ItemType(core, typesReader);
+                HibernateItem typeItemHibernate = new HibernateItem(typesReader);
 
-                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItemHibernate, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                 core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                 core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
             }
@@ -219,8 +221,9 @@ namespace BoxSocial.Internals
                 typesReader.Read();
 
                 typeItem = new ItemType(core, typesReader);
+                HibernateItem typeItemHibernate = new HibernateItem(typesReader);
 
-                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItem, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
+                core.Cache.SetCached(string.Format("itemTypes[{0}]", typeItem.Id), typeItemHibernate, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                 core.Cache.SetCached(string.Format("itemTypeIds[{0}]", typeItem.TypeNamespace), typeItem.Id, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
                 core.Cache.SetCached(string.Format("itemApplicationIds[{0}]", typeItem.Id), typeItem.ApplicationId, new TimeSpan(4, 0, 0), CacheItemPriority.NotRemovable);
             }
@@ -258,9 +261,9 @@ namespace BoxSocial.Internals
         {
             object o = core.Cache.GetCached(string.Format("itemTypes[{0}]", typeId));
 
-            if (o != null && o is ItemType)
+            if (o != null && o is HibernateItem)
             {
-                return (ItemType)o;
+                return new ItemType(core, (HibernateItem)o);
             }
             else
             {

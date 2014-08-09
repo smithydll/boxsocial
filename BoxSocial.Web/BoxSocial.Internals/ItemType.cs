@@ -54,6 +54,8 @@ namespace BoxSocial.Internals
         private bool typeImplementsINotifiable;
         [DataField("type_embeddable")]
         private bool typeImplementsIEmbeddable;
+
+        private Type type = null;
 			
 		public long TypeId
 		{
@@ -180,6 +182,21 @@ namespace BoxSocial.Internals
                 throw new InvalidItemTypeException();
             }
         }
+
+        internal ItemType(Core core, HibernateItem typeRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(ItemType_ItemLoad);
+
+            try
+            {
+                loadItemInfo(typeRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidItemTypeException();
+            }
+        }
 		
 		public ItemType(Core core, long typeId)
 			: base(core)
@@ -242,6 +259,22 @@ namespace BoxSocial.Internals
             loadValue(typeRow, "type_notifiable", out typeImplementsINotifiable);
             loadValue(typeRow, "type_embeddable", out typeImplementsIEmbeddable);
         }
+
+        protected override void loadItemInfo(HibernateItem typeRow)
+        {
+            loadValue(typeRow, "type_id", out typeId);
+            loadValue(typeRow, "type_namespace", out typeNamespace);
+            loadValue(typeRow, "type_application_id", out applicationId);
+            loadValue(typeRow, "type_primitive", out typeInheritsPrimitive);
+            loadValue(typeRow, "type_likeable", out typeImplementsILikeable);
+            loadValue(typeRow, "type_commentable", out typeImplementsICommentable);
+            loadValue(typeRow, "type_rateable", out typeImplementsIRateable);
+            loadValue(typeRow, "type_subscribeable", out typeImplementsISubscribeable);
+            loadValue(typeRow, "type_shareable", out typeImplementsIShareable);
+            loadValue(typeRow, "type_viewable", out typeImplementsIViewable);
+            loadValue(typeRow, "type_notifiable", out typeImplementsINotifiable);
+            loadValue(typeRow, "type_embeddable", out typeImplementsIEmbeddable);
+        }
 		
 		private void ItemType_ItemLoad()
         {
@@ -285,6 +318,15 @@ namespace BoxSocial.Internals
         public static ItemType GetType(Core core, ItemKey itemKey)
         {
             return ItemKey.GetItemType(core, itemKey.TypeId);
+        }
+
+        public Type GetItemType()
+        {
+            if (type == null)
+            {
+                type = Type.GetType(typeNamespace);
+            }
+            return type;
         }
 		
 		public override string Uri

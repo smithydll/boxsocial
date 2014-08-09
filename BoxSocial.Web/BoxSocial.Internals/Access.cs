@@ -57,12 +57,8 @@ namespace BoxSocial.Internals
 
         int IComparable.CompareTo(object obj)
         {
-            if (obj.GetType() != typeof(PermissionCacheKey))
-            {
-                return -1;
-            }
-
-            PermissionCacheKey key = (PermissionCacheKey)obj;
+            PermissionCacheKey key = obj as PermissionCacheKey;
+            if (key == null) return -1;
 
             if (permission == key.Permission)
             {
@@ -81,8 +77,8 @@ namespace BoxSocial.Internals
 
         public override bool Equals(object obj)
         {
-            if (obj.GetType() != typeof(PermissionCacheKey)) return false;
-            PermissionCacheKey key = (PermissionCacheKey)obj;
+            PermissionCacheKey key = obj as PermissionCacheKey;
+            if (key == null) return false;
 
             if (permission != key.Permission)
                 return false;
@@ -504,7 +500,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if ((typeof(INestableItem).IsAssignableFrom(ItemKey.GetType(core).GetType())))
+                    if ((typeof(INestableItem).IsAssignableFrom(ItemKey.GetType(core).GetItemType())))
                     {
                         INestableItem ni = (INestableItem)Item;
                         ParentTree parents = ni.GetParents();
@@ -520,7 +516,7 @@ namespace BoxSocial.Internals
                             {
                                 Access parentAccess = new Access(core, Item.PermissiveParentKey, Owner);
                                 //HttpContext.Current.Response.Write(" cached result 0x07");
-                                return CachePermission(permission, viewer, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.GetType(core).GetType(), permission), leaf, true, viewer));
+                                return CachePermission(permission, viewer, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.GetType(core).GetItemType(), permission), leaf, true, viewer));
                                 //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParentKey.Type, permission), leaf, true));
                             }
                         }
@@ -543,7 +539,7 @@ namespace BoxSocial.Internals
                         {
                             Access parentAccess = new Access(core, Item.PermissiveParentKey, Owner);
                             //HttpContext.Current.Response.Write(" cached result 0x10");
-                            return CachePermission(permission, viewer, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.GetType(core).GetType(), permission), leaf, true, viewer));
+                            return CachePermission(permission, viewer, parentAccess.Can(Item.ParentPermissionKey(Item.PermissiveParentKey.GetType(core).GetItemType(), permission), leaf, true, viewer));
                             //return CachePermission(permission, item.PermissiveParent.Access.Can(item.ParentPermissionKey(item.PermissiveParent.GetType(), permission), leaf, true));
                         }
                     }

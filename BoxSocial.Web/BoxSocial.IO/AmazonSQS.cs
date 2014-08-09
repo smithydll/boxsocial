@@ -62,16 +62,34 @@ namespace BoxSocial.IO
 
         private string GetQueueUrl(string queue)
         {
-            if (!queueUrls.ContainsKey(queue))
-            {
-                GetQueueUrlRequest request = new GetQueueUrlRequest();
-                request.QueueName = SanitiseQueueName(queue);
-                GetQueueUrlResponse response = client.GetQueueUrl(request);
+            System.Net.WebException exception = null;
 
-                queueUrls.Add(queue, response.GetQueueUrlResult.QueueUrl);
+            int attempts = 0;
+            while (attempts < 3)
+            {
+                try
+                {
+                    if (!queueUrls.ContainsKey(queue))
+                    {
+                        GetQueueUrlRequest request = new GetQueueUrlRequest();
+                        request.QueueName = SanitiseQueueName(queue);
+                        GetQueueUrlResponse response = client.GetQueueUrl(request);
+
+                        queueUrls.Add(queue, response.GetQueueUrlResult.QueueUrl);
+                    }
+
+                    return queueUrls[queue];
+                }
+                catch (System.Net.WebException ex)
+                {
+                    exception = ex;
+                }
+
+                attempts++;
+                System.Threading.Thread.Sleep(15); // give the remote server some time to recover
             }
 
-            return queueUrls[queue];
+            throw exception;
         }
 
         public override void DeleteQueue(string queue)
@@ -104,26 +122,38 @@ namespace BoxSocial.IO
 
         public override void PushJob(TimeSpan ttl, Job jobMessage)
         {
-            SendMessageRequest request = new SendMessageRequest();
-            //request.DelaySeconds = (int)(ttl.Ticks / TimeSpan.TicksPerSecond);
-            request.QueueUrl = GetQueueUrl(SanitiseQueueName(jobMessage.QueueName));
-            request.MessageBody = JsonConvert.SerializeObject(jobMessage);
-            SendMessageResponse response = client.SendMessage(request);
+            try
+            {
+                SendMessageRequest request = new SendMessageRequest();
+                //request.DelaySeconds = (int)(ttl.Ticks / TimeSpan.TicksPerSecond);
+                request.QueueUrl = GetQueueUrl(SanitiseQueueName(jobMessage.QueueName));
+                request.MessageBody = JsonConvert.SerializeObject(jobMessage);
+                SendMessageResponse response = client.SendMessage(request);
+            }
+            catch (System.Net.WebException)
+            {
+            }
         }
 
         public override List<Job> ClaimJobs(string queue, int count)
         {
             List<Job> claimedJobs = new List<Job>();
 
-            ReceiveMessageRequest request = new ReceiveMessageRequest();
-            request.MaxNumberOfMessages = count;
-            request.QueueUrl = GetQueueUrl(SanitiseQueueName(queue));
-            ReceiveMessageResponse response = client.ReceiveMessage(request);
-
-            for (int i = 0; i < response.ReceiveMessageResult.Message.Count; i++)
+            try
             {
-                Message message = response.ReceiveMessageResult.Message[i];
-                claimedJobs.Add(new Job(queue, message.MessageId, message.ReceiptHandle, message.Body));
+                ReceiveMessageRequest request = new ReceiveMessageRequest();
+                request.MaxNumberOfMessages = count;
+                request.QueueUrl = GetQueueUrl(SanitiseQueueName(queue));
+                ReceiveMessageResponse response = client.ReceiveMessage(request);
+
+                for (int i = 0; i < response.ReceiveMessageResult.Message.Count; i++)
+                {
+                    Message message = response.ReceiveMessageResult.Message[i];
+                    claimedJobs.Add(new Job(queue, message.MessageId, message.ReceiptHandle, message.Body));
+                }
+            }
+            catch (System.Net.WebException)
+            {
             }
 
             return claimedJobs;
@@ -131,10 +161,17 @@ namespace BoxSocial.IO
 
         public override void DeleteJob(Job job)
         {
-            DeleteMessageRequest request = new DeleteMessageRequest();
-            request.QueueUrl = GetQueueUrl(SanitiseQueueName(job.QueueName));
-            request.ReceiptHandle = job.Handle;
-            DeleteMessageResponse response = client.DeleteMessage(request);
+            try
+            {
+                DeleteMessageRequest request = new DeleteMessageRequest();
+                request.QueueUrl = GetQueueUrl(SanitiseQueueName(job.QueueName));
+                request.ReceiptHandle = job.Handle;
+                DeleteMessageResponse response = client.DeleteMessage(request);
+            }
+            catch (System.Net.WebException)
+            {
+                // some jobs won't execute if complete even if in the queue
+            }
         }
 
         public override void CloseConnection()

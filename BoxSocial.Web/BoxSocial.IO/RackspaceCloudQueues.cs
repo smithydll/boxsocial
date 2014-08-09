@@ -83,6 +83,7 @@ namespace BoxSocial.IO
                     }
                 }
 
+                attempts++;
                 System.Threading.Thread.Sleep(15); // give the remote server some time to recover
             }
 
@@ -120,9 +121,12 @@ namespace BoxSocial.IO
                         result.Dispose();
                     }
                 }
+
+                attempts++;
+                System.Threading.Thread.Sleep(15); // give the remote server some time to recover
             }
 
-                throw new ErrorQueryingQueueException();
+            throw new ErrorQueryingQueueException();
         }
 
         public override void PushJob(Job jobMessage)

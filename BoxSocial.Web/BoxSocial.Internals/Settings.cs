@@ -70,6 +70,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string SmsHttpGateway
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-http-gateway"];
+            }
+        }
+
         public string QueueProvider
         {
             get

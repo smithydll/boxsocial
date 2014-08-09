@@ -387,7 +387,7 @@ namespace BoxSocial.FrontEnd
                         }
                     }
 
-                    if (o != null && o.GetType() == typeof(System.Collections.Generic.Dictionary<string, long>))
+                    if (o != null && o is Dictionary<string, long>)
                     {
                         primitiveTypeIds = (Dictionary<string, long>)o;
 

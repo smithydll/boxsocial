@@ -32,6 +32,7 @@ namespace BoxSocial.IO
     public class LocalCache : Cache
     {
         private System.Web.Caching.Cache cache;
+        private Dictionary<string, object> cache2;
         private Http http;
 
         public LocalCache(Http http)
@@ -43,7 +44,8 @@ namespace BoxSocial.IO
             }
             else
             {
-                cache = new System.Web.Caching.Cache();
+                //cache = new System.Web.Caching.Cache();
+                cache2 = new Dictionary<string, object>();
             }
         }
 
@@ -54,6 +56,12 @@ namespace BoxSocial.IO
                 if (cache != null)
                 {
                     return cache.Get(key);
+                }
+                else if (cache2 != null)
+                {
+                    object returnValue = null;
+                    cache2.TryGetValue(key, out returnValue);
+                    return returnValue;
                 }
             }
             catch (NullReferenceException)
@@ -68,6 +76,18 @@ namespace BoxSocial.IO
             if (cache != null)
             {
                 cache.Insert(key, value, null, System.Web.Caching.Cache.NoAbsoluteExpiration, expiresIn, priority, null);
+            }
+            else if (cache2 != null)
+            {
+                cache2[key] = value;
+            }
+        }
+
+        public override void Close()
+        {
+            if (http == null)
+            {
+                cache2 = null;
             }
         }
     }

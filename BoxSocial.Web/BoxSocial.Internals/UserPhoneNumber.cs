@@ -247,6 +247,7 @@ namespace BoxSocial.Internals
             iquery.AddField("phone_type", (byte)phoneType);
             iquery.AddField("phone_time_ut", UnixTime.UnixTimeStamp());
             iquery.AddField("phone_simple_permissions", true);
+            iquery.AddField("phone_validated", false);
 
             long phoneId = core.Db.Query(iquery);
 

@@ -633,14 +633,14 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public static SelectQuery GetSelectQueryStub(Core core, Type type, bool check)
         {
-            if (type != typeof(ItemType))
+            /*if (type != typeof(ItemType))
             {
                 long typeId = ItemType.GetTypeId(core, type);
                 if (typeId > 0 && QueryCache.HasQuery(typeId))
                 {
                     return (SelectQuery)QueryCache.GetQuery(type, typeId);
                 }
-            }
+            }*/
 
             {
                 SelectQuery query;
@@ -712,14 +712,14 @@ namespace BoxSocial.Internals
                         }
                     }*/
 
-                    if (check)
+                    /*if (check)
                     {
                         if (type != typeof(ItemType))
                         {
                             long typeId = ItemType.GetTypeId(core, type);
                             QueryCache.AddQueryToCache(typeId, query);
                         }
-                    }
+                    }*/
                 }
                 return query;
             }

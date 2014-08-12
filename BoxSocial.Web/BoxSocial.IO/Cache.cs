@@ -34,5 +34,7 @@ namespace BoxSocial.IO
         public abstract object GetCached(string key);
 
         public abstract void SetCached(string key, object value, TimeSpan expiresIn, CacheItemPriority priority);
+
+        public abstract void Close();
     }
 }

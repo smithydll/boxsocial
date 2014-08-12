@@ -33,7 +33,7 @@ namespace BoxSocial.IO
 {
     public class QueryCache
     {
-        private static object queryLock = new object();
+        /*private static object queryLock = new object();
         private static Dictionary<long, string> queries = new Dictionary<long, string>(256);
 
         public static Query GetQuery(Type type, long typeId)
@@ -136,6 +136,6 @@ namespace BoxSocial.IO
                     }
                 }
             }
-        }
+        }*/
     }
 }

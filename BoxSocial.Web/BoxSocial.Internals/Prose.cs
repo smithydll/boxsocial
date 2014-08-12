@@ -62,8 +62,8 @@ namespace BoxSocial.Internals
         private string language;
         private CultureInfo culture;
         private Dictionary<string, ResourceManager> languageResources;
-        private static object stringCacheLock = new object();
-        private static Dictionary<string, string> stringCache = new Dictionary<string, string>(256, StringComparer.Ordinal);
+        /*private static object stringCacheLock = new object();
+        private static Dictionary<string, string> stringCache = new Dictionary<string, string>(256, StringComparer.Ordinal);*/
 
         public string Language
         {
@@ -111,7 +111,7 @@ namespace BoxSocial.Internals
                     ResourceManager rm = null;
                     bool cached = false;
 
-                    object o = null;
+                    /*object o = null;
                     System.Web.Caching.Cache cache;
 
                     if (HttpContext.Current != null && HttpContext.Current.Cache != null)
@@ -139,14 +139,14 @@ namespace BoxSocial.Internals
                         rm = (ResourceManager)o;
                         cached = true;
                     }
-                    else
+                    else*/
                     {
                         rm = ResourceManager.CreateFileBasedResourceManager(key, Path.Combine(core.LanguagePath, key), null);
                     }
 
                     languageResources.Add(key, rm);
 
-                    if (!cached)
+                    /*if (!cached)
                     {
                         try
                         {
@@ -155,7 +155,7 @@ namespace BoxSocial.Internals
                         catch (NullReferenceException)
                         {
                         }
-                    }
+                    }*/
                 }
             }
             catch
@@ -175,20 +175,20 @@ namespace BoxSocial.Internals
             {
                 string value = string.Empty;
 
-                lock (stringCacheLock)
+                //lock (stringCacheLock)
                 {
-                    if (!stringCache.TryGetValue("Internals" + "-" + culture + "." + key, out value))
+                    //if (!stringCache.TryGetValue("Internals" + "-" + culture + "." + key, out value))
                     {
-                        foreach (string akey in languageResources.Keys)
+                        /*foreach (string akey in languageResources.Keys)
                         {
                             if (stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
                             {
                                 return MARKER + value;
                             }
-                        }
+                        }*/
 
                         value = languageResources["Internals"].GetString(key, culture);
-                        stringCache.Add("Internals" + "-" + culture + "." + key, value);
+                        //stringCache.Add("Internals" + "-" + culture + "." + key, value);
                     }
                 }
 
@@ -200,12 +200,12 @@ namespace BoxSocial.Internals
                 {
                     string value = string.Empty;
 
-                    if (!stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
+                    //if (!stringCache.TryGetValue(akey + "-" + culture + "." + key, out value))
                     {
                         try
                         {
                             value = languageResources[akey].GetString(key, culture);
-                            stringCache.Add(akey + "-" + culture + "." + key, value);
+                            //stringCache.Add(akey + "-" + culture + "." + key, value);
                             return MARKER + value;
                         }
                         catch
@@ -240,12 +240,12 @@ namespace BoxSocial.Internals
             {
                 string value = string.Empty;
 
-                lock (stringCacheLock)
+                //lock (stringCacheLock)
                 {
-                    if (!stringCache.TryGetValue(applicationKey + "-" + culture + "." + languageKey, out value))
+                    //if (!stringCache.TryGetValue(applicationKey + "-" + culture + "." + languageKey, out value))
                     {
                         value = languageResources[applicationKey].GetString(languageKey, culture);
-                        stringCache.Add(applicationKey + "-" + culture + "." + languageKey, value);
+                        //stringCache.Add(applicationKey + "-" + culture + "." + languageKey, value);
                     }
                 }
                 return MARKER + value;

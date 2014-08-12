@@ -40,5 +40,10 @@ namespace BoxSocial.IO
         {
             throw new NotImplementedException();
         }
+
+        public override void Close()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

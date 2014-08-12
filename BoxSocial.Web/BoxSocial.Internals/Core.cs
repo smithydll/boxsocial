@@ -51,6 +51,7 @@ namespace BoxSocial.Internals
         private Functions functions;
         private Display display;
         private Email email;
+        private SmsGateway sms;
         private Ajax ajax;
         private Hyperlink hyperlink;
         private Settings applicationSettings;
@@ -539,6 +540,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        public void CloseCache()
+        {
+            if (cache != null)
+            {
+                cache.Close();
+                cache = null;
+            }
+        }
+
         /// <summary>
         /// Gets the BBcode class
         /// </summary>
@@ -603,6 +613,21 @@ namespace BoxSocial.Internals
                     }
                 }
                 return email;
+            }
+        }
+
+        public SmsGateway Sms
+        {
+            get
+            {
+                if (sms == null)
+                {
+                    if (Settings.SmsProvider == "http")
+                    {
+                        sms = new HttpSmsGateway(Settings.SmsHttpGateway);
+                    }
+                }
+                return sms;
             }
         }
 
@@ -977,7 +1002,7 @@ namespace BoxSocial.Internals
             this.template = template;
 			
 			ItemKey.populateItemTypeCache(this);
-            QueryCache.populateQueryCache();
+            //QueryCache.populateQueryCache();
 
             userProfileCache = new PrimitivesCache(this);
             itemsCache = new NumberedItemsCache(this);
@@ -993,7 +1018,19 @@ namespace BoxSocial.Internals
             this.db = db;
 
             ItemKey.populateItemTypeCache(this);
-            QueryCache.populateQueryCache();
+            //QueryCache.populateQueryCache();
+
+            userProfileCache = new PrimitivesCache(this);
+            itemsCache = new NumberedItemsCache(this);
+            accessControlCache = new AccessControlCache(this);
+
+            primitiveTypes = ItemKey.GetPrimitiveTypes(this);
+        }
+
+        public Core(Mysql db)
+        {
+            this.db = db;
+            ItemKey.populateItemTypeCache(this);
 
             userProfileCache = new PrimitivesCache(this);
             itemsCache = new NumberedItemsCache(this);

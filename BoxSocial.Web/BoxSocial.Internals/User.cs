@@ -1502,11 +1502,11 @@ namespace BoxSocial.Internals
         public static SelectQuery GetSelectQueryStub(Core core, UserLoadOptions loadOptions)
         {
             long typeId = ItemType.GetTypeId(core, typeof(User));
-            if (loadOptions == UserLoadOptions.All && QueryCache.HasQuery(typeId))
+            /*if (loadOptions == UserLoadOptions.All && QueryCache.HasQuery(typeId))
             {
                 return (SelectQuery)QueryCache.GetQuery(typeof(User), typeId);
             }
-            else
+            else*/
             {
 #if DEBUG
                 Stopwatch httpTimer = new Stopwatch();
@@ -1553,10 +1553,10 @@ namespace BoxSocial.Internals
                 HttpContext.Current.Response.Write(string.Format("<!-- Build user query stub in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
 #endif
 
-                if (loadOptions == UserLoadOptions.All)
+                /*if (loadOptions == UserLoadOptions.All)
                 {
                     QueryCache.AddQueryToCache(typeId, query);
-                }
+                }*/
                 return query;
             }
         }

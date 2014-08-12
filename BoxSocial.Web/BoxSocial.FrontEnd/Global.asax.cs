@@ -125,12 +125,14 @@ namespace BoxSocial.FrontEnd
                     worker.WorkerSupportsCancellation = true;
                     worker.DoWork += new DoWorkEventHandler(worker_DoWork);
                     worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-                    worker.RunWorkerAsync(HttpContext.Current);
+                    worker.RunWorkerAsync();
                 }
 
                 queue.CloseConnection();
                 queue = null;
             }
+
+            Regex.CacheSize = 256;
         }
 
         protected void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -147,14 +149,14 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
-            HttpContext.Current = (HttpContext)e.Argument;
+            //HttpContext.Current = (HttpContext)e.Argument;
 
             Mysql db = new Mysql(WebConfigurationManager.AppSettings["mysql-user"],
                 WebConfigurationManager.AppSettings["mysql-password"],
                 WebConfigurationManager.AppSettings["mysql-database"],
                 WebConfigurationManager.AppSettings["mysql-host"]);
 
-            Core core = new Core(null, db, null);
+            Core core = new Core(db);
 
             try
             {
@@ -232,12 +234,14 @@ namespace BoxSocial.FrontEnd
 
             // Cleanup
 
-            core.CloseProse();
-            core.CloseSearch();
-            db.CloseConnection();
-            core = null;
             queue.CloseConnection();
             queue = null;
+            core.CloseProse();
+            core.CloseSearch();
+            core.CloseCache();
+            core = null;
+            db.CloseConnection();
+            db = null;
         }
 
         protected void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -248,6 +252,14 @@ namespace BoxSocial.FrontEnd
             {
                 if ((!worker.CancellationPending) && (!e.Cancelled))
                 {
+                    worker.Dispose();
+                    worker = new BackgroundWorker();
+
+                    // Starts the queue processor
+                    worker.WorkerReportsProgress = false;
+                    worker.WorkerSupportsCancellation = true;
+                    worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
                     worker.RunWorkerAsync();
                 }
                 else
@@ -348,6 +360,7 @@ namespace BoxSocial.FrontEnd
             if (currentURI != null)
             {
                 List<string[]> patterns = new List<string[]>();
+
                 if (host != Hyperlink.Domain)
                 {
                     SelectQuery query = new SelectQuery("dns_records");

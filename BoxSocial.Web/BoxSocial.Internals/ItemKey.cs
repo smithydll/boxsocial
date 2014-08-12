@@ -267,7 +267,8 @@ namespace BoxSocial.Internals
             }
             else
             {
-                return null;
+                ItemType itemType = updateItemTypeCache(core, typeId);
+                return itemType;
             }
         }
         

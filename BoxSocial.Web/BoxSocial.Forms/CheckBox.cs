@@ -34,6 +34,7 @@ namespace BoxSocial.Forms
         private StyleLength width;
         private ScriptProperty script;
         private string icon;
+        private string cssClass;
 
         public string Caption
         {
@@ -103,6 +104,18 @@ namespace BoxSocial.Forms
             }
         }
 
+        public string Class
+        {
+            get
+            {
+                return cssClass;
+            }
+            set
+            {
+                cssClass = value;
+            }
+        }
+
         public CheckBox(string name)
         {
             this.name = name;
@@ -111,6 +124,7 @@ namespace BoxSocial.Forms
             disabled = false;
             width = new StyleLength(100F, LengthUnits.Percentage);
             script = new ScriptProperty();
+            cssClass = string.Empty;
         }
 
         public override string ToString()
@@ -120,13 +134,14 @@ namespace BoxSocial.Forms
 
         public override string ToString(DisplayMedium medium)
         {
-            return string.Format("<input type=\"checkbox\" name=\"{0}\" id = \"{0}\" style=\"{3}\" {1}{2}{5}/>{4}",
+            return string.Format("<input type=\"checkbox\" name=\"{0}\" id=\"{0}\" style=\"{3}\" {1}{2}{5}{6}/>{4}",
                 HttpUtility.HtmlEncode(name),
                 (IsChecked) ? "checked=\"checked\" " : "",
                 (IsDisabled) ? "disabled=\"disabled\" " : "",
                 width.Length > 0 ? "width: " + width + ";" : "",
-                !string.IsNullOrEmpty(caption) ? string.Format("<label for=\"{0}\">{1}</label>", HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(caption)) : "",
-                Script.ToString());
+                !string.IsNullOrEmpty(caption) ? string.Format("<label for=\"{0}\">{1}</label>", HttpUtility.HtmlEncode(name), HttpUtility.HtmlEncode(caption)) : string.Empty,
+                Script.ToString(),
+                !string.IsNullOrEmpty(cssClass) ? string.Format("class=\"{0}\" ", cssClass) : string.Empty);
         }
 
         public override void SetValue(string value)

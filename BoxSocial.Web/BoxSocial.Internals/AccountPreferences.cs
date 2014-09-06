@@ -303,21 +303,24 @@ namespace BoxSocial.Internals
 
             if (!string.IsNullOrEmpty(customDomain))
             {
-                try
+                if (customDomain != LoggedInMember.UserDomain)
                 {
-                    IPHostEntry host = Dns.GetHostEntry(customDomain);
-                    IPHostEntry host2 = Dns.GetHostEntry(Hyperlink.Domain);
+                    try
+                    {
+                        IPHostEntry host = Dns.GetHostEntry(customDomain);
+                        IPHostEntry host2 = Dns.GetHostEntry(Hyperlink.Domain);
 
-                    if (host.HostName.ToLower() != host2.HostName.ToLower() && host.HostName.ToLower() != Hyperlink.Domain)
+                        if (host.HostName.ToLower() != host2.HostName.ToLower() && host.HostName.ToLower() != Hyperlink.Domain)
+                        {
+                            SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain.");
+                            return;
+                        }
+                    }
+                    catch (System.Net.Sockets.SocketException)
                     {
                         SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain.");
                         return;
                     }
-                }
-                catch (System.Net.Sockets.SocketException)
-                {
-                    SetError("Invalid domain, you need to add a CNAME entry to " + Hyperlink.Domain + " in the DNS settings for your domain.");
-                    return;
                 }
             }
 

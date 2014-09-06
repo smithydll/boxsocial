@@ -214,6 +214,44 @@ namespace BoxSocial.IO
                 return string.Format("({0})",
                     temp.ToString());
             }
+            else if (value is long[])
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (long item in (long[])value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
+            else if (value is int[])
+            {
+                StringBuilder temp = new StringBuilder();
+                bool first = true;
+                foreach (long item in (int[])value)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        temp.Append(", ");
+                    }
+                    temp.Append(ObjectToSql(item));
+                }
+                return string.Format("({0})",
+                    temp.ToString());
+            }
             else if (value is SelectQuery)
             {
                 return string.Format("({0})",

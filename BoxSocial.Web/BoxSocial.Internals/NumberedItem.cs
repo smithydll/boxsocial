@@ -345,7 +345,7 @@ namespace BoxSocial.Internals
         {
             if (ik.GetType(core) != null)
             {
-                if (ik.GetType(core).GetItemType().IsSubclassOf(typeof(Primitive)))
+                if (ik.GetType(core).IsPrimitive)
                 {
                     core.PrimitiveCache.LoadPrimitiveProfile(ik);
                     return core.PrimitiveCache[ik];

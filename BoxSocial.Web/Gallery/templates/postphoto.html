@@ -119,6 +119,22 @@
 <dd>{S_GALLERY_TITLE}</dd>
 <dt>Gallery Permissions</dt>
 <dd>{S_PERMISSIONS}</dd>
+<!-- IF S_SHARE -->
+<dt>{L_SHARE}</dt>
+<dd>
+<!-- IF S_SHARE_TWITTER -->
+  <img src="https://g.twimg.com/twitter-bird-16x16.png" alt="Twitter" /> {S_SHARE_TWITTER}
+  <!-- ENDIF -->
+  <!-- IF S_SHARE_TUMBLR -->
+  <img src="https://platform.tumblr.com/v1/share_4.png" alt="Tumblr" /> {S_SHARE_TUMBLR}
+  <!-- ENDIF -->
+  <!-- IF S_SHARE_FACEBOOK -->
+  <span style="height: 18px; display: inline-block; background: #4c69ba; background: -webkit-gradient(linear, center top, center bottom, from(#4c69ba), to(#3b55a0)); background: -webkit-linear-gradient(#4c69ba, #3b55a0); border-color: #4c69ba; -webkit-border-radius: 2px;"><img src="https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png" alt="Link Facebook account" /></span> {S_SHARE_FACEBOOK}
+  <!-- ENDIF -->
+  <input type="hidden" name="share" value="photo" />
+  <br />
+</dd>
+<!-- ENDIF -->
 </dl>
 </div>
 <div class="album-tab" id="album-tab-1">

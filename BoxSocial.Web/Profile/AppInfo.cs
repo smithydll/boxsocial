@@ -317,7 +317,7 @@ namespace BoxSocial.Applications.Profile
 
                 if (user.UserInfo.TwitterAuthenticated)
                 {
-                    twitterSyndicateCheckBox = new CheckBox("share-twitter");
+                    twitterSyndicateCheckBox = new CheckBox("status-share-twitter");
                     twitterSyndicateCheckBox.Caption = "Twitter";
                     twitterSyndicateCheckBox.Icon = "https://g.twimg.com/twitter-bird-16x16.png";
                     twitterSyndicateCheckBox.IsChecked = user.UserInfo.TwitterSyndicate;
@@ -328,7 +328,7 @@ namespace BoxSocial.Applications.Profile
 
                 if (user.UserInfo.TumblrAuthenticated)
                 {
-                    tumblrSyndicateCheckBox = new CheckBox("share-tumblr");
+                    tumblrSyndicateCheckBox = new CheckBox("status-share-tumblr");
                     tumblrSyndicateCheckBox.Caption = "Tumblr";
                     tumblrSyndicateCheckBox.Icon = "https://platform.tumblr.com/v1/share_4.png";
                     tumblrSyndicateCheckBox.IsChecked = user.UserInfo.TumblrSyndicate;
@@ -339,7 +339,7 @@ namespace BoxSocial.Applications.Profile
 
                 if (user.UserInfo.FacebookAuthenticated)
                 {
-                    facebookSyndicateCheckBox = new CheckBox("share-facebook");
+                    facebookSyndicateCheckBox = new CheckBox("status-share-facebook");
                     facebookSyndicateCheckBox.Caption = "Facebook";
                     facebookSyndicateCheckBox.Icon = "https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png";
                     facebookSyndicateCheckBox.IsChecked = user.UserInfo.FacebookSyndicate;

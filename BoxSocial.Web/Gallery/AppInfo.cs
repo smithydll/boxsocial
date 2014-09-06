@@ -568,6 +568,68 @@ namespace BoxSocial.Applications.Gallery
 
             template.Parse("S_GALLERY_TITLE", galleryTitleTextBox);
 
+            CheckBoxArray shareCheckBoxArray = new CheckBoxArray("share-radio");
+            shareCheckBoxArray.Layout = Layout.Horizontal;
+            CheckBox twitterSyndicateCheckBox = null;
+            CheckBox tumblrSyndicateCheckBox = null;
+            CheckBox facebookSyndicateCheckBox = null;
+
+            if (e.Owner is User)
+            {
+                User user = (User)e.Owner;
+
+                if (user.UserInfo.TwitterAuthenticated)
+                {
+                    twitterSyndicateCheckBox = new CheckBox("photo-share-twitter");
+                    twitterSyndicateCheckBox.Caption = "Twitter";
+                    twitterSyndicateCheckBox.Icon = "https://g.twimg.com/twitter-bird-16x16.png";
+                    twitterSyndicateCheckBox.IsChecked = user.UserInfo.TwitterSyndicate;
+                    twitterSyndicateCheckBox.Width.Length = 0;
+
+                    shareCheckBoxArray.Add(twitterSyndicateCheckBox);
+                }
+
+                if (user.UserInfo.TumblrAuthenticated)
+                {
+                    tumblrSyndicateCheckBox = new CheckBox("photo-share-tumblr");
+                    tumblrSyndicateCheckBox.Caption = "Tumblr";
+                    tumblrSyndicateCheckBox.Icon = "https://platform.tumblr.com/v1/share_4.png";
+                    tumblrSyndicateCheckBox.IsChecked = user.UserInfo.TumblrSyndicate;
+                    tumblrSyndicateCheckBox.Width.Length = 0;
+
+                    shareCheckBoxArray.Add(tumblrSyndicateCheckBox);
+                }
+
+                if (user.UserInfo.FacebookAuthenticated)
+                {
+                    facebookSyndicateCheckBox = new CheckBox("photo-share-facebook");
+                    facebookSyndicateCheckBox.Caption = "Facebook";
+                    facebookSyndicateCheckBox.Icon = "https://fbstatic-a.akamaihd.net/rsrc.php/v2/yU/r/fWK1wxX-qQn.png";
+                    facebookSyndicateCheckBox.IsChecked = user.UserInfo.FacebookSyndicate;
+                    facebookSyndicateCheckBox.Width.Length = 0;
+
+                    shareCheckBoxArray.Add(facebookSyndicateCheckBox);
+                }
+
+            }
+
+            if (shareCheckBoxArray.Count > 0)
+            {
+                template.Parse("S_SHARE", "TRUE");
+            }
+            if (twitterSyndicateCheckBox != null)
+            {
+                template.Parse("S_SHARE_TWITTER", twitterSyndicateCheckBox);
+            }
+            if (tumblrSyndicateCheckBox != null)
+            {
+                template.Parse("S_SHARE_TUMBLR", tumblrSyndicateCheckBox);
+            }
+            if (facebookSyndicateCheckBox != null)
+            {
+                template.Parse("S_SHARE_FACEBOOK", facebookSyndicateCheckBox);
+            }
+
             e.core.AddPostPanel(e.core.Prose.GetString("PHOTO"), template);
         }
 

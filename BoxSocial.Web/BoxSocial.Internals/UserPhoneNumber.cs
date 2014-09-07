@@ -98,6 +98,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string ActivateKey
+        {
+            get
+            {
+                return phoneActivateKey;
+            }
+        }
+
         public bool Validated
         {
             get

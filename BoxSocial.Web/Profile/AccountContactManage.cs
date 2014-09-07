@@ -65,9 +65,11 @@ namespace BoxSocial.Applications.Profile
             AddModeHandler("edit-address", new ModuleModeHandler(AccountContactManage_EditAddress));
             AddModeHandler("add-email", new ModuleModeHandler(AccountContactManage_AddEmail));
             AddModeHandler("edit-email", new ModuleModeHandler(AccountContactManage_AddEmail));
+            AddModeHandler("verify-email", new ModuleModeHandler(AccountContactManage_VerifyEmail));
             AddModeHandler("add-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("edit-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("delete-phone", new ModuleModeHandler(AccountContactManage_DeletePhone));
+            AddModeHandler("verify-phone", new ModuleModeHandler(AccountContactManage_VerifyPhone));
             AddModeHandler("add-link", new ModuleModeHandler(AccountContactManage_AddLink));
             AddModeHandler("edit-link", new ModuleModeHandler(AccountContactManage_AddLink));
             AddModeHandler("delete-link", new ModuleModeHandler(AccountContactManage_DeleteLink));
@@ -79,6 +81,7 @@ namespace BoxSocial.Applications.Profile
             AddSaveHandler("edit-phone", new EventHandler(AccountContactManage_AddPhone_save));
             AddSaveHandler("add-link", new EventHandler(AccountContactManage_AddLink_save));
             AddSaveHandler("edit-link", new EventHandler(AccountContactManage_AddLink_save));
+            AddSaveHandler("verify-phone", new EventHandler(AccountContactManage_VerifyPhone_Save));
         }
 
         void AccountContactManage_Show(object sender, EventArgs e)
@@ -105,8 +108,14 @@ namespace BoxSocial.Applications.Profile
 
                 emailsVariableCollection.Parse("EMAIL_ID", email.Id.ToString());
                 emailsVariableCollection.Parse("EMAIL_ADDRESS", email.Email);
+                emailsVariableCollection.Parse("U_VERIFY", BuildUri("contact", "verify-email", email.Id));
                 emailsVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-email", email.Id));
                 emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, email));
+
+                if (email.IsActivated)
+                {
+                    emailsVariableCollection.Parse("IS_VERIFIED", "TRUE");
+                }
             }
 
             foreach (UserPhoneNumber phoneNumber in phoneNumbers)
@@ -115,8 +124,19 @@ namespace BoxSocial.Applications.Profile
 
                 phoneNumbersVariableCollection.Parse("PHONE_ID", phoneNumber.Id.ToString());
                 phoneNumbersVariableCollection.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
+                phoneNumbersVariableCollection.Parse("U_VERIFY", BuildUri("contact", "verify-phone", phoneNumber.Id));
                 phoneNumbersVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-phone", phoneNumber.Id));
                 phoneNumbersVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
+
+                if (phoneNumber.Validated)
+                {
+                    phoneNumbersVariableCollection.Parse("IS_VERIFIED", "TRUE");
+                }
+            }
+
+            if (core.Sms != null)
+            {
+                template.Parse("VERIFY_PHONE_NUMBERS", "TRUE");
             }
 
             foreach (UserLink link in links)
@@ -256,6 +276,51 @@ namespace BoxSocial.Applications.Profile
             template.Parse("S_EMAIL_TYPE", emailTypeSelectBox);
         }
 
+        void AccountContactManage_VerifyEmail(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            UserEmail email = new UserEmail(core, core.Functions.RequestLong("id", 0));
+
+            if (email.UserId == LoggedInMember.Id)
+            {
+                if (!email.IsActivated)
+                {
+                    string activateKey = User.GenerateActivationSecurityToken();
+
+                    string activateUri = string.Format("http://" + Hyperlink.Domain + "/register/?mode=activate-email&id={0}&key={1}",
+                        email.Id, activateKey);
+
+                    UpdateQuery query = new UpdateQuery(typeof(UserEmail));
+                    query.AddField("email_activate_code", activateKey);
+                    query.AddCondition("email_id", email.Id);
+
+                    core.Db.Query(query);
+
+                    Template emailTemplate = new Template(core.Http.TemplateEmailPath, "email_activation.html");
+
+                    emailTemplate.Parse("TO_NAME", Owner.DisplayName);
+                    emailTemplate.Parse("U_ACTIVATE", activateUri);
+                    emailTemplate.Parse("USERNAME", ((User)Owner).UserName);
+
+                    core.Email.SendEmail(email.Email, core.Settings.SiteTitle + " email activation", emailTemplate);
+
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Verification e-mail send", "A verification code has been sent to the e-mail address along with verification instructions.");
+                }
+                else
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Already verified", "You have already verified your email address.");
+                }
+            }
+            else
+            {
+                SetRedirectUri(BuildUri());
+                core.Display.ShowMessage("Error", "An error has occured.");
+            }
+        }
+
         void AccountContactManage_AddPhone(object sender, ModuleModeEventArgs e)
         {
             SetTemplate("account_phone_edit");
@@ -308,6 +373,72 @@ namespace BoxSocial.Applications.Profile
 
             template.Parse("S_PHONE_NUMBER", phoneNumberTextBox);
             template.Parse("S_PHONE_TYPE", phoneTypeSelectBox);
+        }
+
+        void AccountContactManage_VerifyPhone(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+            SetTemplate("account_phone_verify");
+
+            UserPhoneNumber phoneNumber = new UserPhoneNumber(core, core.Functions.RequestLong("id", 0));
+
+            if (phoneNumber.UserId == LoggedInMember.Id)
+            {
+                if (!phoneNumber.Validated)
+                {
+                    string activateKey = User.GeneratePhoneActivationToken();
+
+                    UpdateQuery query = new UpdateQuery(typeof(UserPhoneNumber));
+                    query.AddField("phone_activate_code", activateKey);
+                    query.AddCondition("phone_id", phoneNumber.Id);
+
+                    core.Db.Query(query);
+
+                    core.Sms.SendSms(phoneNumber.PhoneNumber, string.Format("Your {0} security code is {1}.", core.Settings.SiteTitle, activateKey));
+
+                    TextBox verifyTextBox = new TextBox("verify-code");
+                    verifyTextBox.Type = InputType.Telephone;
+
+                    template.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
+                    template.Parse("S_VERIFY_CODE", verifyTextBox);
+                }
+                else
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Already verified", "You have already verified your phone number.");
+                }
+            }
+            else
+            {
+                SetRedirectUri(BuildUri());
+                core.Display.ShowMessage("Error", "An error has occured.");
+            }
+        }
+
+        void AccountContactManage_VerifyPhone_Save(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            UserPhoneNumber phoneNumber = new UserPhoneNumber(core, core.Functions.FormLong("id", 0));
+
+            if (phoneNumber.UserId == LoggedInMember.Id)
+            {
+                if (!phoneNumber.Validated)
+                {
+                    if (phoneNumber.ActivateKey == core.Http.Form["verify-code"])
+                    {
+                        UpdateQuery query = new UpdateQuery(typeof(UserPhoneNumber));
+                        query.AddField("phone_validated", true);
+                        query.AddField("phone_validated_time_ut", UnixTime.UnixTimeStamp());
+                        query.AddCondition("phone_id", phoneNumber.Id);
+
+                        db.Query(query);
+
+                        SetRedirectUri(BuildUri());
+                        core.Display.ShowMessage("Phone number verified", "Your phone number has been verified");
+                    }
+                }
+            }
         }
 
         void AccountContactManage_AddLink(object sender, ModuleModeEventArgs e)
@@ -392,7 +523,7 @@ namespace BoxSocial.Applications.Profile
                         UserEmail.Create(core, emailAddress, emailType);
 
                         SetRedirectUri(BuildUri());
-                        core.Display.ShowMessage("E-mail address Saved", "Your e-mail address has been saved in the database. Before your e-mail can be used it will need to be validated. A validation code has been sent to the e-mail address along with validation instructions.");
+                        core.Display.ShowMessage("E-mail address Saved", "Your e-mail address has been saved in the database. Before your e-mail can be used it will need to be verification. A verification code has been sent to the e-mail address along with verification instructions.");
                         return;
                     }
                     catch (InvalidUserEmailException)

@@ -113,6 +113,7 @@ namespace BoxSocial.Internals
             // Show all active sessions
             SelectQuery query = SessionKey.GetSelectQueryStub(core, typeof(SessionKey));
             query.AddCondition(new DataField(typeof(SessionKey), "user_id"), LoggedInMember.Id);
+            query.AddSort(SortOrder.Descending, "key_last_visit_ut");
 
             System.Data.Common.DbDataReader sessionsReader = db.ReaderQuery(query);
 
@@ -124,6 +125,7 @@ namespace BoxSocial.Internals
 
                 sessionsVariableCollection.Parse("IP", sessionKey.Ip);
                 sessionsVariableCollection.Parse("TIME", core.Tz.DateTimeToString(sessionKey.GetVisit(core.Tz)));
+                sessionsVariableCollection.Parse("BROWSER_STRING", sessionKey.BrowserString);
             }
 
             sessionsReader.Close();

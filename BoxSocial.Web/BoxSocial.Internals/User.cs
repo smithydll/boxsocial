@@ -2163,6 +2163,22 @@ namespace BoxSocial.Internals
             return captchaString;
         }
 
+        public static string GeneratePhoneActivationToken()
+        {
+            Random rand = new Random();
+            string captchaString = "";
+
+            char[] chars = { '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+
+            for (int i = 0; i < 6; i++)
+            {
+                int j = (int)(rand.NextDouble() * chars.Length);
+                captchaString += chars[j].ToString();
+            }
+
+            return captchaString;
+        }
+
         public override bool CanModerateComments(User member)
         {
             if (member.userId == userId)

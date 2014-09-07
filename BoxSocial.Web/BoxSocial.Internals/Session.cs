@@ -237,6 +237,8 @@ namespace BoxSocial.Internals
         private string lastIp;
         [DataField("key_last_visit_ut")]
         private long lastVisitRaw;
+        [DataField("key_browser_string", 255)]
+        private string browserString;
 
         internal string KeyId
         {
@@ -259,6 +261,14 @@ namespace BoxSocial.Internals
             get
             {
                 return lastIp;
+            }
+        }
+
+        internal string BrowserString
+        {
+            get
+            {
+                return browserString;
             }
         }
 
@@ -957,8 +967,8 @@ namespace BoxSocial.Internals
                         }
                         else
                         {
-                            db.UpdateQuery(string.Format("INSERT INTO session_keys (key_id, user_id, key_last_ip, key_last_visit_ut) VALUES ('{0}', {1}, '{2}', UNIX_TIMESTAMP())",
-                                SessionState.SessionMd5(autoLoginKey), userId, ipAddress.ToString()));
+                            db.UpdateQuery(string.Format("INSERT INTO session_keys (key_id, user_id, key_last_ip, key_last_visit_ut, key_browser_string) VALUES ('{0}', {1}, '{2}', UNIX_TIMESTAMP(), '{3}')",
+                                SessionState.SessionMd5(autoLoginKey), userId, ipAddress.ToString(), Mysql.Escape(Request.UserAgent)));
                         }
 
                         sessionData.autoLoginId = autoLoginKey;

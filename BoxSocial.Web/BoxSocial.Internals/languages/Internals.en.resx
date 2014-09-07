@@ -986,6 +986,15 @@
   <data name="USERNAME" xml:space="preserve">
     <value>User name</value>
   </data>
+  <data name="VERIFICATION_CODE" xml:space="preserve">
+    <value>Verification Code:</value>
+  </data>
+  <data name="VERIFIED" xml:space="preserve">
+    <value>Verified</value>
+  </data>
+  <data name="VERIFY" xml:space="preserve">
+    <value>Verify</value>
+  </data>
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
   </data>

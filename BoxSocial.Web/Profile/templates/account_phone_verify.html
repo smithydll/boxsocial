@@ -1,0 +1,19 @@
+﻿<h3>Verify Phone Number</h3>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Verify Phone Number</legend>
+		<dl>
+			<dt>Phone Number</dt>
+			<dd>{PHONE_NUMBER}</dd>
+			<dt><label for="phone-verify-code">Verify Code</label></dt>
+			<dd>{S_VERIFY_CODE}</dd>
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="profile" />
+		<input type="hidden" name="sub" value="contact" />
+        <input type="hidden" name="id" value="{S_ID}" />
+		<input type="hidden" name="mode" value="verify-phone" />
+	</fieldset>
+</form>

@@ -456,14 +456,14 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;p&gt;You can make your profile private by unticking the `Other` box for read permissions.&lt;/p&gt;
         ///&lt;p&gt;To have your profile featured on the home page, you need to make sure that your profile can be read by Friends, Family, Group and Other.&lt;/p&gt;
         ///
-        ///&lt;form action=&quot;/account/&quot; method=&quot;post&quot;&gt;
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
         ///	&lt;fieldset&gt;
         ///		&lt;legend&gt;Profile Permissions&lt;/legend&gt;
         ///        &lt;h4&gt;&lt;label&gt;Permissions&lt;/label&gt;&lt;/h4&gt;
         ///        {S_PROFILE_PERMS}
         ///		&lt;dl&gt;
         ///			&lt;dt&gt;&lt;/dt&gt;
-        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; / [rest of string was truncated]&quot;;.
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_permissions {
             get {
@@ -493,6 +493,15 @@ namespace BoxSocial.Applications.Profile {
         internal static string account_phone_edit {
             get {
                 return ResourceManager.GetString("account_phone_edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_phone_verify {
+            get {
+                return ResourceManager.GetString("account_phone_verify", resourceCulture);
             }
         }
         
@@ -551,19 +560,11 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &lt;script type=&quot;text/javascript&quot;&gt;
-        ///&lt;!--
-        ///    $(document).ready(function () {
-        ///        $(&apos;#message&apos;).focus().val(&apos;is &apos;).outerWidth($(&apos;#status-div&apos;).width() - $(&apos;#status-submit&apos;).outerWidth(true));
-        ///    });
-        ///--&gt;
-        ///&lt;/script&gt;
-        ///
-        ///	&lt;div id=&quot;compose-status&quot;&gt;
-        ///        &lt;h3&gt;Post Status&lt;/h3&gt;
+        ///   Looks up a localized string similar to 	&lt;div id=&quot;compose-status&quot;&gt;
         ///        &lt;div id=&quot;status-div&quot;&gt;
         ///		&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot; id=&quot;status-form&quot; onsubmit=&quot;return SendAction(&apos;{USER_DISPLAY_NAME}&apos;);&quot;&gt;
-        ///			&lt;p&gt;&lt;input type=&quot;text&quot; id=&quot;message&quot; name=&quot;message&quot; value=&quot;is &quot; style=&quot;border: 1px so [rest of string was truncated]&quot;;.
+        ///			&lt;p&gt;&lt;textarea id=&quot;message&quot; name=&quot;message&quot; class=&quot;blur&quot; style=&quot;width: 100%; height: 24px; overflow-y: hidden;&quot; rows=&quot;1&quot; cols=&quot;75&quot; onfocus=&quot;$(this).css(&apos;height&apos;, &apos;78px&apos;).css(&apos;overflow-y&apos;, &apos;auto&apos;); $(this).parent().siblings(&apos;.status-buttons&apos;).show();&quot;&gt;{L_SHARE_SOMETHING_INTERESTING}&lt;/textarea&gt;
+        ///            &lt;input type=&quot;hidden&quot; name=&quot;aclm [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string poststatusmessage {
             get {
@@ -579,10 +580,10 @@ namespace BoxSocial.Applications.Profile {
         ///	&lt;!-- BEGIN friend_list --&gt;
         ///		&lt;li&gt;
         ///			&lt;a href=&quot;{friend_list.U_PROFILE}&quot;&gt;
-        ///				&lt;!-- IF friend_list.TILE --&gt;
-        ///				&lt;img src=&quot;{friend_list.TILE}&quot; data-at2x=&quot;{friend_list.SQUARE}&quot; alt=&quot;{friend_list.USER_DISPLAY_NAME}&quot; title=&quot;{friend_list.USER_DISPLAY_NAME}&quot; /&gt;
+        ///				&lt;!-- IF friend_list.ICON --&gt;
+        ///				&lt;img src=&quot;{friend_list.ICON}&quot; data-at2x=&quot;{friend_list.TILE}&quot; alt=&quot;{friend_list.USER_DISPLAY_NAME}&quot; title=&quot;{friend_list.USER_DISPLAY_NAME}&quot; width=&quot;40&quot; height=&quot;40&quot; /&gt;
         ///				&lt;!-- ELSE --&gt;
-        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{friend_list.USER_DISPLAY_NAM [rest of string was truncated]&quot;;.
+        ///				&lt;img src=&quot;/images/no_picture_100.png&quot; alt=&quot;{friend_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string todayfriendpanel {
             get {
@@ -597,17 +598,20 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;!-- IF $_IS_MOBILE --&gt;
-        ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
-        ///        &lt;!-- IF USER_MOBILE_COVER_PHOTO --&gt;
-        ///		&lt;div class=&quot;info no-icon&quot; style=&quot;height: 90px; background-image: url(&apos;{USER_MOBILE_COVER_PHOTO}&apos;);&quot;&gt;
-        ///        &lt;!-- ELSE --&gt;
-        ///        &lt;div class=&quot;info no-icon&quot;&gt;
-        ///        &lt;!-- ENDIF --&gt;
-        ///        &lt;h2&gt;{L_FEED}&lt;/h2&gt;
-        ///        &lt;/div&gt;
-        ///    &lt;/div&gt;
-        ///&lt;!-- EN [rest of string was truncated]&quot;;.
+        ///&lt;!-- INCLUDE primitive_header.html --&gt;
+        ///
+        ///&lt;script type=&quot;text/javascript&quot;&gt;
+        ///&lt;!--
+        ///    $(document).ready(function () {
+        ///        $(&apos;#message&apos;).focus().val(&apos;is &apos;).outerWidth($(&apos;#status-div&apos;).width() - $(&apos;#status-submit&apos;).outerWidth(true));
+        ///    });
+        ///    nid = {NEWEST_ID};
+        ///--&gt;
+        ///&lt;/script&gt;
+        ///
+        ///	&lt;div id=&quot;pane-profile&quot;&gt;
+        ///		&lt;div id=&quot;pane-pages&quot; class=&quot;pane&quot;&gt;
+        ///			&lt;h3&gt;{L_ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewfeed {
             get {
@@ -622,17 +626,20 @@ namespace BoxSocial.Applications.Profile {
         ///&lt;div class=&quot;breadcrumbs&quot;&gt;&lt;p&gt;{BREADCRUMBS}&lt;/p&gt;&lt;/div&gt;
         ///&lt;!-- ENDIF --&gt;
         ///
-        ///&lt;!-- IF $_IS_MOBILE --&gt;
-        ///	&lt;div id=&quot;overview-profile&quot; class=&quot;pane&quot;&gt;
-        ///        &lt;!-- IF USER_MOBILE_COVER_PHOTO --&gt;
-        ///		&lt;div class=&quot;info no-icon&quot; style=&quot;height: 90px; background-image: url(&apos;{USER_MOBILE_COVER_PHOTO}&apos;);&quot;&gt;
-        ///        &lt;!-- ELSE --&gt;
-        ///        &lt;div class=&quot;info no-icon&quot;&gt;
-        ///        &lt;!-- ENDIF --&gt;
-        ///        &lt;h2&gt;{L_STATUS_FEED}&lt;/h2&gt;
-        ///        &lt;/div&gt;
-        ///    &lt;/div&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;!-- INCLUDE primitive_header.html --&gt;
+        ///
+        ///&lt;script type=&quot;text/javascript&quot;&gt;
+        ///&lt;!--
+        ///    $(document).ready(function () {
+        ///        $(&apos;#message&apos;).focus().val(&apos;is &apos;).outerWidth($(&apos;#status-div&apos;).width() - $(&apos;#status-submit&apos;).outerWidth(true));
+        ///    });
+        ///--&gt;
+        ///&lt;/script&gt;
+        ///
+        ///&lt;!-- IF $_IS_DESKTOP --&gt;
+        ///	&lt;div id=&quot;pane-profile&quot;&gt;
+        ///		&lt;div id=&quot;pane-pages&quot; class=&quot;pane&quot;&gt;
+        ///			&lt;h3&gt;{ [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string viewstatusfeed {
             get {

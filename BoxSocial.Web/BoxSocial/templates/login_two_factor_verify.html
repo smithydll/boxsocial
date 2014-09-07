@@ -3,14 +3,14 @@
 <p class="error">{ERROR}</p>
 <!-- ENDIF -->
 <div id="login-box">
-<h2>Sign In</h2>
+<h2>{L_SIGNIN}</h2>
 				<form action="{S_POST}" method="post" id="form-login">
 				<fieldset>
 						<dl>
-							<dt><label for="verify">Verification Code:</label></dt>
+							<dt><label for="verify">{L_VERIFICATION_CODE}</label></dt>
 							<dd>{S_VERIFY}</dd>
 							<dt></dt>
-							<dd><input type="submit" value="Sign In" name="submit" /></dd>
+							<dd><input type="submit" value="{L_SIGNIN}" name="submit" /></dd>
 						</dl>
                         {S_REMEMBER}
                         <input type="hidden" name="mode" value="verify" />
@@ -20,6 +20,6 @@
 						<!-- ENDIF -->
 					</fieldset>
 				</form>
-				<p><a href="{U_FORGOT_PASSWORD}">I have forgotten my password</a></p>
+				<p><a href="{U_FORGOT_PASSWORD}">{L_FORGOT_PASSWORD}</a></p>
 			</div>
 <!-- INCLUDE page_footer.html -->

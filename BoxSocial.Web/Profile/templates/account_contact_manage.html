@@ -63,6 +63,9 @@
     </p>
     <span class="action delete"><a href="{email_list.U_DELETE}">{L_DELETE}</a></span>
     <span class="action edit"><a href="{email_list.U_EDIT}">{L_EDIT}</a></span>
+    <!-- IF NOT email_list.IS_VERIFIED -->
+    <span class="action verify"><a href="{email_list.U_VERIFY}">{L_VERIFY}</a></span>
+    <!-- ELSE -->
     <span class="action permissions"><a href="{email_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
 </li>
 <!-- END email_list -->
@@ -83,6 +86,11 @@
 <tr class="odd">
 <!-- ENDIF -->
 	<td>{email_list.EMAIL_ADDRESS}</td>
+    <!-- IF email_list.IS_VERIFIED -->
+    <td>{L_VERIFIED}</td>
+    <!-- ELSE -->
+    <td><a href="{email_list.U_VERIFY}">{L_VERIFY}</a></td>
+    <!-- ENDIF -->
 	<td><a href="{email_list.U_EDIT}">{L_EDIT}</a></td>
 	<td><a href="{email_list.U_DELETE}">{L_DELETE}</a></td>
 	<td><a href="{email_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></td>
@@ -102,6 +110,9 @@
     </p>
     <span class="action delete"><a href="{phone_list.U_DELETE}">{L_DELETE}</a></span>
     <span class="action edit"><a href="{phone_list.U_EDIT}">{L_EDIT}</a></span>
+    <!-- IF VERIFY_PHONE_NUMBERS AND NOT phone_list.IS_VERIFIED -->
+    <span class="action verify"><a href="{phone_list.U_VERIFY}">{L_VERIFY}</a></span>
+    <!-- ENDIF -->
     <span class="action permissions"><a href="{phone_list.U_EDIT_PERMISSIONS}">{L_PRIVACY}</a></span>
 </li>
 <!-- END phone_list -->
@@ -111,6 +122,9 @@
 <table style="width: 100%">
 <tr>
 	<th>Number</th>
+    <!-- IF VERIFY_PHONE_NUMBERS -->
+    <th></th>
+    <!-- ENDIF -->
 	<th></th>
 	<th></th>
 	<th></th>
@@ -122,6 +136,13 @@
 <tr class="odd">
 <!-- ENDIF -->
 	<td>{phone_list.PHONE_NUMBER}</td>
+    <!-- IF VERIFY_PHONE_NUMBERS -->
+    <!-- IF phone_list.IS_VERIFIED -->
+    <td>{L_VERIFIED}</td>
+    <!-- ELSE -->
+    <td><a href="{phone_list.U_VERIFY}">{L_VERIFY}</a></td>
+    <!-- ENDIF -->
+    <!-- ENDIF -->
 	<td><a href="{phone_list.U_EDIT}">{L_EDIT}</a></td>
 	<td><a href="{phone_list.U_DELETE}">{L_DELETE}</a></td>
 	<td><a href="{phone_list.U_EDIT_PERMISSIONS}">Privacy</a></td>

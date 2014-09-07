@@ -58,6 +58,8 @@ namespace BoxSocial.Internals
         private string emailActivateKey;
         [DataField("email_simple_permissions")]
         private bool simplePermissions;
+        [DataField("email_verify_ut")]
+        private long emailVerifyTimeRaw;
 
         private User owner;
         private Access access;

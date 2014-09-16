@@ -62,6 +62,8 @@ namespace BoxSocial.Internals
         private string phoneActivateKey;
         [DataField("phone_simple_permissions")]
         private bool simplePermissions;
+        [DataField("phone_two_factor")]
+        private bool isTwoFactor;
 
         private User owner;
         private Access access;
@@ -135,6 +137,18 @@ namespace BoxSocial.Internals
             set
             {
                 SetPropertyByRef(new { simplePermissions }, value);
+            }
+        }
+
+        public bool IsTwoFactor
+        {
+            get
+            {
+                return isTwoFactor;
+            }
+            set
+            {
+                SetPropertyByRef(new { isTwoFactor }, value);
             }
         }
 

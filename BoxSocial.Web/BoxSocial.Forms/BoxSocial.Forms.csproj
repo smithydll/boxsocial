@@ -58,6 +58,7 @@
     <Compile Include="FormField.cs" />
     <Compile Include="HiddenField.cs" />
     <Compile Include="Image.cs" />
+    <Compile Include="Link.cs" />
     <Compile Include="ScriptProperty.cs" />
     <Compile Include="StyleLength.cs" />
     <Compile Include="RadioList.cs" />

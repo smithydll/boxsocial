@@ -66,6 +66,7 @@ namespace BoxSocial.Applications.Profile
             AddModeHandler("add-email", new ModuleModeHandler(AccountContactManage_AddEmail));
             AddModeHandler("edit-email", new ModuleModeHandler(AccountContactManage_AddEmail));
             AddModeHandler("verify-email", new ModuleModeHandler(AccountContactManage_VerifyEmail));
+            AddModeHandler("delete-email", new ModuleModeHandler(AccountContactManage_DeleteEmail));
             AddModeHandler("add-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("edit-phone", new ModuleModeHandler(AccountContactManage_AddPhone));
             AddModeHandler("delete-phone", new ModuleModeHandler(AccountContactManage_DeletePhone));
@@ -111,6 +112,7 @@ namespace BoxSocial.Applications.Profile
                 emailsVariableCollection.Parse("U_VERIFY", BuildUri("contact", "verify-email", email.Id));
                 emailsVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-email", email.Id));
                 emailsVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, email));
+                emailsVariableCollection.Parse("U_DELETE", BuildUri("contact", "delete-email", email.Id));
 
                 if (email.IsActivated)
                 {
@@ -127,6 +129,7 @@ namespace BoxSocial.Applications.Profile
                 phoneNumbersVariableCollection.Parse("U_VERIFY", BuildUri("contact", "verify-phone", phoneNumber.Id));
                 phoneNumbersVariableCollection.Parse("U_EDIT", BuildUri("contact", "edit-phone", phoneNumber.Id));
                 phoneNumbersVariableCollection.Parse("U_EDIT_PERMISSIONS", Access.BuildAclUri(core, phoneNumber));
+                phoneNumbersVariableCollection.Parse("U_DELETE", BuildUri("contact", "delete-phone", phoneNumber.Id));
 
                 if (phoneNumber.Validated)
                 {
@@ -660,16 +663,40 @@ namespace BoxSocial.Applications.Profile
             }
         }
 
+        void AccountContactManage_DeleteEmail(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            long emailId = core.Functions.RequestLong("id", 0);
+
+            try
+            {
+            }
+            catch(InvalidUserEmailException)
+            {
+                SetRedirectUri(BuildUri());
+                core.Display.ShowMessage("Error", "Could not delete the email.");
+                return;
+            }
+        }
+
         void AccountContactManage_DeletePhone(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
 
-            long phoneId = core.Functions.FormLong("id", 0);
+            long phoneId = core.Functions.RequestLong("id", 0);
 
             try
             {
                 
                 UserPhoneNumber number = new UserPhoneNumber(core, phoneId);
+
+                if (number.IsTwoFactor)
+                {
+                    SetRedirectUri(BuildUri());
+                    core.Display.ShowMessage("Cannot delete phone number", "The phone number cannot be deleted because it is currently being used for two-factor authentication.");
+                    return;
+                }
 
                 if (number.Delete() > 0)
                 {
@@ -679,12 +706,14 @@ namespace BoxSocial.Applications.Profile
                 }
                 else
                 {
+                    SetRedirectUri(BuildUri());
                     core.Display.ShowMessage("Error", "Could not delete the phone number.");
                     return;
                 }
             }
-            catch (PageNotFoundException)
+            catch (InvalidUserPhoneNumberException)
             {
+                SetRedirectUri(BuildUri());
                 core.Display.ShowMessage("Error", "Could not delete the phone number.");
                 return;
             }

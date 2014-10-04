@@ -1151,9 +1151,17 @@ namespace BoxSocial.Applications.Blog
 
                 if (!string.IsNullOrEmpty(category))
                 {
-                    Category cat = new Category(core, category);
-                    breadCrumbParts.Add(new string[] { "categories/" + category, cat.Title });
-                    pageUri = Blog.BuildUri(core, page.User, category);
+                    try
+                    {
+                        Category cat = new Category(core, category);
+                        breadCrumbParts.Add(new string[] { "categories/" + category, cat.Title });
+                        pageUri = Blog.BuildUri(core, page.User, category);
+                    }
+                    catch (InvalidCategoryException)
+                    {
+                        core.Functions.Generate404();
+                        return;
+                    }
                 }
                 else if (!string.IsNullOrEmpty(tag))
                 {

@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -44,6 +45,35 @@ namespace BoxSocial.FrontEnd
         {
             string method = core.Http["method"];
             //EndResponse();
+        }
+
+        private bool AuthoriseRequest()
+        {
+            string authorisationHeader = ReadAuthorisationHeader();
+
+            if (authorisationHeader.StartsWith("OAuth "))
+            {
+                NameValueCollection authorisationHeaders = HttpUtility.ParseQueryString(authorisationHeader.Substring(6));
+
+                string requestConsumerKey = authorisationHeaders["oauth_consumer_key"];
+
+                OAuthApplication oae = new OAuthApplication(core, requestConsumerKey);
+
+                string requestSignature = authorisationHeaders["oauth_signature"];
+                string expectedSignature = "";
+
+                if (requestSignature == expectedSignature)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private string ReadAuthorisationHeader()
+        {
+            return Request.Headers["Authorization"];
         }
     }
 }

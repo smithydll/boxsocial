@@ -141,6 +141,9 @@
   <data name="ANONYMOUS" xml:space="preserve">
     <value>Anonymous</value>
   </data>
+  <data name="APPLICATION" xml:space="preserve">
+    <value>Application</value>
+  </data>
   <data name="APPLICATIONS" xml:space="preserve">
     <value>Applications</value>
   </data>
@@ -718,6 +721,9 @@
   </data>
   <data name="NO_PICTURE" xml:space="preserve">
     <value>No Picture</value>
+  </data>
+  <data name="OAUTH_KEYS" xml:space="preserve">
+    <value>OAuth Keys</value>
   </data>
   <data name="OCTOBER" xml:space="preserve">
     <value>October</value>

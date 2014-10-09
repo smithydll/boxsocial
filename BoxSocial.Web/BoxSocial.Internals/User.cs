@@ -1886,6 +1886,8 @@ namespace BoxSocial.Internals
             disallowedNames.Add("favourites");
             disallowedNames.Add("likes");
             disallowedNames.Add("dev");
+            disallowedNames.Add("developer");
+            disallowedNames.Add("developers");
             disallowedNames.Add("dcma");
             disallowedNames.Add("coppa");
             disallowedNames.Add("guidelines");
@@ -1975,6 +1977,10 @@ namespace BoxSocial.Internals
             disallowedNames.Add("comedian");
             disallowedNames.Add("cart");
             disallowedNames.Add("api");
+            disallowedNames.Add("oauth");
+            disallowedNames.Add("oauth2");
+            disallowedNames.Add("download");
+            disallowedNames.Add("app");
             disallowedNames.Sort();
 
             if (disallowedNames.BinarySearch(userName.ToLower()) >= 0)
@@ -2070,6 +2076,16 @@ namespace BoxSocial.Internals
             }
 
             if (userName.EndsWith(".exe", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (userName.EndsWith(".bat", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (userName.EndsWith(".do", StringComparison.Ordinal))
             {
                 matches++;
             }

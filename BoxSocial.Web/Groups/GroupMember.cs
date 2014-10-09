@@ -41,7 +41,7 @@ namespace BoxSocial.Groups
     }
 
     [PseudoPrimitive]
-    [DataTable("group_members")]
+    [DataTable("applications_oauth")]
     [PermissionGroup]
     public class GroupMember : User
     {

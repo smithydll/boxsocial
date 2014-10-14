@@ -172,7 +172,7 @@ namespace BoxSocial.Internals
         {
             Regex reg = new Regex(@"%[a-f0-9]{2}");
 
-            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
+            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");
         }
 
         private static string computeSignature(string baseString, string keyString)
@@ -593,6 +593,7 @@ namespace BoxSocial.Internals
                 {
                     return true; // This request cannot succeed, so remove it from the queue
                 }
+                //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain + ": Twitter", ex.ToString());
                 return false; // Failed for other reasons, retry
             }
 

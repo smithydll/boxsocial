@@ -170,6 +170,7 @@
     <Content Include="templates\404.html" />
     <Content Include="templates\account_applications.html" />
     <Content Include="templates\account_application_edit.html" />
+    <Content Include="templates\account_application_oauth.html" />
     <Content Include="templates\account_application_settings.html" />
     <Content Include="templates\account_footer.html" />
     <Content Include="templates\account_header.html" />

@@ -65,7 +65,7 @@ namespace BoxSocial.FrontEnd
 
         void AccountApplicationOAuth_Show(object sender, EventArgs e)
         {
-            
+            template.SetTemplate("account_application_oauth.html");
         }
     }
 }

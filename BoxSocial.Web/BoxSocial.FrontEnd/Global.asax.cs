@@ -210,7 +210,7 @@ namespace BoxSocial.FrontEnd
 
                     if (failedJobs > 0)
                     {
-                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString());
+                        //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString());
                     }
                 }
             }

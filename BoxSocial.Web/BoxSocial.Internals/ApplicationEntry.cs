@@ -1278,29 +1278,29 @@ namespace BoxSocial.Internals
                         if (publicItem)
                         {
                             string sharePrefix = core.Http.Form["share"];
-                            if (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated)
+                            if (owner.UserInfo.TwitterAuthenticated)
                             {
                                 string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
-                                if (sharePrefix == null || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-twitter"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-twitter"] != null))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription));
                                 }
                             }
 
-                            if (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)
+                            if (owner.UserInfo.TumblrAuthenticated)
                             {
                                 Uri shareUri = new Uri(info.ShareUri);
 
-                                if (sharePrefix == null || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-tumblr"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.TumblrSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-tumblr"] != null))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
                                 }
                             }
 
-                            if (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated)
+                            if (owner.UserInfo.FacebookAuthenticated)
                             {
-                                if (sharePrefix == null || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-facebook"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.FacebookSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-facebook"] != null))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishFacebook", description));
                                 }

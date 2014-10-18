@@ -378,6 +378,9 @@
   <data name="COUNTRY_DZ" xml:space="preserve">
     <value>Algeria</value>
   </data>
+  <data name="CREATE_NEW_APPLICATION" xml:space="preserve">
+    <value>Create New Application</value>
+  </data>
   <data name="CREATOR" xml:space="preserve">
     <value>Creator</value>
   </data>
@@ -524,6 +527,12 @@
   </data>
   <data name="INHERIT" xml:space="preserve">
     <value>Inherit</value>
+  </data>
+  <data name="INSTALL" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="INSTALLED" xml:space="preserve">
+    <value>Installed</value>
   </data>
   <data name="INTERESTED_IN" xml:space="preserve">
     <value>Interested In</value>
@@ -698,6 +707,9 @@
   <data name="NONE_SPECIFIED" xml:space="preserve">
     <value>None Specified</value>
   </data>
+  <data name="NOTIFICATIONS" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
   <data name="NOT_SURE" xml:space="preserve">
     <value>Not Sure</value>
   </data>
@@ -808,6 +820,9 @@
   </data>
   <data name="RATING" xml:space="preserve">
     <value>Rating</value>
+  </data>
+  <data name="REGENERATE_KEYS" xml:space="preserve">
+    <value>Rewgenerate Keys</value>
   </data>
   <data name="REGISTER" xml:space="preserve">
     <value>Register</value>
@@ -973,6 +988,9 @@
   </data>
   <data name="TWO_WEEKS_AGO" xml:space="preserve">
     <value>Two Weeks Ago</value>
+  </data>
+  <data name="UNINSTALL" xml:space="preserve">
+    <value>Uninstall</value>
   </data>
   <data name="UNRATED" xml:space="preserve">
     <value>Unrated</value>

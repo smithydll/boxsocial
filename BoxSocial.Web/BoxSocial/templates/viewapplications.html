@@ -1,13 +1,47 @@
 <!-- INCLUDE page_header.html -->
 <h2>Applications</h2>
 
-<dl id="app-list">
-	<!-- BEGIN application_list -->
-	<dt><a href="{application_list.URI}"><img src="{application_list.I_TILE}" alt="{application_list.TITLE} Tile" /></a></dt>
-	<dd><a href="{application_list.URI}">{application_list.TITLE}</a></dd>
+<ul id="app-list">
+    <!-- BEGIN application_list -->
+    <li style="width: 20%; height: auto; position: relative; float: left;">
+        <div class="contact-card-container" style="width: auto; margin: 5px;">
+            <div class="contact-card" style="width: 100%; position: relative; z-index: auto; box-shadow: none; border: 1px solid #cccccc;">
+          <!-- IF application_list.MOBILE_COVER -->
+              <div style="height: 80px; background-image: url('{application_list.MOBILE_COVER}'); background-position: center; background-color: #333333; background-size: cover; width: auto;">
+          <!-- ELSE -->
+              <div style="height: 80px; background-color: #333333; background-size: cover; width: auto;">
+          <!-- ENDIF -->
+          <!-- IF application_list.I_TILE -->
+		        <img src="{application_list.I_TILE}" alt="{application_list.TITLE}" />
+          <!-- ELSE -->
+                <img src="/images/no_picture_100.png" alt="{application_list.TITLE}" />
+          <!-- ENDIF -->
+              </div>
+              <div style="width: auto;">
+                <p><strong><a href="{application_list.URI}">{application_list.TITLE}</a></strong></p>
+                <!-- IF LOGGED_IN -->
+                <!-- IF application_list.U_INSTALL -->
+                    <p><span class="post-button"><a href="{application_list.U_INSTALL}">{L_INSTALL}</a></span></p>
+                <!-- ENDIF -->
+                <!-- IF application_list.IS_INSTALLED -->
+                    <p><span class="post-button disabled">{L_INSTALLED}</span></p>
+                <!-- ENDIF -->
+                <!-- ENDIF -->
+              </div>
+            </div>
+        </div>
+    </li>
 	<!-- END application_list -->
-</dl>
+</ul>
 
 <div class="cheat-clear-left"></div>
+
+<!-- IF LOGGED_IN -->
+<!-- IF NOT $_IS_MOBILE -->
+	<div id="new-stuff">
+    <span id="create-group" class="post-button"><a href="{U_CREATE_APPLICATION}">{L_CREATE_NEW_APPLICATION}</a></span>
+	</div>
+<!-- ENDIF -->
+<!-- ENDIF -->
 
 <!-- INCLUDE page_footer.html -->

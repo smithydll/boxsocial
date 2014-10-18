@@ -103,12 +103,12 @@
 				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
 				<a href="{U_ACCOUNT}">{L_MY_ACCOUNT}</a>
                 <!-- IF UNREAD_NOTIFICATIONS -->
-                <a href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
+                <a id="notifications-tile" href="{U_ACCOUNT}" title="{L_NOTIFICATIONS}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
                 <!-- ELSE -->
-                <a id="notifications-tile" style="display: none;" href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
+                <a id="notifications-tile" title="{L_NOTIFICATIONS}" style="display: none;" href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
                 <!-- ENDIF -->
                 <!-- IF UNSEEN_MAIL -->
-                <a href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
+                <a id="mail-notifications-tile" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
                 <!-- ELSE -->
                 <a id="mail-notifications-tile" style="display: none;" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
                 <!-- ENDIF -->

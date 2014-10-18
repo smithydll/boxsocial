@@ -576,6 +576,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });
 
                     patterns.Add(new string[] { @"^/applications(/|)$", @"/viewapplications.aspx$1" });
+                    patterns.Add(new string[] { @"^/applications/register(/|)$", @"/registerapplication.aspx$1" });
 
                     patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?an=$1&module=$2&sub=$3" });
                     patterns.Add(new string[] { @"^/application/([A-Za-z0-9\-_]+)/manage/([a-z\-]+)(/|)$", @"/applicationmanage.aspx?an=$1&module=$2" });

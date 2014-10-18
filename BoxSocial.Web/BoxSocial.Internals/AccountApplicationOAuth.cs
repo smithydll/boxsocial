@@ -60,12 +60,50 @@ namespace BoxSocial.FrontEnd
 
         void AccountApplicationOAuth_Load(object sender, EventArgs e)
         {
-            
+            AddModeHandler("generate-keys", new ModuleModeHandler(AccountApplicationOAuth_GenerateKeys));
         }
 
         void AccountApplicationOAuth_Show(object sender, EventArgs e)
         {
             template.SetTemplate("account_application_oauth.html");
+
+            template.Parse("U_REGENERATE_KEYS", core.Hyperlink.AppendSid(BuildUri("oauth", "generate-keys"), true));
+
+            if (Owner is ApplicationEntry)
+            {
+                ApplicationEntry ae = (ApplicationEntry)Owner;
+                if (ae.ApplicationType == ApplicationType.OAuth)
+                {
+                    OAuthApplication oa = new OAuthApplication(core, ae);
+                    template.Parse("IS_OAUTH", "TRUE");
+                    template.Parse("CONSUMER_KEY", oa.ApiKey);
+                    template.Parse("CONSUMER_SECRET", oa.ApiSecret);
+                }
+            }
+        }
+
+        void AccountApplicationOAuth_GenerateKeys(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            string newKey = OAuth.GeneratePublic();
+            string newSecret = OAuth.GenerateSecret();
+
+            if (Owner is ApplicationEntry)
+            {
+                ApplicationEntry ae = (ApplicationEntry)Owner;
+                if (ae.ApplicationType == ApplicationType.OAuth)
+                {
+                    OAuthApplication oa = new OAuthApplication(core, ae);
+
+                    oa.ApiKey = newKey;
+                    oa.ApiSecret = newSecret;
+
+                    oa.Update();
+                }
+            }
+
+            AccountApplicationOAuth_Show(sender, e);
         }
     }
 }

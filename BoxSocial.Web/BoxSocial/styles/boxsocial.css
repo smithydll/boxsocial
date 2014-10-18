@@ -7,7 +7,7 @@ html, body {
 
 body {
 	background: white;
-	font-size: 62.5%;
+	font-size: 81.25%;
 	font-family: Verdana, Helvetica, Arial, sans-serif;
 	text-align: center;
 	line-height: 1.231;
@@ -81,7 +81,7 @@ p {
 
 #head h1 a {
 	display: block;
-	width: 540px;
+	width: 400px;
 	height: 63px;
 }
 
@@ -149,17 +149,7 @@ p {
 #head #head-nav {
 	text-align: right;
 	font-size: 120%;
-	margin-left: 550px;
-}
-
-div#rc-top {
-	height: 5px;
-	font-size: 1px;
-}
-
-div#rc-bottom {
-	height: 5px;
-	font-size: 1px;
+	margin-left: 400px;
 }
 
 #foot {
@@ -456,7 +446,6 @@ div.img-wb {
 div.no-disp-pic {
 	width: 160px;
 	height: 120px;
-	font-size: 12px;
 	padding: 3px;
 	margin: 0px;
 }
@@ -475,7 +464,6 @@ span.no-disp-pic
 	width: 100px;
 	height: 100px;
 	display: block;
-	font-size: 12px;
 	padding: 3px;
 	margin: 0px;
 }
@@ -590,6 +578,12 @@ ul#profile-friends, ul#profile-subscribers {
 ul#profile-friends dl {
 	padding: 0px;
 	margin: 0px;
+}
+
+ul#profile-friends dd {
+	padding: 0;
+    margin: 0;
+    text-align: center;
 }
 
 ul#profile-friends li, ul#profile-subscribers li {
@@ -711,56 +705,130 @@ ul.comment-list li p.extra a {
 	list-style-type: none;
 	padding: 0;
 	margin: 0;
-	height: 24px;
+	height: 2em;
 	margin-left: 8px;
 }
 
 #tabs li {
 	float: left;
-	height: 24px;
+	height: 2em;
 	list-style-type: none;
-	background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
-	margin-left: 1px;
-	border-top-left-radius: 5px;
-	border-top-right-radius: 5px;
-	border: 1px solid #002288;
+	background: #ff9945;
+	margin-left: 1em;
 	border-bottom: none;
 	color: #ffffff;
+	position: relative;
+	padding-bottom: 1px;
 }
 
 #tabs li.current {
-    background: #ffffff url(images/ui-bg_flat_100_ffffff_40x100.png) 50% 50% repeat-x;
+    z-index: 99;
 }
 
 #tabs li a {
 	display: block;
-	padding-left: 2px;
-	margin-right: 2px;
 	cursor: pointer;
+}
+
+#tabs li a:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0.4em 2em 1em;
+    border-color: transparent transparent #ff9945 transparent;
+    position: absolute;
+    left: -1em;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+}
+
+#tabs li a:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 2em 0.4em 0 1em;
+    border-color: transparent transparent transparent #ff9945;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
 }
 
 #tabs li > span {
 	display: block;
 	padding-left: 2px;
 	margin-right: 2px;
+	margin-top: 1px;
 }
 
 #tabs li.current a span, #tabs li.current span {
-    color: #aa5500;
+    color: #ff9945;
 }
 
 #tabs li span {
 	display: block;
-	height: 22px;
-	line-height: 22px;
-	padding: 0 8px;
-	margin-top: 2px;
+	height: 2em;
+	line-height: 2em;
+	padding: 0 0.4em;
+	margin-top: 1px;
 	font-weight: bold;
 	color: #ffffff;
 }
 
-#tabs li:hover {
-	background: #ffffff url(images/ui-bg_flat_100_ffffff_40x100.png) 50% 50% repeat-x;
+#tabs li span:before {
+    content: "";
+    border-width: 0 0.4em 2em 1em;
+    border-color: transparent transparent #ff9945 transparent;
+    position: absolute;
+    left: -1em;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    top: 1px;
+    z-index: 1;
+    bottom: 0;
+}
+
+#tabs li span:after {
+    content: "";
+    border-width: 2em 0.4em 0 1em;
+    border-color: transparent transparent transparent #ff9945;
+    position: absolute;
+    left: 100%;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    top: 1px;
+    z-index: 1;
+    bottom: 0;
+}
+
+#tabs li.current span {
+	background: #ffffff;
+}
+
+#tabs li.current span:before {
+	border-color: transparent transparent #ffffff transparent;
+}
+
+#tabs li.current span:after {
+    border-color: transparent transparent transparent #ffffff;
+}
+
+#tabs li:hover span {
+	background: #ffffff;
+}
+
+#tabs li:hover span:before {
+	border-color: transparent transparent #ffffff transparent;
+}
+
+#tabs li:hover span:after {
+    border-color: transparent transparent transparent #ffffff;
 }
 
 #tabs li:hover a span {
@@ -967,11 +1035,22 @@ textarea.blur {
     color: #999999;
 }
 
-span.post-button, span.img-button, button {
+span.post-button a, span.img-button, button {
 	border-radius: 5px;
 	border: 1px solid #002288;
 	background: #2244aa url(images/ui-bg_flat_100_2244aa_40x100.png) 50% 50% repeat-x;
 	color: #ffffff;
+	margin: 2px;
+	padding: 4px 16px;
+}
+
+span.post-button.disabled 
+{
+    border-radius: 5px;
+	border: 1px solid #888888;
+	background: #dddddd;
+	color: #666666;
+	cursor: default;
 	margin: 2px;
 	padding: 4px 16px;
 }
@@ -1056,7 +1135,7 @@ input[type="cancel"]:hover, input[type="reset"]:hover {
     outline: none;
 }
 
-span.post-button:hover, span.img-button:hover, button:hover {
+span.post-button a:hover, span.img-button:hover, button:hover {
     background: #ffffff url(images/ui-bg_glass_100_ffffff_1x400.png) 50% 50% repeat-x;
     color: #0044aa;
 }
@@ -1075,8 +1154,9 @@ span.post-button a, span.img-button a {
     color: #ffffff;
 }
 
-span.post-button:hover a, span.img-button:hover a {
+span.post-button a:hover, span.img-button:hover a {
     color: #0044aa;
+    text-decoration: none;
 }
 
 span.subscribe-button a {
@@ -1881,23 +1961,54 @@ blockquote {
 	padding-right: 5px;
 }
 
+#head-nav .notifications:before, #head-nav .mail-notifications:before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0.1em 1.6em 0.8em;
+    border-color: transparent transparent #ff9945 transparent;
+    position: absolute;
+    top: 0;
+    left: -0.8em;
+    bottom: 0;
+}
+
+#notifications-tile, #mail-notifications-tile {
+    margin: 0 0.4em;
+}
+
+#head-nav .notifications:after, #head-nav .mail-notifications:after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 1.6em 0.8em 0 0.1em;
+    border-color: #ff9945 transparent transparent transparent;
+    position: absolute;
+    top: 0;
+    right: -0.8em;
+    bottom: 0;
+}
+
 #head-nav .notifications, #head-nav .mail-notifications {
     display: inline-block;
     width: 1.2em;
-    padding: 0.2em 0.1em;
+    padding: 0.2em 0;
     line-height: 1.2em;
-    background-color: #E71717;
-    border-radius: 3px;
+    background-color: #ff9945;
     color: #FFFFFF;
     text-align: center;
     font-weight: bold;
     font-size: 0.9em;
+    margin: 0;
+    position: relative;
 }
 
 #head-nav .mail-notifications {
     background-image: url(images/ui-icons_ffffff_256x240.png);
     background-repeat: no-repeat;
-    background-position: -80px -96px;
+    background-position: -80px -94px; /* 80 96 */
 }
 
 #share-form {

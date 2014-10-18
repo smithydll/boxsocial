@@ -65,6 +65,7 @@
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
     <Content Include="captcha%402x.aspx" />
+    <Content Include="registerapplication.aspx" />
     <Content Include="scripts\ajax.common.js" />
     <Content Include="scripts\ajax.desktop.js" />
     <Content Include="scripts\canvas-to-blob.min.js" />
@@ -186,6 +187,7 @@
     <Content Include="templates\mobile\viewsubscriptions.html" />
     <Content Include="templates\mobile\viewsubscribers.html" />
     <Content Include="templates\primitive_footer.html" />
+    <Content Include="templates\registerapplication.html" />
     <Content Include="templates\viewsubscriptions.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />

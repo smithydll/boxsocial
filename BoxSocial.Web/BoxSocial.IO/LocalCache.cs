@@ -75,7 +75,15 @@ namespace BoxSocial.IO
         {
             if (cache != null)
             {
-                cache.Insert(key, value, null, System.Web.Caching.Cache.NoAbsoluteExpiration, expiresIn, priority, null);
+                try
+                {
+                    cache.Insert(key, value, null, System.Web.Caching.Cache.NoAbsoluteExpiration, expiresIn, priority, null);
+                }
+                catch (InvalidOperationException)
+                {
+                    // Not sure why failed, but I guess will try to cache again and succeed
+                    // System.Web.HttpUnhandledException: Exception of type 'System.Web.HttpUnhandledException' was thrown. ---> System.InvalidOperationException: Operation is not valid due to the current state of the object
+                }
             }
             else if (cache2 != null)
             {

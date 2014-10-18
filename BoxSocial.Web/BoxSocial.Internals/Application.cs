@@ -106,8 +106,8 @@ namespace BoxSocial.Internals
                 {
                     Assembly assembly = Assembly.LoadFrom(assemblyPath);
 
-                    LoadedAssemblies.Add(applicationId, assembly);
-                    AssemblyNames.Add(assemblyName, applicationId);
+                    LoadedAssemblies[applicationId] = assembly;
+                    AssemblyNames[assemblyName] = applicationId;
                 }
             }
 

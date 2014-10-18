@@ -77,6 +77,34 @@ namespace BoxSocial.Internals
             this.db = db;
 
             SelectQuery query = GetSelectQueryStub(core);
+            query.AddCondition("applications_oauth.application_api_key", apiKey);
+
+            System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
+
+            if (applicationReader.HasRows)
+            {
+                applicationReader.Read();
+
+                //loadItemInfo(applicationReader);
+
+                applicationReader.Close();
+                applicationReader.Dispose();
+            }
+            else
+            {
+                applicationReader.Close();
+                applicationReader.Dispose();
+
+                throw new InvalidApplicationException();
+            }
+        }
+
+        public OAuthApplication(Core core, ApplicationEntry ae)
+            : base(core)
+        {
+            this.db = db;
+
+            SelectQuery query = GetSelectQueryStub(core);
             query.AddCondition("applications_oauth.application_id", apiKey);
 
             System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);

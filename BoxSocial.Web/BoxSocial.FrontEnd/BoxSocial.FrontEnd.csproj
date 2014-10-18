@@ -155,6 +155,9 @@
     <Compile Include="register.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="registerapplication.aspx.cs">
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="safety.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

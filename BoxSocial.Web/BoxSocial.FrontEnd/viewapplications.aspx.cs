@@ -73,6 +73,16 @@ namespace BoxSocial.FrontEnd
                 viewingPrimitive = AppPrimitives.Musician;
             }
 
+            Primitive viewer = core.Session.LoggedInMember;
+
+            if (viewingPrimitive != AppPrimitives.Member)
+            {
+                core.PrimitiveCache.LoadPrimitiveProfile(id, typeId);
+                viewer = core.PrimitiveCache[id, typeId];
+            }
+
+            template.Parse("U_CREATE_APPLICATION", core.Hyperlink.AppendSid("/applications/register"));
+
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(core, typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + ((byte)viewingPrimitive).ToString(), (byte)viewingPrimitive);
             query.AddCondition("application_locked", false);
@@ -91,6 +101,21 @@ namespace BoxSocial.FrontEnd
                 applicationVariableCollection.Parse("TITLE", ae.Title);
                 applicationVariableCollection.Parse("URI", ae.GetUri(typeId, id));
                 applicationVariableCollection.Parse("I_TILE", ae.Tile);
+                if (ae.ApplicationType == ApplicationType.Native)
+                {
+                    if (viewer != null)
+                    {
+                        if (!ae.HasInstalled(core, viewer))
+                        {
+                            applicationVariableCollection.Parse("U_INSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                                ae.ApplicationId, viewer.AccountUriStub), true));
+                        }
+                        else
+                        {
+                            applicationVariableCollection.Parse("IS_INSTALLED", "TRUE");
+                        }
+                    }
+                }
             }
 
             core.Display.ParsePagination("/applications/", 10, applicationsTable.Rows.Count);

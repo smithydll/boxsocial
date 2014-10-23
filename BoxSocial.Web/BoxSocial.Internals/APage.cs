@@ -36,7 +36,6 @@ namespace BoxSocial.Internals
     public abstract partial class APage : PPage
     {
         protected string anAssemblyName;
-        protected ApplicationEntry anApplication;
 
         public APage()
             : base()
@@ -52,7 +51,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return anApplication;
+                return (ApplicationEntry)primitive;
             }
         }
 
@@ -62,7 +61,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                anApplication = core.GetApplication(anAssemblyName);
+                primitive = core.GetApplication(anAssemblyName);
             }
             catch (InvalidApplicationException)
             {
@@ -70,18 +69,22 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            core.PagePath = core.PagePath.Substring(anApplication.AssemblyName.Length + 1 + 12);
+            core.PagePath = core.PagePath.Substring(AnApplication.ApplicationName.Length + 1 + 12);
             if (core.PagePath.Trim(new char[] { '/' }) == string.Empty)
             {
                 core.PagePath = "/profile";
             }
 
-            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Application, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, anApplication));
+            BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Application, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, AnApplication));
 
-            PageTitle = anApplication.Title;
+            PageTitle = AnApplication.Title;
 
-
-
+            core.Template.Parse("PRIMITIVE_THUMB", Owner.Thumbnail);
+            core.Template.Parse("PRIMITIVE_ICON", Owner.Icon);
+            core.Template.Parse("PRIMITIVE_TILE", Owner.Tile);
+            core.Template.Parse("PRIMITIVE_SQUARE", Owner.Square);
+            core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
+            core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
         }
     }
 

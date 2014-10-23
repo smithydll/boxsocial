@@ -44,4 +44,34 @@
 <!-- ENDIF -->
 <!-- ENDIF -->
 
+<!-- IF dev_application_list -->
+<h3>Developer</h3>
+
+<ul id="my-apps-list">
+    <!-- BEGIN dev_application_list -->
+    <li style="width: 20%; height: auto; position: relative; float: left;">
+        <div class="contact-card-container" style="width: auto; margin: 5px;">
+            <div class="contact-card" style="width: 100%; position: relative; z-index: auto; box-shadow: none; border: 1px solid #cccccc;">
+          <!-- IF dev_application_list.MOBILE_COVER -->
+              <div style="height: 80px; background-image: url('{dev_application_list.MOBILE_COVER}'); background-position: center; background-color: #333333; background-size: cover; width: auto;">
+          <!-- ELSE -->
+              <div style="height: 80px; background-color: #333333; background-size: cover; width: auto;">
+          <!-- ENDIF -->
+          <!-- IF dev_application_list.I_TILE -->
+		        <img src="{dev_application_list.I_TILE}" alt="{dev_application_list.TITLE}" />
+          <!-- ELSE -->
+                <img src="/images/no_picture_100.png" alt="{dev_application_list.TITLE}" />
+          <!-- ENDIF -->
+              </div>
+              <div style="width: auto;">
+                <p><strong><a href="{dev_application_list.URI}">{dev_application_list.TITLE}</a></strong></p>
+              </div>
+            </div>
+        </div>
+    </li>
+	<!-- END dev_application_list -->
+</ul>
+<div class="cheat-clear-left"></div>
+<!-- ENDIF -->
+
 <!-- INCLUDE page_footer.html -->

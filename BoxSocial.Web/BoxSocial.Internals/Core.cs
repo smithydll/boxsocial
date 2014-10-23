@@ -731,7 +731,7 @@ namespace BoxSocial.Internals
                 ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
                 ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
 
-                if (Prose != null)
+                if (Prose != null && ae.ApplicationType == ApplicationType.Native)
                 {
                     Prose.AddApplication(ae.Key);
                 }
@@ -752,7 +752,7 @@ namespace BoxSocial.Internals
                     Cache.SetCached("Applications", loadedAssemblies, new TimeSpan(1, 0, 0), CacheItemPriority.Default);
                 }
 
-                if (Prose != null)
+                if (Prose != null && ae.ApplicationType == ApplicationType.Native)
                 {
                     Prose.AddApplication(ae.Key);
                 }

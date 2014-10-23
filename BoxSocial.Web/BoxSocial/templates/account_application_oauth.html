@@ -1,0 +1,15 @@
+﻿<h3>{L_OAUTH_KEYS}</h3>
+
+<!-- IF IS_OAUTH -->
+<dl class="wide">
+    <dt>Application consumer key:</dt>
+    <dd>{CONSUMER_KEY}</dd>
+    <dt>Application consumer secret:</dt>
+    <dd>{CONSUMER_SECRET}</dd>
+</dl>
+
+<a href="{U_REGENERATE_KEYS}">{L_REGENERATE_KEYS}</a>
+
+<!-- ELSE -->
+<p>Native applications do not have an oauth endpoint.</p>
+<!-- ENDIF -->

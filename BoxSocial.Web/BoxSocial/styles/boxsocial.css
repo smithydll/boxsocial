@@ -569,7 +569,7 @@ div.blog-post h3 {
 	padding-bottom: 2px;
 }
 
-ul#profile-friends, ul#profile-subscribers {
+ul#profile-friends, ul#profile-subscribers, ul#app-list, ul#my-apps-list {
 	list-style: none;
 	padding: 5px;
 	margin: 0px;
@@ -730,7 +730,7 @@ ul.comment-list li p.extra a {
 	cursor: pointer;
 }
 
-#tabs li a:before {
+#tabs li:before {
     content: "";
     width: 0;
     height: 0;
@@ -744,7 +744,7 @@ ul.comment-list li p.extra a {
     z-index: -1;
 }
 
-#tabs li a:after {
+#tabs li:after {
     content: "";
     width: 0;
     height: 0;
@@ -760,9 +760,6 @@ ul.comment-list li p.extra a {
 
 #tabs li > span {
 	display: block;
-	padding-left: 2px;
-	margin-right: 2px;
-	margin-top: 1px;
 }
 
 #tabs li.current a span, #tabs li.current span {
@@ -929,9 +926,17 @@ ul.comment-list li p.extra a {
 	text-align: right;
 }
 
+.account-pane dl.wide dt, .account-wide-pane dl.wide dt {
+    width: 250px;
+}
+
 .account-pane dd, .account-wide-pane dd {
 	margin: 0 0 5px 160px;
 	position: relative;
+}
+
+.account-pane dl.wide dd, .account-wide-pane dl.wide dd {
+    margin: 0 0 5px 260px;
 }
 
 table {
@@ -1626,29 +1631,6 @@ ul.permission-grant-list {
 	list-style: none;
 	padding: 0px;
 	margin: 0px;
-}
-
-dl#app-list {
-    width: 100%;
-	padding: 0px;
-	margin: 0px; 
-	height: 60px;   
-}
-
-#app-list dt {
-    display: block;
-	width: 25%;
-	float: left;
-	height: 60px;
-	margin: 0px;
-	padding: 0.5em 0 0.5em 0;
-}
-
-#app-list dd {
-	display: block;
-	margin: 0 0 0 25%;
-	height: 60px;
-	padding: 0.5em 0 0.5em 0;
 }
 
 /* markup */

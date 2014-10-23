@@ -28,6 +28,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using System.Web.Configuration;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -70,6 +71,8 @@ namespace BoxSocial.Internals
         private string applicationTile;
         [DataField("application_square", 63)]
         private string applicationSquare;
+        [DataField("application_name", DataFieldKeys.Unique, 63)]
+        private string applicationName;
         [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
         private string assemblyName;
         [DataField("application_primitive")]
@@ -140,7 +143,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return assemblyName;
+                return applicationName;
             }
         }
 
@@ -255,6 +258,14 @@ namespace BoxSocial.Internals
             get
             {
                 return assemblyName;
+            }
+        }
+
+        public string ApplicationName
+        {
+            get
+            {
+                return applicationName;
             }
         }
 
@@ -497,6 +508,30 @@ namespace BoxSocial.Internals
             }
         }
 
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        public ApplicationEntry(Core core, bool isThis)
+            : base(core)
+        {
+            if (isThis)
+            {
+                Assembly asm = Assembly.GetCallingAssembly();
+
+                string assemblyName = asm.GetName().Name;
+                assembly = asm;
+
+                ItemLoad += new ItemLoadHandler(ApplicationEntry_ItemLoad);
+
+                try
+                {
+                    LoadItem("application_assembly_name", assemblyName);
+                }
+                catch (InvalidItemException)
+                {
+                    throw new InvalidApplicationException();
+                }
+            }
+        }
+
         public ApplicationEntry(Core core, string assemblyName)
             : base(core)
         {
@@ -504,7 +539,7 @@ namespace BoxSocial.Internals
 
             try
             {
-                LoadItem("application_assembly_name", assemblyName);
+                LoadItem("application_name", assemblyName);
             }
             catch (InvalidItemException)
             {
@@ -555,8 +590,19 @@ namespace BoxSocial.Internals
 
         protected override void loadItemInfo(DataRow applicationRow)
         {
+            loadApplication(applicationRow);
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader applicationRow)
+        {
+            loadApplication(applicationRow);
+        }
+
+        protected void loadApplication(DataRow applicationRow)
+        {
             loadValue(applicationRow, "application_id", out applicationId);
             loadValue(applicationRow, "user_id", out creatorId);
+            loadValue(applicationRow, "application_name", out applicationName);
             loadValue(applicationRow, "application_title", out title);
             loadValue(applicationRow, "application_description", out description);
             loadValue(applicationRow, "application_icon", out applicationIcon);
@@ -580,10 +626,11 @@ namespace BoxSocial.Internals
             core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
-        protected override void loadItemInfo(System.Data.Common.DbDataReader applicationRow)
+        protected void loadApplication(System.Data.Common.DbDataReader applicationRow)
         {
             loadValue(applicationRow, "application_id", out applicationId);
             loadValue(applicationRow, "user_id", out creatorId);
+            loadValue(applicationRow, "application_name", out applicationName);
             loadValue(applicationRow, "application_title", out title);
             loadValue(applicationRow, "application_description", out description);
             loadValue(applicationRow, "application_icon", out applicationIcon);
@@ -637,6 +684,7 @@ namespace BoxSocial.Internals
             }
 
             InsertQuery iQuery = new InsertQuery(typeof(ApplicationEntry));
+            iQuery.AddField("application_name", assembly);
             iQuery.AddField("application_assembly_name", assembly);
             iQuery.AddField("user_id", core.LoggedInMemberId);
             iQuery.AddField("application_date_ut", UnixTime.UnixTimeStamp());
@@ -651,12 +699,22 @@ namespace BoxSocial.Internals
             iQuery.AddField("application_icon", string.Format(@"/images/{0}/icon.png", assembly));
             iQuery.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", assembly));
             iQuery.AddField("application_tile", string.Format(@"/images/{0}/tile.png", assembly));
+            iQuery.AddField("application_type", (byte)ApplicationType.Native);
 
             long applicationId = core.Db.Query(iQuery);
 
             ApplicationEntry newApplication = new ApplicationEntry(core, applicationId);
 
             ApplicationDeveloper developer = ApplicationDeveloper.Create(core, newApplication, core.Session.LoggedInMember);
+
+            try
+            {
+                ApplicationEntry guestbookAe = core.GetApplication("Profile");
+                guestbookAe.Install(core, newApplication);
+            }
+            catch
+            {
+            }
 
             try
             {
@@ -676,12 +734,12 @@ namespace BoxSocial.Internals
             {
                 if (core.Http.Domain != Hyperlink.Domain)
                 {
-                    return core.Hyperlink.Uri + "application/" + assemblyName + "/";
+                    return core.Hyperlink.Uri + "application/" + applicationName + "/";
                 }
                 else
                 {
                     return string.Format("/application/{0}/",
-                        assemblyName);
+                        applicationName);
                 }
             }
         }
@@ -711,7 +769,7 @@ namespace BoxSocial.Internals
             else
             {
                 return core.Hyperlink.AppendSid(string.Format("/application/{0}?type={1}&id={2}",
-                    assemblyName, typeId, id));
+                    applicationName, typeId, id));
             }
         }
 
@@ -1493,15 +1551,27 @@ namespace BoxSocial.Internals
                     viewer = core.PrimitiveCache[id, typeId];
                 }
 
-                if (page.AnApplication.HasInstalled(core, viewer))
+                if (page.AnApplication.ApplicationType == ApplicationType.Native)
                 {
-                    core.Template.Parse("U_UNINSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
-                        page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                    if (page.AnApplication.HasInstalled(core, viewer))
+                    {
+                        core.Template.Parse("U_UNINSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=uninstall&id={0}",
+                            page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                    }
+                    else
+                    {
+                        core.Template.Parse("U_INSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
+                            page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                    }
                 }
-                else
+
+                if (page.AnApplication.ApplicationType == ApplicationType.OAuth)
                 {
-                    core.Template.Parse("U_INSTALL", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=install&id={0}",
-                        page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                    if (page.AnApplication.HasInstalled(core, viewer))
+                    {
+                        core.Template.Parse("U_REVOKE", core.Hyperlink.AppendSid(string.Format("{1}dashboard/applications?mode=revoke&id={0}",
+                            page.AnApplication.ApplicationId, viewer.AccountUriStub), true));
+                    }
                 }
 
                 if (core.Session.LoggedInMember.Id == page.AnApplication.CreatorId)
@@ -1746,6 +1816,251 @@ namespace BoxSocial.Internals
                 return string.Empty;
             }
         }
+
+        public static bool CheckApplicationNameValid(string applicationName)
+        {
+            int matches = 0;
+
+            List<string> disallowedNames = new List<string>();
+            disallowedNames.Add("about");
+            disallowedNames.Add("copyright");
+            disallowedNames.Add("register");
+            disallowedNames.Add("sign-in");
+            disallowedNames.Add("log-in");
+            disallowedNames.Add("help");
+            disallowedNames.Add("safety");
+            disallowedNames.Add("privacy");
+            disallowedNames.Add("terms-of-service");
+            disallowedNames.Add("site-map");
+            disallowedNames.Add(WebConfigurationManager.AppSettings["boxsocial-title"].ToLower());
+            disallowedNames.Add("blogs");
+            disallowedNames.Add("profiles");
+            disallowedNames.Add("search");
+            disallowedNames.Add("communities");
+            disallowedNames.Add("community");
+            disallowedNames.Add("constitution");
+            disallowedNames.Add("profile");
+            disallowedNames.Add("my-profile");
+            disallowedNames.Add("history");
+            disallowedNames.Add("get-active");
+            disallowedNames.Add("statistics");
+            disallowedNames.Add("blog");
+            disallowedNames.Add("categories");
+            disallowedNames.Add("members");
+            disallowedNames.Add("users");
+            disallowedNames.Add("upload");
+            disallowedNames.Add("support");
+            disallowedNames.Add("account");
+            disallowedNames.Add("history");
+            disallowedNames.Add("browse");
+            disallowedNames.Add("feature");
+            disallowedNames.Add("featured");
+            disallowedNames.Add("favourites");
+            disallowedNames.Add("likes");
+            disallowedNames.Add("dev");
+            disallowedNames.Add("dcma");
+            disallowedNames.Add("coppa");
+            disallowedNames.Add("guidelines");
+            disallowedNames.Add("press");
+            disallowedNames.Add("jobs");
+            disallowedNames.Add("careers");
+            disallowedNames.Add("feedback");
+            disallowedNames.Add("create");
+            disallowedNames.Add("subscribe");
+            disallowedNames.Add("subscriptions");
+            disallowedNames.Add("rate");
+            disallowedNames.Add("comment");
+            disallowedNames.Add("mail");
+            disallowedNames.Add("video");
+            disallowedNames.Add("videos");
+            disallowedNames.Add("music");
+            disallowedNames.Add("podcast");
+            disallowedNames.Add("podcasts");
+            disallowedNames.Add("security");
+            disallowedNames.Add("bugs");
+            disallowedNames.Add("beta");
+            disallowedNames.Add("friend");
+            disallowedNames.Add("friends");
+            disallowedNames.Add("family");
+            disallowedNames.Add("promotion");
+            disallowedNames.Add("birthday");
+            disallowedNames.Add("account");
+            disallowedNames.Add("settings");
+            disallowedNames.Add("admin");
+            disallowedNames.Add("administrator");
+            disallowedNames.Add("administrators");
+            disallowedNames.Add("root");
+            disallowedNames.Add("my-account");
+            disallowedNames.Add("member");
+            disallowedNames.Add("anonymous");
+            disallowedNames.Add("legal");
+            disallowedNames.Add("contact");
+            disallowedNames.Add("aonlinesite");
+            disallowedNames.Add("images");
+            disallowedNames.Add("image");
+            disallowedNames.Add("styles");
+            disallowedNames.Add("style");
+            disallowedNames.Add("theme");
+            disallowedNames.Add("header");
+            disallowedNames.Add("footer");
+            disallowedNames.Add("head");
+            disallowedNames.Add("foot");
+            disallowedNames.Add("bin");
+            disallowedNames.Add("images");
+            disallowedNames.Add("templates");
+            disallowedNames.Add("cgi-bin");
+            disallowedNames.Add("cgi");
+            disallowedNames.Add("web.config");
+            disallowedNames.Add("report");
+            disallowedNames.Add("rules");
+            disallowedNames.Add("script");
+            disallowedNames.Add("scripts");
+            disallowedNames.Add("css");
+            disallowedNames.Add("img");
+            disallowedNames.Add("App_Data");
+            disallowedNames.Add("test");
+            disallowedNames.Add("sitepreview");
+            disallowedNames.Add("plesk-stat");
+            disallowedNames.Add("jakarta");
+            disallowedNames.Add("storage");
+            disallowedNames.Add("netalert");
+            disallowedNames.Add("group");
+            disallowedNames.Add("groups");
+            disallowedNames.Add("create");
+            disallowedNames.Add("edit");
+            disallowedNames.Add("delete");
+            disallowedNames.Add("remove");
+            disallowedNames.Add("sid");
+            disallowedNames.Add("network");
+            disallowedNames.Add("networks");
+            disallowedNames.Add("cart");
+            disallowedNames.Add("api");
+            disallowedNames.Add("feed");
+            disallowedNames.Add("rss");
+            disallowedNames.Sort();
+
+            if (disallowedNames.BinarySearch(applicationName.ToLower()) >= 0)
+            {
+                matches++;
+            }
+
+            if (!Regex.IsMatch(applicationName, @"^([A-Za-z0-9\-_\.\!~\*'&=\$].+)$"))
+            {
+                matches++;
+            }
+
+            applicationName = applicationName.Normalize().ToLower();
+
+            if (applicationName.Length < 2)
+            {
+                matches++;
+            }
+
+            if (applicationName.Length > 64)
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".aspx", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".asax", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".php", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".html", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".gif", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".png", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".js", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".bmp", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".jpg", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".jpeg", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".zip", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".jsp", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".cfm", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".exe", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.StartsWith(".", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (applicationName.EndsWith(".", StringComparison.Ordinal))
+            {
+                matches++;
+            }
+
+            if (matches > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static bool CheckApplicationNameUnique(Core core, string applicationName)
+        {
+            if (core.Db.Query(string.Format("SELECT application_name FROM applications WHERE LCASE(application_name) = '{0}';",
+                Mysql.Escape(applicationName.ToLower()))).Rows.Count > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+
     }
 
     public class InvalidApplicationException : Exception

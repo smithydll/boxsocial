@@ -53,6 +53,7 @@ namespace BoxSocial.Internals
             query.AddField(new DataField("applications", "application_locked"));
             query.AddField(new DataField("applications", "application_update"));
             query.AddField(new DataField("applications", "application_primitive"));
+            query.AddCondition("application_type", (byte)ApplicationType.Native);
 
             System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
 

@@ -456,7 +456,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         /// <param name="core">Core token</param>
         /// <param name="sender">Object that called the page</param>
-        [Show(@"images/([A-Za-z0-9\-_/\.@]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician)]
+        [Show(@"images/([A-Za-z0-9\-_/\.@]+)", AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician | AppPrimitives.Application)]
         private void showImage(Core core, object sender)
         {
             if (sender is PPage)
@@ -471,7 +471,7 @@ namespace BoxSocial.Applications.Gallery
         /// <returns>List of primitives given support of</returns>
         public override AppPrimitives GetAppPrimitiveSupport()
         {
-            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician;
+            return AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Network | AppPrimitives.Musician | AppPrimitives.Application;
         }
 
         /// <summary>

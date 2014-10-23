@@ -1832,6 +1832,8 @@ namespace BoxSocial.Groups
                 return;
             }
 
+            e.Template.Parse("S_POST", e.Core.Hyperlink.AppendSid("/groups/register/", true));
+
             string selected = "checked=\"checked\" ";
             long category = 1;
             bool categoryError = false;

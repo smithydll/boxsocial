@@ -1,0 +1,33 @@
+﻿<!-- INCLUDE page_header.html -->
+<h2>{L_CREATE_NEW_APPLICATION}</h2>
+
+<p>Developers can create applications that integrate with {SITE_TITLE} through the Box Social API.
+The {SITE_TITLE} API uses OAuth 1.0 to authenticate requests.</p>
+
+<!-- IF ERROR -->
+<p class="error">{ERROR}</p>
+<!-- ENDIF -->
+<form action="{S_POST}" method="post" id="form-register">
+<fieldset>
+    <dl id="form-list">
+        <dt class="top"><label for="title">Application Title:</label></dt>
+		<dd class="top"><input type="text" name="title" id="title" size="64" maxlength="64" style="width: 350px; "  onchange="UpdateSlug()" value="{APPLICATION_TITLE}" /></dd>
+		<dt class="top"><label for="slug">Application slug:</label></dt>
+		<dd class="top"><input type="text" id="slug" name="slug" maxlength="64" size="48" style="width: 225px; "value="{APPLICATION_SLUG}" /> <img src="/images/group-path-bar.png" alt="The name shown in the address bar." /></dd>
+        <dt class="top"><label for="description">Application Description:</label></dt>
+		<dd class="top">
+			<textarea id="description" name="description" rows="4" cols="75">{APPLICATION_DESCRIPTION}</textarea>
+		</dd>
+        <dt class="top"><label>Enter the letters shown to the left in the box below:</label></dt>
+		<dd class="top"><img src="{U_CAPTCHA}" alt="captcha" style="width: 350px;" /></dd>
+		<dd class="top"><input type="text" id="captcha" name="captcha" /></dd>
+		<dt class="top"><label for="agree">I understand the developer agreement:</label></dt>
+		<dd class="top"><input type="checkbox" value="true" id="agree" name="agree" /></dd>
+        <dt class="top"></dt>
+		<dd class="top"><input type="submit" value="Create Application" name="submit" /> <a href="{U_APPLICATIONS}">Cancel</a></dd>
+    </dl>
+    <input type="hidden" id="verification" value="{SID}" />
+</fieldset>
+</form>
+
+<!-- INCLUDE page_footer.html -->

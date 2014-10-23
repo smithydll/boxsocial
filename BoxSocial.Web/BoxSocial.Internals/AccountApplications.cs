@@ -64,6 +64,7 @@ namespace BoxSocial.Internals
             AddSaveHandler("settings", new EventHandler(ApplicationSettingsSave));
             AddModeHandler("install", new ModuleModeHandler(ApplicationInstall));
             AddModeHandler("uninstall", new ModuleModeHandler(ApplicationUninstall));
+            AddModeHandler("revoke", new ModuleModeHandler(ApplicationUninstall));
         }
 
         private void AccountApplications_Show(object sender, EventArgs e)

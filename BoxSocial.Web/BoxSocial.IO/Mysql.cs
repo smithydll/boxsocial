@@ -139,7 +139,7 @@ namespace BoxSocial.IO
             try
             {
                 PushQuery(sqlConnection.State.ToString(), 0.0);
-                
+
                 //DataSet resultSet = new DataSet();
                 MySql.Data.MySqlClient.MySqlDataAdapter dataAdapter = new MySql.Data.MySqlClient.MySqlDataAdapter();
                 dataAdapter.SelectCommand = new MySql.Data.MySqlClient.MySqlCommand(sqlquery, sqlConnection);
@@ -161,6 +161,11 @@ namespace BoxSocial.IO
                 PushQuery(sqlquery, timer.ElapsedTicks / 10000000.0);
 
                 return resultTable;
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                PushQuery(sqlquery, 0.0);
+                throw new System.Exception(ex.ToString());
             }
             catch (System.Exception ex)
             {

@@ -86,6 +86,7 @@ namespace BoxSocial.FrontEnd
             SelectQuery query = ApplicationEntry.GetSelectQueryStub(core, typeof(ApplicationEntry));
             query.AddCondition("application_primitives & " + ((byte)viewingPrimitive).ToString(), (byte)viewingPrimitive);
             query.AddCondition("application_locked", false);
+            query.AddCondition("application_type", (byte)ApplicationType.Native);
             query.AddSort(SortOrder.Ascending, "application_title");
             query.LimitStart = (TopLevelPageNumber - 1) * 10;
             query.LimitCount = 10;
@@ -119,6 +120,26 @@ namespace BoxSocial.FrontEnd
             }
 
             core.Display.ParsePagination("/applications/", 10, applicationsTable.Rows.Count);
+
+            if (viewingPrimitive == AppPrimitives.Member && core.Session.SignedIn)
+            {
+                query = ApplicationEntry.GetSelectQueryStub(core, typeof(ApplicationEntry));
+                query.AddCondition("user_id", core.LoggedInMemberId);
+                query.AddCondition("application_type", (byte)ApplicationType.OAuth);
+
+                DataTable devApplicationsTable = db.Query(query);
+
+                foreach (DataRow dr in devApplicationsTable.Rows)
+                {
+                    ApplicationEntry ae = new ApplicationEntry(core, dr);
+
+                    VariableCollection applicationVariableCollection = template.CreateChild("dev_application_list");
+
+                    applicationVariableCollection.Parse("TITLE", ae.Title);
+                    applicationVariableCollection.Parse("URI", ae.GetUri(typeId, id));
+                    applicationVariableCollection.Parse("I_TILE", ae.Tile);
+                }
+            }
 
             EndResponse();
         }

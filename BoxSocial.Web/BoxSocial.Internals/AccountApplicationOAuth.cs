@@ -79,6 +79,11 @@ namespace BoxSocial.FrontEnd
                     template.Parse("CONSUMER_KEY", oa.ApiKey);
                     template.Parse("CONSUMER_SECRET", oa.ApiSecret);
                 }
+
+                /*SelectQuery query = OAuthApplication.GetSelectQueryStub(core);
+                query.AddCondition(new DataField("applications_oauth", "application_id"), ae.Id);
+
+                HttpContext.Current.Response.Write(query.ToString());*/
             }
         }
 

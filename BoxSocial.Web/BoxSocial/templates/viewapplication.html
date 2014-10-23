@@ -1,5 +1,40 @@
 <!-- INCLUDE page_header.html -->
-	<h2><a href="{U_APPLICATION}">{APPLICATION_NAME}</a></h2>
+
+<!-- IF $_IS_DESKTOP AND BREADCRUMBS -->
+<div class="breadcrumbs"><p>{BREADCRUMBS}</p></div>
+<!-- ENDIF -->
+
+    <!-- IF $_IS_MOBILE -->
+	<div id="overview-profile" class="pane">
+        <!-- IF PRIMITIVE_MOBILE_COVER_PHOTO -->
+		<div class="info no-icon" style="height: 90px; background-image: url('{PRIMITIVE_MOBILE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info no-icon">
+        <!-- ENDIF -->
+        <h2>{APPLICATION_NAME}</h2>
+        </div>
+    </div>
+    <!-- ENDIF -->
+
+<div id="content">
+    <!-- IF NOT $_IS_MOBILE -->
+	<div id="overview-profile" class="pane">
+		<div class="img-wb img-fl">
+			<!-- IF PRIMITIVE_THUMB -->
+			<img src="{PRIMITIVE_THUMB}" data-at2x="{PRIMITIVE_MOBILE}" alt="{APPLICATION_NAME} Display Picture" />
+            <!-- ENDIF -->
+		</div>
+        <!-- IF PRIMITIVE_COVER_PHOTO -->
+		<div class="info" style="height: 190px; background-image: url('{PRIMITIVE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
+        <!-- ENDIF -->
+            
+			<h2><a href="{U_APPLICATION}">{APPLICATION_NAME}</a></h2>
+		<div class="cheat-clear"></div>
+	</div>
+    </div>
+
 	<div id="pane-profile">
 		<div id="pane-profile-overview" class="pane">
 			<h3><a href="{U_APPLICATION}">{APPLICATION_NAME}</a></h3>
@@ -12,11 +47,9 @@
 			<!-- IF U_UNINSTALL -->
 			<p><span id="uninstall" class="post-button"><a href="{U_UNINSTALL}">Uninstall This Application</a></span></p>
 			<!-- ENDIF -->
-			<!-- IF I_THUMBNAIL -->
-			<div class="img-wb img-fl">
-			    <img src="{I_THUMBNAIL}" alt="{APPLICATION_NAME} Icon" />
-		    </div>
-		    <!-- ENDIF -->
+            <!-- IF U_REVOKE -->
+			<p><span id="revoke" class="post-button"><a href="{U_REVOKE}">Revoke Access</a></span></p>
+			<!-- ENDIF -->
 		</div>
 	</div>
 	<div id="profile">
@@ -35,4 +68,5 @@
 {app_panel.BODY}
 	<!-- END app_panel -->
 	</div>
+    </div>
 <!-- INCLUDE page_footer.html -->

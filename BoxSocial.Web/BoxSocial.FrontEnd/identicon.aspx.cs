@@ -53,10 +53,12 @@ namespace BoxSocial.FrontEnd
         {
             string profileUserName = core.Http["un"];
             string groupUserName = core.Http["gn"];
+            string applicationUserName = core.Http["an"];
             string mode = core.Http["mode"];
             bool retina = core.Http["retina"] == "true";
             User profileOwner = null;
             UserGroup thisGroup = null;
+            ApplicationEntry anApplication = null;
 
             int width = 100;
 
@@ -175,6 +177,29 @@ namespace BoxSocial.FrontEnd
                 }
             }
 
+            if (!string.IsNullOrEmpty(applicationUserName))
+            {
+                try
+                {
+
+                    anApplication = new ApplicationEntry(core, applicationUserName);
+                }
+                catch
+                {
+                    core.Functions.Generate404();
+                    return;
+                }
+
+                if (anApplication != null)
+                {
+                    if (anApplication.GalleryIcon > 0)
+                    {
+                        httpContext.Response.Redirect(string.Format("/applicationpage.aspx?an={0}&path=/images/_{1}/_{0}.png", applicationUserName, mode), true);
+                        return;
+                    }
+                }
+            }
+
             Response.Cache.SetCacheability(HttpCacheability.Public);
             Response.Cache.SetMaxAge(new TimeSpan(10, 0, 0));
             Response.Cache.SetLastModified(DateTime.Now.Subtract(new TimeSpan(10, 0, 0)));
@@ -221,6 +246,26 @@ namespace BoxSocial.FrontEnd
                 {
                     imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "group"), "_" + mode), string.Format("{0}.png",
                         groupUserName));
+                }
+            }
+
+            if (!string.IsNullOrEmpty(applicationUserName))
+            {
+                byte[] userBytes = System.Text.Encoding.UTF8.GetBytes(applicationUserName);
+                MD5 md5 = MD5.Create();
+                int hash = BitConverter.ToInt32(md5.ComputeHash(userBytes), 0);
+
+                char letter = anApplication.DisplayName.ToUpper()[0];
+                image = CreateIcon(letter, width, false);
+                if (retina)
+                {
+                    imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "application"), "_" + mode), string.Format("{0}@2x.png",
+                        applicationUserName));
+                }
+                else
+                {
+                    imagePath = Path.Combine(Path.Combine(Path.Combine(Path.Combine(Server.MapPath("./"), "images"), "application"), "_" + mode), string.Format("{0}.png",
+                        applicationUserName));
                 }
             }
 

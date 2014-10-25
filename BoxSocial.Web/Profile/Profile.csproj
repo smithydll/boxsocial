@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AccountApplicationIcon.cs" />
     <Compile Include="AccountGroupCoverPhoto.cs" />
     <Compile Include="AccountBlocklistManage.cs" />
     <Compile Include="AccountDisplayPic.cs" />
@@ -133,6 +134,7 @@
     <Content Include="resources\script.js" />
     <Content Include="resources\style.css" />
     <Content Include="templates\account_address_edit.html" />
+    <Content Include="templates\account_application_icon.html" />
     <Content Include="templates\account_blocklist_manage.html" />
     <Content Include="templates\account_contact.html" />
     <Content Include="templates\account_contact_manage.html" />

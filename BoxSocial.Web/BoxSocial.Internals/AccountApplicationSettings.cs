@@ -26,16 +26,16 @@ using System.Web;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
-namespace BoxSocial.FrontEnd
+namespace BoxSocial.Internals
 {
-    [AccountSubModule(AppPrimitives.Application, "applications", "oauth")]
-    public class AccountApplicationOAuth : AccountSubModule
+    [AccountSubModule(AppPrimitives.Application, "applications", "settings")]
+    public class AccountApplicationSettings : AccountSubModule
     {
         public override string Title
         {
             get
             {
-                return core.Prose.GetString("OAUTH_KEYS");
+                return core.Prose.GetString("SETTINGS");
             }
         }
 
@@ -43,56 +43,51 @@ namespace BoxSocial.FrontEnd
         {
             get
             {
-                return 3;
+                return 2;
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the AccountOverview class. 
-        /// </summary>
-        /// <param name="core">The Core token.</param>
-        public AccountApplicationOAuth(Core core, Primitive owner)
+        public AccountApplicationSettings(Core core, Primitive owner)
             : base(core, owner)
         {
-            this.Load += new EventHandler(AccountApplicationOAuth_Load);
-            this.Show += new EventHandler(AccountApplicationOAuth_Show);
+            this.Load += new EventHandler(AccountApplicationSettings_Load);
+            this.Show += new EventHandler(AccountApplicationSettings_Show);
         }
 
-        void AccountApplicationOAuth_Load(object sender, EventArgs e)
+        void AccountApplicationSettings_Load(object sender, EventArgs e)
         {
-            AddModeHandler("generate-keys", new ModuleModeHandler(AccountApplicationOAuth_GenerateKeys));
+
         }
 
-        void AccountApplicationOAuth_Show(object sender, EventArgs e)
+        void AccountApplicationSettings_Show(object sender, EventArgs e)
         {
-            template.SetTemplate("account_application_oauth.html");
+            template.SetTemplate("account_application_settings.html");
 
-            template.Parse("U_REGENERATE_KEYS", core.Hyperlink.AppendSid(BuildUri("oauth", "generate-keys"), true));
+            Save(new EventHandler(AccountApplicationSettings_Save));
 
             if (Owner is ApplicationEntry)
             {
                 ApplicationEntry ae = (ApplicationEntry)Owner;
+                template.Parse("APPLICATION_TITLE", ae.Title);
+                template.Parse("APPLICATION_DESCRIPTION", ae.Description);
+
                 if (ae.ApplicationType == ApplicationType.OAuth)
                 {
                     OAuthApplication oa = new OAuthApplication(core, ae);
+
                     template.Parse("IS_OAUTH", "TRUE");
-                    template.Parse("CONSUMER_KEY", oa.ApiKey);
-                    template.Parse("CONSUMER_SECRET", oa.ApiSecret);
+                    template.Parse("OAUTH_CALLBACK", oa.CallbackUrl);
                 }
-
-                /*SelectQuery query = OAuthApplication.GetSelectQueryStub(core);
-                query.AddCondition(new DataField("applications_oauth", "application_id"), ae.Id);
-
-                HttpContext.Current.Response.Write(query.ToString());*/
             }
         }
 
-        void AccountApplicationOAuth_GenerateKeys(object sender, EventArgs e)
+        void AccountApplicationSettings_Save(object sender, EventArgs e)
         {
             AuthoriseRequestSid();
 
-            string newKey = OAuth.GeneratePublic();
-            string newSecret = OAuth.GenerateSecret();
+            string title = core.Http.Form["title"];
+            string description = core.Http.Form["description"];
+            string callbackUrl = core.Http.Form["callback"];
 
             if (Owner is ApplicationEntry)
             {
@@ -101,14 +96,18 @@ namespace BoxSocial.FrontEnd
                 {
                     OAuthApplication oa = new OAuthApplication(core, ae);
 
-                    oa.ApiKey = newKey;
-                    oa.ApiSecret = newSecret;
+                    oa.CallbackUrl = callbackUrl;
 
                     oa.Update();
                 }
-            }
 
-            AccountApplicationOAuth_Show(sender, e);
+                ae.Title = title;
+                ae.Description = description;
+
+                ae.Update();
+
+                SetInformation("Application settings saved.");
+            }
         }
     }
 }

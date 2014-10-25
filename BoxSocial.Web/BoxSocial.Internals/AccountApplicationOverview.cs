@@ -28,14 +28,14 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    [AccountSubModule(AppPrimitives.Application, "dashboard", "edit", true)]
-    public class AccountApplicationEdit : AccountSubModule
+    [AccountSubModule(AppPrimitives.Application, "applications", "overview", true)]
+    public class AccountApplicationOverview : AccountSubModule
     {
         public override string Title
         {
             get
             {
-                return core.Prose.GetString("APPLICATION");
+                return core.Prose.GetString("OVERVIEW");
             }
         }
 
@@ -51,7 +51,7 @@ namespace BoxSocial.Internals
         /// Initializes a new instance of the AccountOverview class. 
         /// </summary>
         /// <param name="core">The Core token.</param>
-        public AccountApplicationEdit(Core core, Primitive owner)
+        public AccountApplicationOverview(Core core, Primitive owner)
             : base(core, owner)
         {
             this.Load += new EventHandler(AccountApplicationEdit_Load);
@@ -65,7 +65,15 @@ namespace BoxSocial.Internals
 
         void AccountApplicationEdit_Show(object sender, EventArgs e)
         {
-            template.SetTemplate("account_application_edit.html");
+            template.SetTemplate("account_application_overview.html");
+
+            template.Parse("BASE_URL", core.Hyperlink.Uri);
+
+            if (Owner is ApplicationEntry)
+            {
+                ApplicationEntry ae = (ApplicationEntry)Owner;
+                template.Parse("IS_OAUTH", ae.ApplicationType == ApplicationType.OAuth ? "TRUE" : "FALSE");
+            }
         }
     }
 }

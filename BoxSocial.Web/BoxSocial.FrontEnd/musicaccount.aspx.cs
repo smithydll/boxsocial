@@ -109,6 +109,7 @@ namespace BoxSocial.FrontEnd
 
                     if (newModule != null)
                     {
+                        newModule.SetOwner = Owner;
                         newModule.assembly = assembly;
                         accountModules.Add(newModule);
                         if (newModule.Key == module)
@@ -195,7 +196,7 @@ namespace BoxSocial.FrontEnd
                         ae = core.GetApplication(accountModule.assembly.GetName().Name);
                     }
 
-                    accountModule.SetOwner = loggedInMember;
+                    accountModule.SetOwner = Owner;
                     accountModule.CreateTemplate();
                     // catch all errors, don't want a single application to crash the account panel
                     try

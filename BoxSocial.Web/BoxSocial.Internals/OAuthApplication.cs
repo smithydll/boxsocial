@@ -55,7 +55,7 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetPropertyByRef(new { consumerKey = apiKey }, value);
+                SetPropertyByRef(new { apiKey }, value);
             }
         }
 
@@ -67,7 +67,19 @@ namespace BoxSocial.Internals
             }
             set
             {
-                SetPropertyByRef(new { consumerSecret = apiSecret }, value);
+                SetPropertyByRef(new { apiSecret }, value);
+            }
+        }
+
+        public string CallbackUrl
+        {
+            get
+            {
+                return apiCallback;
+            }
+            set
+            {
+                SetPropertyByRef(new { apiCallback }, value);
             }
         }
 

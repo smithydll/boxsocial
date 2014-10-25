@@ -374,6 +374,7 @@ namespace BoxSocial.FrontEnd
 
                     long userTypeId = 0;
                     long groupTypeId = 0;
+                    long applicationTypeId = 0;
 
                     Dictionary<string, long> primitiveTypeIds;
 
@@ -406,6 +407,7 @@ namespace BoxSocial.FrontEnd
 
                         userTypeId = primitiveTypeIds[typeof(User).FullName];
                         groupTypeId = primitiveTypeIds[typeof(UserGroup).FullName];
+                        applicationTypeId = primitiveTypeIds[typeof(ApplicationEntry).FullName];
                     }
                     else
                     {
@@ -571,6 +573,9 @@ namespace BoxSocial.FrontEnd
 
                     patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?gn=$2&mode=$1" });
                     patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?gn=$2&mode=$1&retina=true" });
+
+                    patterns.Add(new string[] { @"^/images/application/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?an=$2&mode=$1" });
+                    patterns.Add(new string[] { @"^/images/application/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?an=$2&mode=$1&retina=true" });
 
                     patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });

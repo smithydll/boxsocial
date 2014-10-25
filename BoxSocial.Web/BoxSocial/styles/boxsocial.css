@@ -569,7 +569,7 @@ div.blog-post h3 {
 	padding-bottom: 2px;
 }
 
-ul#profile-friends, ul#profile-subscribers, ul#app-list, ul#my-apps-list {
+ul#profile-friends, ul#profile-subscribers, ul#app-list, ul#my-apps-list, ul#group-list {
 	list-style: none;
 	padding: 5px;
 	margin: 0px;

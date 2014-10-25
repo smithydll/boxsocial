@@ -1,0 +1,23 @@
+<h3>{APPLICATION_NAME} Settings</h3>
+<p>Here you can manage the settings for {APPLICATION_NAME}.</p>
+
+<form action="{S_ACCOUNT}" method="post">
+	<fieldset>
+		<legend>Settings</legend>
+		<dl>
+            <!-- IF S_USER -->
+			<dt><label>Send E-mail Notifications</label></dt>
+			<dd>
+				<label><input type="radio" name="email-notifications" value="1"{S_EMAIL_NOTIFICATIONS_YES} /> Yes</label>
+				<label><input type="radio" name="email-notifications" value="0"{S_EMAIL_NOTIFICATIONS_NO} /> No</label>
+			</dd>
+            <!-- ENDIF -->
+			<dt></dt>
+			<dd><input type="submit" name="save" value="Save" /></dd>
+		</dl>
+		<input type="hidden" name="module" value="" />
+		<input type="hidden" name="sub" value="applications" />
+        <input type="hidden" name="mode" value="settings" />
+        <input type="hidden" name="id" value="{S_APPLICATION_ID}" />
+	</fieldset>
+</form>

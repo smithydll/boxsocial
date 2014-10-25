@@ -39,7 +39,7 @@ namespace BoxSocial.Applications.Gallery
     /// <summary>
     /// 
     /// </summary>
-    [AccountModule("galleries")]
+    [AccountModule(AppPrimitives.Member | AppPrimitives.Group | AppPrimitives.Musician, "galleries")]
     public class AccountGalleries : AccountModule
     {
         /// <summary>

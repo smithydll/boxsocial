@@ -884,6 +884,9 @@
   <data name="SEPTEMBER" xml:space="preserve">
     <value>September</value>
   </data>
+  <data name="SETTINGS" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="SEXUALITY" xml:space="preserve">
     <value>Sexuality</value>
   </data>

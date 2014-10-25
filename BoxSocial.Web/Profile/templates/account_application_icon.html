@@ -1,10 +1,10 @@
-﻿<h3>Display Picture</h3>
+﻿<h3>Application Icon</h3>
 
 <form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
 	<fieldset>
-		<legend>Display Picture</legend>
-    <!-- IF I_DISPLAY_PICTURE -->
-		<p><img src="{I_DISPLAY_PICTURE}" alt="Display Picture" /></p>
+		<legend>Application Icon</legend>
+    <!-- IF I_ICON -->
+		<p><img src="{I_ICON}" alt="Application Icon" /></p>
     <!-- ENDIF -->
 		<dl>
 			<dt><label for="photo-file">Select File</label></dt>
@@ -12,7 +12,7 @@
 			<dt></dt>
 			<dd><input type="submit" name="save" value="{L_SAVE}" /></dd>
 		</dl>
-		<input type="hidden" name="module" value="groups" />
-		<input type="hidden" name="sub" value="display-picture" />
+		<input type="hidden" name="module" value="applications" />
+		<input type="hidden" name="sub" value="icon" />
 	</fieldset>
 </form>

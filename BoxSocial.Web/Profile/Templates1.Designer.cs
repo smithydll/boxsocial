@@ -84,6 +84,15 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        internal static string account_application_icon {
+            get {
+                return ResourceManager.GetString("account_application_icon", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &lt;h3&gt;{L_MANAGE_BLOCK_LIST}&lt;/h3&gt;
         ///
         ///&lt;table style=&quot;width: 100%&quot;&gt;
@@ -497,7 +506,22 @@ namespace BoxSocial.Applications.Profile {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to &lt;h3&gt;Verify Phone Number&lt;/h3&gt;
+        ///
+        ///&lt;form action=&quot;{S_ACCOUNT}&quot; method=&quot;post&quot;&gt;
+        ///	&lt;fieldset&gt;
+        ///		&lt;legend&gt;Verify Phone Number&lt;/legend&gt;
+        ///		&lt;dl&gt;
+        ///			&lt;dt&gt;Phone Number&lt;/dt&gt;
+        ///			&lt;dd&gt;{PHONE_NUMBER}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;label for=&quot;phone-verify-code&quot;&gt;Verify Code&lt;/label&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;{S_VERIFY_CODE}&lt;/dd&gt;
+        ///			&lt;dt&gt;&lt;/dt&gt;
+        ///			&lt;dd&gt;&lt;input type=&quot;submit&quot; name=&quot;save&quot; value=&quot;Save&quot; /&gt;&lt;/dd&gt;
+        ///		&lt;/dl&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;module&quot; value=&quot;profile&quot; /&gt;
+        ///		&lt;input type=&quot;hidden&quot; name=&quot;sub&quot; value=&quot;contact&quot; /&gt;
+        ///        &lt;input type=&quot;hidden&quot; name [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string account_phone_verify {
             get {

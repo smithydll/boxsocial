@@ -71,6 +71,8 @@ namespace BoxSocial.Internals
         private string applicationTile;
         [DataField("application_square", 63)]
         private string applicationSquare;
+        [DataField("application_gallery_icon")]
+        private long applicationGalleryIcon;
         [DataField("application_name", DataFieldKeys.Unique, 63)]
         private string applicationName;
         [DataField("application_assembly_name", DataFieldKeys.Unique, 63)]
@@ -329,11 +331,35 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long GalleryIcon
+        {
+            get
+            {
+                return applicationGalleryIcon;
+            }
+        }
+
         public override string Icon
         {
             get
             {
-                return applicationIcon;
+                if (ApplicationType == Internals.ApplicationType.Native)
+                {
+                    return applicationIcon;
+                }
+                else
+                {
+                    if (GalleryIcon > 0)
+                    {
+                        return string.Format("{0}images/_icon/_{1}.png",
+                            UriStub, Key);
+                    }
+                    else
+                    {
+                        return core.Hyperlink.AppendCoreSid(string.Format("/images/application/_icon/{0}.png",
+                            Key));
+                    }
+                }
             }
             /*set
             {
@@ -345,7 +371,23 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return applicationThumb;
+                if (ApplicationType == Internals.ApplicationType.Native)
+                {
+                    return applicationThumb;
+                }
+                else
+                {
+                    if (GalleryIcon > 0)
+                    {
+                        return string.Format("{0}images/_thumb/_{1}.png",
+                            UriStub, Key);
+                    }
+                    else
+                    {
+                        return core.Hyperlink.AppendCoreSid(string.Format("/images/application/_thumb/{0}.png",
+                            Key));
+                    }
+                }
             }
             /*set
             {
@@ -357,7 +399,23 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return applicationTile;
+                if (ApplicationType == Internals.ApplicationType.Native)
+                {
+                    return applicationTile;
+                }
+                else
+                {
+                    if (GalleryIcon > 0)
+                    {
+                        return string.Format("{0}images/_tile/_{1}.png",
+                            UriStub, Key);
+                    }
+                    else
+                    {
+                        return core.Hyperlink.AppendCoreSid(string.Format("/images/application/_tile/{0}.png",
+                            Key));
+                    }
+                }
             }
             /*set
             {
@@ -369,7 +427,23 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return applicationSquare;
+                if (ApplicationType == Internals.ApplicationType.Native)
+                {
+                    return applicationSquare;
+                }
+                else
+                {
+                    if (GalleryIcon > 0)
+                    {
+                        return string.Format("{0}images/_square/_{1}.png",
+                            UriStub, Key);
+                    }
+                    else
+                    {
+                        return core.Hyperlink.AppendCoreSid(string.Format("/images/application/_square/{0}.png",
+                            Key));
+                    }
+                }
             }
             /*set
             {
@@ -381,7 +455,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(applicationIcon))
+                if (string.IsNullOrEmpty(applicationIcon) && applicationGalleryIcon == 0)
                 {
                     return false;
                 }
@@ -621,6 +695,7 @@ namespace BoxSocial.Internals
             loadValue(applicationRow, "application_update", out updateQueued);
             loadValue(applicationRow, "application_simple_permissions", out simplePermissions);
             loadValue(applicationRow, "application_type", out applicationType);
+            loadValue(applicationRow, "application_gallery_icon", out applicationGalleryIcon);
 
             itemLoaded(applicationRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -649,6 +724,7 @@ namespace BoxSocial.Internals
             loadValue(applicationRow, "application_update", out updateQueued);
             loadValue(applicationRow, "application_simple_permissions", out simplePermissions);
             loadValue(applicationRow, "application_type", out applicationType);
+            loadValue(applicationRow, "application_gallery_icon", out applicationGalleryIcon);
 
             itemLoaded(applicationRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

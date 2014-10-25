@@ -51,7 +51,14 @@ namespace BoxSocial.Groups
         {
             get
             {
-                return core.Prose.GetString("GROUPS");
+                if (Owner is UserGroup)
+                {
+                    return core.Prose.GetString("GROUP");
+                }
+                else
+                {
+                    return core.Prose.GetString("GROUPS");
+                }
             }
         }
 

@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.UI;
@@ -45,35 +46,198 @@ namespace BoxSocial.FrontEnd
         {
             string method = core.Http["method"];
             //EndResponse();
+
+            switch (method)
+            {
+                case "request_token":
+                    RequestOAuthToken();
+                    break;
+                case "access_token":
+                    break;
+            }
         }
 
-        private bool AuthoriseRequest()
+        private void RequestOAuthToken()
+        {
+            OAuthApplication oae = null;
+            string nonce = null;
+
+            if (AuthoriseRequest("/oauth/request_token", null, out oae, out nonce))
+            {
+                try
+                {
+                    OAuthToken token = OAuthToken.Create(core, oae, nonce);
+
+                    NameValueCollection response = new NameValueCollection();
+                    response.Add("oauth_token", token.Token);
+                    response.Add("oauth_token_secret", token.TokenSecret);
+                    response.Add("oauth_callback_confirmed", "true");
+
+                    core.Http.WriteAndEndResponse(response);
+                }
+                catch (NonceViolationException)
+                {
+#if DEBUG
+                    HttpContext.Current.Response.Write("Nonce violation");
+#endif
+                    core.Http.StatusCode = 403;
+                    core.Http.End();
+                }
+            }
+            else
+            {
+#if DEBUG
+                HttpContext.Current.Response.Write("Authorization failed");
+#endif
+                core.Http.StatusCode = 403;
+                core.Http.End();
+            }
+        }
+
+        private bool AuthoriseRequest(string path, OAuthToken token, out OAuthApplication oae , out string nonce)
         {
             string authorisationHeader = ReadAuthorisationHeader();
 
-            if (authorisationHeader.StartsWith("OAuth "))
+            if (authorisationHeader != null && authorisationHeader.StartsWith("OAuth "))
             {
-                NameValueCollection authorisationHeaders = HttpUtility.ParseQueryString(authorisationHeader.Substring(6));
+                NameValueCollection authorisationHeaders = ParseAuthorisationHeader(authorisationHeader.Substring(6));
 
                 string requestConsumerKey = authorisationHeaders["oauth_consumer_key"];
 
-                OAuthApplication oae = new OAuthApplication(core, requestConsumerKey);
-
-                string requestSignature = authorisationHeaders["oauth_signature"];
-                string expectedSignature = "";
-
-                if (requestSignature == expectedSignature)
+                try
                 {
-                    return true;
+                    oae = new OAuthApplication(core, requestConsumerKey);
+                    nonce = authorisationHeaders["oauth_nonce"];
+
+                    SortedDictionary<string, string> signatureParamaters = new SortedDictionary<string, string>();
+
+                    foreach (string key in authorisationHeaders.Keys)
+                    {
+                        if (key == null)
+                        {
+                        }
+                        else if (key == "oauth_signature")
+                        {
+                        }
+                        else
+                        {
+                            signatureParamaters.Add(key, authorisationHeaders[key]);
+                        }
+                    }
+
+                    foreach (string key in core.Http.Query.Keys)
+                    {
+                        if (key == null)
+                        {
+                        }
+                        else if (key == "method")
+                        {
+                        }
+                        else if (key == "oauth_signature")
+                        {
+                        }
+                        else
+                        {
+                            signatureParamaters.Add(key, core.Http.Query[key]);
+                        }
+                    }
+
+                    string parameters = string.Empty;
+
+                    foreach (string key in signatureParamaters.Keys)
+                    {
+                        if (parameters != string.Empty)
+                        {
+                            parameters += "&";
+                        }
+                        parameters += string.Format("{0}={1}", OAuth.UrlEncode(key), OAuth.UrlEncode(signatureParamaters[key]));
+                    }
+
+                    string signature = core.Http.HttpMethod + "&" + OAuth.UrlEncode(core.Http.Host + path) + "&" + OAuth.UrlEncode(parameters);
+
+                    string requestSignature = authorisationHeaders["oauth_signature"];
+                    string expectedSignature = OAuth.ComputeSignature(signature, oae.ApiSecret + "&" + (token != null ? token.TokenSecret : string.Empty));
+
+                    if (requestSignature == expectedSignature)
+                    {
+                        return true;
+                    }
+                }
+                catch (InvalidApplicationException)
+                {
+                    oae = null;
+                    nonce = null;
+                    return false;
                 }
             }
 
+            oae = null;
+            nonce = null;
             return false;
         }
 
         private string ReadAuthorisationHeader()
         {
             return Request.Headers["Authorization"];
+        }
+
+        private NameValueCollection ParseAuthorisationHeader(string header)
+        {
+            NameValueCollection result = new NameValueCollection();
+
+            bool inDoubleQuote = false;
+            bool inValue = false;
+            string key = string.Empty;
+            string value = string.Empty;
+            char previous = ' ';
+            for (int i = 0; i < header.Length; i++)
+            {
+                char c = header[i];
+
+                if (!inDoubleQuote && c == '=')
+                {
+                    inValue = true;
+                }
+                else if (c == '"')
+                {
+                    inDoubleQuote = !inDoubleQuote;
+                    if (previous == '"')
+                    {
+                        if (inValue)
+                        {
+                            value += c;
+                        }
+                        else
+                        {
+                            key += c;
+                        }
+                    }
+                }
+                else if (!inDoubleQuote && c == ',')
+                {
+                    result.Add(HttpUtility.UrlDecode(key), HttpUtility.UrlDecode(value));
+                    key = string.Empty;
+                    value = string.Empty;
+                    inValue = false;
+                }
+                else if (inValue)
+                {
+                    value += c;
+                }
+                else
+                {
+                    key += c;
+                }
+
+                previous = c;
+            }
+
+            if (key.Length > 0)
+            {
+                result.Add(HttpUtility.UrlDecode(key), HttpUtility.UrlDecode(value));
+            }
+
+            return result;
         }
     }
 }

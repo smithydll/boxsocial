@@ -65,6 +65,7 @@
     <Content Include="captcha.aspx" />
     <Content Include="comment.aspx" />
     <Content Include="captcha%402x.aspx" />
+    <Content Include="oauth.aspx" />
     <Content Include="registerapplication.aspx" />
     <Content Include="scripts\ajax.common.js" />
     <Content Include="scripts\ajax.desktop.js" />

@@ -90,6 +90,7 @@ function SendAction(u, f) {
 
 function SentAction(r, e, a) {
     $('#status-form').trigger("reset");
+    $('#status-form .p-permisions').hide();
     $('#status-form .status-buttons').hide();
     $('#status-form #message').css('height', '24px').css('overflow-y', 'hidden').addClass('blur');
     $("#permissions-ids").val("");

@@ -26,6 +26,7 @@ using System.Diagnostics;
 using System.Security;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using BoxSocial.IO;
@@ -56,6 +57,29 @@ namespace BoxSocial.Internals
             rand.GetBytes(randomData);
 
             return Convert.ToBase64String(randomData).TrimEnd(new char[] { '=' });
+        }
+
+        public static string ComputeSignature(string baseString, string keyString)
+        {
+            byte[] keyBytes = UTF8Encoding.UTF8.GetBytes(keyString);
+
+            HMACSHA1 sha1 = new HMACSHA1(keyBytes);
+            sha1.Initialize();
+
+            byte[] baseBytes = UTF8Encoding.UTF8.GetBytes(baseString);
+
+            byte[] text = sha1.ComputeHash(baseBytes);
+
+            string signature = Convert.ToBase64String(text).Trim();
+
+            return signature;
+        }
+
+        public static string UrlEncode(string value)
+        {
+            Regex reg = new Regex(@"%[a-f0-9]{2}");
+
+            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");
         }
     }
 }

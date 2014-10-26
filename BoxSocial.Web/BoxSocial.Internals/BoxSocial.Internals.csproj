@@ -141,6 +141,7 @@
     <Compile Include="IPermissibleControlPanelSubModule.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OAuthApplication.cs" />
+    <Compile Include="OAuthToken.cs" />
     <Compile Include="OPage.cs">
       <SubType>ASPXCodeBehind</SubType>
     </Compile>

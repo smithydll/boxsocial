@@ -89,7 +89,7 @@ namespace BoxSocial.Internals
             this.db = db;
 
             SelectQuery query = GetSelectQueryStub(core);
-            query.AddCondition(new DataField("applications_oauth", "application_api_key"), apiKey);
+            query.AddCondition(new DataField(typeof(OAuthApplication), "application_api_key"), apiKey);
 
             System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
 
@@ -118,7 +118,7 @@ namespace BoxSocial.Internals
             this.db = db;
 
             SelectQuery query = GetSelectQueryStub(core);
-            query.AddCondition(new DataField("applications_oauth", "application_id"), ae.Id);
+            query.AddCondition(new DataField(typeof(OAuthApplication), "application_id"), ae.Id);
 
             System.Data.Common.DbDataReader applicationReader = db.ReaderQuery(query);
 

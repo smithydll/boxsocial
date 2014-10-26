@@ -121,6 +121,8 @@ namespace BoxSocial.FrontEnd
                     }
 
                     return;
+                case "authorize":
+                    return;
             }
         }
 

@@ -1,11 +1,11 @@
 ﻿	<div id="compose-status">
         <div id="status-div">
 		<form action="{S_ACCOUNT}" method="post" id="status-form" onsubmit="return SendAction('{USER_DISPLAY_NAME}');">
-			<p><textarea id="message" name="message" class="blur" style="width: 100%; height: 24px; overflow-y: hidden;" rows="1" cols="75" onfocus="$(this).css('height', '78px').css('overflow-y', 'auto'); $(this).parent().siblings('.status-buttons').show();">{L_SHARE_SOMETHING_INTERESTING}</textarea>
+			<p><textarea id="message" name="message" class="blur" style="width: 100%; height: 24px; overflow-y: hidden;" rows="1" cols="75" onfocus="$(this).css('height', '78px').css('overflow-y', 'auto'); $(this).parent().siblings('.status-buttons').show(); $(this).parent().siblings('.p-permisions').show();">{L_SHARE_SOMETHING_INTERESTING}</textarea>
             <input type="hidden" name="aclmode" value="simple" />
 			<input type="hidden" name="module" value="profile" />
 			<input type="hidden" name="sub" value="status" /></p>
-            <p>{S_STATUS_PERMISSIONS}</p>
+            <div class="p-permisions" style="display: none;">{S_STATUS_PERMISSIONS}</div>
             <p class="status-buttons" style="display: none; text-align: right;">
             <!-- IF S_SHARE -->
             <!-- IF S_SHARE_TWITTER -->
@@ -21,7 +21,7 @@
               <br />
             <!-- ENDIF -->
             <input type="submit" id="status-submit" value="{L_POST}" />
-            <input type="reset" value="{L_CANCEL}" onclick="$(this).parent().hide(); $(this).parent().parent().find('#message').css('height', '24px').css('overflow-y', 'hidden').addClass('blur');" /></p>
+            <input type="reset" value="{L_CANCEL}" onclick="$(this).parent().hide(); $(this).parent().parent().find('.p-permisions').hide(); $(this).parent().parent().find('#message').css('height', '24px').css('overflow-y', 'hidden').addClass('blur');" /></p>
 		</form>
         </div>
 	</div>

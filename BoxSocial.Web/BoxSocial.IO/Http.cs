@@ -23,6 +23,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Xml;
@@ -60,6 +61,54 @@ namespace BoxSocial.IO
                     return null;
                 }
             }
+        }
+
+        public string IpAddress
+        {
+            get
+            {
+                return ReturnRealIPAddress(current.Request.ServerVariables);
+            }
+        }
+
+        public static string ReturnRealIPAddress(NameValueCollection ServerVariables)
+        {
+            // List syndicated from http://wikimedia.org/trusted-xff.html
+            // TODO: automatically parse the above url with a script into a text file of IP addresses, will be faster
+            string[] legitFowardFor = { "61.91.190.242", 
+            "61.91.190.246",
+            "61.91.190.248",
+            "61.91.190.249",
+            "61.91.190.250",
+            "61.91.190.251",
+            "61.91.191.2",
+            "61.91.191.4",
+            "61.91.191.6",
+            "61.91.191.8",
+            "61.91.191.9",
+            "61.91.191.10",
+            "61.91.191.11",
+            "203.144.143.2",
+            "203.144.143.3",
+            "203.144.143.4",
+            "203.144.143.5",
+            "203.144.143.6",
+            "203.144.143.7",
+            "203.144.143.8",
+            "203.144.143.9",
+            "203.144.143.10",
+            "203.144.143.11"};
+            IPAddress remoteAddress = IPAddress.Parse(ServerVariables["REMOTE_ADDR"]);
+
+            for (int i = 0; i < legitFowardFor.Length; i++)
+            {
+                if (remoteAddress.Equals(IPAddress.Parse(legitFowardFor[i])))
+                {
+                    return ServerVariables["HTTP_X_FORWARDED_FOR"];
+                }
+            }
+
+            return ServerVariables["REMOTE_ADDR"];
         }
         
         public void SetToImageResponse(string contextType, DateTime lastModified)
@@ -124,6 +173,27 @@ namespace BoxSocial.IO
         public void WriteAndEndResponse(Template template)
         {
             Write(template);
+            End();
+        }
+
+        public void WriteAndEndResponse(NameValueCollection response)
+        {
+            string responseString = string.Empty;
+
+            bool first = true;
+            foreach (string key in response.Keys)
+            {
+                if (!first)
+                {
+                    responseString += "&";
+                }
+
+                responseString += string.Format("{0}={1}", HttpUtility.UrlEncode(key), HttpUtility.UrlEncode(response[key]));
+
+                first = false;
+            }
+
+            Write(responseString);
             End();
         }
         
@@ -217,6 +287,14 @@ namespace BoxSocial.IO
             get
             {
                 return current.Request.RawUrl;
+            }
+        }
+
+        public string Host
+        {
+            get
+            {
+                return current.Request.Url.GetLeftPart(UriPartial.Authority);
             }
         }
         

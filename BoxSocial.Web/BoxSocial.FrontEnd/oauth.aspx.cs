@@ -50,14 +50,15 @@ namespace BoxSocial.FrontEnd
             switch (method)
             {
                 case "request_token":
-                    RequestOAuthToken();
+                    RequestOAuthRequestToken();
                     break;
                 case "access_token":
+                    RequestOAuthAccessToken();
                     break;
             }
         }
 
-        private void RequestOAuthToken()
+        private void RequestOAuthRequestToken()
         {
             OAuthApplication oae = null;
             string nonce = null;
@@ -73,25 +74,25 @@ namespace BoxSocial.FrontEnd
                     response.Add("oauth_token_secret", token.TokenSecret);
                     response.Add("oauth_callback_confirmed", "true");
 
+                    db.CommitTransaction();
+
                     core.Http.WriteAndEndResponse(response);
                 }
                 catch (NonceViolationException)
                 {
-#if DEBUG
-                    HttpContext.Current.Response.Write("Nonce violation");
-#endif
                     core.Http.StatusCode = 403;
                     core.Http.End();
                 }
             }
             else
             {
-#if DEBUG
-                HttpContext.Current.Response.Write("Authorization failed");
-#endif
                 core.Http.StatusCode = 403;
                 core.Http.End();
             }
+        }
+
+        private void RequestOAuthAccessToken()
+        {
         }
 
         private bool AuthoriseRequest(string path, OAuthToken token, out OAuthApplication oae , out string nonce)

@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
 using BoxSocial.Internals;
@@ -121,9 +122,81 @@ namespace BoxSocial.FrontEnd
                     }
 
                     return;
-                case "authorize":
-                    return;
+                case "oauth":
+                    string method = core.Http.Query["method"];
+                    switch (method)
+                    {
+                        case "authorize":
+                            OAuthAuthorize();
+                            return;
+                        case "approve":
+                            OAuthApprove();
+                            return;
+                    }
+                    break;
             }
+        }
+
+        private void OAuthApprove()
+        {
+            string oauthToken = core.Http.Form["oauth_token"];
+
+            try
+            {
+                OAuthToken token = new OAuthToken(core, oauthToken);
+
+                token.UseToken();
+
+            }
+            catch (InvalidOAuthTokenException)
+            {
+                core.Functions.Generate403();
+            }
+
+            EndResponse();
+        }
+
+        private void OAuthAuthorize()
+        {
+            bool forceLogin = (core.Http.Query["force_login"] == "true");
+            string oauthToken = core.Http.Query["oauth_token"];
+
+            try
+            {
+                OAuthToken token = new OAuthToken(core, oauthToken);
+                ApplicationEntry ae = token.Application;
+                
+                HiddenField oauthTokenHiddenField = new HiddenField("oauth_token");
+                oauthTokenHiddenField.Value = oauthToken;
+
+                SubmitButton submitButton = new SubmitButton("submit", core.Prose.GetString("AUTHORISE"));
+
+                if (token.TokenExpired)
+                {
+                    core.Functions.Generate403();
+                    EndResponse();
+                    return;
+                }
+
+                template.SetTemplate("oauth_authorize.html");
+
+                template.Parse("U_POST", core.Hyperlink.AppendSid("/oauth/approve"));
+                template.Parse("REQUIRE_LOGIN", ((forceLogin || (!core.Session.SignedIn)) ? "TRUE" : "FALSE"));
+                template.Parse("AUTHORISE_APPLICATION", string.Format(core.Prose.GetString("AUTHORISE_APPLICATION"), ae.Title));
+                template.Parse("APPLICATION_ICON", ae.Icon);
+                template.Parse("S_OAUTH_TOKEN", oauthTokenHiddenField);
+                template.Parse("S_SUBMIT", submitButton);
+            }
+            catch (InvalidOAuthTokenException)
+            {
+                core.Functions.Generate403();
+            }
+            catch (InvalidApplicationException)
+            {
+                core.Functions.Generate403();
+            }
+
+            EndResponse();
         }
 
         private void ReturnTagList()

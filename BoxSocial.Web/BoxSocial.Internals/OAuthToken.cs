@@ -33,9 +33,9 @@ namespace BoxSocial.Internals
     {
         [DataField("oauth_token_id", DataFieldKeys.Primary)]
         private long oauthTokenId;
-        [DataField("oauth_application_id")]
+        [DataField("oauth_application_id", typeof(OAuthApplication))]
         private long oauthApplicationId;
-        [DataField("oauth_token", 127)]
+        [DataField("oauth_token", DataFieldKeys.Unique, 127)]
         private string oauthToken;
         [DataField("oauth_token_secret", 127)]
         private string oauthTokenSecret;
@@ -49,6 +49,8 @@ namespace BoxSocial.Internals
         private long oauthTokenExpires;
         [DataField("oauth_token_expired")]
         private bool oauthTokenExpired;
+
+        private ApplicationEntry application;
 
         public override long Id
         {
@@ -82,6 +84,20 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ApplicationEntry Application
+        {
+            get
+            {
+                if (application == null || application.Id != oauthApplicationId)
+                {
+                    ItemKey applicationKey = new ItemKey(oauthApplicationId, ItemType.GetTypeId(core, typeof(ApplicationEntry)));
+                    core.ItemCache.RequestItem(applicationKey);
+                    application = (ApplicationEntry)core.ItemCache[applicationKey];
+                }
+                return application;
+            }
+        }
+
         public OAuthToken(Core core, long tokenId)
             : base(core)
         {
@@ -90,6 +106,21 @@ namespace BoxSocial.Internals
             try
             {
                 LoadItem(tokenId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidOAuthTokenException();
+            }
+        }
+
+        public OAuthToken(Core core, string token)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(OAuthToken_ItemLoad);
+
+            try
+            {
+                LoadItem("oauth_token", token);
             }
             catch (InvalidItemException)
             {
@@ -137,7 +168,13 @@ namespace BoxSocial.Internals
                 queryReader.Dispose();
             }
 
-            string newToken = OAuth.GeneratePublic();
+            string newToken = string.Empty;
+
+            do
+            {
+                newToken = OAuth.GeneratePublic();
+            } while (!CheckTokenUnique(core, newToken));
+
             string newSecret = OAuth.GenerateSecret();
 
             Item item = Item.Create(core, typeof(OAuthToken), new FieldValuePair("oauth_application_id", oae.Id),
@@ -154,6 +191,27 @@ namespace BoxSocial.Internals
             return newOAuthToken;
         }
 
+        public static bool CheckTokenUnique(Core core, string token)
+        {
+            SelectQuery query = new SelectQuery(typeof(OAuthToken));
+            query.AddCondition("oauth_token", token);
+
+            System.Data.Common.DbDataReader tokenReader = core.Db.ReaderQuery(query);
+
+            if (tokenReader.HasRows)
+            {
+                tokenReader.Close();
+                tokenReader.Dispose();
+                return false;
+            }
+            else
+            {
+                tokenReader.Close();
+                tokenReader.Dispose();
+                return true;
+            }
+        }
+
         public void UseToken()
         {
             SetPropertyByRef(new { oauthTokenExpired }, true);
@@ -167,8 +225,10 @@ namespace BoxSocial.Internals
             loadValue(tokenRow, "oauth_token", out oauthToken);
             loadValue(tokenRow, "oauth_token_secret", out oauthTokenSecret);
             loadValue(tokenRow, "oauth_token_nonce", out oauthTokenNone);
+            loadValue(tokenRow, "oauth_token_ip", out oauthTokenIp);
             loadValue(tokenRow, "oauth_token_created_ut", out oauthTokenCreated);
             loadValue(tokenRow, "oauth_token_expires_ut", out oauthTokenExpires);
+            loadValue(tokenRow, "oauth_token_expired", out oauthTokenExpired);
 
             itemLoaded(tokenRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -181,8 +241,10 @@ namespace BoxSocial.Internals
             loadValue(tokenRow, "oauth_token", out oauthToken);
             loadValue(tokenRow, "oauth_token_secret", out oauthTokenSecret);
             loadValue(tokenRow, "oauth_token_nonce", out oauthTokenNone);
+            loadValue(tokenRow, "oauth_token_ip", out oauthTokenIp);
             loadValue(tokenRow, "oauth_token_created_ut", out oauthTokenCreated);
             loadValue(tokenRow, "oauth_token_expires_ut", out oauthTokenExpires);
+            loadValue(tokenRow, "oauth_token_expired", out oauthTokenExpired);
 
             itemLoaded(tokenRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -203,6 +265,10 @@ namespace BoxSocial.Internals
     }
 
     public class NonceViolationException : Exception
+    {
+    }
+
+    public class OAuthTokenExpiredException : Exception
     {
     }
 }

@@ -188,6 +188,7 @@
     <Content Include="templates\mobile\primitive_header.html" />
     <Content Include="templates\mobile\viewsubscriptions.html" />
     <Content Include="templates\mobile\viewsubscribers.html" />
+    <Content Include="templates\oauth_authorize.html" />
     <Content Include="templates\primitive_footer.html" />
     <Content Include="templates\registerapplication.html" />
     <Content Include="templates\viewsubscriptions.html" />

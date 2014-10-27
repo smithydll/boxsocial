@@ -156,6 +156,12 @@
   <data name="AUGUST" xml:space="preserve">
     <value>August</value>
   </data>
+  <data name="AUTHORISE" xml:space="preserve">
+    <value>Authorise</value>
+  </data>
+  <data name="AUTHORISE_APPLICATION" xml:space="preserve">
+    <value>Do you want to authorise "{0}" to use your account?</value>
+  </data>
   <data name="AUTOBIOGRAPHY" xml:space="preserve">
     <value>Autobiography</value>
   </data>

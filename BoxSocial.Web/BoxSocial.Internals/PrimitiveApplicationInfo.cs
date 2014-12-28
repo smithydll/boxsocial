@@ -44,6 +44,11 @@ namespace BoxSocial.Internals
         private bool simplePermissions;
         [DataField("app_email_notifications")]
         private bool emailNotifications;
+        // oauth credentials
+        [DataField("app_oauth_access_token", 127)]
+        private string oauthAccessToken;
+        [DataField("app_oauth_access_token_secret", 127)]
+        private string oauthAccessTokenSecret;
 
         private Primitive owner; // primitive installed the application
         private Access access; // primitive application access rights
@@ -65,6 +70,22 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("emailNotifications", value);
+            }
+        }
+
+        public string OAuthAccessToken
+        {
+            get
+            {
+                return oauthAccessToken;
+            }
+        }
+
+        public string OAuthAccessTokenSecret
+        {
+            get
+            {
+                return oauthAccessTokenSecret;
             }
         }
 
@@ -155,6 +176,34 @@ namespace BoxSocial.Internals
             {
                 throw new InvalidPrimitiveAppInfoException();
             }
+        }
+
+        public PrimitiveApplicationInfo(Core core, System.Data.Common.DbDataReader appRow)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(PrimitiveApplicationInfo_ItemLoad);
+
+            try
+            {
+                loadItemInfo(appRow);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidPrimitiveAppInfoException();
+            }
+        }
+
+        protected override void loadItemInfo(System.Data.Common.DbDataReader appRow)
+        {
+            loadValue(appRow, "item", out ownerKey);
+            loadValue(appRow, "application_id", out applicationId);
+            loadValue(appRow, "app_simple_permissions", out simplePermissions);
+            loadValue(appRow, "app_email_notifications", out emailNotifications);
+            loadValue(appRow, "app_oauth_access_token", out oauthAccessToken);
+            loadValue(appRow, "app_oauth_access_token_secret", out oauthAccessTokenSecret);
+
+            itemLoaded(appRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         private void PrimitiveApplicationInfo_ItemLoad()

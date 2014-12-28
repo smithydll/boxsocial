@@ -472,6 +472,57 @@ namespace BoxSocial.Internals
             return;
             
         }
+
+        public SessionState(Core core, Mysql db, OAuthToken token, HttpRequest Request, HttpResponse Response)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            this.Request = Request;
+            this.Response = Response;
+            this.db = db;
+            this.core = core;
+
+            SelectQuery query = new SelectQuery(typeof(PrimitiveApplicationInfo));
+            query.AddCondition("application_id", token.ApplicationId);
+            query.AddCondition("app_oauth_access_token", token.Token);
+
+            System.Data.Common.DbDataReader appReader = core.Db.ReaderQuery(query);
+
+            if (appReader.HasRows)
+            {
+                appReader.Read();
+                PrimitiveApplicationInfo pai = new PrimitiveApplicationInfo(core, appReader);
+
+                appReader.Close();
+                appReader.Dispose();
+
+                if (pai.Owner is User)
+                {
+                    this.core = core;
+                    this.db = core.Db;
+                    isLoggedIn = true;
+                    this.signInState = SessionSignInState.SignedIn;
+                    loggedInMember = (User)pai.Owner;
+                    ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
+                    this.sessionMethod = SessionMethods.OAuth;
+                }
+            }
+            else
+            {
+                appReader.Close();
+                appReader.Dispose();
+
+                this.core = core;
+                this.db = core.Db;
+                isLoggedIn = false;
+                this.signInState = SessionSignInState.SignedOut;
+                ipAddress = IPAddress.Parse(SessionState.ReturnRealIPAddress(Request.ServerVariables));
+                this.sessionMethod = SessionMethods.OAuth;
+            }
+        }
 		
 		public SessionState(Core core, User user)
 		{
@@ -593,7 +644,6 @@ namespace BoxSocial.Internals
         // The following session algorithm was borrowed from phpBB2.0.22,
         // it is considered secure and widely implemented
         //
-
         public string SessionBegin(long userId)
         {
             return SessionBegin(userId, false, false, false);
@@ -768,6 +818,7 @@ namespace BoxSocial.Internals
 							Response.Cookies.Clear();
 							
                             HttpCookie sessionDataCookie = new HttpCookie(cookieName + "_data");
+                            //sessionDataCookie.Domain = core.Hyperlink.CurrentDomain;
                             sessionDataCookie.Path = "/";
                             sessionDataCookie.Value = "";
                             sessionDataCookie.Expires = DateTime.MinValue;
@@ -776,6 +827,7 @@ namespace BoxSocial.Internals
                             Response.Cookies.Add(sessionDataCookie);
 
                             HttpCookie sessionSidCookie = new HttpCookie(cookieName + "_sid");
+                            //sessionSidCookie.Domain = core.Hyperlink.CurrentDomain;
                             sessionSidCookie.Path = "/";
                             sessionSidCookie.Value = "";
                             sessionSidCookie.Expires = DateTime.MinValue;
@@ -1715,7 +1767,11 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 
         /// </summary>
-        Get
+        Get,
+        /// <summary>
+        /// 
+        /// </summary>
+        OAuth,
     }
 
     public class InvalidSessionException : Exception

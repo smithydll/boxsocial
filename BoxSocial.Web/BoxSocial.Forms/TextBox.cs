@@ -29,6 +29,7 @@ namespace BoxSocial.Forms
     public enum InputType
     {
         Text,
+        Password,
         Number,
         Email,
         Url,
@@ -192,6 +193,19 @@ namespace BoxSocial.Forms
             type = InputType.Text;
         }
 
+        public TextBox(string name, InputType type)
+        {
+            this.name = name;
+
+            disabled = false;
+            visible = true;
+            maxLength = -1;
+            lines = 1;
+            width = new StyleLength(100F, LengthUnits.Percentage);
+            script = new ScriptProperty();
+            this.type = type;
+        }
+
         public override string ToString()
         {
             return ToString(Forms.DisplayMedium.Desktop);
@@ -236,6 +250,8 @@ namespace BoxSocial.Forms
             {
                 case  InputType.Text:
                     return "text";
+                case InputType.Password:
+                    return "password";
                 case InputType.Number:
                     return "number";
                 case InputType.Email:

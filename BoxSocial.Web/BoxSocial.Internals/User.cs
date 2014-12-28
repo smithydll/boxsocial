@@ -934,7 +934,7 @@ namespace BoxSocial.Internals
             core.PrimitiveCache.RegisterItem((Primitive)this);
 #if DEBUG
             httpTimer.Stop();
-            if (HttpContext.Current != null)
+            if (HttpContext.Current != null && core.Session != null && core.Session.SessionMethod != SessionMethods.OAuth)
             {
                 HttpContext.Current.Response.Write(string.Format("<!-- User {1} cached in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0, userName));
             }
@@ -1553,7 +1553,7 @@ namespace BoxSocial.Internals
 
 #if DEBUG
                 httpTimer.Stop();
-                if (HttpContext.Current != null)
+                if (HttpContext.Current != null && core.Session != null && core.Session.SessionMethod != SessionMethods.OAuth)
                 {
                     HttpContext.Current.Response.Write(string.Format("<!-- Build user query stub in {0} -->\r\n", httpTimer.ElapsedTicks / 10000000.0));
                 }

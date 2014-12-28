@@ -27,3 +27,28 @@
 </tr>
 <!-- END application_list -->
 </table>
+
+<h4>Authorised Third Party Applications</h4>
+
+<table style="width: 100%">
+<tr>
+	<th>Name</th>
+	<th></th>
+	<th></th>
+</tr>
+<!-- BEGIN oauth_application_list -->
+<!-- IF oauth_application_list.INDEX_EVEN -->
+<tr class="even">
+<!-- ELSE -->
+<tr class="odd">
+<!-- ENDIF -->
+	<td><a href="{oauth_application_list.U_APPLICATION}">{oauth_application_list.NAME}</a></td>
+	<td><a href="{oauth_application_list.U_SETTINGS}">Settings</a></td>
+	<td>
+		<!-- IF oauth_application_list.U_DEAUTHORISE -->
+		<a href="{oauth_application_list.U_DEAUTHORISE}">Deauthorise</a>
+		<!-- ENDIF -->
+	</td>
+</tr>
+<!-- END oauth_application_list -->
+</table>

@@ -8,23 +8,66 @@
 	<link href="{U_STATIC}/styles/boxsocial.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
 	<style type="text/css">
 		<!--
+
+@media screen and (min-width: 481px) {
+		.about-app {
+		    float: right;
+		    width: 200px;
+		}
 		
+		.form-app {
+		    margin-right: 200px;
+		    max-width: 700px;
+		}
+}
+
+@media screen and (max-width: 480px) {
+		.about-app {
+		}
 		
+		.form-app {
+		    max-width: 700px;
+		}
+}
+		
+		#page {
+		    width: auto;
+		    max-width: 900px;
+		    padding: 10px;
+		}
 
 --></style>
 </head>
 <body>
-    <div>
-        <!-- IF APP_ICON -->
-        <p><img src="{APPLICATION_ICON}" title="{APPLICATION_TITLE}" /></p>
-        <!-- ENDIF -->
+	<div id="page">
+        <div class="about-app">
+            <!-- IF APP_ICON -->
+            <p><img src="{APPLICATION_ICON}" title="{APPLICATION_TITLE}" /></p>
+            <!-- ENDIF -->
+        </div>
+        <p>{AUTHORISE_APPLICATION}</p>
+        <div class="form-app">
+            <form action="{U_POST}" method="post">
+                <fieldset>
+        		    <dl>
+            <!-- IF REQUIRE_LOGIN -->
+					    <dt><label for="username">{L_USERNAME}:</label></dt>
+					    <dd>{S_USERNAME}</dd>
+					    <dt><label for="password">{L_PASSWORD}:</label></dt>
+					    <dd>{S_PASSWORD}</dd>
+            <!-- ENDIF -->
+            <!-- IF VERIFY -->
+            			<dt><label for="verify">{L_VERIFICATION_CODE}</label></dt>
+						<dd>{S_VERIFY}</dd>
+            <!-- ENDIF -->
+                        <dt></dt>
+					    <dd>{S_SUBMIT} {S_CANCEL}</dd>
+                    </dl>
+                    {S_OAUTH_TOKEN}
+                    {S_MODE}
+                </fieldset>
+            </form>
+        </div>
     </div>
-    <p>{AUTHORISE_APPLICATION}</p>
-    <form action="{U_POST}">
-    <!-- IF REQUIRE_LOGIN -->
-    <!-- ENDIF -->
-    <p>{S_SUBMIT}</p>
-    {S_OAUTH_TOKEN}
-    </form>
 </body>
 </html>

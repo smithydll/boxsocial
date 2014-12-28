@@ -1173,6 +1173,29 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public void InvokeApplicationCall(ApplicationEntry ae, string callName)
+        {
+            if (ae == null)
+            {
+                // Internal calls
+
+                switch (callName)
+                {
+                    case "feed":
+                        break;
+                }
+            }
+            else
+            {
+                Application callApplication = Application.GetApplication(this, AppPrimitives.Any, ae);
+
+                if (callApplication != null)
+                {
+                    callApplication.ExecuteCall(callName);
+                }
+            }
+        }
+
         public void AdjustCommentCount(ItemKey itemKey, int adjustment)
         {
             ItemInfo ii = null;

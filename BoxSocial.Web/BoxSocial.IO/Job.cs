@@ -40,6 +40,8 @@ namespace BoxSocial.IO
         string function;
         string body;
         long userId;
+        string error;
+        bool cancel;
 
         [JsonIgnore()]
         public string JobId
@@ -131,6 +133,32 @@ namespace BoxSocial.IO
             }
         }
 
+        [JsonIgnore()]
+        public string Error
+        {
+            get
+            {
+                return error;
+            }
+            set
+            {
+                error = value;
+            }
+        }
+
+        [JsonIgnore()]
+        public bool Cancel
+        {
+            get
+            {
+                return cancel;
+            }
+            set
+            {
+                cancel = value;
+            }
+        }
+
         internal Job(string queueName, string jobId, string jobHandle, string message)
         {
             this.queueName = queueName;
@@ -144,6 +172,8 @@ namespace BoxSocial.IO
             long.TryParse(strings["item_id"], out this.itemId);
             this.function = strings["function"];
             this.body = strings["body"];
+            this.error = string.Empty;
+            this.cancel = false;
         }
 
         internal Job(string queueName, string jobId, string jobHandle, long applicationId, long userId, long itemTypeId, long itemId, string function)
@@ -162,6 +192,8 @@ namespace BoxSocial.IO
             this.itemId = itemId;
             this.function = function;
             this.body = body;
+            this.error = string.Empty;
+            this.cancel = false;
         }
 
         public Job(string queueName, long applicationId, long userId, long itemTypeId, long itemId, string function)
@@ -180,6 +212,8 @@ namespace BoxSocial.IO
             this.itemId = itemId;
             this.function = function;
             this.body = body;
+            this.error = string.Empty;
+            this.cancel = false;
         }
 
         public override string ToString()

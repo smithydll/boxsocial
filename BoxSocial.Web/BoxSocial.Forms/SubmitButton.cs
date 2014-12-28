@@ -36,6 +36,11 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
+            return ToString(Forms.DisplayMedium.Desktop);
+        }
+
+        public override string ToString(DisplayMedium medium)
+        {
             return string.Format("<input type=\"submit\" name=\"{0}\" value=\"{1}\" style=\"{3}\"{2}/>",
                 HttpUtility.HtmlEncode(Name),
                 HttpUtility.HtmlEncode(Caption),

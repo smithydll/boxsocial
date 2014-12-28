@@ -20,6 +20,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Data;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -33,6 +35,7 @@ using BoxSocial.Groups;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using TwoStepsAuthenticator;
 
 namespace BoxSocial.FrontEnd
 {
@@ -122,15 +125,22 @@ namespace BoxSocial.FrontEnd
                     }
 
                     return;
+                case "boxsocial":
+                    NameValueCollection response = new NameValueCollection();
+
+                    core.Http.WriteAndEndResponse(response);
+                    break;
                 case "oauth":
                     string method = core.Http.Query["method"];
                     switch (method)
                     {
                         case "authorize":
-                            OAuthAuthorize();
+                            OAuthAuthorize(false);
                             return;
                         case "approve":
                             OAuthApprove();
+                            return;
+                        case "authenticate":
                             return;
                     }
                     break;
@@ -140,36 +150,153 @@ namespace BoxSocial.FrontEnd
         private void OAuthApprove()
         {
             string oauthToken = core.Http.Form["oauth_token"];
+            bool success = false;
 
             try
             {
                 OAuthToken token = new OAuthToken(core, oauthToken);
+                ApplicationEntry ae = token.Application;
+                OAuthApplication oae = new OAuthApplication(core, ae);
 
-                token.UseToken();
+                if (core.Http.Form["mode"] == "verify")
+                {
+                    Authenticator authenticator = new Authenticator();
 
+                    if (authenticator.CheckCode(core.Session.CandidateMember.UserInfo.TwoFactorAuthKey, core.Http.Form["verify"]))
+                    {
+                        success = true;
+                    }
+                    else
+                    {
+                        showVerificationForm(ae, oauthToken, core.Session.SessionId);
+
+                        return;
+                    }
+                }
+                else
+                {
+
+                    bool authenticated = false;
+
+                    string userName = Request.Form["username"];
+                    string password = BoxSocial.Internals.User.HashPassword(Request.Form["password"]);
+
+                    DataTable userTable = db.Query(string.Format("SELECT uk.user_name, uk.user_id, ui.user_password, ui.user_two_factor_auth_key, ui.user_two_factor_auth_verified FROM user_keys uk INNER JOIN user_info ui ON uk.user_id = ui.user_id WHERE uk.user_name = '{0}';",
+                       userName));
+
+                    if (userTable.Rows.Count == 1)
+                    {
+                        DataRow userRow = userTable.Rows[0];
+                        string dbPassword = (string)userRow["user_password"];
+
+                        if (dbPassword == password)
+                        {
+                            authenticated = true;
+                        }
+
+                        if (authenticated)
+                        {
+                            if ((byte)userRow["user_two_factor_auth_verified"] > 0)
+                            {
+                                string sessionId = session.SessionBegin((long)userRow["user_id"], false, false, false);
+
+                                showVerificationForm(ae, oauthToken, sessionId);
+
+                                return;
+                            }
+                            else
+                            {
+                                string sessionId = session.SessionBegin((long)userRow["user_id"], false, false);
+
+                                success = true;
+                            }
+                        }
+                        else
+                        {
+                            OAuthAuthorize(true);
+                            return;
+                        }
+                    }
+                }
+
+                if (success)
+                {
+                    OAuthVerifier verifier = OAuthVerifier.Create(core, token, core.Session.CandidateMember);
+                    token.UseToken();
+
+                    db.CommitTransaction();
+
+                    if (!string.IsNullOrEmpty(oae.CallbackUrl))
+                    {
+                        Response.Redirect(string.Format("{0}?oauth_token={1}&oauth_verifier={2}", oae.CallbackUrl, Uri.EscapeDataString(token.Token), Uri.EscapeDataString(verifier.Verifier)));
+                    }
+                    else
+                    {
+                        core.Ajax.SendRawText("", string.Format("oauth_token={0}&oauth_verifier={1}", Uri.EscapeDataString(token.Token), Uri.EscapeDataString(verifier.Verifier)));
+                    }
+                }
+                else
+                {
+                    // Incorrect password
+                    OAuthAuthorize(true);
+                    return;
+                }
             }
             catch (InvalidOAuthTokenException)
             {
                 core.Functions.Generate403();
             }
 
+
             EndResponse();
         }
 
-        private void OAuthAuthorize()
+        private void showVerificationForm(ApplicationEntry ae, string oauthToken, string sessionId)
+        {
+
+            TextBox verifyTextBox = new TextBox("verify");
+
+            HiddenField oauthTokenHiddenField = new HiddenField("oauth_token");
+            oauthTokenHiddenField.Value = oauthToken;
+
+            HiddenField modeHiddenField = new HiddenField("mode");
+            modeHiddenField.Value = "verify";
+
+            SubmitButton submitButton = new SubmitButton("submit", core.Prose.GetString("AUTHORISE"));
+            Button cancelButton = new Button("cancel", core.Prose.GetString("CANCEL"), "cancel");
+
+            template.SetTemplate("oauth_authorize.html");
+            template.Parse("U_POST", core.Hyperlink.AppendSid("/oauth/approve", true, sessionId));
+            template.Parse("VERIFY", "TRUE");
+            template.Parse("AUTHORISE_APPLICATION", string.Format(core.Prose.GetString("AUTHORISE_APPLICATION"), ae.Title));
+            template.Parse("APPLICATION_ICON", ae.Icon);
+            template.Parse("S_VERIFY", verifyTextBox);
+            template.Parse("S_OAUTH_TOKEN", oauthTokenHiddenField);
+            template.Parse("S_MODE", modeHiddenField);
+            template.Parse("S_SUBMIT", submitButton);
+            template.Parse("S_CANCEL", cancelButton);
+
+            EndResponse();
+        }
+
+        private void OAuthAuthorize(bool fail)
         {
             bool forceLogin = (core.Http.Query["force_login"] == "true");
-            string oauthToken = core.Http.Query["oauth_token"];
+            string oauthToken = core.Http["oauth_token"];
 
             try
             {
                 OAuthToken token = new OAuthToken(core, oauthToken);
                 ApplicationEntry ae = token.Application;
+
+                TextBox usernameTextBox = new TextBox("username");
+                TextBox passwordTextBox = new TextBox("password", InputType.Password);
                 
                 HiddenField oauthTokenHiddenField = new HiddenField("oauth_token");
                 oauthTokenHiddenField.Value = oauthToken;
 
                 SubmitButton submitButton = new SubmitButton("submit", core.Prose.GetString("AUTHORISE"));
+                Button cancelButton = new Button("cancel", core.Prose.GetString("CANCEL"), "cancel");
 
                 if (token.TokenExpired)
                 {
@@ -180,12 +307,15 @@ namespace BoxSocial.FrontEnd
 
                 template.SetTemplate("oauth_authorize.html");
 
-                template.Parse("U_POST", core.Hyperlink.AppendSid("/oauth/approve"));
+                template.Parse("U_POST", core.Hyperlink.AppendSid("/oauth/approve", true));
                 template.Parse("REQUIRE_LOGIN", ((forceLogin || (!core.Session.SignedIn)) ? "TRUE" : "FALSE"));
                 template.Parse("AUTHORISE_APPLICATION", string.Format(core.Prose.GetString("AUTHORISE_APPLICATION"), ae.Title));
                 template.Parse("APPLICATION_ICON", ae.Icon);
+                template.Parse("S_USERNAME", usernameTextBox);
+                template.Parse("S_PASSWORD", passwordTextBox);
                 template.Parse("S_OAUTH_TOKEN", oauthTokenHiddenField);
                 template.Parse("S_SUBMIT", submitButton);
+                template.Parse("S_CANCEL", cancelButton);
             }
             catch (InvalidOAuthTokenException)
             {

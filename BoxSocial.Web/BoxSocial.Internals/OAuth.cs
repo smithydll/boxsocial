@@ -77,6 +77,11 @@ namespace BoxSocial.Internals
 
         public static string UrlEncode(string value)
         {
+            if (string.IsNullOrEmpty(value))
+            {
+                return string.Empty;
+            }
+
             Regex reg = new Regex(@"%[a-f0-9]{2}");
 
             return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");

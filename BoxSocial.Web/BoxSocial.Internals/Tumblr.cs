@@ -184,14 +184,14 @@ namespace BoxSocial.Internals
         {
             Regex reg = new Regex(@"%[a-f0-9]{2}");
 
-            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
+            return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");
         }
 
         public static string UrlEncode(byte[] data)
         {
             Regex reg = new Regex(@"%[a-f0-9]{2}");
 
-            return reg.Replace(HttpUtility.UrlEncode(data), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A");
+            return reg.Replace(HttpUtility.UrlEncode(data), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");
         }
 
         private static string computeSignature(string baseString, string keyString)
@@ -635,6 +635,7 @@ namespace BoxSocial.Internals
                 }
                 catch
                 {
+                    job.Cancel = true;
                     return true; // Item is probably deleted, report success to delete from queue
                 }
             }
@@ -667,6 +668,7 @@ namespace BoxSocial.Internals
                 {
                     return true; // This request cannot succeed, so remove it from the queue
                 }
+                job.Error = ex.ToString();
                 return false; // Failed for other reasons, retry
             }
 

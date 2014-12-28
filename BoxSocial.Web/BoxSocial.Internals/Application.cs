@@ -135,6 +135,10 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public virtual void ExecuteCall(string callName)
+        {
+        }
+
         public List<string> GetSlugs()
         {
             List<string> slugs = new List<string>();
@@ -236,7 +240,7 @@ namespace BoxSocial.Internals
 #if DEBUG
             long timerElapsed = timer.ElapsedTicks;
             timer.Stop();
-            if (HttpContext.Current != null)
+            if (HttpContext.Current != null && core.Session.SessionMethod != SessionMethods.OAuth)
             {
                 HttpContext.Current.Response.Write("<!-- Time registering pages " + type.FullName + ": " + (timerElapsed / 10000000.0).ToString() + "-->\r\n");
             }
@@ -668,6 +672,15 @@ namespace BoxSocial.Internals
             return applicationsList;
         }
 
+        public static List<OAuthApplication> GetOAuthApplications(Core core, Primitive owner)
+        {
+            List<OAuthApplication> applicationsList = new List<OAuthApplication>();
+
+            // TODO: GetOAuthApplications
+
+            return applicationsList;
+        }
+
         public static List<ApplicationEntry> GetStaticApplications(Core core)
         {
             List<ApplicationEntry> applicationsList = new List<ApplicationEntry>();
@@ -744,7 +757,10 @@ namespace BoxSocial.Internals
 #endif
                                     Application newApplication = System.Activator.CreateInstance(type, new object[] { core }) as Application;
 #if DEBUG
-                                    HttpContext.Current.Response.Write(string.Format("<!-- Activated {1} in {0} -->\r\n", (load.ElapsedTicks - startInit) / 10000000.0, newApplication.Title));
+                                    if (HttpContext.Current != null && core.Session.SessionMethod != SessionMethods.OAuth)
+                                    {
+                                        HttpContext.Current.Response.Write(string.Format("<!-- Activated {1} in {0} -->\r\n", (load.ElapsedTicks - startInit) / 10000000.0, newApplication.Title));
+                                    }
 #endif
 
                                     if (newApplication != null)
@@ -786,7 +802,10 @@ namespace BoxSocial.Internals
             }
 #if DEBUG
             load.Stop();
-            HttpContext.Current.Response.Write(string.Format("<!-- Application.LoadApplications in {0} -->\r\n", load.ElapsedTicks / 10000000.0));
+            if (HttpContext.Current != null && core.Session.SessionMethod != SessionMethods.OAuth)
+            {
+                HttpContext.Current.Response.Write(string.Format("<!-- Application.LoadApplications in {0} -->\r\n", load.ElapsedTicks / 10000000.0));
+            }
 #endif
         }
 

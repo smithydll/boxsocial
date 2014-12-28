@@ -60,6 +60,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public long ApplicationId
+        {
+            get
+            {
+                return oauthApplicationId;
+            }
+        }
+
         public string Token
         {
             get

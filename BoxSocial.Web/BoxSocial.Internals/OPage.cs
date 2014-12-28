@@ -48,6 +48,7 @@ namespace BoxSocial.Internals
         public UnixTime tz;
         protected Core core;
         private bool pageEnded;
+        HttpContext httpContext;
 
         public OPage()
         {
@@ -65,7 +66,12 @@ namespace BoxSocial.Internals
 
             core = new Core(this, db);
 
-            HttpContext httpContext = HttpContext.Current;
+            httpContext = HttpContext.Current;
+        }
+
+        public void StartSession(OAuthToken token)
+        {
+            core.Session = new SessionState(core, db, token, httpContext.Request, httpContext.Response);
         }
 
         public void EndResponse()

@@ -394,6 +394,11 @@ namespace BoxSocial.Internals
 
         public string AppendSid(string uri, bool forceSid)
         {
+            return AppendSid(uri, forceSid, sid);
+        }
+
+        public string AppendSid(string uri, bool forceSid, string sid)
+        {
             if (SidUrls || forceSid)
             {
                 int ior = uri.IndexOf("?sid=");

@@ -168,6 +168,8 @@ namespace BoxSocial.FrontEnd
                     Dictionary<string, int> queues = new Dictionary<string, int>();
                     queues.Add(WebConfigurationManager.AppSettings["queue-default-priority"], 10);
 
+                    StringBuilder failedJobsLog = new StringBuilder();
+
                     foreach (string queueName in queues.Keys)
                     {
                         List<Job> jobs = null;
@@ -204,14 +206,26 @@ namespace BoxSocial.FrontEnd
                             {
                                 failedJobs++;
                                 //queue.ReleaseJob(job);
+#if DEBUG
+                                failedJobsLog.AppendLine("Application Id: " + job.ApplicationId);
+                                failedJobsLog.AppendLine("Item Id: " + job.ItemId);
+                                failedJobsLog.AppendLine("Item Type Id: " + job.ItemTypeId);
+                                failedJobsLog.AppendLine("Function: " + job.Function);
+                                failedJobsLog.AppendLine("Body: " + job.Body);
+                                failedJobsLog.AppendLine("Message: " + job.Message);
+                                failedJobsLog.AppendLine("Error: " + job.Error);
+                                failedJobsLog.AppendLine("====================");
+#endif
                             }
                         }
                     }
 
+#if DEBUG
                     if (failedJobs > 0)
                     {
-                        //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString());
+                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
                     }
+#endif
                 }
             }
             catch (Exception ex)
@@ -545,11 +559,13 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/googleplus/callback(/|)$", @"/functions.aspx?fun=googleplus" });
                     patterns.Add(new string[] { @"^/api/facebook/callback(/|)$", @"/functions.aspx?fun=facebook" });
                     patterns.Add(new string[] { @"^/api/tumblr/callback(/|)$", @"/functions.aspx?fun=tumblr" });
+                    patterns.Add(new string[] { @"^/api/boxsocial/callback(/|)$", @"/functions.aspx?fun=boxsocial" });
 
-                    patterns.Add(new string[] { @"^/oauth/request_token(/|)$", @"/oauth.aspx?method=request_token" });
+                    patterns.Add(new string[] { @"^/oauth/request_token(/|)$", @"/oauth.aspx?global_method=request_token" });
                     patterns.Add(new string[] { @"^/oauth/authorize(/|)$", @"/functions.aspx?fun=oauth&method=authorize" });
                     patterns.Add(new string[] { @"^/oauth/approve(/|)$", @"/functions.aspx?fun=oauth&method=approve" });
-                    patterns.Add(new string[] { @"^/oauth/access_token(/|)$", @"/oauth.aspx?method=access_token" });
+                    patterns.Add(new string[] { @"^/oauth/access_token(/|)$", @"/oauth.aspx?global_method=access_token" });
+                    patterns.Add(new string[] { @"^/oauth/([A-Za-z0-9\-_]+)/([A-Za-z0-9\-_]+)(/|)$", @"/oauth.aspx?global_method=call&global_an=$1&global_call=$2" });
 
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });

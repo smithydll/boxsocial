@@ -44,7 +44,7 @@ namespace BoxSocial.FrontEnd
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            string method = core.Http["method"];
+            string method = core.Http["global_method"];
             //EndResponse();
 
             switch (method)
@@ -55,6 +55,48 @@ namespace BoxSocial.FrontEnd
                 case "access_token":
                     RequestOAuthAccessToken();
                     break;
+                case "call":
+                    InitiateApplicationMethod();
+                    break;
+            }
+        }
+
+        private void InitiateApplicationMethod()
+        {
+            string applicationName = core.Http.Query["global_an"];
+            string callName = core.Http.Query["global_call"];
+
+            OAuthApplication oae = null;
+            string nonce = null;
+
+            if (AuthoriseRequest("/oauth/" + applicationName + "/" + callName, null, out oae, out nonce))
+            {
+                if (applicationName == "Internals")
+                {
+                    core.InvokeApplicationCall(null, callName);
+                }
+                else
+                {
+                    try
+                    {
+                        ApplicationEntry ae = new ApplicationEntry(core, applicationName);
+
+                        core.InvokeApplicationCall(ae, callName);
+                    }
+                    catch (InvalidApplicationException)
+                    {
+                    }
+                }
+            }
+            else
+            {
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, access token rejected");
+
+                core.Http.WriteAndEndResponse(response);
+                return;
             }
         }
 
@@ -80,22 +122,152 @@ namespace BoxSocial.FrontEnd
                 }
                 catch (NonceViolationException)
                 {
-                    core.Http.StatusCode = 403;
-                    core.Http.End();
+                    core.Http.StatusCode = 401;
+
+                    NameValueCollection response = new NameValueCollection();
+                    response.Add("error", "unauthorised, nonce violation");
+
+                    core.Http.WriteAndEndResponse(response);
+                    return;
                 }
             }
             else
             {
-                core.Http.StatusCode = 403;
-                core.Http.End();
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, access token rejected");
+
+                core.Http.WriteAndEndResponse(response);
+                return;
             }
         }
 
         private void RequestOAuthAccessToken()
         {
+            // Final step in oauth handshake
+
+            OAuthApplication oae = null;
+            string nonce = null;
+
+            string verifier = core.Http.Form["oauth_verifier"];
+
+            OAuthVerifier oAuthVerifier = null;
+            OAuthToken oauthToken = null;
+
+            try
+            {
+                oAuthVerifier = new OAuthVerifier(core, verifier);
+            }
+            catch (InvalidOAuthVerifierException)
+            {
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, invalid verifier");
+
+                core.Http.WriteAndEndResponse(response);
+                return;
+            }
+
+            if (oAuthVerifier.Expired)
+            {
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, verifier expired");
+
+                core.Http.WriteAndEndResponse(response);
+                return;
+            }
+
+            try
+            {
+                oauthToken = new OAuthToken(core, oAuthVerifier.TokenId);
+            }
+            catch (InvalidOAuthTokenException)
+            {
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, invalid token");
+
+                core.Http.WriteAndEndResponse(response);
+                return;
+            }
+
+
+            if (AuthoriseRequest("/oauth/access_token", oauthToken, out oae, out nonce))
+            {
+                oAuthVerifier.UseVerifier();
+
+                // TODO: check application is not already installed
+                SelectQuery query = new SelectQuery(typeof(PrimitiveApplicationInfo));
+                query.AddCondition("application_id", oauthToken.ApplicationId);
+                query.AddCondition("item_id", oAuthVerifier.UserId);
+                query.AddCondition("item_type_id", ItemKey.GetTypeId(core, typeof(User)));
+
+                System.Data.Common.DbDataReader appReader = db.ReaderQuery(query);
+
+                if (!appReader.HasRows)
+                {
+                    appReader.Close();
+                    appReader.Dispose();
+
+                    OAuthToken oauthAuthToken = OAuthToken.Create(core, oae, nonce);
+
+                    InsertQuery iQuery = new InsertQuery("primitive_apps");
+                    iQuery.AddField("application_id", oauthToken.ApplicationId);
+                    iQuery.AddField("item_id", oAuthVerifier.UserId);
+                    iQuery.AddField("item_type_id", ItemKey.GetTypeId(core, typeof(User)));
+                    iQuery.AddField("app_email_notifications", true);
+                    iQuery.AddField("app_oauth_access_token", oauthAuthToken.Token);
+                    iQuery.AddField("app_oauth_access_token_secret", oauthAuthToken.TokenSecret);
+
+                    if (core.Db.Query(iQuery) > 0)
+                    {
+                        // successfull
+                    }
+
+                    db.CommitTransaction();
+
+                    NameValueCollection response = new NameValueCollection();
+                    response.Add("oauth_token", oauthAuthToken.Token);
+                    response.Add("oauth_token_secret", oauthAuthToken.TokenSecret);
+
+                    core.Http.WriteAndEndResponse(response);
+                }
+                else
+                {
+                    appReader.Read();
+
+                    PrimitiveApplicationInfo pai = new PrimitiveApplicationInfo(core, appReader);
+
+                    appReader.Close();
+                    appReader.Dispose();
+
+                    NameValueCollection response = new NameValueCollection();
+                    response.Add("oauth_token", pai.OAuthAccessToken);
+                    response.Add("oauth_token_secret", pai.OAuthAccessTokenSecret);
+
+                    core.Http.WriteAndEndResponse(response);
+                }
+            }
+            else
+            {
+                // FAIL
+                core.Http.StatusCode = 401;
+
+                NameValueCollection response = new NameValueCollection();
+                response.Add("error", "unauthorised, access token rejected");
+
+                core.Http.WriteAndEndResponse(response);
+                core.Http.End();
+                return;
+            }
         }
 
-        private bool AuthoriseRequest(string path, OAuthToken token, out OAuthApplication oae , out string nonce)
+        private bool AuthoriseRequest(string path, OAuthToken token, out OAuthApplication oae, out string nonce)
         {
             string authorisationHeader = ReadAuthorisationHeader();
 
@@ -128,10 +300,10 @@ namespace BoxSocial.FrontEnd
 
                     foreach (string key in core.Http.Query.Keys)
                     {
-                        if (key == null)
+                        if (string.IsNullOrEmpty(key))
                         {
                         }
-                        else if (key == "method")
+                        else if (key.StartsWith("global_"))
                         {
                         }
                         else if (key == "oauth_signature")
@@ -140,6 +312,18 @@ namespace BoxSocial.FrontEnd
                         else
                         {
                             signatureParamaters.Add(key, core.Http.Query[key]);
+                        }
+                    }
+
+                    foreach (string key in core.Http.Form.Keys)
+                    {
+                        //if (key == "oauth_verifier")
+                        if (string.IsNullOrEmpty(key))
+                        {
+                        }
+                        else
+                        {
+                            signatureParamaters.Add(key, core.Http.Form[key]);
                         }
                     }
 
@@ -156,6 +340,28 @@ namespace BoxSocial.FrontEnd
 
                     string signature = core.Http.HttpMethod + "&" + OAuth.UrlEncode(core.Http.Host + path) + "&" + OAuth.UrlEncode(parameters);
 
+                    if (token == null)
+                    {
+                        string oauthToken = authorisationHeaders["oauth_token"];
+
+                        if (!string.IsNullOrEmpty(oauthToken))
+                        {
+                            try
+                            {
+                                token = new OAuthToken(core, oauthToken);
+
+                                // start session
+                                StartSession(token);
+                            }
+                            catch (InvalidOAuthTokenException)
+                            {
+                                oae = null;
+                                nonce = null;
+                                return false;
+                            }
+                        }
+                    }
+
                     string requestSignature = authorisationHeaders["oauth_signature"];
                     string expectedSignature = OAuth.ComputeSignature(signature, oae.ApiSecret + "&" + (token != null ? token.TokenSecret : string.Empty));
 
@@ -163,6 +369,19 @@ namespace BoxSocial.FrontEnd
                     {
                         return true;
                     }
+#if DEBUG
+                    else
+                    {
+                        HttpContext.Current.Response.Write("Request signature: " + requestSignature + "\r\n");
+                        HttpContext.Current.Response.Write("Expected signature: " + expectedSignature + "\r\n");
+                        HttpContext.Current.Response.Write("signature: " + signature + "\r\n");
+                        if (token != null)
+                        {
+                            HttpContext.Current.Response.Write("token: " + token.Token + "\r\n");
+                            HttpContext.Current.Response.Write("secret: " + token.TokenSecret + "\r\n");
+                        }
+                    }
+#endif
                 }
                 catch (InvalidApplicationException)
                 {

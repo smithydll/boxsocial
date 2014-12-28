@@ -136,6 +136,8 @@ namespace BoxSocial.Internals
         {
             AuthoriseRequestSid();
 
+            bool fail = false;
+
             if (core.Http.Form["mode"] == "enable" && (!LoggedInMember.UserInfo.TwoFactorAuthVerified))
             {
                 Authenticator authenticator = new Authenticator();
@@ -146,6 +148,7 @@ namespace BoxSocial.Internals
                 else
                 {
                     LoggedInMember.UserInfo.TwoFactorAuthKey = string.Empty;
+                    fail = true;
                 }
                 LoggedInMember.UserInfo.Update();
 
@@ -157,7 +160,18 @@ namespace BoxSocial.Internals
                 core.Db.Query(uQuery);
             }
 
-            core.Display.ShowMessage("Two Factor Authentication Disabled", "Two factor authentication has been disabled for this account.");
+            if (LoggedInMember.UserInfo.TwoFactorAuthVerified)
+            {
+                core.Display.ShowMessage("Two Factor Authentication Enabled", "Two factor authentication has been enabled for this account.");
+            }
+            else if (fail)
+            {
+                core.Display.ShowMessage("Two Factor Authentication Failed", "Two factor authentication has not been enabled for this account. Check you entered the code correctly.");
+            }
+            else
+            {
+                core.Display.ShowMessage("Two Factor Authentication Disabled", "Two factor authentication has been disabled for this account.");
+            }
             SetRedirectUri(BuildUri());
         }
 

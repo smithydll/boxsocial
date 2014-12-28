@@ -242,6 +242,8 @@ namespace BoxSocial.Internals
                 WebConfigurationManager.AppSettings["mysql-host"]);
             template = new Template(Server.MapPath("./templates/"), "");
 
+            HttpContext.Current.Response.AppendHeader("x-ua-compatible", "IE=edge,chrome=1");
+
             string u = HttpContext.Current.Request.ServerVariables["HTTP_USER_AGENT"];
             if ((b.IsMatch(u) || v.IsMatch(u.Substring(0, 4))))
             {

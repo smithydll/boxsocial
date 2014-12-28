@@ -143,6 +143,26 @@ namespace BoxSocial.Applications.Profile
             return false;
         }
 
+        public override void ExecuteCall(string callName)
+        {
+            switch (callName)
+            {
+                case "profile":
+                    break;
+                case "friends":
+                    break;
+                case "status_post":
+                    string message = core.Http.Form["message"];
+                    StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
+
+                    break;
+                case "status":
+                    break;
+                case "feed":
+                    break;
+            }
+        }
+
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();

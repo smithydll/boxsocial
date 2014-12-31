@@ -24,10 +24,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    [JsonObject("action")]
     [DataTable("actions")]
     public class Action : NumberedItem, IPermissibleSubItem
     {
@@ -56,6 +60,7 @@ namespace BoxSocial.Internals
         private IActionableItem item;
         private NumberedItem interactItem;
 
+        [JsonIgnore]
         public new ItemInfo Info
         {
             get
@@ -92,6 +97,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey ActionItemKey
         {
             get
@@ -100,6 +106,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey InteractItemKey
         {
             get
@@ -108,6 +115,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public IActionableItem ActionedItem
         {
             get
@@ -136,6 +144,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public NumberedItem InteractItem
         {
             get
@@ -168,6 +177,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("id")]
         public long ActionId
         {
             get
@@ -176,7 +186,16 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("title")]
         public string Title
+        {
+            get
+            {
+                return title;
+            }
+        }
+
+        public string FormattedTitle
         {
             get
             {
@@ -216,6 +235,7 @@ namespace BoxSocial.Internals
             return string.Format("{0} {1}", ownerDisplayName, title);
         }
 
+        [JsonProperty("body")]
         public string Body
         {
             get
@@ -224,6 +244,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string BodyCache
         {
             get
@@ -232,6 +253,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("ownerId")]
         public long OwnerId
         {
             get
@@ -240,7 +262,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonIgnore]
         public ItemKey OwnerKey
         {
             get
@@ -249,7 +271,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -357,6 +379,15 @@ namespace BoxSocial.Internals
             return query;
         }
 
+        [JsonProperty("timeUt")]
+        public long TimeUt
+        {
+            get
+            {
+                return timeRaw;
+            }
+        }
+
         public DateTime GetTime(UnixTime tz)
         {
             return tz.DateTimeFromMysql(timeRaw);
@@ -401,6 +432,7 @@ namespace BoxSocial.Internals
             return (ActionItem)input;
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -409,6 +441,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -417,7 +450,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get

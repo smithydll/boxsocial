@@ -1182,6 +1182,9 @@ namespace BoxSocial.Internals
                 switch (callName)
                 {
                     case "feed":
+                        Feed.ShowMore(this, Session.LoggedInMember);
+                        break;
+                    case "primitive":
                         break;
                 }
             }

@@ -23,8 +23,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -384,7 +388,7 @@ namespace BoxSocial.Internals
 
                     VariableCollection feedItemVariableCollection = feedDateVariableCollection.CreateChild("feed_item");
 
-                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.FormattedTitle);
                     /*if ((!core.IsMobile) && (!string.IsNullOrEmpty(feedAction.BodyCache)))
                     {
                         core.Display.ParseBbcodeCache(feedItemVariableCollection, "TEXT", feedAction.BodyCache);
@@ -497,7 +501,7 @@ namespace BoxSocial.Internals
             {
                 VariableCollection feedItemVariableCollection = template.CreateChild("feed_days_list.feed_item");
 
-                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.FormattedTitle);
                 core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
 
                 feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);
@@ -553,6 +557,46 @@ namespace BoxSocial.Internals
 
             string loadMoreUri = core.Hyperlink.BuildHomeUri() + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId;
             core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
+        }
+
+        public static void ShowMore(Core core, User owner)
+        {
+            long newestId = core.Functions.RequestLong("newest-id", 0);
+            long newerId = 0;
+
+            bool moreContent = false;
+            long lastId = 0;
+
+            List<Action> feedActions = null;
+
+            if (newestId > 0)
+            {
+                feedActions = Feed.GetNewerItems(core, owner, newestId);
+            }
+            else
+            {
+                feedActions = Feed.GetItems(core, owner, 1, 20, 0, out moreContent);
+            }
+
+            if (feedActions != null)
+            {
+                JsonSerializer js;
+                StringWriter jstw;
+                JsonWriter jtw;
+
+                js = new JsonSerializer();
+                jstw = new StringWriter();
+                jtw = new JsonTextWriter(jstw);
+
+                core.Http.WriteJson(js, feedActions);
+            }
+
+            if (core.Db != null)
+            {
+                core.Db.CloseConnection();
+            }
+
+            core.Http.End();
         }
     }
 }

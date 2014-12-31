@@ -24,6 +24,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -32,6 +35,7 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     [Permission("VIEW", "Can view this status message", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
+    [JsonObject("StatusMessage")]
     public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem, IActionableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
@@ -58,6 +62,7 @@ namespace BoxSocial.Internals
 
         public event CommentHandler OnCommentPosted;
 
+        [JsonProperty("id")]
         public long StatusId
         {
             get
@@ -66,6 +71,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public User Poster
         {
             get
@@ -74,6 +80,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey OwnerKey
         {
             get
@@ -82,6 +89,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -95,6 +103,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("message")]
         public string Message
         {
             get
@@ -103,6 +112,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string ShareString
         {
             get
@@ -111,6 +121,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("timeUt")]
         public long TimeRaw
         {
             get
@@ -431,6 +442,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -439,6 +451,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -448,6 +461,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("shareUri")]
         public string ShareUri
         {
             get
@@ -456,6 +470,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Comments
         {
             get
@@ -464,6 +479,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public SortOrder CommentSortOrder
         {
             get
@@ -472,6 +488,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte CommentsPerPage
         {
             get
@@ -480,6 +497,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public Access Access
         {
             get
@@ -492,6 +510,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool IsSimplePermissions
         {
             get
@@ -504,6 +523,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public List<AccessControlPermission> AclPermissions
         {
             get { throw new NotImplementedException(); }
@@ -514,6 +534,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -522,6 +543,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get
@@ -530,6 +552,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string DisplayTitle
         {
             get
@@ -554,6 +577,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Likes
         {
             get
@@ -562,6 +586,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Dislikes
         {
             get
@@ -570,6 +595,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long SharedTimes
         {
             get
@@ -578,6 +604,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string IndexingString
         {
             get
@@ -586,6 +613,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string IndexingTitle
         {
             get
@@ -594,6 +622,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string IndexingTags
         {
             get
@@ -649,7 +678,7 @@ namespace BoxSocial.Internals
             return template;
         }
 
-
+        [JsonIgnore]
         public string Action
         {
             get
@@ -663,6 +692,7 @@ namespace BoxSocial.Internals
             return ShareString;
         }
 
+        [JsonIgnore]
         public string Noun
         {
             get
@@ -671,7 +701,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonIgnore]
         public ActionableItemType PostType
         {
             get
@@ -680,6 +710,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte[] Data
         {
             get
@@ -688,6 +719,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string DataContentType
         {
             get
@@ -696,6 +728,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Caption
         {
             get

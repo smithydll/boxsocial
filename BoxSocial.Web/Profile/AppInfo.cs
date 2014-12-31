@@ -21,10 +21,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.Forms;
 using BoxSocial.IO;
@@ -155,6 +159,15 @@ namespace BoxSocial.Applications.Profile
                     string message = core.Http.Form["message"];
                     StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
 
+                    JsonSerializer js;
+                    StringWriter jstw;
+                    JsonWriter jtw;
+
+                    js = new JsonSerializer();
+                    jstw = new StringWriter();
+                    jtw = new JsonTextWriter(jstw);
+
+                    core.Http.WriteJson(js, newMessage);
                     break;
                 case "status":
                     break;

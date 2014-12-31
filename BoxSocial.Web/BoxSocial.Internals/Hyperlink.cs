@@ -399,6 +399,10 @@ namespace BoxSocial.Internals
 
         public string AppendSid(string uri, bool forceSid, string sid)
         {
+            if (core.Session.SessionMethod == SessionMethods.OAuth)
+            {
+                return AppendAbsoluteSid(uri, forceSid);
+            }
             if (SidUrls || forceSid)
             {
                 int ior = uri.IndexOf("?sid=");
@@ -481,13 +485,27 @@ namespace BoxSocial.Internals
 
         public string AppendAbsoluteSid(string uri, bool forceSid)
         {
-            if ((!uri.StartsWith("http://", StringComparison.Ordinal)) && (!uri.StartsWith("https://", StringComparison.Ordinal)))
+            if (core.Session.SessionMethod == SessionMethods.OAuth)
             {
-                return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
+                if ((!uri.StartsWith("http://", StringComparison.Ordinal)) && (!uri.StartsWith("https://", StringComparison.Ordinal)))
+                {
+                    return StripSid(Uri + uri.TrimStart(new char[] { '/' }));
+                }
+                else
+                {
+                    return StripSid(uri);
+                }
             }
             else
             {
-                return AppendSid(uri, forceSid);
+                if ((!uri.StartsWith("http://", StringComparison.Ordinal)) && (!uri.StartsWith("https://", StringComparison.Ordinal)))
+                {
+                    return AppendSid(Uri + uri.TrimStart(new char[] { '/' }), forceSid);
+                }
+                else
+                {
+                    return AppendSid(uri, forceSid);
+                }
             }
         }
 

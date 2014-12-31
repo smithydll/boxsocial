@@ -33,8 +33,11 @@ using System.Web;
 using System.Web.Configuration;
 using System.Web.Services;
 using System.Web.Services.Protocols;
-using BoxSocial.IO;
 using System.Xml;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
+using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
@@ -87,6 +90,7 @@ namespace BoxSocial.Internals
     [Permission("VIEW_FAMILY", "Can see your family", PermissionTypes.View)]
     [Permission("VIEW_COLLEAGUES", "Can see your colleagues", PermissionTypes.View)]
     [PermissionGroup]
+    [JsonObject("user")]
     public class User : Primitive, ICommentableItem, IPermissibleItem, ISearchableItem, ISubscribeableItem, INotifiableItem
     {
         [DataField("user_id", DataFieldKeys.Primary)]
@@ -123,6 +127,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// user ID (read only)
         /// </summary>
+        [JsonProperty("id")]
         public long UserId
         {
             get
@@ -131,6 +136,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Domain
         {
             get
@@ -139,6 +145,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public UserInfo UserInfo
         {
             get
@@ -154,6 +161,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public UserProfile Profile
         {
             get
@@ -169,6 +177,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public UserStyle Style
         {
             get
@@ -195,6 +204,7 @@ namespace BoxSocial.Internals
         /// 
         /// </summary>
         /// <returns></returns>
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -203,6 +213,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("type")]
         public override string Type
         {
             get
@@ -211,6 +222,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override AppPrimitives AppPrimitive
         {
             get
@@ -222,6 +234,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// user name (read only)
         /// </summary>
+        [JsonProperty("username")]
         public string UserName
         {
             get
@@ -230,6 +243,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Key
         {
             get
@@ -238,6 +252,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string DisplayNameOwnership
         {
             get
@@ -246,6 +261,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Preposition
         {
             get
@@ -262,6 +278,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("displayName")]
         public override string DisplayName
         {
             get
@@ -270,6 +287,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string TitleNameOwnership
         {
             get
@@ -278,6 +296,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string TitleName
         {
             get
@@ -286,6 +305,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string ProfileUri
         {
             get
@@ -295,6 +315,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string UserTiny
         {
             get
@@ -312,6 +333,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Thumbnail
         {
             get
@@ -329,6 +351,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string UserMobile
         {
             get
@@ -349,6 +372,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 50x50 display tile
         /// </summary>
+        [JsonIgnore]
         public override string Icon
         {
             get
@@ -369,6 +393,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 100x100 display tile
         /// </summary>
+        [JsonProperty("displayImageUrl")]
         public override string Tile
         {
             get
@@ -389,6 +414,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 200x200 display tile
         /// </summary>
+        [JsonIgnore]
         public override string Square
         {
             get
@@ -409,6 +435,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Cover photo
         /// </summary>
+        [JsonProperty("coverPhotoUrl")]
         public override string CoverPhoto
         {
             get
@@ -472,6 +499,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Cover photo
         /// </summary>
+        [JsonIgnore]
         public override string MobileCoverPhoto
         {
             get
@@ -532,6 +560,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string UserDomain
         {
             get
@@ -565,6 +594,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public List<UserEmail> EmailAddresses
         {
             get
@@ -2361,13 +2391,14 @@ namespace BoxSocial.Internals
             return output;
         }
 
+        [JsonIgnore]
         public override string UriStub
         {
             get
             {
-                if ((string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
+                if ((string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile || core.Session.SessionMethod == SessionMethods.OAuth || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
                 {
-                    if (core.Http != null && core.Http.Domain != Hyperlink.Domain)
+                    if (core.Http != null && core.Http.Domain != Hyperlink.Domain || core.Session.SessionMethod == SessionMethods.OAuth)
                     {
                         return core.Hyperlink.Uri + "user/" + UserName.ToLower() + "/";
                     }
@@ -2392,6 +2423,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string UriStubAbsolute
         {
             get
@@ -2408,6 +2440,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -2426,6 +2459,7 @@ namespace BoxSocial.Internals
             return loggedIdUid;
         }
 
+        [JsonIgnore]
         public override string AccountUriStub
         {
             get
@@ -2441,6 +2475,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Comments
         {
             get
@@ -2449,6 +2484,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public SortOrder CommentSortOrder
         {
             get
@@ -2457,6 +2493,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte CommentsPerPage
         {
             get
@@ -2466,6 +2503,7 @@ namespace BoxSocial.Internals
         }
 
         // Force all inherited classes to expose themselves as base type of User
+        [JsonIgnore]
         public new long TypeId
         {
             get
@@ -2474,6 +2512,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public new ItemKey ItemKey
         {
             get
@@ -2489,6 +2528,7 @@ namespace BoxSocial.Internals
             return 1;
         }
 
+        [JsonIgnore]
         public bool IsOnline
         {
             get
@@ -2497,6 +2537,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override Access Access
         {
             get
@@ -2510,6 +2551,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override bool IsSimplePermissions
         {
             get
@@ -2531,6 +2573,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override List<AccessControlPermission> AclPermissions
         {
             get
@@ -2649,6 +2692,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        [JsonIgnore]
         private new IPermissibleItem PermissiveParent
         {
             get
@@ -2657,6 +2701,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get
@@ -2770,6 +2815,7 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        [JsonIgnore]
         public override string DisplayTitle
         {
             get
@@ -2798,6 +2844,7 @@ namespace BoxSocial.Internals
             return new ItemKey(-3, ItemType.GetTypeId(core, typeof(User)));
         }
 
+        [JsonIgnore]
         public string IndexingString
         {
             get
@@ -2806,6 +2853,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string IndexingTitle
         {
             get
@@ -2814,6 +2862,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string IndexingTags
         {
             get
@@ -2848,6 +2897,7 @@ namespace BoxSocial.Internals
             return template;
         }
 
+        [JsonIgnore]
         public string Noun
         {
             get
@@ -2876,6 +2926,7 @@ namespace BoxSocial.Internals
             return (UserPhoneNumber)input;
         }
 
+        [JsonProperty("subscribers")]
         public long Subscribers
         {
             get
@@ -2913,6 +2964,7 @@ namespace BoxSocial.Internals
             return string.Empty;
         }
 
+        [JsonIgnore]
         public string Title
         {
             get

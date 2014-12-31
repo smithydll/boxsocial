@@ -23,6 +23,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -135,6 +138,7 @@ namespace BoxSocial.Internals
         }
     }
 
+    [JsonObject("primitive")]
     public abstract class Primitive : NumberedItem, IPermissibleItem
     {
 
@@ -280,6 +284,7 @@ namespace BoxSocial.Internals
             set;
         }
 
+        [JsonIgnore]
         public Primitive Owner
         {
             get
@@ -294,7 +299,8 @@ namespace BoxSocial.Internals
         }
 
         public abstract bool IsItemGroupMember(ItemKey viewer, ItemKey key);
-        
+
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -303,6 +309,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get

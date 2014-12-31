@@ -27,6 +27,9 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -64,6 +67,7 @@ namespace BoxSocial.Internals
         public event EventHandler ItemUpdated;
         public event ItemDeletedEventHandler ItemDeleted;
 
+        [JsonIgnore]
         public Bbcode Bbcode
         {
             get
@@ -72,6 +76,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         private Functions Functions
         {
             get
@@ -510,6 +515,7 @@ namespace BoxSocial.Internals
             return db.Query(query);
         }
 
+        [JsonIgnore]
         public string Namespace
         {
             get

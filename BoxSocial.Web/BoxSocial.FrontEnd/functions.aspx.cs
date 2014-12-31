@@ -558,7 +558,7 @@ namespace BoxSocial.FrontEnd
                         newerId = feedAction.Id;
                     }
 
-                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.Title);
+                    core.Display.ParseBbcode(feedItemVariableCollection, "TITLE", feedAction.FormattedTitle);
                     core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, core.PrimitiveCache[feedAction.OwnerId], true, string.Empty, string.Empty);
 
                     feedItemVariableCollection.Parse("USER_DISPLAY_NAME", feedAction.Owner.DisplayName);

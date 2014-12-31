@@ -26,6 +26,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -106,6 +109,7 @@ namespace BoxSocial.Internals
             get;
         }
 
+        [JsonIgnore]
         public ItemKey ItemKey
         {
             get
@@ -118,6 +122,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemInfo Info
         {
             get

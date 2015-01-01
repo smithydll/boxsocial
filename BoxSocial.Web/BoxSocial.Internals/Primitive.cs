@@ -146,21 +146,25 @@ namespace BoxSocial.Internals
         {
         }
 
+        [JsonIgnore]
         public override abstract long Id
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string Key
         {
             get;
         }
 
+        [JsonProperty("type")]
         public abstract string Type
         {
             get;
         }
-		
+
+        [JsonIgnore]
 		public long TypeId
         {
             get
@@ -169,6 +173,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public new ItemKey ItemKey
         {
             get
@@ -177,76 +182,91 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public abstract string AccountUriStub
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract AppPrimitives AppPrimitive
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string Thumbnail
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string Icon
         {
             get;
         }
 
+        [JsonProperty("display_image_uri")]
         public abstract string Tile
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string Square
         {
             get;
         }
 
+        [JsonProperty("cover_photo_uri")]
         public abstract string CoverPhoto
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string MobileCoverPhoto
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string UriStub
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string UriStubAbsolute
         {
             get;
         }
 
+        [JsonIgnore]
         public override abstract string Uri
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string TitleName
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string TitleNameOwnership
         {
             get;
         }
 
+        [JsonProperty("display_name")]
         public abstract string DisplayName
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract string DisplayNameOwnership
         {
             get;
@@ -273,11 +293,13 @@ namespace BoxSocial.Internals
 
         public abstract string GenerateBreadCrumbs(List<string[]> parts);
 
+        [JsonIgnore]
         public abstract Access Access
         {
             get;
         }
 
+        [JsonIgnore]
         public abstract bool IsSimplePermissions
         {
             get;
@@ -293,6 +315,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public abstract List<AccessControlPermission> AclPermissions
         {
             get;
@@ -335,6 +358,7 @@ namespace BoxSocial.Internals
 
         public abstract bool GetDefaultCan(string permission, ItemKey viewer);
 
+        [JsonIgnore]
         public abstract string DisplayTitle
         {
             get;

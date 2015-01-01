@@ -141,6 +141,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        public OAuthApplication(Core core, System.Data.Common.DbDataReader oAuthApplicationRow)
+            : base(core, false)
+        {
+            this.db = db;
+
+            loadItemInfo(oAuthApplicationRow);
+            loadApplication(oAuthApplicationRow);
+        }
+
         protected override void loadItemInfo(System.Data.Common.DbDataReader applicationRow)
         {
             loadOAuthApplication(applicationRow);
@@ -242,6 +251,36 @@ namespace BoxSocial.Internals
             }
 
             return newApp;
+        }
+
+        public static List<OAuthApplication> GetApps(Core core, Primitive owner)
+        {
+            List<OAuthApplication> oauthApplications = new List<OAuthApplication>();
+
+            SelectQuery query = Item.GetSelectQueryStub(core, typeof(PrimitiveApplicationInfo));
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(ApplicationEntry)));
+            query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(ApplicationEntry)), "application_id", "application_id");
+            query.AddFields(Item.GetFieldsPrefixed(core, typeof(OAuthApplication)));
+            query.AddJoin(JoinTypes.Inner, Item.GetTable(typeof(OAuthApplication)), "application_id", "application_id");
+            query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_id"), owner.ItemKey.Id);
+            query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_type_id"), owner.ItemKey.TypeId);
+            query.AddCondition(new DataField(typeof(ApplicationEntry), "application_type"), (byte)ApplicationType.OAuth);
+
+            System.Data.Common.DbDataReader userApplicationsReader = core.Db.ReaderQuery(query);
+
+            if (userApplicationsReader.HasRows)
+            {
+                while (userApplicationsReader.Read())
+                {
+                    OAuthApplication ae = new OAuthApplication(core, userApplicationsReader);
+                    oauthApplications.Add(ae);
+                }
+
+                userApplicationsReader.Close();
+                userApplicationsReader.Dispose();
+            }
+
+            return oauthApplications;
         }
     }
 }

@@ -94,6 +94,25 @@ namespace BoxSocial.Internals
                 }
             }
 
+            List<OAuthApplication> oauthApplications = OAuthApplication.GetApps(core, Owner);
+
+            foreach (ApplicationEntry ae in oauthApplications)
+            {
+                VariableCollection applicationsVariableCollection = template.CreateChild("oauth_application_list");
+
+                applicationsVariableCollection.Parse("NAME", ae.Title);
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("mode", "settings");
+                args.Add("id", ae.ApplicationId.ToString());
+                applicationsVariableCollection.Parse("U_SETTINGS", BuildUri(args));
+                applicationsVariableCollection.Parse("U_APPLICATION", ae.Uri);
+
+                args = new Dictionary<string, string>();
+                args.Add("mode", "uninstall");
+                args.Add("id", ae.ApplicationId.ToString());
+                applicationsVariableCollection.Parse("U_DEAUTHORISE", core.Hyperlink.AppendSid(BuildUri(args), true));
+            }
+
             if (Owner == LoggedInMember)
             {
                 template.Parse("U_APPLICATIONS", core.Hyperlink.AppendCoreSid("/applications"));
@@ -266,8 +285,17 @@ namespace BoxSocial.Internals
                     default:
                         if (!ae.IsPrimitive)
                         {
-                            ae.Uninstall(core, core.Session.LoggedInMember, Owner);
-                            uninstalled = true;
+                            switch (ae.ApplicationType)
+                            {
+                                case ApplicationType.Native:
+                                    ae.Uninstall(core, core.Session.LoggedInMember, Owner);
+                                    uninstalled = true;
+                                    break;
+                                case ApplicationType.OAuth:
+                                    ae.Deauthorise(core, core.Session.LoggedInMember, Owner);
+                                    uninstalled = true;
+                                    break;
+                            }
                         }
                         break;
                 }

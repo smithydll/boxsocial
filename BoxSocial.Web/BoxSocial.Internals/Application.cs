@@ -555,6 +555,7 @@ namespace BoxSocial.Internals
             query.AddCondition(new DataField(typeof(PrimitiveApplicationInfo), "item_type_id"), owner.ItemKey.TypeId);
             query.AddCondition("application_update", false);
             query.AddCondition(new QueryOperation("application_primitives", QueryOperations.BinaryAnd, (byte)owner.AppPrimitive), ConditionEquality.NotEqual, false);
+            query.AddCondition(new DataField(typeof(ApplicationEntry), "application_type"), (byte)ApplicationType.Native);
 
             return query;
         }

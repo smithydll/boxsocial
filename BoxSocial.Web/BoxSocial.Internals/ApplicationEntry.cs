@@ -1120,6 +1120,38 @@ namespace BoxSocial.Internals
             return false;
         }
 
+        public bool Deauthorise(Core core, Primitive viewer, Primitive owner)
+        {
+            if (this.ApplicationType != Internals.ApplicationType.OAuth) return false;
+
+            try
+            {
+                PrimitiveApplicationInfo pai = new PrimitiveApplicationInfo(core, owner, this.Id);
+
+                OAuthToken token = new OAuthToken(core, pai.OAuthAccessToken);
+                token.UseToken();
+                token.Update();
+
+                DeleteQuery dQuery = new DeleteQuery(typeof(PrimitiveApplicationInfo));
+                dQuery.AddCondition("application_id", Id);
+                dQuery.AddCondition("item_id", owner.Id);
+                dQuery.AddCondition("item_type_id", owner.TypeId);
+
+                if (core.Db.Query(dQuery) > 0)
+                {
+                    return true;
+                }
+            }
+            catch (InvalidPrimitiveAppInfoException)
+            {
+            }
+            catch (InvalidOAuthTokenException)
+            {
+            }
+
+            return false;
+        }
+
         public bool Uninstall(Core core, Primitive viewer, Primitive owner)
         {
             return Uninstall(core, viewer, owner, false);
@@ -1127,6 +1159,8 @@ namespace BoxSocial.Internals
 
         public bool Uninstall(Core core, Primitive viewer, Primitive owner, bool force)
         {
+            if (this.ApplicationType != Internals.ApplicationType.Native) return false;
+
             if (!force)
             {
                 if (isPrimitive)

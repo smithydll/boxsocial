@@ -121,7 +121,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("timeUt")]
+        [JsonProperty("time_ut")]
         public long TimeRaw
         {
             get
@@ -461,7 +461,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("shareUri")]
+        [JsonIgnore]
         public string ShareUri
         {
             get

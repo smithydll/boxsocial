@@ -122,7 +122,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonIgnore]
+        [JsonProperty("info")]
         public ItemInfo Info
         {
             get

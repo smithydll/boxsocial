@@ -278,7 +278,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("displayName")]
+        [JsonProperty("display_name")]
         public override string DisplayName
         {
             get
@@ -393,7 +393,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 100x100 display tile
         /// </summary>
-        [JsonProperty("displayImageUrl")]
+        [JsonProperty("display_image_uri")]
         public override string Tile
         {
             get
@@ -435,7 +435,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Cover photo
         /// </summary>
-        [JsonProperty("coverPhotoUrl")]
+        [JsonProperty("cover_photo_uri")]
         public override string CoverPhoto
         {
             get

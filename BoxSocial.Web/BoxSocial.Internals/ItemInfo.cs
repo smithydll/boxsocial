@@ -27,11 +27,15 @@ using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
     [DataTable("item_info")]
+    [JsonObject("item_info")]
     public class ItemInfo : Item
     {
         [DataField("info_item", DataFieldKeys.Unique)]
@@ -69,6 +73,7 @@ namespace BoxSocial.Internals
 
         private NumberedItem item;
 
+        [JsonIgnore]
         public ItemKey InfoKey
         {
             get
@@ -392,6 +397,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("comments")]
         public long Comments
         {
             get
@@ -404,6 +410,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("likes")]
         public long Likes
         {
             get
@@ -416,6 +423,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("dislikes")]
         public long Dislikes
         {
             get
@@ -428,6 +436,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("ratings")]
         public long Ratings
         {
             get
@@ -440,6 +449,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("rating")]
         public float Rating
         {
             get
@@ -452,6 +462,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("subscribers")]
         public long Subscribers
         {
             get
@@ -464,6 +475,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("shares")]
         public long SharedTimes
         {
             get
@@ -476,6 +488,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("views")]
         public long ViewedTimes
         {
             get
@@ -628,6 +641,7 @@ namespace BoxSocial.Internals
             core.Db.Query(uQuery);
         }
 
+        [JsonIgnore]
         internal long TweetId
         {
             get
@@ -640,6 +654,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string FacebookPostId
         {
             get
@@ -652,6 +667,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal long TumblrPostId
         {
             get
@@ -664,6 +680,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         private ItemKey ItemKey
         {
             get
@@ -672,6 +689,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         private NumberedItem Item
         {
             get
@@ -684,6 +702,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -699,6 +718,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("share_uri")]
         public string ShareUri
         {
             get
@@ -707,6 +727,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string UniqueString
         {
             get

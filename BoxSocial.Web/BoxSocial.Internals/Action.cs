@@ -177,6 +177,24 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("actioned_item_info")]
+        public ItemInfo ActionedItemInfo
+        {
+            get
+            {
+                return ActionedItem.Info;
+            }
+        }
+
+        [JsonProperty("interact_item_info")]
+        public ItemInfo InteractItemInfo
+        {
+            get
+            {
+                return InteractItem.Info;
+            }
+        }
+
         [JsonProperty("id")]
         public long ActionId
         {
@@ -253,7 +271,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("ownerId")]
+        [JsonProperty("owner_id")]
         public long OwnerId
         {
             get
@@ -379,7 +397,7 @@ namespace BoxSocial.Internals
             return query;
         }
 
-        [JsonProperty("timeUt")]
+        [JsonProperty("time_ut")]
         public long TimeUt
         {
             get

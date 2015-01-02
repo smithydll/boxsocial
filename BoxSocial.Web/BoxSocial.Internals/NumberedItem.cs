@@ -109,7 +109,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        [JsonIgnore]
+        [JsonProperty("key")]
         public ItemKey ItemKey
         {
             get

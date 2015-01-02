@@ -26,16 +26,21 @@ using System.Diagnostics;
 using System.Text;
 using System.Web;
 using System.Web.Caching;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+    [JsonObject("item_key")]
 	public class ItemKey : IComparable
 	{
 		private long itemId;
 		private long itemTypeId;
         private int hashCode;
 
+        [JsonProperty("id")]
 		public long Id
 		{
 			get
@@ -43,7 +48,8 @@ namespace BoxSocial.Internals
 				return itemId;
 			}
 		}
-		
+
+        [JsonProperty("type_id")]
 		public long TypeId
 		{
 			get
@@ -51,6 +57,24 @@ namespace BoxSocial.Internals
 				return itemTypeId;
 			}
 		}
+
+        [JsonProperty("id_str")]
+        public string IdString
+        {
+            get
+            {
+                return itemId.ToString();
+            }
+        }
+
+        [JsonProperty("type_id_str")]
+        public string TypeIdString
+        {
+            get
+            {
+                return itemTypeId.ToString();
+            }
+        }
 
         public ItemType GetType(Core core)
         {
@@ -270,6 +294,37 @@ namespace BoxSocial.Internals
                 ItemType itemType = updateItemTypeCache(core, typeId);
                 return itemType;
             }
+        }
+
+        public static List<ItemType> GetItemTypes(Core core)
+        {
+            List<ItemType> types = new List<ItemType>();
+
+            SelectQuery query = ItemType.GetSelectQueryStub(core, typeof(ItemType));
+
+            System.Data.Common.DbDataReader typesReader = null;
+
+            try
+            {
+                typesReader = core.Db.ReaderQuery(query);
+            }
+            catch
+            {
+                if (typesReader != null)
+                {
+                    typesReader.Close();
+                    typesReader.Dispose();
+                }
+
+                return types;
+            }
+
+            while (typesReader.Read())
+            {
+                types.Add(new ItemType(core, typesReader));
+            }
+
+            return types;
         }
         
         public override string ToString ()

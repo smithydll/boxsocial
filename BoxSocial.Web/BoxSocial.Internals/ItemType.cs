@@ -22,11 +22,15 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {	
 	[DataTable("item_types")]
+    [JsonObject("item_type")]
 	public class ItemType : NumberedItem
 	{
 		
@@ -56,7 +60,8 @@ namespace BoxSocial.Internals
         private bool typeImplementsIEmbeddable;
 
         private Type type = null;
-			
+
+        [JsonProperty("id")]
 		public long TypeId
 		{
 			get
@@ -64,7 +69,8 @@ namespace BoxSocial.Internals
 				return typeId;
 			}
 		}
-		
+
+        [JsonProperty("namespace")]
 		public string TypeNamespace
 		{
 			get
@@ -72,7 +78,8 @@ namespace BoxSocial.Internals
 				return typeNamespace;
 			}
 		}
-		
+
+        [JsonProperty("application_id")]
 		public long ApplicationId
 		{
 			get
@@ -81,6 +88,7 @@ namespace BoxSocial.Internals
 			}
 		}
 
+        [JsonIgnore]
         public bool IsPrimitive
         {
             get
@@ -89,6 +97,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("likeable")]
         public bool Likeable
         {
             get
@@ -97,6 +106,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("commentable")]
         public bool Commentable
         {
             get
@@ -105,6 +115,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("rateable")]
         public bool Rateable
         {
             get
@@ -113,6 +124,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("subscribeable")]
         public bool Subscribeable
         {
             get
@@ -121,6 +133,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("shareable")]
         public bool Shareable
         {
             get
@@ -129,6 +142,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("viewable")]
         public bool Viewable
         {
             get
@@ -137,6 +151,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("notifiable")]
         public bool Notifiable
         {
             get
@@ -145,6 +160,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool Embeddable
         {
             get
@@ -329,6 +345,7 @@ namespace BoxSocial.Internals
             return type;
         }
 		
+        [JsonIgnore]
 		public override string Uri
 		{
 			get
@@ -337,6 +354,7 @@ namespace BoxSocial.Internals
 			}
 		}
 		
+        [JsonIgnore]
 		public override long Id
 		{
 			get

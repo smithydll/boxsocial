@@ -1181,10 +1181,16 @@ namespace BoxSocial.Internals
 
                 switch (callName)
                 {
+                    case "item_types":
+                        this.Functions.ReturnItemTypeIds();
+                        break;
                     case "feed":
                         Feed.ShowMore(this, Session.LoggedInMember);
                         break;
                     case "primitive":
+                        break;
+                    case "permission_groups":
+                        this.Functions.ReturnPermissionGroupList(ResponseFormat.Json);
                         break;
                 }
             }

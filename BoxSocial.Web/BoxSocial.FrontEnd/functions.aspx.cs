@@ -28,14 +28,14 @@ using System.Text;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
-using BoxSocial.Internals;
-using BoxSocial.IO;
-using BoxSocial.Forms;
-using BoxSocial.Groups;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using TwoStepsAuthenticator;
+using BoxSocial.Internals;
+using BoxSocial.IO;
+using BoxSocial.Forms;
+using BoxSocial.Groups;
 
 namespace BoxSocial.FrontEnd
 {
@@ -79,7 +79,7 @@ namespace BoxSocial.FrontEnd
                     CheckNewFeedItems();
                     return;
                 case "permission-groups-list":
-                    ReturnPermissionGroupList();
+                    core.Functions.ReturnPermissionGroupList(ResponseFormat.Xml);
                     return;
                 case "embed":
                     ReturnItemEmbedCode();
@@ -631,88 +631,6 @@ namespace BoxSocial.FrontEnd
                 returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
 
                 core.Ajax.SendDictionary("unreadItems", returnValues);
-            }
-        }
-
-        private void ReturnPermissionGroupList()
-        {
-            string namePart = core.Http.Form["name-field"];
-            long itemId = core.Functions.FormLong("item", 0);
-            long itemTypeId = core.Functions.FormLong("type", 0);
-
-            if (!(itemId > 0 && itemTypeId > 0))
-            {
-                if (core.Session.SignedIn)
-                {
-                    itemId = core.Session.LoggedInMember.Id;
-                    itemTypeId = core.Session.LoggedInMember.TypeId;
-                }
-            }
-
-            if (itemId > 0 && itemTypeId > 0)
-            {
-                ItemKey ik = new ItemKey(itemId, itemTypeId);
-
-                List<PrimitivePermissionGroup> groups = null;
-                NumberedItem ni = NumberedItem.Reflect(core, ik);
-                Primitive primitive = null;
-                Dictionary<ItemKey, string[]> permissiveNames = new Dictionary<ItemKey, string[]>();
-
-                if (ni.GetType().IsSubclassOf(typeof(Primitive)))
-                {
-                    primitive = (Primitive)ni;
-                }
-                else
-                {
-                    primitive = ((IPermissibleItem)ni).Owner;
-                }
-
-                groups = new List<PrimitivePermissionGroup>();
-                int itemGroups = 0;
-
-                Type type = ni.GetType();
-                if (type.GetMethod(type.Name + "_GetItemGroups", new Type[] { typeof(Core) }) != null)
-                {
-                    groups.AddRange((List<PrimitivePermissionGroup>)type.InvokeMember(type.Name + "_GetItemGroups", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, new object[] { core }));
-                    itemGroups = groups.Count;
-                }
-
-                groups.AddRange(core.GetPrimitivePermissionGroups(primitive));
-
-                foreach (PrimitivePermissionGroup group in groups)
-                {
-                    if (!string.IsNullOrEmpty(group.LanguageKey))
-                    {
-                        permissiveNames.Add(group.ItemKey, new string[] { core.Prose.GetString(group.LanguageKey), group.Tile });
-                    }
-                    else
-                    {
-                        permissiveNames.Add(group.ItemKey, new string[] { group.DisplayName, group.Tile });
-                    }
-                }
-
-                List<User> friends = primitive.GetPermissionUsers(namePart);
-
-                foreach (User friend in friends)
-                {
-                    permissiveNames.Add(friend.ItemKey, new string[] { friend.DisplayName, friend.Tile });
-                }
-
-                core.Ajax.SendPermissionGroupDictionary("permissionSelect", permissiveNames);
-
-                /*if (core.Session.IsLoggedIn)
-                {
-                    List<Friend> friends = core.Session.LoggedInMember.GetFriends(namePart);
-
-                    Dictionary<long, string[]> friendNames = new Dictionary<long, string[]>();
-
-                    foreach (Friend friend in friends)
-                    {
-                        friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.UserTile });
-                    }
-
-                    core.Ajax.SendUserDictionary("friendSelect", friendNames);
-                }*/
             }
         }
     }

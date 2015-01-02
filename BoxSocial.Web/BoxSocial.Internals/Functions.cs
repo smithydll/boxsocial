@@ -1086,6 +1086,7 @@ namespace BoxSocial.Internals
                 NumberedItem ni = NumberedItem.Reflect(core, ik);
                 Primitive primitive = null;
                 Dictionary<ItemKey, string[]> permissiveNames = new Dictionary<ItemKey, string[]>();
+                List<PrimitivePermissionGroup> permissionKeys = new List<PrimitivePermissionGroup>();
 
                 if (ni.GetType().IsSubclassOf(typeof(Primitive)))
                 {
@@ -1113,10 +1114,12 @@ namespace BoxSocial.Internals
                     if (!string.IsNullOrEmpty(group.LanguageKey))
                     {
                         permissiveNames.Add(group.ItemKey, new string[] { core.Prose.GetString(group.LanguageKey), group.Tile });
+                        permissionKeys.Add(group);
                     }
                     else
                     {
                         permissiveNames.Add(group.ItemKey, new string[] { group.DisplayName, group.Tile });
+                        permissionKeys.Add(group);
                     }
                 }
 
@@ -1125,6 +1128,7 @@ namespace BoxSocial.Internals
                 foreach (User friend in friends)
                 {
                     permissiveNames.Add(friend.ItemKey, new string[] { friend.DisplayName, friend.Tile });
+                    permissionKeys.Add(new PrimitivePermissionGroup(friend.ItemKey, friend.DisplayName, friend.Tile));
                 }
 
                 switch (responseFormat)
@@ -1141,7 +1145,7 @@ namespace BoxSocial.Internals
                         jstw = new StringWriter();
                         jtw = new JsonTextWriter(jstw);
 
-                        core.Http.WriteJson(js, permissiveNames);
+                        core.Http.WriteJson(js, permissionKeys);
                         break;
                 }
 

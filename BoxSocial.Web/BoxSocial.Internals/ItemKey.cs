@@ -324,6 +324,9 @@ namespace BoxSocial.Internals
                 types.Add(new ItemType(core, typesReader));
             }
 
+            typesReader.Close();
+            typesReader.Dispose();
+
             return types;
         }
         

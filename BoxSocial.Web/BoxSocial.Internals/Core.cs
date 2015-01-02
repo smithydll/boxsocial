@@ -1192,6 +1192,17 @@ namespace BoxSocial.Internals
                     case "permission_groups":
                         this.Functions.ReturnPermissionGroupList(ResponseFormat.Json);
                         break;
+                    case "page_list":
+                        break;
+                    case "comments":
+                        break;
+                    case "comment_post":
+                        Comment.Post(this);
+                        break;
+                    case "comment_delete":
+                        break;
+                    case "rate":
+                        break;
                 }
             }
             else

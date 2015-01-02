@@ -338,6 +338,19 @@ namespace BoxSocial.Applications.Gallery
             return false;
         }
 
+        public override void ExecuteCall(string callName)
+        {
+            switch (callName)
+            {
+                case "gallery":
+                    break;
+                case "gallery_item":
+                    break;
+                case "upload":
+                    break;
+            }
+        }
+
         /// <summary>
         /// Builds installation info for the application.
         /// </summary>

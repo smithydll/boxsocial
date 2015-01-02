@@ -690,4 +690,22 @@ namespace BoxSocial.Internals
             }
         }
     }
+
+    public class PermissionDeniedException : Exception
+    {
+        private string languageKey;
+
+        public string LanguageKey
+        {
+            get
+            {
+                return languageKey;
+            }
+        }
+
+        public PermissionDeniedException(string languageKey)
+        {
+            this.languageKey = languageKey;
+        }
+    }
 }

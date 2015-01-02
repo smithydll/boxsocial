@@ -27,12 +27,16 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
 
     [DataTable("comments")]
+    [JsonObject("comment")]
     public sealed class Comment : NumberedItem, ILikeableItem, IShareableItem, IPermissibleSubItem, IActionableItem
     {
         // TODO: 1023 max length
@@ -66,6 +70,7 @@ namespace BoxSocial.Internals
         private ICommentableItem item;
         private User user;
 
+        [JsonProperty("id")]
         public long CommentId
         {
             get
@@ -74,6 +79,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("user_id")]
         public long UserId
         {
             get
@@ -82,6 +88,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public User User
         {
             get
@@ -99,7 +106,8 @@ namespace BoxSocial.Internals
                 }
             }
         }
-		
+
+        [JsonProperty("item_key")]
 		public ItemKey CommentedItemKey
 		{
 			get
@@ -108,6 +116,7 @@ namespace BoxSocial.Internals
 			}
 		}
 
+        [JsonIgnore]
         public long ItemId
         {
             get
@@ -116,6 +125,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long ItemTypeId
         {
             get
@@ -124,6 +134,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte SpamScore
         {
             get
@@ -132,6 +143,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("comment")]
         public string Body
         {
             get
@@ -140,11 +152,21 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string BodyCache
         {
             get
             {
                 return bodyCache;
+            }
+        }
+
+        [JsonProperty("time_ut")]
+        public long TimeRaw
+        {
+            get
+            {
+                return timeRaw;
             }
         }
 
@@ -244,6 +266,70 @@ namespace BoxSocial.Internals
         void Comment_ItemDeleted(object sender, ItemDeletedEventArgs e)
         {
             ActionableItem.CleanUp(core, this);
+        }
+
+        public static void Post(Core core)
+        {
+            long itemId = core.Functions.FormLong("item_id", 0);
+            long itemTypeId = core.Functions.FormLong("item_type_id", 0);
+            string comment = core.Http.Form["comment"];
+
+            ItemKey itemKey = new ItemKey(itemId, itemTypeId);
+
+            NumberedItem item = null;
+            ICommentableItem thisItem = null;
+
+
+            item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+
+            if (item is ICommentableItem)
+            {
+                thisItem = (ICommentableItem)item;
+
+                IPermissibleItem pItem = null;
+                if (item is IPermissibleItem)
+                {
+                    pItem = (IPermissibleItem)item;
+                }
+                else if (item is IPermissibleSubItem)
+                {
+                    pItem = ((IPermissibleSubItem)item).PermissiveParent;
+                }
+                else
+                {
+                    pItem = thisItem.Owner;
+                }
+
+                if (!pItem.Access.Can("COMMENT"))
+                {
+                    throw new PermissionDeniedException("UNAUTHORISED_TO_COMMENT");
+                }
+
+            }
+            else
+            {
+                throw new InvalidItemException();
+            }
+
+
+            Comment commentObject = null;
+
+            commentObject = Comment.Create(core, itemKey, comment);
+
+            if (item != null)
+            {
+                if (item is IActionableItem || item is IActionableSubItem)
+                {
+                }
+                else
+                {
+                    //ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
+                }
+
+                ICommentableItem citem = (ICommentableItem)item;
+
+                citem.CommentPosted(new CommentPostedEventArgs(commentObject, core.Session.LoggedInMember, new ItemKey(itemId, itemTypeId)));
+            }
         }
 
         public static Comment Create(Core core, ItemKey itemKey, string comment)
@@ -520,6 +606,7 @@ namespace BoxSocial.Internals
             return System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(input, "MD5").ToLower();
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -534,6 +621,7 @@ namespace BoxSocial.Internals
                     core.Hyperlink.StripSid(item.Uri), commentId, commentId));
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -542,6 +630,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Likes
         {
             get
@@ -550,6 +639,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Dislikes
         {
             get
@@ -558,6 +648,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -566,6 +657,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ICommentableItem CommentedItem
         {
             get
@@ -578,6 +670,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -628,6 +721,7 @@ namespace BoxSocial.Internals
             core.AdjustCommentCount(itemKey, -1);
         }
 
+        [JsonIgnore]
         public long SharedTimes
         {
             get
@@ -636,6 +730,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey OwnerKey
         {
             get
@@ -644,6 +739,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string ShareString
         {
             get
@@ -652,6 +748,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string ShareUri
         {
             get
@@ -660,7 +757,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonIgnore]
         public string Action
         {
             get
@@ -674,7 +771,7 @@ namespace BoxSocial.Internals
             return ShareString;
         }
 
-
+        [JsonIgnore]
         public ActionableItemType PostType
         {
             get
@@ -683,6 +780,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte[] Data
         {
             get
@@ -691,6 +789,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string DataContentType
         {
             get
@@ -699,6 +798,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Caption
         {
             get

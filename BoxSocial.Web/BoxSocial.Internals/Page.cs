@@ -31,6 +31,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -45,6 +48,7 @@ namespace BoxSocial.Internals
     [DataTable("user_pages", "PAGE")]
     [Permission("VIEW", "Can view the page", PermissionTypes.View)]
     [Permission("EDIT", "Can edit the page", PermissionTypes.CreateAndEdit)]
+    [JsonObject("page")]
     public class Page : NumberedItem, INestableItem, IPermissibleItem, ICommentableItem
     {
         [DataField("page_id", DataFieldKeys.Primary)]
@@ -105,6 +109,7 @@ namespace BoxSocial.Internals
 
         public event CommentHandler OnCommentPosted;
 
+        [JsonProperty("id")]
         public long PageId
         {
             get
@@ -113,6 +118,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("slug")]
         public string Slug
         {
             get
@@ -125,6 +131,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("title")]
         public string Title
         {
             get
@@ -144,6 +151,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("body")]
         public string Body
         {
             get
@@ -156,6 +164,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string BodyCache
         {
             get
@@ -168,6 +177,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Icon
         {
             get
@@ -180,6 +190,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public Access Access
         {
             get
@@ -192,6 +203,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool IsSimplePermissions
         {
             get
@@ -204,6 +216,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public User Creator
         {
             get
@@ -222,6 +235,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey OwnerKey
         {
             get
@@ -230,6 +244,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -248,6 +263,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte LicenseId
         {
             get
@@ -260,6 +276,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ContentLicense License
         {
             get
@@ -272,6 +289,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte ClassificationId
         {
             get
@@ -284,6 +302,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public Classifications Classification
         {
             get
@@ -292,6 +311,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Views
         {
             get
@@ -304,6 +324,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Status
         {
             get
@@ -316,6 +337,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long ParentId
         {
             get
@@ -364,6 +386,7 @@ namespace BoxSocial.Internals
 			return Parents;
 		}
 
+        [JsonIgnore]
         public ParentTree Parents
         {
             get
@@ -387,6 +410,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("order")]
         public int Order
         {
             get
@@ -398,7 +422,8 @@ namespace BoxSocial.Internals
                 SetProperty("order", value);
             }
         }
-		
+
+        [JsonProperty("level")]
 		public int Level
 		{
 			get
@@ -411,6 +436,7 @@ namespace BoxSocial.Internals
 			}
 		}
 
+        [JsonIgnore]
         public long ParentTypeId
         {
             get
@@ -419,6 +445,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string ParentPath
         {
             get
@@ -427,6 +454,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("path")]
         public string FullPath
         {
             get
@@ -442,6 +470,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool ListOnly
         {
             get
@@ -451,6 +480,24 @@ namespace BoxSocial.Internals
             set
             {
                 SetProperty("listOnly", value);
+            }
+        }
+
+        [JsonProperty("time_created_ut")]
+        public long TimeCreatedRaw
+        {
+            get
+            {
+                return createdRaw;
+            }
+        }
+
+        [JsonProperty("time_modified_ut")]
+        public long TimeModifiedRaw
+        {
+            get
+            {
+                return modifiedRaw;
             }
         }
 
@@ -1280,6 +1327,7 @@ namespace BoxSocial.Internals
             return success;
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -1288,6 +1336,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -1327,6 +1376,7 @@ namespace BoxSocial.Internals
             return paths[paths.Length - 1];
         }
 
+        [JsonIgnore]
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -1339,7 +1389,8 @@ namespace BoxSocial.Internals
         {
             return false;
         }
-        
+
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -1355,6 +1406,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get
@@ -1374,6 +1426,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string DisplayTitle
         {
             get
@@ -1395,6 +1448,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Comments
         {
             get
@@ -1403,6 +1457,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public SortOrder CommentSortOrder
         {
             get
@@ -1411,6 +1466,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public byte CommentsPerPage
         {
             get
@@ -1419,6 +1475,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Noun
         {
             get

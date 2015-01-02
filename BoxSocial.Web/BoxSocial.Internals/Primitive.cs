@@ -385,6 +385,7 @@ namespace BoxSocial.Internals
     /// <summary>
     /// 
     /// </summary>
+    [JsonObject("primitive_permission")]
     public class PrimitivePermissionGroup
     {
         private long typeId;
@@ -393,6 +394,7 @@ namespace BoxSocial.Internals
         private string displayName;
         private string tile;
 
+        [JsonProperty("key")]
         public ItemKey ItemKey
         {
             get
@@ -401,6 +403,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long TypeId
         {
             get
@@ -409,6 +412,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long ItemId
         {
             get
@@ -417,6 +421,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("language_key")]
         public string LanguageKey
         {
             get
@@ -424,7 +429,8 @@ namespace BoxSocial.Internals
                 return languageKey;
             }
         }
-        
+
+        [JsonProperty("display_name")]
         public string DisplayName
         {
             get
@@ -433,6 +439,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("display_image_uri")]
         public string Tile
         {
             get

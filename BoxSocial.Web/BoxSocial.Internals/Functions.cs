@@ -1055,6 +1055,8 @@ namespace BoxSocial.Internals
             jstw = new StringWriter();
             jtw = new JsonTextWriter(jstw);
 
+            js.NullValueHandling = NullValueHandling.Ignore;
+
             core.Http.WriteJson(js, itemTypes);
         }
 
@@ -1144,6 +1146,8 @@ namespace BoxSocial.Internals
                         js = new JsonSerializer();
                         jstw = new StringWriter();
                         jtw = new JsonTextWriter(jstw);
+
+                        js.NullValueHandling = NullValueHandling.Ignore;
 
                         core.Http.WriteJson(js, permissionKeys);
                         break;

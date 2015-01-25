@@ -32,6 +32,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -54,6 +57,7 @@ namespace BoxSocial.Applications.Gallery
     [Permission("EDIT_ITEMS", "Can edit photos", PermissionTypes.CreateAndEdit)]
     [Permission("DELETE_ITEMS", "Can delete photos", PermissionTypes.Delete)]
     [Permission("DOWNLOAD_ORIGINAL", "Can download the original photo. This will include EXIF data which may include personally identifiable information.", PermissionTypes.View)]
+    [JsonObject("gallery")]
     public class Gallery : NumberedItem, IPermissibleItem, INestableItem, ICommentableItem, ILikeableItem, IActionableItem
     {
 
@@ -203,6 +207,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery Id
         /// </summary>
+        [JsonProperty("id")]
         public long GalleryId
         {
             get
@@ -214,6 +219,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery parent Id
         /// </summary>
+        [JsonProperty("parent_id")]
         public long ParentId
         {
             get
@@ -260,6 +266,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Get the parents
         /// </summary>
+        [JsonIgnore]
         public ParentTree Parents
         {
             get
@@ -283,6 +290,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public ItemKey OwnerKey
         {
             get
@@ -294,6 +302,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the owner of the gallery
         /// </summary>
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -314,6 +323,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery title
         /// </summary>
+        [JsonProperty("title")]
         public string GalleryTitle
         {
             get
@@ -326,6 +336,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery parent path
         /// </summary>
+        [JsonProperty("parent_path")]
         public string ParentPath
         {
             get
@@ -341,6 +352,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery path (slug)
         /// </summary>
+        [JsonProperty("path")]
         public string Path
         {
             get
@@ -352,6 +364,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery full path
         /// </summary>
+        [JsonIgnore]
         public string FullPath
         {
             get
@@ -370,6 +383,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the number of visits made to the gallery
         /// </summary>
+        [JsonIgnore]
         public long Visits
         {
             get
@@ -381,6 +395,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the number of items in the gallery
         /// </summary>
+        [JsonProperty("items")]
         public long Items
         {
             get
@@ -396,6 +411,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public long ItemComment
         {
             get
@@ -407,6 +423,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the number of bytes consumed by the items in the gallery
         /// </summary>
+        [JsonIgnore]
         public long Bytes
         {
             get
@@ -422,6 +439,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery abstract
         /// </summary>
+        [JsonProperty("description")]
         public string GalleryAbstract
         {
             get
@@ -433,6 +451,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery description
         /// </summary>
+        [JsonIgnore]
         public string GalleryDescription
         {
             get
@@ -446,6 +465,7 @@ namespace BoxSocial.Applications.Gallery
         /// </summary>
         [Obsolete("The preferred method is to use the highlight ID to load the item and check it's permissions.")]
         [EditorBrowsable(EditorBrowsableState.Never)]
+        [JsonIgnore]
         public string HighlightUri
         {
             get
@@ -457,6 +477,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item ID
         /// </summary>
+        [JsonProperty("highlight_id")]
         public long HighlightId
         {
             get
@@ -472,6 +493,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
+        [JsonIgnore]
         public string TinyUri
         {
             get
@@ -522,6 +544,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
+        [JsonIgnore]
         public string ThumbnailUri
         {
             get
@@ -572,6 +595,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
+        [JsonIgnore]
         public string IconUri
         {
             get
@@ -611,6 +635,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
+        [JsonIgnore]
         public string TileUri
         {
             get
@@ -650,6 +675,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the gallery highlighted item thumbnail URI
         /// </summary>
+        [JsonIgnore]
         public string SquareUri
         {
             get
@@ -2252,6 +2278,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns the gallery id
         /// </summary>
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -2263,6 +2290,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Returns gallery URI
         /// </summary>
+        [JsonIgnore]
         public override string Uri
         {
             get
@@ -2281,6 +2309,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string NewGalleryUri
         {
             get
@@ -2293,6 +2322,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string PhotoUploadUri
         {
             get
@@ -2305,6 +2335,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string AclUri
         {
             get
@@ -2316,6 +2347,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Gets the access object for the gallery
         /// </summary>
+        [JsonIgnore]
         public Access Access
         {
             get
@@ -2338,6 +2370,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public bool IsSimplePermissions
         {
             get
@@ -2350,6 +2383,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public GallerySettings Settings
         {
             get
@@ -2383,6 +2417,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         internal GalleryItem HighlightItem
         {
             get
@@ -2439,6 +2474,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -2456,7 +2492,8 @@ namespace BoxSocial.Applications.Gallery
         {
             return false;
         }
-        
+
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -2472,6 +2509,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get
@@ -2492,6 +2530,7 @@ namespace BoxSocial.Applications.Gallery
             return false;
         }
 
+        [JsonIgnore]
         public int Order
         {
             get
@@ -2500,6 +2539,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public int Level
         {
             get
@@ -2508,6 +2548,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public long ParentTypeId
         {
             get
@@ -2536,6 +2577,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public string DisplayTitle
         {
             get
@@ -2552,6 +2594,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public long Comments
         {
             get
@@ -2563,6 +2606,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public SortOrder CommentSortOrder
         {
             get
@@ -2574,6 +2618,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// 
         /// </summary>
+        [JsonIgnore]
         public byte CommentsPerPage
         {
             get
@@ -2582,6 +2627,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public long Likes
         {
             get
@@ -2590,6 +2636,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public long Dislikes
         {
             get
@@ -2599,6 +2646,7 @@ namespace BoxSocial.Applications.Gallery
         }
 
 
+        [JsonIgnore]
         public string Action
         {
             get
@@ -2658,6 +2706,7 @@ namespace BoxSocial.Applications.Gallery
             return returnValue;
         }
 
+        [JsonIgnore]
         public string Noun
         {
             get
@@ -2667,6 +2716,7 @@ namespace BoxSocial.Applications.Gallery
         }
 
 
+        [JsonIgnore]
         public ActionableItemType PostType
         {
             get
@@ -2675,6 +2725,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public byte[] Data
         {
             get
@@ -2683,6 +2734,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public string DataContentType
         {
             get
@@ -2691,6 +2743,7 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        [JsonIgnore]
         public string Caption
         {
             get

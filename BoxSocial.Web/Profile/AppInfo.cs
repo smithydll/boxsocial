@@ -149,23 +149,67 @@ namespace BoxSocial.Applications.Profile
 
         public override void ExecuteCall(string callName)
         {
+            JsonSerializer js;
+            StringWriter jstw;
+            JsonWriter jtw;
+
             switch (callName)
             {
                 case "profile":
+                    {
+                        long userId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);
+
+                        User user = new User(core, userId);
+                        UserProfile up = user.Profile;
+
+                        if (user.Access.Can("VIEW"))
+                        {
+                            js = new JsonSerializer();
+                            jstw = new StringWriter();
+                            jtw = new JsonTextWriter(jstw);
+
+                            js.NullValueHandling = NullValueHandling.Ignore;
+
+                            core.Http.WriteJson(js, user);
+                        }
+                        else
+                        {
+                        }
+                    }
                     break;
                 case "friends":
+                    {
+                        long userId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);
+                        int page = core.Functions.RequestInt("page", 1);
+                        int perPage = Math.Max(Math.Min(20, core.Functions.RequestInt("per_page", 18)), 1);
+                        string filter = core.Http["filter"];
+
+                        User user = new User(core, userId);
+
+                        if (user.Access.Can("VIEW_FRIENDS"))
+                        {
+                            List<Friend> friends = user.GetFriends(page, perPage, filter);
+
+
+                            js = new JsonSerializer();
+                            jstw = new StringWriter();
+                            jtw = new JsonTextWriter(jstw);
+
+                            js.NullValueHandling = NullValueHandling.Ignore;
+
+                            core.Http.WriteJson(js, friends);
+                        }
+                    }
                     break;
                 case "status_post":
                     string message = core.Http.Form["message"];
                     StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
 
-                    JsonSerializer js;
-                    StringWriter jstw;
-                    JsonWriter jtw;
-
                     js = new JsonSerializer();
                     jstw = new StringWriter();
                     jtw = new JsonTextWriter(jstw);
+
+                    js.NullValueHandling = NullValueHandling.Ignore;
 
                     core.Http.WriteJson(js, newMessage);
                     break;

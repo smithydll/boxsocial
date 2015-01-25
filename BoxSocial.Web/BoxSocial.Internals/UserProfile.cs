@@ -23,6 +23,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -62,6 +65,7 @@ namespace BoxSocial.Internals
     }
 
     [DataTable("user_profile", "USER")]
+    [JsonObject("user_profile")]
     public sealed class UserProfile : NumberedItem
     {
         private User user;
@@ -132,6 +136,7 @@ namespace BoxSocial.Internals
         private string countryName;
         private string religionTitle;
 
+        [JsonIgnore]
         public User User
         {
             get
@@ -144,6 +149,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("id")]
         public long UserId
         {
             get
@@ -152,6 +158,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Gender
         {
             get
@@ -170,6 +177,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public Gender GenderRaw
         {
             get
@@ -182,6 +190,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool InterestedInMen
         {
             get
@@ -194,6 +203,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool InterestedInWomen
         {
             get
@@ -206,6 +216,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Sexuality
         {
             get
@@ -239,6 +250,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public Sexuality SexualityRaw
         {
             get
@@ -251,6 +263,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string MaritialStatus
         {
             get
@@ -307,6 +320,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long MaritialWithId
         {
             get
@@ -319,6 +333,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool MaritialWithConfirmed
         {
             get
@@ -331,6 +346,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public MaritialStatus MaritialStatusRaw
         {
             get
@@ -343,6 +359,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("description")]
         public string Autobiography
         {
             get
@@ -358,6 +375,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// User's height in cm.
         /// </summary>
+        [JsonIgnore]
         public byte Height
         {
             get
@@ -370,6 +388,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public uint Weight
         {
             get
@@ -382,6 +401,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long ProfileViews
         {
             get
@@ -390,6 +410,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long ProfileComments
         {
             get
@@ -398,7 +419,7 @@ namespace BoxSocial.Internals
             }
         }
 
-
+        [JsonIgnore]
         public int Age
         {
             get
@@ -416,6 +437,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AgeString
         {
             get
@@ -442,6 +464,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Title
         {
             get
@@ -454,6 +477,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string FirstName
         {
             get
@@ -466,6 +490,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string MiddleName
         {
             get
@@ -478,6 +503,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string LastName
         {
             get
@@ -490,6 +516,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Suffix
         {
             get
@@ -502,6 +529,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         private long Comments
         {
             get
@@ -510,6 +538,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Religion
         {
             get
@@ -525,6 +554,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public short ReligionId
         {
             get
@@ -537,6 +567,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string Country
         {
             get
@@ -552,6 +583,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string CountryIso
         {
             get
@@ -564,6 +596,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AddressLine1
         {
             get
@@ -576,6 +609,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AddressLine2
         {
             get
@@ -588,6 +622,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AddressTown
         {
             get
@@ -600,6 +635,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AddressState
         {
             get
@@ -612,6 +648,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AddressPostCode
         {
             get
@@ -624,6 +661,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public DateTime DateOfBirth
         {
             get
@@ -946,6 +984,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -954,6 +993,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get

@@ -487,6 +487,8 @@ namespace BoxSocial.FrontEnd
                             jstw = new StringWriter();
                             jtw = new JsonTextWriter(jstw);
 
+                            js.NullValueHandling = NullValueHandling.Ignore;
+
                             core.Http.WriteJson(js, embed);
 
                             if (core.Db != null)

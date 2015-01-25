@@ -23,11 +23,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
     [DataTable("user_info", "USER")]
+    [JsonObject("user_info")]
     public sealed class UserInfo : NumberedItem
     {
         [DataField("user_id", DataFieldKeys.Unique)]

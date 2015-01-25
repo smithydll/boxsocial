@@ -212,7 +212,7 @@ namespace BoxSocial.Internals
             get;
         }
 
-        [JsonIgnore]
+        [JsonProperty("display_image_uri_2x")]
         public abstract string Square
         {
             get;

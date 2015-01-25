@@ -138,6 +138,19 @@ namespace BoxSocial.Applications.Pages
             return false;
         }
 
+        public override void ExecuteCall(string callName)
+        {
+            switch (callName)
+            {
+                case "page":
+                    Default.Show(core);
+                    break;
+                case "page_list":
+                    
+                    break;
+            }
+        }
+
         public override ApplicationInstallationInfo Install()
         {
             ApplicationInstallationInfo aii = this.GetInstallInfo();

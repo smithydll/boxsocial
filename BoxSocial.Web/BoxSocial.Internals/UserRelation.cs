@@ -24,6 +24,9 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -45,6 +48,7 @@ namespace BoxSocial.Internals
         [DataField("relation_time_ut")]
         private long relationTime;
 
+        [JsonIgnore]
         public long RelationId
         {
             get
@@ -53,6 +57,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("order")]
         public int RelationOrder
         {
             get

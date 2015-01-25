@@ -161,6 +161,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        /*[JsonProperty("user_info")]
+        private UserInfo JsonUserInfo
+        {
+            get
+            {
+                return userInfo;
+            }
+        }*/
+
         [JsonIgnore]
         public UserProfile Profile
         {
@@ -173,6 +182,15 @@ namespace BoxSocial.Internals
 
                     userProfile = (UserProfile)core.ItemCache[userProfileKey];
                 }
+                return userProfile;
+            }
+        }
+
+        [JsonProperty("user_profile")]
+        private UserProfile JsonUserProfile
+        {
+            get
+            {
                 return userProfile;
             }
         }
@@ -414,7 +432,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// 200x200 display tile
         /// </summary>
-        [JsonIgnore]
+        [JsonProperty("display_image_uri_2x")]
         public override string Square
         {
             get

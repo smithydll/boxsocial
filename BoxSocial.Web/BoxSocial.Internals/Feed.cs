@@ -562,6 +562,7 @@ namespace BoxSocial.Internals
         public static void ShowMore(Core core, User owner)
         {
             long newestId = core.Functions.RequestLong("newest-id", 0);
+            long oldestId = core.Functions.RequestLong("oldest-id", 0);
             long newerId = 0;
 
             bool moreContent = false;
@@ -575,7 +576,7 @@ namespace BoxSocial.Internals
             }
             else
             {
-                feedActions = Feed.GetItems(core, owner, 1, 20, 0, out moreContent);
+                feedActions = Feed.GetItems(core, owner, 1, 20, oldestId, out moreContent);
             }
 
             if (feedActions != null)
@@ -587,6 +588,8 @@ namespace BoxSocial.Internals
                 js = new JsonSerializer();
                 jstw = new StringWriter();
                 jtw = new JsonTextWriter(jstw);
+
+                js.NullValueHandling = NullValueHandling.Ignore;
 
                 core.Http.WriteJson(js, feedActions);
             }

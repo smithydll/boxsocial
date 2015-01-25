@@ -345,6 +345,7 @@ namespace BoxSocial.Applications.Gallery
                 case "gallery":
                     break;
                 case "gallery_item":
+                    GalleryItem.Show(core);
                     break;
                 case "upload":
                     break;

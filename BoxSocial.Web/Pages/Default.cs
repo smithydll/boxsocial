@@ -24,6 +24,9 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -32,6 +35,41 @@ namespace BoxSocial.Applications.Pages
 {
     public class Default
     {
+        public static void Show(Core core)
+        {
+            string path = core.Http.Query["path"];
+            long ownerId = core.Functions.RequestLong("owner_id", 0);
+            long ownerTypeId = core.Functions.RequestLong("owner_type_id", 0);
+            ItemKey ownerKey = new ItemKey(ownerId, ownerTypeId);
+
+            try
+            {
+                core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                Primitive owner = core.PrimitiveCache[ownerKey];
+
+                Page thePage = new Page(core, owner, path);
+
+                JsonSerializer js;
+                StringWriter jstw;
+                JsonWriter jtw;
+
+                js = new JsonSerializer();
+                jstw = new StringWriter();
+                jtw = new JsonTextWriter(jstw);
+
+                js.NullValueHandling = NullValueHandling.Ignore;
+
+                core.Http.WriteJson(js, thePage);
+            }
+            catch (PageNotFoundException)
+            {
+                
+            }
+            catch
+            {
+            }
+        }
+
         public static void Show(object sender, ShowPPageEventArgs e)
         {
             string pageName = e.Slug;

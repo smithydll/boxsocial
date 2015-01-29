@@ -1068,7 +1068,7 @@ namespace BoxSocial.Internals
 
             if (string.IsNullOrEmpty(namePart))
             {
-                namePart = core.Http.Form["name_field"];
+                namePart = core.Http["name_field"];
             }
 
             if (!(itemId > 0 && itemTypeId > 0))

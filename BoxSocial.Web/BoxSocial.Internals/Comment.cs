@@ -88,7 +88,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonIgnore]
+        [JsonProperty("user")]
         public User User
         {
             get

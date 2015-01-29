@@ -269,7 +269,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            StatusMessage statusMessage = StatusMessage.Create(core, core.Session.LoggedInMember, message);
+            StatusMessage statusMessage = StatusMessage.Create(core, core.Session.LoggedInMember, message, core.Session.ApplicationId);
 
             AccessControlLists acl = new AccessControlLists(core, statusMessage);
             acl.SaveNewItemPermissions();

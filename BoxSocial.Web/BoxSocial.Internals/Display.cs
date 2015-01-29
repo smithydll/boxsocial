@@ -1029,6 +1029,57 @@ namespace BoxSocial.Internals
             return GeneratePageList(owner, loggedInMember, fragment, null);
         }
 
+        public List<Page> GetPageList(Primitive owner, User loggedInMember, Page current)
+        {
+            Database db = core.Db;
+            long loggedIdUid = User.GetMemberId(loggedInMember);
+
+            SelectQuery query = Page.GetSelectQueryStub(core, typeof(Page));
+            query.AddCondition("page_item_id", owner.Id);
+            query.AddCondition("page_item_type_id", owner.TypeId);
+            query.AddCondition("page_status", "PUBLISH");
+            QueryCondition qc1 = query.AddCondition("page_parent_id", 0);
+            if (current != null)
+            {
+                ParentTree pt = current.GetParents();
+                if (pt != null)
+                {
+                    foreach (ParentTreeNode ptn in pt.Nodes)
+                    {
+                        qc1.AddCondition(ConditionRelations.Or, "page_parent_id", ptn.ParentId);
+                    }
+                }
+
+                qc1.AddCondition(ConditionRelations.Or, "page_parent_id", current.Id);
+            }
+            query.AddSort(SortOrder.Ascending, "page_order");
+
+            System.Data.Common.DbDataReader pagesReader = db.ReaderQuery(query);
+
+            List<IPermissibleItem> tempPages = new List<IPermissibleItem>();
+            List<Page> pages = new List<Page>();
+
+            while (pagesReader.Read())
+            {
+                tempPages.Add(new Page(core, owner, pagesReader));
+            }
+
+            pagesReader.Close();
+            pagesReader.Dispose();
+
+            core.AcessControlCache.CacheGrants(tempPages);
+
+            foreach (IPermissibleItem page in tempPages)
+            {
+                if (page.Access.Can("VIEW"))
+                {
+                    pages.Add((Page)page);
+                }
+            }
+
+            return pages;
+        }
+
         public string GeneratePageList(Primitive owner, User loggedInMember, bool fragment, Page current)
         {
             Database db = core.Db;

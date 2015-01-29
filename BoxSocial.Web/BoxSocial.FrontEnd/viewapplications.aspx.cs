@@ -138,6 +138,7 @@ namespace BoxSocial.FrontEnd
                     applicationVariableCollection.Parse("TITLE", ae.Title);
                     applicationVariableCollection.Parse("URI", ae.GetUri(typeId, id));
                     applicationVariableCollection.Parse("I_TILE", ae.Tile);
+                    applicationVariableCollection.Parse("I_ICON", ae.Icon);
                 }
             }
 

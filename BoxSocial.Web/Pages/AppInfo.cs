@@ -145,9 +145,6 @@ namespace BoxSocial.Applications.Pages
                 case "page":
                     Default.Show(core);
                     break;
-                case "page_list":
-                    
-                    break;
             }
         }
 

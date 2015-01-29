@@ -343,6 +343,12 @@ namespace BoxSocial.Applications.Gallery
             switch (callName)
             {
                 case "gallery":
+                    {
+                    }
+                    break;
+                case "gallery_items":
+                    {
+                    }
                     break;
                 case "gallery_item":
                     GalleryItem.Show(core);

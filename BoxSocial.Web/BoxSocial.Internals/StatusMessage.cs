@@ -56,6 +56,8 @@ namespace BoxSocial.Internals
         private string ip;
         [DataField("status_simple_permissions")]
         private bool simplePermissions;
+        [DataField("status_application_id")]
+        private long applicationId;
 
         private User owner;
         private Access access;
@@ -308,6 +310,11 @@ namespace BoxSocial.Internals
 
         public static StatusMessage Create(Core core, User creator, string message)
         {
+            return Create(core, creator, message, 0);
+        }
+
+        public static StatusMessage Create(Core core, User creator, string message, long applicationId)
+        {
             if (core == null)
             {
                 throw new NullCoreException();
@@ -318,6 +325,7 @@ namespace BoxSocial.Internals
             iQuery.AddField("status_message", message);
             iQuery.AddField("status_ip", core.Session.IPAddress.ToString());
             iQuery.AddField("status_time_ut", UnixTime.UnixTimeStamp());
+            iQuery.AddField("status_application_id", applicationId);
 
             long statusId = core.Db.Query(iQuery);
 

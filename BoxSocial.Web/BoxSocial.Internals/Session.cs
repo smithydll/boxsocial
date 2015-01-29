@@ -352,6 +352,7 @@ namespace BoxSocial.Internals
         private SessionMethods sessionMethod;
         private SessionCookie sessionData;
         private Core core;
+        private long applicationId;
 
         private string sessionId;
 
@@ -368,6 +369,18 @@ namespace BoxSocial.Internals
             get
             {
                 return sessionMethod;
+            }
+        }
+
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
+            }
+            internal set
+            {
+                applicationId = value;
             }
         }
 
@@ -484,6 +497,8 @@ namespace BoxSocial.Internals
             this.Response = Response;
             this.db = db;
             this.core = core;
+
+            applicationId = token.ApplicationId;
 
             SelectQuery query = new SelectQuery(typeof(PrimitiveApplicationInfo));
             query.AddCondition("application_id", token.ApplicationId);

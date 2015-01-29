@@ -32,6 +32,9 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Caching;
 using System.Web.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
@@ -1179,6 +1182,10 @@ namespace BoxSocial.Internals
             {
                 // Internal calls
 
+                JsonSerializer js;
+                StringWriter jstw;
+                JsonWriter jtw;
+
                 switch (callName)
                 {
                     case "item_types":
@@ -1193,8 +1200,70 @@ namespace BoxSocial.Internals
                         this.Functions.ReturnPermissionGroupList(ResponseFormat.Json);
                         break;
                     case "page_list":
+                        {
+                            long id = Functions.RequestLong("id", 0);
+                            long typeId = Functions.RequestLong("type_id", 0);
+                            string path = Http["path"];
+                            ItemKey ownerKey = new ItemKey(id, typeId);
+
+                            PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                            Primitive owner = PrimitiveCache[ownerKey];
+
+                            if (owner != null)
+                            {
+                                Page page = null;
+                                if (!string.IsNullOrEmpty(path))
+                                {
+                                    page = new Page(this, owner, path);
+                                }
+
+                                List<Page> pages = Display.GetPageList(owner, Session.LoggedInMember, page);
+
+                                js = new JsonSerializer();
+                                jstw = new StringWriter();
+                                jtw = new JsonTextWriter(jstw);
+
+                                js.NullValueHandling = NullValueHandling.Ignore;
+
+                                Http.WriteJson(js, pages);
+                            }
+                        }
                         break;
                     case "comments":
+                        {
+                            long id = Functions.RequestLong("id", 0);
+                            long typeId = Functions.RequestLong("type_id", 0);
+                            int page = Math.Max(Functions.RequestInt("page", 1), 1);
+                            int perPage = Math.Max(Math.Min(20, Functions.RequestInt("per_page", 10)), 1);
+                            SortOrder order = Http["sort_order"] == "DESC" ? SortOrder.Descending : SortOrder.Ascending;
+
+                            ItemKey itemKey = new ItemKey(id, typeId);
+
+                            // Check ACLs
+                            ICommentableItem item = (ICommentableItem)NumberedItem.Reflect(this, itemKey);
+                            bool canViewComments = true;
+
+                            if (item is IPermissibleItem)
+                            {
+                                if (!((IPermissibleItem)item).Access.Can("VIEW"))
+                                {
+                                    canViewComments = false;
+                                }
+                            }
+
+                            if (canViewComments)
+                            {
+                                List<Comment> comments = Comment.GetComments(this, itemKey, order, page, perPage, null);
+
+                                js = new JsonSerializer();
+                                jstw = new StringWriter();
+                                jtw = new JsonTextWriter(jstw);
+
+                                js.NullValueHandling = NullValueHandling.Ignore;
+
+                                Http.WriteJson(js, comments);
+                            }
+                        }
                         break;
                     case "comment_post":
                         Comment.Post(this);

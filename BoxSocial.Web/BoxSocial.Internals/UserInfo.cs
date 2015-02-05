@@ -162,6 +162,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user Id
         /// </summary>
+        [JsonProperty("id")]
         public long UserId
         {
             get
@@ -173,6 +174,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user name
         /// </summary>
+        [JsonProperty("username")]
         public string UserName
         {
             get
@@ -184,6 +186,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's Display name
         /// </summary>
+        [JsonIgnore]
         public string DisplayName
         {
             get
@@ -203,6 +206,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string TwoFactorAuthKey
         {
             get
@@ -215,6 +219,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public bool TwoFactorAuthVerified
         {
             get
@@ -227,6 +232,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("twitter_username")]
         public string TwitterUserName
         {
             get
@@ -239,6 +245,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("twitter_syndicate")]
         public bool TwitterSyndicate
         {
             get
@@ -251,6 +258,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("twitter_authenticated")]
         public bool TwitterAuthenticated
         {
             get
@@ -263,6 +271,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string TwitterToken
         {
             get
@@ -275,6 +284,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string TwitterTokenSecret
         {
             get
@@ -287,6 +297,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string FacebookUserId
         {
             get
@@ -299,6 +310,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("facebook_syndicate")]
         public bool FacebookSyndicate
         {
             get
@@ -311,6 +323,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("facebook_authenticated")]
         public bool FacebookAuthenticated
         {
             get
@@ -323,6 +336,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string FacebookCode
         {
             get
@@ -335,6 +349,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string FacebookAccessToken
         {
             get
@@ -347,6 +362,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal long FacebookExpires
         {
             get
@@ -359,6 +375,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string FacebookSharePermissions
         {
             get
@@ -371,6 +388,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("tumblr_username")]
         public string TumblrUserName
         {
             get
@@ -383,6 +401,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("twitter_hostname")]
         public string TumblrHostname
         {
             get
@@ -395,6 +414,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("tumblr_syndicate")]
         public bool TumblrSyndicate
         {
             get
@@ -407,6 +427,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("tumblr_authenticated")]
         public bool TumblrAuthenticated
         {
             get
@@ -419,6 +440,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string TumblrToken
         {
             get
@@ -431,6 +453,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         internal string TumblrTokenSecret
         {
             get
@@ -443,6 +466,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public string AnalyticsCode
         {
             get
@@ -458,6 +482,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's Display name with ownership
         /// </summary>
+        [JsonIgnore]
         public string DisplayNameOwnership
         {
             get
@@ -479,6 +504,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public SubscriberLevel SubscriptionLevel
         {
             get
@@ -491,6 +517,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Subscriptions
         {
             get
@@ -506,6 +533,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets whether the user wants to see custom styles
         /// </summary>
+        [JsonIgnore]
         public bool ShowCustomStyles
         {
             get
@@ -521,6 +549,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets whether the user wants to see images in BBcode enabled fields
         /// </summary>
+        [JsonIgnore]
         public bool BbcodeShowImages
         {
             get
@@ -532,6 +561,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets whether the user wants to see flash in BBcode enabled fields
         /// </summary>
+        [JsonIgnore]
         public bool BbcodeShowFlash
         {
             get
@@ -543,6 +573,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets whether the user wants to see vieos in BBcode enabled fields
         /// </summary>
+        [JsonIgnore]
         public bool BbcodeShowVideos
         {
             get
@@ -554,6 +585,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's BBcode display options
         /// </summary>
+        [JsonIgnore]
         public BbcodeOptions GetUserBbcodeOptions
         {
             get
@@ -562,6 +594,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public BbcodeOptions SetUserBbcodeOptions
         {
             set
@@ -573,6 +606,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's homepage
         /// </summary>
+        [JsonProperty("homepage")]
         public string ProfileHomepage
         {
             get
@@ -588,6 +622,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's friend count
         /// </summary>
+        [JsonIgnore]
         public long Friends
         {
             get
@@ -599,6 +634,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's primary e-mail address
         /// </summary>
+        [JsonIgnore]
         public string PrimaryEmail
         {
             get
@@ -610,6 +646,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's e-mail notifications preference
         /// </summary>
+        [JsonIgnore]
         public bool EmailNotifications
         {
             get
@@ -625,6 +662,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the number of bytes the user has consumed on the filesystem
         /// </summary>
+        [JsonProperty("bytes_used")]
         public ulong BytesUsed
         {
             get
@@ -636,6 +674,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's number of status messages
         /// </summary>
+        [JsonIgnore]
         public long StatusMessages
         {
             get
@@ -644,6 +683,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long UnreadNotifications
         {
             get
@@ -652,6 +692,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long UnseenMail
         {
             get
@@ -663,6 +704,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's display picture Id
         /// </summary>
+        [JsonIgnore]
         public long DisplayPictureId
         {
             get
@@ -678,6 +720,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's display picture Id
         /// </summary>
+        [JsonIgnore]
         public long CoverPhotoId
         {
             get
@@ -690,6 +733,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long LastVisitDateRaw
         {
             get
@@ -701,6 +745,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's last visit date
         /// </summary>
+        [JsonIgnore]
         public DateTime LastOnlineTime
         {
             get
@@ -709,6 +754,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public DateTime RegistrationDate
         {
             get
@@ -720,6 +766,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's time zone code
         /// </summary>
+        [JsonIgnore]
         public ushort TimeZoneCode
         {
             get
@@ -735,6 +782,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's time zone object
         /// </summary>
+        [JsonIgnore]
         public UnixTime GetTimeZone
         {
             get
@@ -746,6 +794,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Get's the user's language code
         /// </summary>
+        [JsonProperty("language")]
         public string Language
         {
             get
@@ -761,6 +810,7 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the user's number of blog subscribers
         /// </summary>
+        [JsonIgnore]
         public long BlogSubscriptions
         {
             get
@@ -769,6 +819,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public long Invites
         {
             get
@@ -992,6 +1043,7 @@ namespace BoxSocial.Internals
             timeZone = new UnixTime(core, timeZoneCode);
         }
 
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -1000,6 +1052,7 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
         public override string Uri
         {
             get

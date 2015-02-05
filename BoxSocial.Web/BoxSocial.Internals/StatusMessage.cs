@@ -35,7 +35,7 @@ namespace BoxSocial.Internals
     [DataTable("user_status_messages")]
     [Permission("VIEW", "Can view this status message", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this status message", PermissionTypes.Interact)]
-    [JsonObject("StatusMessage")]
+    [JsonObject("status_message")]
     public class StatusMessage : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem, IActionableItem
     {
         [DataField("status_id", DataFieldKeys.Primary)]
@@ -337,7 +337,7 @@ namespace BoxSocial.Internals
 
             StatusMessage newStatusMessage = new StatusMessage(core, creator, statusId, message);
 
-            core.Search.Index(newStatusMessage);
+            //core.Search.Index(newStatusMessage);
 
             return newStatusMessage;
         }
@@ -362,6 +362,12 @@ namespace BoxSocial.Internals
             try
             {
                 StatusMessage item = new StatusMessage(e.Core, e.ItemId);
+
+                if (!item.Access.Can("VIEW"))
+                {
+                    e.Core.Functions.Generate403();
+                    return;
+                }
 
                 VariableCollection statusMessageVariableCollection = e.Core.Template.CreateChild("status_messages");
 

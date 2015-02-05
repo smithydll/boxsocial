@@ -1431,16 +1431,20 @@ namespace BoxSocial.Internals
                     {
                         bool publicItem = true;
 
-                        if (item is IPermissibleItem)
+                        string debug = string.Empty;
+
+                        IPermissibleItem pitem = item as IPermissibleItem;
+                        if (pitem != null)
                         {
-                            IPermissibleItem pitem = (IPermissibleItem)item;
                             publicItem = pitem.Access.IsPublic();
+                            //debug += ":p+" + item.ItemKey.ToString();
                         }
 
-                        if (item is IPermissibleSubItem)
+                        IPermissibleSubItem psitem = item as IPermissibleSubItem;
+                        if (psitem != null)
                         {
-                            IPermissibleSubItem pitem = (IPermissibleSubItem)item;
-                            publicItem = pitem.PermissiveParent.Access.IsPublic();
+                            publicItem = psitem.PermissiveParent.Access.IsPublic();
+                            //debug += ":ps+" + publicItem.ToString();
                         }
 
                         if (publicItem)
@@ -1452,7 +1456,7 @@ namespace BoxSocial.Internals
 
                                 if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-twitter"] != null))
                                 {
-                                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription));
+                                    core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription + debug));
                                 }
                             }
 

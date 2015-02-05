@@ -86,8 +86,8 @@ namespace BoxSocial.Applications.Profile
 
             StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
 
-            AccessControlLists acl = new AccessControlLists(core, newMessage);
-            acl.SaveNewItemPermissions();
+            /*AccessControlLists acl = new AccessControlLists(core, newMessage);
+            acl.SaveNewItemPermissions();*/
 
             long newestId = core.Functions.FormLong("newest-id", 0);
             long newerId = 0;

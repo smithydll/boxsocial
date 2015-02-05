@@ -155,6 +155,17 @@ namespace BoxSocial.Applications.Profile
 
             switch (callName)
             {
+                case "settings/me":
+                    break;
+                case "info/me":
+                    js = new JsonSerializer();
+                            jstw = new StringWriter();
+                            jtw = new JsonTextWriter(jstw);
+
+                            js.NullValueHandling = NullValueHandling.Ignore;
+
+                            core.Http.WriteJson(js, core.Session.LoggedInMember.UserInfo);
+                    break;
                 case "profile":
                     {
                         long userId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);

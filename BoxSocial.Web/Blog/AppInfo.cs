@@ -22,10 +22,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -182,6 +186,41 @@ namespace BoxSocial.Applications.Blog
             }
 
             return false;
+        }
+
+        public override void ExecuteCall(string callName)
+        {
+            JsonSerializer js;
+            StringWriter jstw;
+            JsonWriter jtw;
+
+            switch (callName)
+            {
+                case "get_posts":
+                    long userId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);
+                    int page = Math.Max(core.Functions.RequestInt("page", 1), 1);
+                    int perPage = Math.Max(Math.Min(20, core.Functions.RequestInt("per_page", 10)), 1);
+
+                    try
+                    {
+                        Blog blog = new Blog(core, userId);
+
+                        List<BlogEntry> blogEntries = blog.GetEntries(string.Empty, string.Empty, 0, 0, 0, page, perPage);
+
+                        js = new JsonSerializer();
+                        jstw = new StringWriter();
+                        jtw = new JsonTextWriter(jstw);
+
+                        js.NullValueHandling = NullValueHandling.Ignore;
+
+                        core.Http.WriteJson(js, blogEntries);
+                    }
+                    catch (InvalidBlogException)
+                    {
+                    }
+
+                    break;
+            }
         }
 
         /// <summary>

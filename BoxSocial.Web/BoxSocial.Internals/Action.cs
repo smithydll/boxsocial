@@ -487,5 +487,14 @@ namespace BoxSocial.Internals
                 }
             }
         }
+
+        [JsonProperty("public")]
+        public bool IsPublic
+        {
+            get
+            {
+                return PermissiveParent.Access.Can("VIEW");
+            }
+        }
     }
 }

@@ -30,6 +30,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -58,6 +61,7 @@ namespace BoxSocial.Applications.Blog
     [Permission("VIEW", "Can view this blog entry", PermissionTypes.View)]
     [Permission("COMMENT", "Can comment on this blog entry", PermissionTypes.Interact)]
     [Permission("RATE", "Can rate this blog entry", PermissionTypes.Interact)]
+    [JsonObject("blog_post")]
     public class BlogEntry : NumberedItem, ICommentableItem, IPermissibleItem, ILikeableItem, ISearchableItem, IShareableItem, IActionableItem
     {
         /// <summary>
@@ -109,6 +113,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the blog entry id
         /// </summary>
+        [JsonProperty("id")]
         public long PostId
         {
             get
@@ -120,6 +125,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the id of the 
         /// </summary>
+        [JsonIgnore]
         public long OwnerId
         {
             get
@@ -131,6 +137,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the owner of the blog post
         /// </summary>
+        [JsonProperty("owner")]
         public Primitive Owner
         {
             get
@@ -152,6 +159,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the blog for the blog post
         /// </summary>
+        [JsonIgnore]
         public Blog Blog
         {
             get
@@ -178,6 +186,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the title of the blog post
         /// </summary>
+        [JsonProperty("title")]
         public string Title
         {
             get
@@ -196,6 +205,7 @@ namespace BoxSocial.Applications.Blog
         /// <remarks>
         /// BBcode encoded field
         /// </remarks>
+        [JsonProperty("body")]
         public string Body
         {
             get
@@ -208,6 +218,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string BodyCache
         {
             get
@@ -223,6 +234,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of views for the blog entry.
         /// </summary>
+        [JsonIgnore]
         public long Views
         {
             get
@@ -234,6 +246,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of trackbacks for the blog entry.
         /// </summary>
+        [JsonProperty("trackbacks")]
         public long Trackbacks
         {
             get
@@ -245,6 +258,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of comments for the blog entry.
         /// </summary>
+        [JsonIgnore]
         public long Comments
         {
             get
@@ -256,6 +270,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the category Id for the blog entry.
         /// </summary>
+        [JsonIgnore]
         public short Category
         {
             get
@@ -271,6 +286,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the status of the blog post.
         /// </summary>
+        [JsonIgnore]
         public PublishStatuses Status
         {
             get
@@ -286,6 +302,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the license for the blog post.
         /// </summary>
+        [JsonIgnore]
         public byte License
         {
             get
@@ -301,6 +318,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the GUID for the blog post.
         /// </summary>
+        [JsonIgnore]
         public string Guid
         {
             get
@@ -313,6 +331,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonProperty("published_date_ut")]
         public long PublishedDateRaw
         {
             get
@@ -325,6 +344,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonProperty("modified_date_ut")]
         public long ModifiedDateRaw
         {
             get
@@ -630,6 +650,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the blog post id.
         /// </summary>
+        [JsonIgnore]
         public override long Id
         {
             get
@@ -641,6 +662,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the URI of the blog post.
         /// </summary>
+        [JsonProperty("uri")]
         public override string Uri
         {
             get
@@ -650,6 +672,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string DeleteUri
         {
             get
@@ -661,6 +684,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the sort order for the comments.
         /// </summary>
+        [JsonIgnore]
         public SortOrder CommentSortOrder
         {
             get
@@ -672,6 +696,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Gets the number of comments to be displayed per page.
         /// </summary>
+        [JsonIgnore]
         public byte CommentsPerPage
         {
             get
@@ -683,6 +708,7 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// Returns the parent object for ACLs.
         /// </summary>
+        [JsonIgnore]
         public IPermissibleItem PermissiveParent
         {
             get
@@ -691,6 +717,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public ItemKey PermissiveParentKey
         {
             get
@@ -699,6 +726,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public Access Access
         {
             get
@@ -711,6 +739,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public bool IsSimplePermissions
         {
             get
@@ -723,6 +752,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public List<AccessControlPermission> AclPermissions
         {
             get
@@ -736,6 +766,7 @@ namespace BoxSocial.Applications.Blog
             return false;
         }
 
+        [JsonIgnore]
         public string DisplayTitle
         {
             get
@@ -762,6 +793,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public long Likes
         {
             get
@@ -770,6 +802,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public long Dislikes
         {
             get
@@ -779,6 +812,7 @@ namespace BoxSocial.Applications.Blog
         }
 
 
+        [JsonIgnore]
         public string IndexingString
         {
             get
@@ -787,6 +821,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string IndexingTitle
         {
             get
@@ -795,6 +830,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string IndexingTags
         {
             get
@@ -855,6 +891,7 @@ namespace BoxSocial.Applications.Blog
             return template;
         }
 
+        [JsonIgnore]
         public long SharedTimes
         {
             get
@@ -863,6 +900,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonProperty("owner_key")]
         public ItemKey OwnerKey
         {
             get
@@ -871,6 +909,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string ShareString
         {
             get
@@ -903,6 +942,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonProperty("share_uri")]
         public string ShareUri
         {
             get
@@ -911,7 +951,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-
+        [JsonIgnore]
         public string Action
         {
             get
@@ -925,6 +965,7 @@ namespace BoxSocial.Applications.Blog
             return ShareString;
         }
 
+        [JsonIgnore]
         public string Noun
         {
             get
@@ -933,7 +974,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-
+        [JsonIgnore]
         public ActionableItemType PostType
         {
             get
@@ -942,6 +983,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public byte[] Data
         {
             get
@@ -950,6 +992,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string DataContentType
         {
             get
@@ -958,6 +1001,7 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        [JsonIgnore]
         public string Caption
         {
             get

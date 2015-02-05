@@ -2437,14 +2437,25 @@ namespace BoxSocial.Internals
 
                             Dictionary<string, string> strings = (Dictionary<string, string>)JsonConvert.DeserializeObject(response, typeof(Dictionary<string, string>));
 
-                            if (strings.ContainsKey("url") && strings.ContainsKey("type") && strings.ContainsKey("title"))
+                            if (strings.ContainsKey("type") && strings.ContainsKey("title"))
                             {
-                                if (strings["type"] == "photo")
+                                string image = string.Empty;
+
+                                if (strings.ContainsKey("url") && strings["type"] == "photo")
                                 {
+                                    image = strings["url"];
+
                                     instagram = "<a href=\"" + instagramUrl + "\"><img src=\"" + strings["url"] + "\" alt=\"" + HttpUtility.HtmlEncode(strings["title"]) + "\" style=\"max-width: 100%;\" /></a>";
                                 }
+                                else if (strings["type"] == "rich")
+                                {
+                                    image = instagramUrl.TrimEnd(new char[] { '/' }) + "/media/?size=l";
+
+                                    instagram = "<a href=\"" + instagramUrl + "\"><img src=\"" + image + "\" alt=\"" + HttpUtility.HtmlEncode(strings["title"]) + "\" style=\"max-width: 100%;\" /></a>";
+                                }
+
+                                ContentPreviewCache.Create(e.Core, "instagram.com", instagramId, string.Empty, instagram, e.Core.Prose.Language, image);
                             }
-                            ContentPreviewCache.Create(e.Core, "instagram.com", instagramId, string.Empty, instagram, e.Core.Prose.Language, strings["url"]);
                         }
 
 

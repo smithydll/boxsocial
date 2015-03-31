@@ -1329,13 +1329,23 @@ namespace BoxSocial.Internals
                 throw new NoPrimaryKeyException();
             }
 
+            string queries = string.Empty;
             if (type.IsSubclassOf(typeof(NumberedItem)))
             {
                 /* Delete any ItemInfo rows */
-                DeleteQuery idQuery = new DeleteQuery(Item.GetTable(typeof(ItemInfo)));
+                DeleteQuery idQuery = new DeleteQuery(typeof(ItemInfo));
                 idQuery.AddCondition("info_item_id", ((NumberedItem)this).ItemKey.Id);
                 idQuery.AddCondition("info_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
 
+                queries += "\r\n" + idQuery.ToString();
+                db.Query(idQuery);
+
+                /* Delete any AccessControlGrant rows */
+                idQuery = new DeleteQuery(typeof(AccessControlGrant));
+                idQuery.AddCondition("grant_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("grant_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+
+                queries += "\r\n" + idQuery.ToString();
                 db.Query(idQuery);
 
                 /* Delete any Action rows */
@@ -1345,29 +1355,40 @@ namespace BoxSocial.Internals
                 sQuery.AddField(new DataField(typeof(Action), "action_item_type_id"));
                 sQuery.AddJoin(JoinTypes.Inner, new DataField(typeof(ActionItem), "action_id"), new DataField(typeof(Action), "action_id"));
                 sQuery.AddCondition(new DataField(typeof(ActionItem), "item_id"), ((NumberedItem)this).ItemKey.Id);
-                sQuery.AddCondition(new DataField(typeof(ActionItem),"item_type_id"), ((NumberedItem)this).ItemKey.TypeId);
+                sQuery.AddCondition(new DataField(typeof(ActionItem), "item_type_id"), ((NumberedItem)this).ItemKey.TypeId);
                 sQuery.AddCondition(new DataField(typeof(ActionItem), "item_id"), ConditionEquality.NotEqual, new DataField(typeof(Action), "action_item_id"));
 
+                queries += "\r\n" + sQuery.ToString();
                 DataTable table = db.Query(sQuery);
 
-                idQuery = new DeleteQuery(Item.GetTable(typeof(Action)));
+                idQuery = new DeleteQuery(typeof(Action));
                 idQuery.AddCondition("action_item_id", ((NumberedItem)this).ItemKey.Id);
                 idQuery.AddCondition("action_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
 
+                queries += "\r\n" + idQuery.ToString();
+                db.Query(idQuery);
+
+                idQuery = new DeleteQuery(typeof(Action));
+                idQuery.AddCondition("interact_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("interact_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+
+                queries += "\r\n" + idQuery.ToString();
                 db.Query(idQuery);
 
                 /* Delete any ActionItem rows */
-                idQuery = new DeleteQuery(Item.GetTable(typeof(ActionItem)));
+                idQuery = new DeleteQuery(typeof(ActionItem));
                 idQuery.AddCondition("item_id", ((NumberedItem)this).ItemKey.Id);
                 idQuery.AddCondition("item_type_id", ((NumberedItem)this).ItemKey.TypeId);
 
+                queries += "\r\n" + idQuery.ToString();
                 db.Query(idQuery);
 
                 /* delete notifications */
-                idQuery = new DeleteQuery(Item.GetTable(typeof(Notification)));
-                idQuery.AddCondition("action_item_id", ((NumberedItem)this).ItemKey.Id);
-                idQuery.AddCondition("action_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
+                idQuery = new DeleteQuery(typeof(Notification));
+                idQuery.AddCondition("notification_item_id", ((NumberedItem)this).ItemKey.Id);
+                idQuery.AddCondition("notification_item_type_id", ((NumberedItem)this).ItemKey.TypeId);
 
+                queries += "\r\n" + idQuery.ToString();
                 db.Query(idQuery);
 
                 /* Select action sub items so we can inform the action to re-calculate it's view */
@@ -1386,6 +1407,7 @@ namespace BoxSocial.Internals
                         query.AddCondition("action_id", actionId);
                         query.LimitCount = 3;
 
+                        queries += "\r\n" + query.ToString();
                         DataTable actionItemDataTable = db.Query(query);
 
                         List<ItemKey> subItemsShortList = new List<ItemKey>();
@@ -1410,6 +1432,7 @@ namespace BoxSocial.Internals
                             idQuery = new DeleteQuery(Item.GetTable(typeof(Action)));
                             idQuery.AddCondition("action_id", actionId);
 
+                            queries += "\r\n" + idQuery.ToString();
                             db.Query(idQuery);
                         }
                         else
@@ -1430,11 +1453,14 @@ namespace BoxSocial.Internals
                                 uQuery.AddField("interact_item_type_id", new DataField(typeof(Action), "action_item_type_id"));
                             }
 
+                            queries += "\r\n" + uQuery.ToString();
                             db.Query(uQuery);
                         }
                     }
                 }
             }
+
+            //core.Email.SendEmail("", "Deleted", queries);
 
             long result = db.Query(dQuery);
 

@@ -206,7 +206,8 @@ namespace BoxSocial.Applications.Gallery
             try
             {
                 Gallery gallery = new Gallery(core, Owner, galleryId);
-                Gallery.Delete(core, gallery);
+                //Gallery.Delete(core, gallery);
+                gallery.Delete();
 
                 SetRedirectUri(BuildUri("galleries", "galleries"));
                 core.Display.ShowMessage("Gallery Deleted", "You have successfully deleted a gallery.");

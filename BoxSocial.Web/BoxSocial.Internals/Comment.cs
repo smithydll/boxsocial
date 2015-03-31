@@ -806,6 +806,15 @@ namespace BoxSocial.Internals
                 return null;
             }
         }
+
+        [JsonIgnore]
+        public long ApplicationId
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 
     public class CommentPostedEventArgs : EventArgs

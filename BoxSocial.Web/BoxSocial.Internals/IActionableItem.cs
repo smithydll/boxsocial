@@ -88,6 +88,11 @@ namespace BoxSocial.Internals
         {
             get;
         }
+
+        long ApplicationId
+        {
+            get;
+        }
     }
 
     public sealed class ActionableItem

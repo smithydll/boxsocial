@@ -1403,7 +1403,8 @@ namespace BoxSocial.Internals
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
                 /* Post to Twitter, Facebook, individual */
-                if ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated))
+                string sharePrefix = core.Http.Form["share"];
+                if (!string.IsNullOrEmpty(sharePrefix) || (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated))
                 {
                     ItemInfo info = item.Info;
                     IActionableItem sharedItem = item;
@@ -1449,7 +1450,6 @@ namespace BoxSocial.Internals
 
                         if (publicItem)
                         {
-                            string sharePrefix = core.Http.Form["share"];
                             if (owner.UserInfo.TwitterAuthenticated)
                             {
                                 string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);

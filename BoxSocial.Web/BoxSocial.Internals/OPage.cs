@@ -72,6 +72,14 @@ namespace BoxSocial.Internals
         public void StartSession(OAuthToken token)
         {
             core.Session = new SessionState(core, db, token, httpContext.Request, httpContext.Response);
+
+            if (core.Session.LoggedInMember != null)
+            {
+                tz = core.Session.LoggedInMember.UserInfo.GetTimeZone;
+            }
+
+            // move it here
+            core.Tz = tz;
         }
 
         public void EndResponse()

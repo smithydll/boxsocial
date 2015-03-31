@@ -101,7 +101,7 @@ namespace BoxSocial.Applications.Gallery
         protected string parentPath;
         [DataField("gallery_item_uri", 63)]
         protected string path;
-        [DataField("gallery_id")]
+        [DataField("gallery_id", typeof(Gallery))]
         protected long parentId;
         [DataField("gallery_item_views")]
         protected long itemViews;
@@ -155,6 +155,8 @@ namespace BoxSocial.Applications.Gallery
         protected int cropPositionVertical;
         [DataField("gallery_item_hcrop")]
         protected int cropPositionHorizontal;
+        [DataField("gallery_item_application_id")]
+        private long applicationId;
 
         /// <summary>
         /// Owner of the photo
@@ -972,6 +974,7 @@ namespace BoxSocial.Applications.Gallery
             loadValue(galleryItemRow, "gallery_item_mobile_cover_exists", out mobileCoverExists);
             loadValue(galleryItemRow, "gallery_item_vcrop", out cropPositionVertical);
             loadValue(galleryItemRow, "gallery_item_hcrop", out cropPositionHorizontal);
+            loadValue(galleryItemRow, "gallery_item_application_id", out applicationId);
 
             itemLoaded(galleryItemRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -1011,6 +1014,7 @@ namespace BoxSocial.Applications.Gallery
             loadValue(galleryItemRow, "gallery_item_mobile_cover_exists", out mobileCoverExists);
             loadValue(galleryItemRow, "gallery_item_vcrop", out cropPositionVertical);
             loadValue(galleryItemRow, "gallery_item_hcrop", out cropPositionHorizontal);
+            loadValue(galleryItemRow, "gallery_item_application_id", out applicationId);
 
             itemLoaded(galleryItemRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -1092,8 +1096,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Delete the gallery item
         /// </summary>
-        /// <param name="core"></param>
-        public void Delete()
+        public new long Delete()
         {
             SelectQuery squery = new SelectQuery("gallery_items gi");
             squery.AddFields("COUNT(*) AS number");
@@ -1105,7 +1108,8 @@ namespace BoxSocial.Applications.Gallery
             dquery.AddCondition("gallery_item_id", itemId);
             dquery.AddCondition("user_id", core.LoggedInMemberId);*/
 
-            if (base.Delete() > 0)
+            long deleted = base.Delete();
+            if (deleted > 0)
             {
                 // TODO, determine if the gallery icon and act appropriately
                 /*if (parentId > 0)
@@ -1135,12 +1139,19 @@ namespace BoxSocial.Applications.Gallery
                     // delete the storage file
                     core.Storage.DeleteFile(core.Storage.PathCombine(core.Settings.StorageBinUserFilesPrefix, "_storage"), storagePath);
                 }
+
+                return deleted;
             }
             else
             {
                 //TODO: throw new
                 throw new Exception("Unauthorised");
             }
+        }
+
+        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string contentType, ulong bytes, string description, byte license, Classifications classification, Stream stream, bool highQuality /*int width, int height*/)
+        {
+            return Create(core, owner, parent, title, ref slug, fileName, contentType, bytes, description, license, classification, stream, highQuality);
         }
 
         /// <summary>
@@ -1161,7 +1172,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="classification">Classification</param>
         /// <remarks>Slug is a reference</remarks>
         /// <returns>New gallery item</returns>
-        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string contentType, ulong bytes, string description, byte license, Classifications classification, Stream stream, bool highQuality /*int width, int height*/)
+        public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string contentType, ulong bytes, string description, byte license, Classifications classification, Stream stream, bool highQuality, long applicationId /*int width, int height*/)
         {
             if (core == null)
             {
@@ -1342,6 +1353,7 @@ namespace BoxSocial.Applications.Gallery
             iQuery.AddField("gallery_item_height", height);
             iQuery.AddField("gallery_item_vcrop", 0);
             iQuery.AddField("gallery_item_hcrop", 0);
+            iQuery.AddField("gallery_item_application_id", applicationId);
 
             // we want to use transactions
             long itemId = db.Query(iQuery);
@@ -4004,6 +4016,15 @@ namespace BoxSocial.Applications.Gallery
 
 
             return embed;
+        }
+
+        [JsonIgnore]
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
+            }
         }
     }
 

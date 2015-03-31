@@ -565,7 +565,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/oauth/authorize(/|)$", @"/functions.aspx?fun=oauth&method=authorize" });
                     patterns.Add(new string[] { @"^/oauth/approve(/|)$", @"/functions.aspx?fun=oauth&method=approve" });
                     patterns.Add(new string[] { @"^/oauth/access_token(/|)$", @"/oauth.aspx?global_method=access_token" });
-                    patterns.Add(new string[] { @"^/oauth/([A-Za-z0-9\-_]+)/([A-Za-z0-9\-_]+)(/|)$", @"/oauth.aspx?global_method=call&global_an=$1&global_call=$2" });
+                    patterns.Add(new string[] { @"^/oauth/([A-Za-z0-9\-_]+)/([A-Za-z0-9\-_\/]+)(/|)$", @"/oauth.aspx?global_method=call&global_an=$1&global_call=$2" });
 
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                     patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });

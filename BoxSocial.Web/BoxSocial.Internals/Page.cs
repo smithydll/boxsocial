@@ -118,6 +118,15 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonProperty("application_id")]
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
+            }
+        }
+
         [JsonProperty("slug")]
         public string Slug
         {

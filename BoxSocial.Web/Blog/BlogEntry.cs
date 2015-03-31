@@ -1009,6 +1009,15 @@ namespace BoxSocial.Applications.Blog
                 return null;
             }
         }
+
+        [JsonIgnore]
+        public long ApplicationId
+        {
+            get
+            {
+                return 0;
+            }
+        }
     }
 
     /// <summary>

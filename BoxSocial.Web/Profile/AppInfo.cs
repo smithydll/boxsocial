@@ -156,15 +156,22 @@ namespace BoxSocial.Applications.Profile
             switch (callName)
             {
                 case "settings/me":
+                        js = new JsonSerializer();
+                        jstw = new StringWriter();
+                        jtw = new JsonTextWriter(jstw);
+
+                        js.NullValueHandling = NullValueHandling.Ignore;
+
+                        core.Http.WriteJson(js, core.Session.LoggedInMember.UserSettings);
                     break;
                 case "info/me":
-                    js = new JsonSerializer();
-                            jstw = new StringWriter();
-                            jtw = new JsonTextWriter(jstw);
+                        js = new JsonSerializer();
+                        jstw = new StringWriter();
+                        jtw = new JsonTextWriter(jstw);
 
-                            js.NullValueHandling = NullValueHandling.Ignore;
+                        js.NullValueHandling = NullValueHandling.Ignore;
 
-                            core.Http.WriteJson(js, core.Session.LoggedInMember.UserInfo);
+                        core.Http.WriteJson(js, core.Session.LoggedInMember.UserInfo);
                     break;
                 case "profile":
                     {

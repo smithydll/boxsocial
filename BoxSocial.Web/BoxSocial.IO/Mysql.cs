@@ -84,7 +84,7 @@ namespace BoxSocial.IO
 
         private void PushQuery(string query, double time)
         {
-#if DEBUG
+//#if DEBUG
             /*string[] stacktrace = Environment.StackTrace.Split(new char[] { '\n' });
             if (stacktrace.Length > 7)
             {
@@ -100,7 +100,7 @@ namespace BoxSocial.IO
             {
                 QueryList.Pop();
             }
-#endif
+//#endif
         }
 
         public string QueryListToString()

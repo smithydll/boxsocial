@@ -26,6 +26,9 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -340,10 +343,47 @@ namespace BoxSocial.Applications.Gallery
 
         public override void ExecuteCall(string callName)
         {
+            JsonSerializer js;
+            StringWriter jstw;
+            JsonWriter jtw;
+
             switch (callName)
             {
-                case "gallery":
+                case "list_galleries":
                     {
+                        long ownerId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);
+                        long ownerTypeId = core.Functions.RequestLong("type_id", core.Session.LoggedInMember.ItemKey.TypeId);
+                        long galleryId = core.Functions.RequestLong("gallery_id", 0);
+                        ItemKey ownerKey = new ItemKey(ownerId, ownerTypeId);
+
+                        Gallery gallery = null;
+                        if (galleryId > 0)
+                        {
+                            gallery = new Gallery(core, galleryId);
+                        }
+                        else
+                        {
+                            core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                            Primitive owner = core.PrimitiveCache[ownerKey];
+
+                            gallery = new Gallery(core, owner);
+                        }
+
+                        if (gallery != null)
+                        {
+                            if (gallery.Access.Can("VIEW"))
+                            {
+                                List<Gallery> galleries = gallery.GetGalleries();
+
+                                js = new JsonSerializer();
+                                jstw = new StringWriter();
+                                jtw = new JsonTextWriter(jstw);
+
+                                js.NullValueHandling = NullValueHandling.Ignore;
+
+                                core.Http.WriteJson(js, galleries);
+                            }
+                        }
                     }
                     break;
                 case "gallery_items":
@@ -354,6 +394,7 @@ namespace BoxSocial.Applications.Gallery
                     GalleryItem.Show(core);
                     break;
                 case "upload":
+                    Gallery.Upload(core);
                     break;
             }
         }

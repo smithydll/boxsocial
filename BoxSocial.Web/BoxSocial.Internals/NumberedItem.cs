@@ -289,9 +289,9 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        public long Delete()
+        public new long Delete()
         {
-            return Delete(false);
+            return this.Delete(false);
         }
 
         public new long Delete(bool parentDeleted)

@@ -234,6 +234,7 @@ namespace BoxSocial.Internals
             timeRaw = (long)statusRow["status_time_ut"];
             loadValue(statusRow, "status_ip", out ip);
             loadValue(statusRow, "status_simple_permissions", out simplePermissions);
+            applicationId = (long)statusRow["status_application_id"];
 
             itemLoaded(statusRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -250,6 +251,7 @@ namespace BoxSocial.Internals
             timeRaw = (long)statusRow["status_time_ut"];
             loadValue(statusRow, "status_ip", out ip);
             loadValue(statusRow, "status_simple_permissions", out simplePermissions);
+            applicationId = (long)statusRow["status_application_id"];
 
             itemLoaded(statusRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -748,6 +750,15 @@ namespace BoxSocial.Internals
             get
             {
                 return null;
+            }
+        }
+
+        [JsonIgnore]
+        public long ApplicationId
+        {
+            get
+            {
+                return applicationId;
             }
         }
     }

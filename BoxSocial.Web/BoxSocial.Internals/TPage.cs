@@ -245,7 +245,7 @@ namespace BoxSocial.Internals
             HttpContext.Current.Response.AppendHeader("x-ua-compatible", "IE=edge,chrome=1");
 
             string u = HttpContext.Current.Request.ServerVariables["HTTP_USER_AGENT"];
-            if ((b.IsMatch(u) || v.IsMatch(u.Substring(0, 4))))
+            if ((!string.IsNullOrEmpty(u)) && ((b.IsMatch(u) || v.IsMatch(u.Substring(0, 4)))))
             {
                 isMobile = true;
                 template.Medium = DisplayMedium.Mobile;

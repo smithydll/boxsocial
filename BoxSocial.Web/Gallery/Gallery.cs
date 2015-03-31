@@ -2751,6 +2751,169 @@ namespace BoxSocial.Applications.Gallery
                 return null;
             }
         }
+
+        [JsonIgnore]
+        public long ApplicationId
+        {
+            get
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        public static void Upload(Core core)
+        {
+            Primitive owner = core.Session.LoggedInMember;
+
+            long galleryId = core.Functions.FormLong("gallery-id", 0);
+            string title = core.Http.Form["title"];
+            string galleryTitle = core.Http.Form["gallery-title"];
+            string description = core.Http.Form["description"];
+            bool publishToFeed = (core.Http.Form["publish-feed"] != null);
+            bool highQualitySave = (core.Http.Form["high-quality"] != null);
+            bool submittedTitle = true;
+
+            if (string.IsNullOrEmpty(galleryTitle))
+            {
+                submittedTitle = false;
+                galleryTitle = "Uploaded " + core.Tz.Now.ToString("MMMM dd, yyyy");
+            }
+
+            bool newGallery = core.Http.Form["album"] == "create";
+
+            int filesUploaded = 0;
+            for (int i = 0; i < core.Http.Files.Count; i++)
+            {
+                if (core.Http.Files.GetKey(i).StartsWith("photo-file", StringComparison.Ordinal))
+                {
+                    if (core.Http.Files[i] == null || core.Http.Files[i].ContentLength == 0)
+                    {
+                        // Ignore error, continue
+                        continue;
+                    }
+                    filesUploaded++;
+                }
+            }
+
+            if (filesUploaded == 0)
+            {
+                //core.Ajax.ShowMessage(core.IsAjax, "error", "No files selected", "You need to select some files to upload");
+                return;
+            }
+
+            try
+            {
+                Gallery parent = null;
+
+                if (newGallery)
+                {
+                    Gallery grandParent = null;
+
+                    if (!submittedTitle)
+                    {
+                        string grandParentSlug = "photos-from-posts";
+                        try
+                        {
+                            grandParent = new Gallery(core, owner, grandParentSlug);
+                        }
+                        catch (InvalidGalleryException)
+                        {
+                            Gallery root = new Gallery(core, owner);
+                            grandParent = Gallery.Create(core, owner, root, "Photos From Posts", ref grandParentSlug, "All my unsorted uploads");
+                        }
+                    }
+                    else
+                    {
+                        grandParent = new Gallery(core, owner);
+                    }
+
+                    string gallerySlug = string.Empty;
+
+                    if (!submittedTitle)
+                    {
+                        gallerySlug = "photos-" + UnixTime.UnixTimeStamp().ToString();
+                    }
+                    else
+                    {
+                        gallerySlug = Gallery.GetSlugFromTitle(galleryTitle, "");
+                    }
+
+                    try
+                    {
+                        parent = Gallery.Create(core, owner, grandParent, galleryTitle, ref gallerySlug, string.Empty);
+                    }
+                    catch (GallerySlugNotUniqueException)
+                    {
+                        core.Ajax.ShowMessage(core.IsAjax, "error", "Gallery not unique", "Please give a different name to the gallery");
+                    }
+
+                    AccessControlLists acl = new AccessControlLists(core, parent);
+                    acl.SaveNewItemPermissions();
+                }
+                else
+                {
+                    parent = new Gallery(core, owner, galleryId);
+                }
+
+                string slug = string.Empty;
+                try
+                {
+                    for (int i = 0; i < core.Http.Files.Count; i++)
+                    {
+                        if (!core.Http.Files.GetKey(i).StartsWith("photo-file", StringComparison.Ordinal))
+                        {
+                            continue;
+                        }
+
+                        slug = core.Http.Files[i].FileName;
+
+                        MemoryStream stream = new MemoryStream();
+                        core.Http.Files[i].InputStream.CopyTo(stream);
+
+                        core.Db.BeginTransaction();
+
+                        GalleryItem newGalleryItem = GalleryItem.Create(core, owner, parent, title, ref slug, core.Http.Files[i].FileName, core.Http.Files[i].ContentType, (ulong)core.Http.Files[i].ContentLength, description, core.Functions.GetLicenseId(), core.Functions.GetClassification(), stream, highQualitySave, core.Session.ApplicationId /*, width, height*/);
+                        stream.Close();
+
+                        if (publishToFeed && i < 3)
+                        {
+                            core.CallingApplication.PublishToFeed(core, core.Session.LoggedInMember, parent, newGalleryItem, Functions.SingleLine(core.Bbcode.Flatten(newGalleryItem.ItemAbstract)));
+                        }
+                    }
+                }
+                catch (GalleryItemTooLargeException)
+                {
+                    core.Db.RollBackTransaction();
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
+                    return;
+                }
+                catch (GalleryQuotaExceededException)
+                {
+                    core.Db.RollBackTransaction();
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                    return;
+                }
+                catch (InvalidGalleryItemTypeException)
+                {
+                    core.Db.RollBackTransaction();
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                    return;
+                }
+                catch (InvalidGalleryFileNameException)
+                {
+                    core.Db.RollBackTransaction();
+                    core.Ajax.ShowMessage(core.IsAjax, "error", "Submission failed", "Submission failed, try uploading with a different file name.");
+                    return;
+                }
+            }
+            catch (InvalidGalleryException)
+            {
+            }
+        }
     }
 
     /// <summary>

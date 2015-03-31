@@ -30,17 +30,17 @@ using System.Text.RegularExpressions;
 using System.Web;
 using System.Xml;
 using System.Xml.Serialization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class Ajax
+    public class AjaxWriter : ResponseWriter
     {
-        private Core core;
-
-        public Ajax(Core core)
+        public AjaxWriter(Core core) : base(core)
         {
-            this.core = core;
         }
 
         /// <summary>
@@ -52,10 +52,10 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
-            AjaxStatus am = new AjaxStatus();
+            ResponseStatus am = new ResponseStatus();
             am.ResponseCode = ajaxCode;
 
-            xs = new XmlSerializer(typeof(AjaxStatus));
+            xs = new XmlSerializer(typeof(ResponseStatus));
 
             core.Http.WriteXml(xs, am);
 
@@ -77,11 +77,11 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
-            AjaxRawText am = new AjaxRawText();
+            ResponseRawText am = new ResponseRawText();
             am.ResponseCode = ajaxCode;
             am.ResponseMessage = message;
 
-            xs = new XmlSerializer(typeof(AjaxRawText));
+            xs = new XmlSerializer(typeof(ResponseRawText));
             stw = new StringWriter();
 
             core.Http.WriteXml(xs, am);
@@ -109,12 +109,12 @@ namespace BoxSocial.Internals
                 XmlSerializer xs;
                 StringWriter stw;
 
-                AjaxMessage am = new AjaxMessage();
+                ResponseMessage am = new ResponseMessage();
                 am.ResponseCode = ajaxCode;
                 am.ResponseTitle = title;
-                am.ResponseMessage = message;
+                am.Message = message;
 
-                xs = new XmlSerializer(typeof(AjaxMessage));
+                xs = new XmlSerializer(typeof(ResponseMessage));
                 stw = new StringWriter();
 
                 core.Http.WriteXml(xs, am);
@@ -143,11 +143,11 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
-            AjaxArray am = new AjaxArray();
+            ResponseArray am = new ResponseArray();
             am.ResponseCode = ajaxCode;
-            am.ResponseArray = arrayItems;
+            am.Array = arrayItems;
 
-            xs = new XmlSerializer(typeof(AjaxArray));
+            xs = new XmlSerializer(typeof(ResponseArray));
             stw = new StringWriter();
 
             core.Http.WriteXml(xs, am);
@@ -165,19 +165,19 @@ namespace BoxSocial.Internals
             XmlSerializer xs;
             StringWriter stw;
 
-            AjaxDictionary am = new AjaxDictionary();
+            ResponseDictionary am = new ResponseDictionary();
             am.ResponseCode = ajaxCode;
 
-            List<AjaxDictionaryItem> ajaxArrayItems = new List<AjaxDictionaryItem>();
+            List<ResponseDictionaryItem> ajaxArrayItems = new List<ResponseDictionaryItem>();
 
             foreach (string key in arrayItems.Keys)
             {
-                ajaxArrayItems.Add(new AjaxDictionaryItem(key, arrayItems[key]));
+                ajaxArrayItems.Add(new ResponseDictionaryItem(key, arrayItems[key]));
             }
 
-            am.ResponseDictionary = ajaxArrayItems.ToArray();
+            am.Dictionary = ajaxArrayItems.ToArray();
 
-            xs = new XmlSerializer(typeof(AjaxDictionary));
+            xs = new XmlSerializer(typeof(ResponseDictionary));
             stw = new StringWriter();
 
             core.Http.WriteXml(xs, am);
@@ -248,91 +248,6 @@ namespace BoxSocial.Internals
             }
 
             core.Http.End();
-        }
-    }
-
-    [XmlRoot("ajax")]
-    public class AjaxStatus
-    {
-        [XmlElement("type")]
-        public string AjaxType = "Status";
-
-        [XmlElement("code")]
-        public string ResponseCode;
-    }
-
-    [XmlRoot("ajax")]
-    public class AjaxRawText
-    {
-        [XmlElement("type")]
-        public string AjaxType = "Raw";
-
-        [XmlElement("code")]
-        public string ResponseCode;
-
-        [XmlElement("message")]
-        public string ResponseMessage;
-    }
-
-    [XmlRoot("ajax")]
-    public class AjaxMessage
-    {
-        [XmlElement("type")]
-        public string AjaxType = "Message";
-
-        [XmlElement("code")]
-        public string ResponseCode;
-
-        [XmlElement("title")]
-        public string ResponseTitle;
-
-        [XmlElement("message")]
-        public string ResponseMessage;
-    }
-
-    [XmlRoot("ajax")]
-    public class AjaxArray
-    {
-        [XmlElement("type")]
-        public string AjaxType = "Array";
-
-        [XmlElement("code")]
-        public string ResponseCode;
-
-        [XmlElement("array")]
-        public string[] ResponseArray;
-    }
-
-    [XmlRoot("ajax")]
-    public class AjaxDictionary
-    {
-        [XmlElement("type")]
-        public string AjaxType = "Dictionary";
-
-        [XmlElement("code")]
-        public string ResponseCode;
-
-        [XmlArray("array")]
-        [XmlArrayItem("item")]
-        public AjaxDictionaryItem[] ResponseDictionary;
-    }
-
-    public class AjaxDictionaryItem
-    {
-        [XmlElement("key")]
-        public string Key;
-        [XmlElement("value")]
-        public string Value;
-
-        public AjaxDictionaryItem()
-        {
-
-        }
-
-        public AjaxDictionaryItem(string key, string value)
-        {
-            this.Key = key;
-            this.Value = value;
         }
     }
 

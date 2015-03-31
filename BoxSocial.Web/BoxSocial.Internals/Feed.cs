@@ -399,10 +399,48 @@ namespace BoxSocial.Internals
                         if (feedAction.InteractItem is IActionableItem)
                         {
                             itemOwner = ((IActionableItem)feedAction.InteractItem).Owner;
+
+                            if (((IActionableItem)feedAction.InteractItem).ApplicationId > 0)
+                            {
+                                try
+                                {
+                                    ApplicationEntry ae = new ApplicationEntry(core, ((IActionableItem)feedAction.InteractItem).ApplicationId);
+
+                                    if (ae.ApplicationType == ApplicationType.OAuth)
+                                    {
+                                        OAuthApplication oae = new OAuthApplication(core, ae);
+
+                                        feedItemVariableCollection.Parse("VIA_APP_TITLE", oae.DisplayTitle);
+                                        feedItemVariableCollection.Parse("U_VIA_APP", oae.Uri);
+                                    }
+                                }
+                                catch (InvalidApplicationException)
+                                {
+                                }
+                            }
                         }
-                        else if (feedAction.InteractItem is IActionableSubItem)
+                        else if (feedAction.ActionedItem is IActionableItem)
                         {
                             itemOwner = ((IActionableItem)feedAction.ActionedItem).Owner;
+
+                            if (((IActionableItem)feedAction.ActionedItem).ApplicationId > 0)
+                            {
+                                try
+                                {
+                                    ApplicationEntry ae = new ApplicationEntry(core, ((IActionableItem)feedAction.ActionedItem).ApplicationId);
+
+                                    if (ae.ApplicationType == ApplicationType.OAuth)
+                                    {
+                                        OAuthApplication oae = new OAuthApplication(core, ae);
+
+                                        feedItemVariableCollection.Parse("VIA_APP_TITLE", oae.DisplayTitle);
+                                        feedItemVariableCollection.Parse("U_VIA_APP", oae.Uri);
+                                    }
+                                }
+                                catch (InvalidApplicationException)
+                                {
+                                }
+                            }
                         }
                         core.Display.ParseBbcode(feedItemVariableCollection, "TEXT", feedAction.Body, itemOwner, true, string.Empty, string.Empty);
                     }

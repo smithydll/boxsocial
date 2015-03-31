@@ -213,7 +213,7 @@ namespace BoxSocial.Applications.Gallery
 
                     try
                     {
-                        parent = Gallery.Create(core, LoggedInMember, grandParent, galleryTitle, ref gallerySlug, string.Empty);
+                        parent = Gallery.Create(core, Owner, grandParent, galleryTitle, ref gallerySlug, string.Empty);
                     }
                     catch (GallerySlugNotUniqueException)
                     {

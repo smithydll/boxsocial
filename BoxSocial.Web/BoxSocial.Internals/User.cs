@@ -115,6 +115,7 @@ namespace BoxSocial.Internals
         protected UserInfo userInfo;
         protected UserProfile userProfile;
         protected UserStyle userStyle;
+        protected UserSettings userSettings;
         
         protected bool iconLoaded = false;
 
@@ -158,6 +159,19 @@ namespace BoxSocial.Internals
                     userInfo = (UserInfo)core.ItemCache[userInfoKey];
                 }
                 return userInfo;
+            }
+        }
+
+        [JsonIgnore]
+        public UserSettings UserSettings
+        {
+            get
+            {
+                if (userSettings == null)
+                {
+                    userSettings = new UserSettings(this);
+                }
+                return userSettings;
             }
         }
 

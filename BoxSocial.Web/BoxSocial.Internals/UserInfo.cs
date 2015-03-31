@@ -232,7 +232,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("twitter_username")]
+        [JsonIgnore]
         public string TwitterUserName
         {
             get
@@ -245,7 +245,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("twitter_syndicate")]
+        [JsonIgnore]
         public bool TwitterSyndicate
         {
             get
@@ -258,7 +258,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("twitter_authenticated")]
+        [JsonIgnore]
         public bool TwitterAuthenticated
         {
             get
@@ -310,7 +310,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("facebook_syndicate")]
+        [JsonIgnore]
         public bool FacebookSyndicate
         {
             get
@@ -323,7 +323,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("facebook_authenticated")]
+        [JsonIgnore]
         public bool FacebookAuthenticated
         {
             get
@@ -401,7 +401,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("twitter_hostname")]
+        [JsonIgnore]
         public string TumblrHostname
         {
             get
@@ -414,7 +414,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("tumblr_syndicate")]
+        [JsonIgnore]
         public bool TumblrSyndicate
         {
             get
@@ -427,7 +427,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonProperty("tumblr_authenticated")]
+        [JsonIgnore]
         public bool TumblrAuthenticated
         {
             get

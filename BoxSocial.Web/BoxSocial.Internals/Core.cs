@@ -55,7 +55,7 @@ namespace BoxSocial.Internals
         private Display display;
         private Email email;
         private SmsGateway sms;
-        private Ajax ajax;
+        private AjaxWriter ajax;
         private Hyperlink hyperlink;
         private Settings applicationSettings;
         private Storage storage;
@@ -637,13 +637,13 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the Ajax Interface
         /// </summary>
-        public Ajax Ajax
+        public AjaxWriter Ajax
         {
             get
             {
                 if (ajax == null)
                 {
-                    ajax = new Ajax(this);
+                    ajax = new AjaxWriter(this);
                 }
                 return ajax;
             }
@@ -1271,6 +1271,22 @@ namespace BoxSocial.Internals
                     case "comment_delete":
                         break;
                     case "rate":
+                        {
+                            int rating = Functions.RequestInt("rating", 0);
+                            long itemId = Functions.RequestLong("item", 0);
+                            long itemTypeId = Functions.RequestLong("type", 0);
+                            ItemKey itemKey = null;
+
+                            try
+                            {
+                                itemKey = new ItemKey(itemId, itemTypeId);
+                            }
+                            catch
+                            {
+                            }
+
+                            Rating.Vote(this, itemKey, rating);
+                        }
                         break;
                 }
             }

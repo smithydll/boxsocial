@@ -1032,8 +1032,13 @@ namespace BoxSocial.Applications.Blog
                         core.Display.ParseBbcodeCache(blogPostVariableCollection, "POST", blogEntries[i].BodyCache);
                     }
                     else*/
+                    if (post > 0)
                     {
                         core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].Body, page.User);
+                    }
+                    else
+                    {
+                        core.Display.ParseBbcode(blogPostVariableCollection, "POST", blogEntries[i].SummaryString, page.User);
                     }
 
                     if (core.Session.IsLoggedIn)

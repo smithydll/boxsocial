@@ -485,7 +485,7 @@ namespace BoxSocial.Internals
 
             foreach (Match match in matches)
             {
-                string imageUri = match.Groups[0].Value;
+                string imageUri = match.Groups[1].Value;
                 imageUris.Add(imageUri);
 
                 if (firstOnly)
@@ -1833,10 +1833,10 @@ namespace BoxSocial.Internals
                         switch (e.Attributes.GetAttribute("default"))
                         {
                             case "left":
-                                styles = "float: left; margin-right: 10px";
+                                styles = "float: left; margin-right: 10px; max-width: 100%;";
                                 break;
                             case "right":
-                                styles = "float: right; margin-left: 10px";
+                                styles = "float: right; margin-left: 10px; max-width: 100%;";
                                 break;
                         }
                         

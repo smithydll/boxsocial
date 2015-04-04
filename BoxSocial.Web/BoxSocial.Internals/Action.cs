@@ -459,12 +459,19 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonIgnore]
+        [JsonProperty("uri")]
         public override string Uri
         {
             get
             {
-                throw new NotImplementedException();
+                string url = string.Empty;
+                if (ActionedItem != null)
+                {
+                    title = ActionedItem.Action;
+                    url = ActionedItem.Uri;
+                }
+
+                return url;
             }
         }
 

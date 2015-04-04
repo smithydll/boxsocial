@@ -866,7 +866,7 @@ namespace BoxSocial.Applications.Blog
             blogPostVariableCollection.Parse("ID", Id);
             blogPostVariableCollection.Parse("TYPE_ID", ItemKey.TypeId);
 
-            core.Display.ParseBbcode(blogPostVariableCollection, "POST", Body, Owner);
+            blogPostVariableCollection.Parse("POST", Functions.TrimStringToWord(HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body))), 256, true));
 
             if (core.Session.IsLoggedIn)
             {
@@ -914,7 +914,21 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
+                string heading = "[h1]" + Title + "[/h1]\r\n\r\n";
+                return heading + SummaryString;
+            }
+        }
+
+        [JsonIgnore]
+        public string SummaryString
+        {
+            get
+            {
+                UnixTime tz = new UnixTime(core, ((User)Owner).UserInfo.TimeZoneCode);
+
                 string strippedBody = HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body)));
+                string uri = string.Format("blog/{0:0000}/{1:00}/{2}",
+                    GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, Id);
 
                 if (string.IsNullOrEmpty(strippedBody.Trim()))
                 {
@@ -922,7 +936,7 @@ namespace BoxSocial.Applications.Blog
 
                     if (images.Count > 0)
                     {
-                        return "[img]" + images[0] + "[/img]";
+                        return "[iurl=\"" + uri + "\"][img]" + images[0] + "[/img][/iurl]";
                     }
 
                     return string.Empty;
@@ -934,7 +948,7 @@ namespace BoxSocial.Applications.Blog
 
                     if (images.Count > 0)
                     {
-                        floatImage = "[float=left][img]" + images[0] + "[/img][/float]";
+                        floatImage = "[float=left][iurl=\"" + uri + "\"][img]" + images[0] + "[/img][/iurl][/float]";
                     }
 
                     return floatImage + Functions.TrimStringToWord(strippedBody, 256, true);

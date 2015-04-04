@@ -220,6 +220,25 @@ namespace BoxSocial.Applications.Blog
                     }
 
                     break;
+                case "get_post":
+                    long postId = core.Functions.RequestLong("id", 0);
+
+                    if (postId > 0)
+                    {
+                        BlogEntry entry = new BlogEntry(core, postId);
+
+                        if (entry.Access.Can("VIEW"))
+                        {
+                            js = new JsonSerializer();
+                            jstw = new StringWriter();
+                            jtw = new JsonTextWriter(jstw);
+
+                            js.NullValueHandling = NullValueHandling.Ignore;
+
+                            core.Http.WriteJson(js, entry);
+                        }
+                    }
+                    break;
             }
         }
 

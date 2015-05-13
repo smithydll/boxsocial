@@ -57,7 +57,7 @@ namespace BoxSocial.FrontEnd
 
             if (!core.Session.IsLoggedIn)
             {
-                core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Not Logged In", "Sign in to share this item.");
+                core.Response.ShowMessage("notLoggedIn", "Not Logged In", "Sign in to share this item.");
             }
 
             string mode = Request.QueryString["mode"];
@@ -84,11 +84,11 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.SendRawText("errorFetchingItem", "");
+                    core.Response.SendRawText("errorFetchingItem", "");
                     return;
                 }
 
-                core.Ajax.SendRawText("sharingForm", template.ToString());
+                core.Response.SendRawText("sharingForm", template.ToString());
                 return;
             }
 
@@ -100,7 +100,7 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                core.Ajax.SendRawText("errorFetchingItem", "");
+                core.Response.SendRawText("errorFetchingItem", "");
                 return;
             }
 
@@ -113,7 +113,7 @@ namespace BoxSocial.FrontEnd
 
                 if (!pitem.Access.IsPublic())
                 {
-                    core.Ajax.ShowMessage(isAjax, "cannotShare", "Cannot Share", "You can only share public items.");
+                    core.Response.ShowMessage("cannotShare", "Cannot Share", "You can only share public items.");
                     return;
                 }
             }
@@ -170,7 +170,7 @@ namespace BoxSocial.FrontEnd
                 returnValues.Add("message", message);
                 returnValues.Add("template", template.ToString());
 
-                core.Ajax.SendDictionary("statusPosted", returnValues);
+                core.Response.SendDictionary("statusPosted", returnValues);
                 return;
             }
             else

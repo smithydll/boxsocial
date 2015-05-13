@@ -68,7 +68,7 @@ namespace BoxSocial.Applications.Profile
 
         void AccountLifestyle_Show(object sender, EventArgs e)
         {
-            if (core.IsAjax)
+            if (core.ResponseFormat != ResponseFormats.Html)
             {
                 AccountLifestyle_SaveParameter(sender, e);
                 return;
@@ -200,7 +200,7 @@ namespace BoxSocial.Applications.Profile
                     LoggedInMember.Profile.SexualityRaw = (Sexuality)byte.Parse(core.Http.Form["value"]);
                     break;
                 default:
-                    core.Ajax.SendStatus("FAIL");
+                    core.Response.SendStatus("FAIL");
                     return;
             }
 
@@ -208,11 +208,11 @@ namespace BoxSocial.Applications.Profile
             {
                 LoggedInMember.Profile.Update();
 
-                core.Ajax.SendStatus("SUCCESS");
+                core.Response.SendStatus("SUCCESS");
             }
             catch (UnauthorisedToUpdateItemException)
             {
-                core.Ajax.SendStatus("FAIL");
+                core.Response.SendStatus("FAIL");
             }
         }
 

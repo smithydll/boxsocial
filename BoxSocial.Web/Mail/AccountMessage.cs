@@ -270,7 +270,7 @@ namespace BoxSocial.Applications.Mail
                 returnValues.Add("template", template.ToString());
                 returnValues.Add("newest-id", newestId.ToString());
 
-                core.Ajax.SendDictionary("newMessages", returnValues);
+                core.Response.SendDictionary("newMessages", returnValues);
 
             }
             catch (InvalidMessageRecipientException)

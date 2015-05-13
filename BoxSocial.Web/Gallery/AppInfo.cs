@@ -343,16 +343,12 @@ namespace BoxSocial.Applications.Gallery
 
         public override void ExecuteCall(string callName)
         {
-            JsonSerializer js;
-            StringWriter jstw;
-            JsonWriter jtw;
-
             switch (callName)
             {
                 case "list_galleries":
                     {
-                        long ownerId = core.Functions.RequestLong("id", core.Session.LoggedInMember.Id);
-                        long ownerTypeId = core.Functions.RequestLong("type_id", core.Session.LoggedInMember.ItemKey.TypeId);
+                        long ownerId = core.Functions.RequestLong("owner_id", core.Session.LoggedInMember.Id);
+                        long ownerTypeId = core.Functions.RequestLong("owner_type_id", core.Session.LoggedInMember.ItemKey.TypeId);
                         long galleryId = core.Functions.RequestLong("gallery_id", 0);
                         ItemKey ownerKey = new ItemKey(ownerId, ownerTypeId);
 
@@ -374,20 +370,45 @@ namespace BoxSocial.Applications.Gallery
                             if (gallery.Access.Can("VIEW"))
                             {
                                 List<Gallery> galleries = gallery.GetGalleries();
+                                List<Gallery> responseGalleries = new List<Gallery>();
 
-                                js = new JsonSerializer();
-                                jstw = new StringWriter();
-                                jtw = new JsonTextWriter(jstw);
+                                foreach (Gallery g in galleries)
+                                {
+                                    if (gallery.Access.Can("VIEW"))
+                                    {
+                                        responseGalleries.Add(g);
+                                    }
+                                }
 
-                                js.NullValueHandling = NullValueHandling.Ignore;
+                                core.Response.WriteObject(responseGalleries);
+                            }
+                            else
+                            {
 
-                                core.Http.WriteJson(js, galleries);
                             }
                         }
                     }
                     break;
-                case "gallery_items":
+                case "list_gallery_items":
                     {
+                        long galleryId = core.Functions.RequestLong("gallery_id", 0);
+                        long offsetId = core.Functions.RequestLong("offset_id", 0);
+
+                        Gallery gallery = null;
+                        if (galleryId > 0)
+                        {
+                            gallery = new Gallery(core, galleryId);
+                        }
+                        
+                        if (gallery != null)
+                        {
+                            if (gallery.Access.Can("VIEW_ITEMS"))
+                            {
+                                List<GalleryItem> galleryItems = gallery.GetItems(core, 1, 12, offsetId);
+
+                                core.Response.WriteObject(galleryItems);
+                            }
+                        }
                     }
                     break;
                 case "gallery_item":

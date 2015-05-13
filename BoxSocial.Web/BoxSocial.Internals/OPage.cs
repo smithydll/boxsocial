@@ -64,7 +64,27 @@ namespace BoxSocial.Internals
                 WebConfigurationManager.AppSettings["mysql-database"],
                 WebConfigurationManager.AppSettings["mysql-host"]);
 
-            core = new Core(this, db);
+            ResponseFormats responseFormat = ResponseFormats.Json; // we should default to json but give the option for xml output
+            bool isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
+            if (!isAjax)
+            {
+                isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
+                if (isAjax)
+                {
+                    responseFormat = ResponseFormats.Xml;
+                }
+            }
+
+            bool isJson = (HttpContext.Current.Request.QueryString["json"] == "true");
+            if (!isJson)
+            {
+                isJson = (HttpContext.Current.Request.Form["json"] == "true");
+                if (isJson)
+                {
+                    responseFormat = ResponseFormats.Json;
+                }
+            }
+            core = new Core(this, responseFormat, db);
 
             httpContext = HttpContext.Current;
         }

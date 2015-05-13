@@ -38,11 +38,11 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public enum ResponseFormat
+    public enum ResponseFormats
     {
         Html,
-        Xml,
-        Json
+        Xml, // Ajax
+        Json,
     }
 
     /// <summary>
@@ -1049,7 +1049,7 @@ namespace BoxSocial.Internals
 
             JsonSerializer js;
             StringWriter jstw;
-            JsonWriter jtw;
+            JsonTextWriter jtw;
 
             js = new JsonSerializer();
             jstw = new StringWriter();
@@ -1060,7 +1060,7 @@ namespace BoxSocial.Internals
             core.Http.WriteJson(js, itemTypes);
         }
 
-        public void ReturnPermissionGroupList(ResponseFormat responseFormat)
+        public void ReturnPermissionGroupList(ResponseFormats responseFormat)
         {
             string namePart = core.Http.Form["name-field"];
             long itemId = core.Functions.FormLong("item", 0);
@@ -1135,13 +1135,13 @@ namespace BoxSocial.Internals
 
                 switch (responseFormat)
                 {
-                    case ResponseFormat.Xml:
-                        core.Ajax.SendPermissionGroupDictionary("permissionSelect", permissiveNames);
+                    case ResponseFormats.Xml:
+                        core.Response.SendPermissionGroupDictionary("permissionSelect", permissiveNames);
                         break;
-                    case ResponseFormat.Json:
+                    case ResponseFormats.Json:
                         JsonSerializer js;
                         StringWriter jstw;
-                        JsonWriter jtw;
+                        JsonTextWriter jtw;
 
                         js = new JsonSerializer();
                         jstw = new StringWriter();

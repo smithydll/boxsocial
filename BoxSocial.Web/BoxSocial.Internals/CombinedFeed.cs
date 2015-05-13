@@ -147,7 +147,7 @@ namespace BoxSocial.Internals
                 return;
             }
 
-            if (core.IsAjax)
+            if (core.ResponseFormat == ResponseFormats.Xml)
             {
                 ShowMore(core, page, owner);
                 return;
@@ -330,7 +330,7 @@ namespace BoxSocial.Internals
             }
 
             string loadMoreUri = core.Hyperlink.BuildHomeUri() + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId;
-            core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
+            core.Response.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
 
     }

@@ -59,13 +59,13 @@ namespace BoxSocial.FrontEnd
 			}
 			catch
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x01).");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x01).");
                 return;
 			}
 
             if (!core.Session.IsLoggedIn)
             {
-                core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Not Logged In", "Sign in to like this item.");
+                core.Response.ShowMessage("notLoggedIn", "Not Logged In", "Sign in to like this item.");
             }
 
             try
@@ -93,12 +93,12 @@ namespace BoxSocial.FrontEnd
             }
 			catch (InvalidItemTypeException)
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x02).");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x02).");
                 return;
 			}
             catch (InvalidApplicationException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x03).");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x03).");
                 return;
             }
 
@@ -136,19 +136,19 @@ namespace BoxSocial.FrontEnd
                         break;
                 }
 
-                core.Ajax.SendStatus("likeAccepted");
+                core.Response.SendStatus("likeAccepted");
             }
             catch (InvalidItemException ex)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x04).");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to like is invalid (0x04).");
             }
             catch (InvalidLikeException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidLike", "Invalid Like", "The like is not valid.");
+                core.Response.ShowMessage("invalidLike", "Invalid Like", "The like is not valid.");
             }
             catch (AlreadyLikedException)
             {
-                core.Ajax.ShowMessage(isAjax, "alreadyLiked", "Already Liked", "You have already liked this item, you cannot like it again");
+                core.Response.ShowMessage("alreadyLiked", "Already Liked", "You have already liked this item, you cannot like it again");
             }
 
             //else

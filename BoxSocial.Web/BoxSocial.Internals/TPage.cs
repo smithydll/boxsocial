@@ -77,6 +77,7 @@ namespace BoxSocial.Internals
         protected Core core;
         public PageSignature Signature;
         private bool isAjax;
+        private bool isJson;
         private bool isMobile;
         private bool pageEnded;
 
@@ -202,6 +203,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool IsJson
+        {
+            get
+            {
+                return IsJson;
+            }
+        }
+
         public bool IsMobile
         {
             get
@@ -256,7 +265,28 @@ namespace BoxSocial.Internals
                 isMobile = false;
             }
 
-            core = new Core(this, db, template);
+            ResponseFormats responseFormat = ResponseFormats.Html;
+            isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
+            if (!isAjax)
+            {
+                isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
+                if (isAjax)
+                {
+                    responseFormat = ResponseFormats.Xml;
+                }
+            }
+
+            isJson = (HttpContext.Current.Request.QueryString["json"] == "true");
+            if (!isJson)
+            {
+                isJson = (HttpContext.Current.Request.Form["json"] == "true");
+                if (isJson)
+                {
+                    responseFormat = ResponseFormats.Json;
+                }
+            }
+
+            core = new Core(this, responseFormat, db, template);
 
             pageTitle = core.Settings.SiteTitle + (!string.IsNullOrEmpty(core.Settings.SiteSlogan) ? " • " + core.Settings.SiteSlogan : string.Empty);
 
@@ -306,12 +336,6 @@ namespace BoxSocial.Internals
 
             // move it here
             core.Tz = tz;
-
-            isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
-            if (!isAjax)
-            {
-                isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
-            }
 
             // As a security measure we use the http object to prevent
             // applications hijacking the response output
@@ -373,7 +397,7 @@ namespace BoxSocial.Internals
                 offset = new long[] { 0 };
             }
 
-           if (session != null && session.SignedIn && core.IsMobile && (!core.IsAjax))
+           if (session != null && session.SignedIn && core.IsMobile && core.ResponseFormat == ResponseFormats.Html)
            {
                 List<ApplicationEntry> applications = BoxSocial.Internals.Application.GetApplications(core, core.Session.LoggedInMember);
 

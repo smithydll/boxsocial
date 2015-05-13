@@ -199,7 +199,7 @@ namespace BoxSocial.Applications.Profile
                 returnValues.Add("newest-id", newerId.ToString());
             }
 
-            core.Ajax.SendDictionary("statusPosted", returnValues);
+            core.Response.SendDictionary("statusPosted", returnValues);
         }
 
         void AccountStatus_Delete(object sender, EventArgs e)
@@ -225,12 +225,13 @@ namespace BoxSocial.Applications.Profile
 
                     core.Db.Query(dQuery);
 
-                    core.Ajax.SendStatus("messageDeleted");
+                    core.Response.SendStatus("messageDeleted");
                     return;
                 }
             }
 
-            core.Ajax.ShowMessage(true, "permissionDenied", "Permission Denied", "You cannot delete this item.");
+            // IsAjax true
+            core.Response.ShowMessage("permissionDenied", "Permission Denied", "You cannot delete this item.");
         }
 
     }

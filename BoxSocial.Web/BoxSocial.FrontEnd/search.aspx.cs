@@ -62,7 +62,7 @@ namespace BoxSocial.FrontEnd
 
         private void showSearchBox()
         {
-            if (Request["q"] != null && Request["q"] != string.Empty && (!Request["q"].StartsWith("?", StringComparison.Ordinal)) && (!Request["q"].StartsWith("*", StringComparison.Ordinal)))
+            if (Request["q"] != null && Request["q"].Trim() != string.Empty && (!Request["q"].Trim().StartsWith("?", StringComparison.Ordinal)) && (!Request["q"].Trim().StartsWith("*", StringComparison.Ordinal)))
             {
                 showSearchResults();
             }
@@ -72,7 +72,7 @@ namespace BoxSocial.FrontEnd
         {
             template.SetTemplate("search_results.html");
 
-            string query = Request["q"];
+            string query = Request["q"].Trim();
 
             template.Parse("SEARCH_QUERY", query);
 
@@ -131,7 +131,7 @@ namespace BoxSocial.FrontEnd
                     friendNames.Add(friends[i].Id.ToString(), friends[i].DisplayName);
                 }
 
-                core.Ajax.SendDictionary("friends", friendNames);
+                core.Response.SendDictionary("friends", friendNames);
             }
             else
             {

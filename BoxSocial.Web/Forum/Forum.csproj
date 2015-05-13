@@ -169,4 +169,7 @@
     <ProjectGuid>{3A1513C8-14E8-41C0-85C6-84A1FDDA79DC}</ProjectGuid>
     <RootNamespace>BoxSocial.Applications.Forum</RootNamespace>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Forum.en.resx"</PostBuildEvent>
+  </PropertyGroup>
 </Project>

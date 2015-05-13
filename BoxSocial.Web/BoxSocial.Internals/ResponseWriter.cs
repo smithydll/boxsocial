@@ -45,6 +45,119 @@ namespace BoxSocial.Internals
         {
             this.core = core;
         }
+
+        public abstract void WriteObject(object obj);
+
+        /// <summary>
+        /// Send a status code only the client has to work out what to do with.
+        /// </summary>
+        /// <param name="ajaxCode"></param>
+        public void SendStatus(string ajaxCode)
+        {
+            ResponseStatus am = new ResponseStatus();
+            am.ResponseCode = ajaxCode;
+
+            WriteObject(am);
+        }
+
+        /// <summary>
+        /// Send raw text the client has to work out what to do with.
+        /// </summary>
+        /// <param name="ajaxCode"></param>
+        /// <param name="core"></param>
+        /// <param name="message"></param>
+        public void SendRawText(string ajaxCode, string message)
+        {
+            ResponseRawText am = new ResponseRawText();
+            am.ResponseCode = ajaxCode;
+            am.ResponseMessage = message;
+
+            WriteObject(am);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ajax">True if to response using AJAX, false to respond conventionally.</param>
+        /// <param name="ajaxCode"></param>
+        /// <param name="core"></param>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        public void ShowMessage(string ajaxCode, string title, string message)
+        {
+            ResponseMessage am = new ResponseMessage();
+            am.ResponseCode = ajaxCode;
+            am.ResponseTitle = title;
+            am.Message = message;
+
+            WriteObject(am);
+        }
+
+        /// <summary>
+        /// Send an array of items for the client to process
+        /// </summary>
+        /// <param name="ajaxCore"></param>
+        /// <param name="core"></param>
+        /// <param name="arrayItems"></param>
+        public void SendArray(string ajaxCode, string[] arrayItems)
+        {
+            ResponseArray am = new ResponseArray();
+            am.ResponseCode = ajaxCode;
+            am.Array = arrayItems;
+
+            WriteObject(am);
+        }
+
+        public void SendDictionary(string ajaxCode, Dictionary<string, string> arrayItems)
+        {
+            ResponseDictionary am = new ResponseDictionary();
+            am.ResponseCode = ajaxCode;
+
+            List<ResponseDictionaryItem> ajaxArrayItems = new List<ResponseDictionaryItem>();
+
+            foreach (string key in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new ResponseDictionaryItem(key, arrayItems[key]));
+            }
+
+            am.Dictionary = ajaxArrayItems.ToArray();
+
+            WriteObject(am);
+        }
+
+        public void SendUserDictionary(string ajaxCode, Dictionary<long, string[]> arrayItems)
+        {
+            AjaxUserDictionary am = new AjaxUserDictionary();
+            am.ResponseCode = ajaxCode;
+
+            List<AjaxUserDictionaryItem> ajaxArrayItems = new List<AjaxUserDictionaryItem>();
+
+            foreach (long id in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new AjaxUserDictionaryItem(id, arrayItems[id][0], arrayItems[id][1]));
+            }
+
+            am.ResponseDictionary = ajaxArrayItems.ToArray();
+
+            WriteObject(am);
+        }
+
+        public void SendPermissionGroupDictionary(string ajaxCode, Dictionary<ItemKey, string[]> arrayItems)
+        {
+            AjaxPermissionGroupDictionary am = new AjaxPermissionGroupDictionary();
+            am.ResponseCode = ajaxCode;
+
+            List<AjaxPermissionGroupDictionaryItem> ajaxArrayItems = new List<AjaxPermissionGroupDictionaryItem>();
+
+            foreach (ItemKey ik in arrayItems.Keys)
+            {
+                ajaxArrayItems.Add(new AjaxPermissionGroupDictionaryItem(ik, arrayItems[ik][0], arrayItems[ik][1]));
+            }
+
+            am.ResponseDictionary = ajaxArrayItems.ToArray();
+
+            WriteObject(am);
+        }
     }
 
     [XmlRoot("ajax")]

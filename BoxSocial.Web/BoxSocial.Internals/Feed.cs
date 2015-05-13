@@ -342,7 +342,7 @@ namespace BoxSocial.Internals
                 throw new NullCoreException();
             }
 
-            if (core.IsAjax)
+            if (core.ResponseFormat == ResponseFormats.Xml)
             {
                 ShowMore(core, page, owner);
                 return;
@@ -594,7 +594,7 @@ namespace BoxSocial.Internals
             }
 
             string loadMoreUri = core.Hyperlink.BuildHomeUri() + "?p=" + (core.TopLevelPageNumber + 1) + "&o=" + lastId;
-            core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
+            core.Response.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
 
         public static void ShowMore(Core core, User owner)
@@ -621,7 +621,7 @@ namespace BoxSocial.Internals
             {
                 JsonSerializer js;
                 StringWriter jstw;
-                JsonWriter jtw;
+                JsonTextWriter jtw;
 
                 js = new JsonSerializer();
                 jstw = new StringWriter();

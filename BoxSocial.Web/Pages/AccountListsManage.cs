@@ -374,7 +374,7 @@ namespace BoxSocial.Applications.Pages
 
                     if (ajax)
                     {
-                        core.Ajax.SendRawText("posted", text);
+                        core.Response.SendRawText("posted", text);
 
                         if (db != null)
                         {
@@ -391,14 +391,14 @@ namespace BoxSocial.Applications.Pages
                 }
                 catch (UnauthorisedToCreateItemException)
                 {
-                    core.Ajax.ShowMessage(ajax, "unauthorised", "Unauthorised", "You are unauthorised to append to this list.");
+                    core.Response.ShowMessage("unauthorised", "Unauthorised", "You are unauthorised to append to this list.");
                     return;
                 }
 
             }
             catch (InvalidListException)
             {
-                core.Ajax.ShowMessage(ajax, "error", "List Error", "You submitted invalid information. Go back and try again.");
+                core.Response.ShowMessage("error", "List Error", "You submitted invalid information. Go back and try again.");
                 return;
             }
         }

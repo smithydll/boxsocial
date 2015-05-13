@@ -1865,7 +1865,7 @@ namespace BoxSocial.Applications.Gallery
         /// <param name="e"></param>
         public static void Show(object sender, ShowPPageEventArgs e)
         {
-            if (e.Core.IsAjax)
+            if (e.Core.ResponseFormat == ResponseFormats.Xml)
             {
                 ShowMore(sender, e);
                 return;
@@ -2272,7 +2272,7 @@ namespace BoxSocial.Applications.Gallery
             }
 
             string loadMoreUri = Gallery.BuildGalleryUri(e.Core, e.Page.Owner, galleryPath) + "?p=" + (e.Core.TopLevelPageNumber + 1) + "&o=" + lastId;
-            e.Core.Ajax.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
+            e.Core.Response.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
 
         /// <summary>
@@ -2848,7 +2848,7 @@ namespace BoxSocial.Applications.Gallery
                     }
                     catch (GallerySlugNotUniqueException)
                     {
-                        core.Ajax.ShowMessage(core.IsAjax, "error", "Gallery not unique", "Please give a different name to the gallery");
+                        core.Response.ShowMessage("error", "Gallery not unique", "Please give a different name to the gallery");
                     }
 
                     AccessControlLists acl = new AccessControlLists(core, parent);
@@ -2888,25 +2888,25 @@ namespace BoxSocial.Applications.Gallery
                 catch (GalleryItemTooLargeException)
                 {
                     core.Db.RollBackTransaction();
-                    core.Ajax.ShowMessage(core.IsAjax, "error", "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
+                    core.Response.ShowMessage("error", "Photo too big", "The photo you have attempted to upload is too big, you can upload photos up to " + Functions.BytesToString(core.Settings.MaxFileSize) + " in size.");
                     return;
                 }
                 catch (GalleryQuotaExceededException)
                 {
                     core.Db.RollBackTransaction();
-                    core.Ajax.ShowMessage(core.IsAjax, "error", "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
+                    core.Response.ShowMessage("error", "Not Enough Quota", "You do not have enough quota to upload this photo. Try resizing the image before uploading or deleting images you no-longer need. Smaller images use less quota.");
                     return;
                 }
                 catch (InvalidGalleryItemTypeException)
                 {
                     core.Db.RollBackTransaction();
-                    core.Ajax.ShowMessage(core.IsAjax, "error", "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
+                    core.Response.ShowMessage("error", "Invalid image uploaded", "You have tried to upload a file type that is not a picture. You are allowed to upload PNG and JPEG images.");
                     return;
                 }
                 catch (InvalidGalleryFileNameException)
                 {
                     core.Db.RollBackTransaction();
-                    core.Ajax.ShowMessage(core.IsAjax, "error", "Submission failed", "Submission failed, try uploading with a different file name.");
+                    core.Response.ShowMessage("error", "Submission failed", "Submission failed, try uploading with a different file name.");
                     return;
                 }
             }

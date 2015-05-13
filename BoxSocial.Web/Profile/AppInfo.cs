@@ -149,29 +149,13 @@ namespace BoxSocial.Applications.Profile
 
         public override void ExecuteCall(string callName)
         {
-            JsonSerializer js;
-            StringWriter jstw;
-            JsonWriter jtw;
-
             switch (callName)
             {
                 case "settings/me":
-                        js = new JsonSerializer();
-                        jstw = new StringWriter();
-                        jtw = new JsonTextWriter(jstw);
-
-                        js.NullValueHandling = NullValueHandling.Ignore;
-
-                        core.Http.WriteJson(js, core.Session.LoggedInMember.UserSettings);
+                        core.Response.WriteObject(core.Session.LoggedInMember.UserSettings);
                     break;
                 case "info/me":
-                        js = new JsonSerializer();
-                        jstw = new StringWriter();
-                        jtw = new JsonTextWriter(jstw);
-
-                        js.NullValueHandling = NullValueHandling.Ignore;
-
-                        core.Http.WriteJson(js, core.Session.LoggedInMember.UserInfo);
+                        core.Response.WriteObject(core.Session.LoggedInMember.UserInfo);
                     break;
                 case "profile":
                     {
@@ -182,13 +166,7 @@ namespace BoxSocial.Applications.Profile
 
                         if (user.Access.Can("VIEW"))
                         {
-                            js = new JsonSerializer();
-                            jstw = new StringWriter();
-                            jtw = new JsonTextWriter(jstw);
-
-                            js.NullValueHandling = NullValueHandling.Ignore;
-
-                            core.Http.WriteJson(js, user);
+                            core.Response.WriteObject(user);
                         }
                         else
                         {
@@ -208,14 +186,7 @@ namespace BoxSocial.Applications.Profile
                         {
                             List<Friend> friends = user.GetFriends(page, perPage, filter);
 
-
-                            js = new JsonSerializer();
-                            jstw = new StringWriter();
-                            jtw = new JsonTextWriter(jstw);
-
-                            js.NullValueHandling = NullValueHandling.Ignore;
-
-                            core.Http.WriteJson(js, friends);
+                            core.Response.WriteObject(friends);
                         }
                     }
                     break;
@@ -223,13 +194,7 @@ namespace BoxSocial.Applications.Profile
                     string message = core.Http.Form["message"];
                     StatusMessage newMessage = StatusFeed.SaveMessage(core, message);
 
-                    js = new JsonSerializer();
-                    jstw = new StringWriter();
-                    jtw = new JsonTextWriter(jstw);
-
-                    js.NullValueHandling = NullValueHandling.Ignore;
-
-                    core.Http.WriteJson(js, newMessage);
+                    core.Response.WriteObject(newMessage);
                     break;
                 case "status":
                     break;

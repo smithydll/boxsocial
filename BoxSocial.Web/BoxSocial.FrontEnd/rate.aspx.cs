@@ -59,7 +59,7 @@ namespace BoxSocial.FrontEnd
 			}
 			catch
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
                 return;
 			}
 
@@ -88,12 +88,12 @@ namespace BoxSocial.FrontEnd
             }
 			catch (InvalidItemTypeException)
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
                 return;
 			}
             catch (InvalidApplicationException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
                 return;
             }
 
@@ -101,19 +101,19 @@ namespace BoxSocial.FrontEnd
             {
                 Rating.Vote(core, itemKey, rating);
 
-                core.Ajax.SendStatus("voteAccepted");
+                core.Response.SendStatus("voteAccepted");
             }
             catch (InvalidItemException ex)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
             }
             catch (InvalidRatingException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidRating", "Invalid Rating", "The rating you have attempted to give for this item is invalid.");
+                core.Response.ShowMessage("invalidRating", "Invalid Rating", "The rating you have attempted to give for this item is invalid.");
             }
             catch (AlreadyRatedException)
             {
-                core.Ajax.ShowMessage(isAjax, "alreadyVoted", "Already Voted", "You have already rated this item, you cannot rate it again");
+                core.Response.ShowMessage("alreadyVoted", "Already Voted", "You have already rated this item, you cannot rate it again");
             }
 
             //else

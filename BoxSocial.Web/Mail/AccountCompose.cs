@@ -260,7 +260,7 @@ namespace BoxSocial.Applications.Mail
                 returnValues.Add("template", template.ToString());
                 returnValues.Add("newest-id", newestId.ToString());
 
-                core.Ajax.SendDictionary("replySent", returnValues);
+                core.Response.SendDictionary("replySent", returnValues);
             }
             else
             {

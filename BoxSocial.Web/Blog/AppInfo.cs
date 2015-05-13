@@ -190,10 +190,6 @@ namespace BoxSocial.Applications.Blog
 
         public override void ExecuteCall(string callName)
         {
-            JsonSerializer js;
-            StringWriter jstw;
-            JsonWriter jtw;
-
             switch (callName)
             {
                 case "get_posts":
@@ -207,13 +203,7 @@ namespace BoxSocial.Applications.Blog
 
                         List<BlogEntry> blogEntries = blog.GetEntries(string.Empty, string.Empty, 0, 0, 0, page, perPage);
 
-                        js = new JsonSerializer();
-                        jstw = new StringWriter();
-                        jtw = new JsonTextWriter(jstw);
-
-                        js.NullValueHandling = NullValueHandling.Ignore;
-
-                        core.Http.WriteJson(js, blogEntries);
+                        core.Response.WriteObject(blogEntries);
                     }
                     catch (InvalidBlogException)
                     {
@@ -229,13 +219,7 @@ namespace BoxSocial.Applications.Blog
 
                         if (entry.Access.Can("VIEW"))
                         {
-                            js = new JsonSerializer();
-                            jstw = new StringWriter();
-                            jtw = new JsonTextWriter(jstw);
-
-                            js.NullValueHandling = NullValueHandling.Ignore;
-
-                            core.Http.WriteJson(js, entry);
+                            core.Response.WriteObject(entry);
                         }
                     }
                     break;

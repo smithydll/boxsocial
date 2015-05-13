@@ -73,7 +73,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    core.Response.SendRawText("errorFetchingComment", "");
                     return;
                 }
 
@@ -89,7 +89,7 @@ namespace BoxSocial.FrontEnd
                 }
                 else
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    core.Response.SendRawText("errorFetchingComment", "");
                 }
 
                 return;
@@ -103,7 +103,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    core.Response.SendRawText("errorFetchingComment", "");
                     return;
                 }
 
@@ -112,12 +112,12 @@ namespace BoxSocial.FrontEnd
 
                 if (commentsTable.Rows.Count == 1)
                 {
-                    core.Ajax.SendRawText("commentFetched", (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
+                    core.Response.SendRawText("commentFetched", (string.Format("\n\n[quote=\"{0}\"]{1}[/quote]",
                         (string)commentsTable.Rows[0]["user_name"], (string)commentsTable.Rows[0]["comment_text"])));
                 }
                 else
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    core.Response.SendRawText("errorFetchingComment", "");
                 }
 
                 return;
@@ -132,7 +132,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.SendRawText("errorFetchingComment", "");
+                    core.Response.SendRawText("errorFetchingComment", "");
                     return;
                 }
 
@@ -160,7 +160,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch (InvalidApplicationException)
                 {
-                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x01)");
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x01)");
                     return;
                 }
 
@@ -173,7 +173,7 @@ namespace BoxSocial.FrontEnd
                     // Only catch genuine InvalidItemException throws
                     if ((ex.GetType() == typeof(TargetInvocationException) && ex.InnerException.GetType().IsSubclassOf(typeof(InvalidItemException))) || ex.GetType().IsSubclassOf(typeof(InvalidItemException)))
                     {
-                        core.Ajax.ShowMessage(isAjax, "invalidItem", "Item no longer exists", "Cannot load the comments as the item no longer exists.");
+                        core.Response.ShowMessage("invalidItem", "Item no longer exists", "Cannot load the comments as the item no longer exists.");
                     }
                     throw ex;
                 }
@@ -188,7 +188,7 @@ namespace BoxSocial.FrontEnd
                 {
                     if (!((IPermissibleItem)thisItem).Access.Can("VIEW"))
                     {
-                        core.Ajax.ShowMessage(isAjax, "accessDenied", "Access Denied", "The you do not have access to these comments");
+                        core.Response.ShowMessage("accessDenied", "Access Denied", "The you do not have access to these comments");
                         return;
                     }
 
@@ -202,7 +202,7 @@ namespace BoxSocial.FrontEnd
                 {
                     if (!((IPermissibleSubItem)thisItem).PermissiveParent.Access.Can("VIEW"))
                     {
-                        core.Ajax.ShowMessage(isAjax, "accessDenied", "Access Denied", "The you do not have access to these comments");
+                        core.Response.ShowMessage("accessDenied", "Access Denied", "The you do not have access to these comments");
                         return;
                     }
 
@@ -217,11 +217,11 @@ namespace BoxSocial.FrontEnd
                     core.Display.DisplayComments(template, ((ICommentableItem)thisItem).Owner, 1, (ICommentableItem)thisItem);
                     //List<Comment> comments = Comment.GetComments(core, new ItemKey(itemId, itemTypeId), SortOrder.Ascending, 1, 10, null);
 
-                    core.Ajax.SendRawText("fetchSuccess", template.ToString());
+                    core.Response.SendRawText("fetchSuccess", template.ToString());
                 }
                 else
                 {
-                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x07)");
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x07)");
                     return;
                 }
             }
@@ -234,7 +234,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.ShowMessage(isAjax, "errorReportingComment", "Error", "The comment you have reported is invalid.");
+                    core.Response.ShowMessage("errorReportingComment", "Error", "The comment you have reported is invalid.");
                     return;
                 }
 
@@ -257,10 +257,10 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        core.Ajax.ShowMessage(isAjax, "alreadyReported", "Already Reported", "You have already reported this comment as SPAM.");
+                        core.Response.ShowMessage("alreadyReported", "Already Reported", "You have already reported this comment as SPAM.");
                     }
                 }
-                core.Ajax.ShowMessage(isAjax, "commentReported", "Reported Comment", "You have successfully reported a comment.");
+                core.Response.ShowMessage("commentReported", "Reported Comment", "You have successfully reported a comment.");
             }
 
             if (mode == "delete")
@@ -271,7 +271,7 @@ namespace BoxSocial.FrontEnd
                 }
                 catch
                 {
-                    core.Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                    core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                     return;
                 }
 
@@ -307,7 +307,7 @@ namespace BoxSocial.FrontEnd
                     }
                     catch (InvalidApplicationException)
                     {
-                        core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
+                        core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
                         return;
                     }
 
@@ -315,12 +315,12 @@ namespace BoxSocial.FrontEnd
                     {
                         if (!thisComment.PermissiveParent.Access.Can("DELETE_COMMENTS"))
                         {
-                            core.Ajax.ShowMessage(isAjax, "permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
+                            core.Response.ShowMessage("permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                         }
                     }
                     catch (InvalidItemException)
                     {
-                        core.Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                        core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                     }
 
                     // delete the comment
@@ -348,10 +348,10 @@ namespace BoxSocial.FrontEnd
                 }
                 catch (InvalidCommentException)
                 {
-                    core.Ajax.ShowMessage(isAjax, "errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                    core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                 }
 
-                core.Ajax.SendRawText("commentDeleted", "You have successfully deleted the comment.");
+                core.Response.SendRawText("commentDeleted", "You have successfully deleted the comment.");
             }
 
             try
@@ -363,13 +363,13 @@ namespace BoxSocial.FrontEnd
             }
             catch
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x02)");
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x02)");
                 return;
             }
 
             if (itemId == 0 || itemTypeId == 0)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x08)");
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x08)");
                 return;
             }
 
@@ -397,7 +397,7 @@ namespace BoxSocial.FrontEnd
             }
             catch (InvalidApplicationException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x03)");
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x03)");
                 return;
             }
 
@@ -427,17 +427,17 @@ namespace BoxSocial.FrontEnd
 
                     if (!pItem.Access.Can("COMMENT"))
                     {
-                        core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
+                        core.Response.ShowMessage("notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
                     }
                 }
                 else
                 {
-                    core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Item", "The comment you have attempted to post is invalid. (0x07)");
+                    core.Response.ShowMessage("invalidComment", "Invalid Item", "The comment you have attempted to post is invalid. (0x07)");
                 }
             }
             catch (InvalidItemException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
             }
 
             Comment commentObject = null;
@@ -477,27 +477,27 @@ namespace BoxSocial.FrontEnd
             }
             catch (NotLoggedInException)
             {
-                core.Ajax.ShowMessage(isAjax, "notLoggedIn", "Not Logged In", "You must be logged in to post a comment.");
+                core.Response.ShowMessage("notLoggedIn", "Not Logged In", "You must be logged in to post a comment.");
             }
             catch (CommentFloodException)
             {
-                core.Ajax.ShowMessage(isAjax, "rejectedByFloodControl", "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
+                core.Response.ShowMessage("rejectedByFloodControl", "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
             }
             catch (CommentTooLongException)
             {
-                core.Ajax.ShowMessage(isAjax, "commentTooLong", "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
+                core.Response.ShowMessage("commentTooLong", "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
             }
             catch (CommentTooShortException)
             {
-                core.Ajax.ShowMessage(isAjax, "commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
+                core.Response.ShowMessage("commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
             }
             catch (InvalidCommentException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x05)");
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x05)");
             }
             catch (Exception ex)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x06) " + ex.ToString());
+                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x06) " + ex.ToString());
             }
 
             if (Request.Form["ajax"] == "true")
@@ -561,7 +561,7 @@ namespace BoxSocial.FrontEnd
                     commentsVariableCollection.Parse("NORMAL", "FALSE");
                 }
 
-                core.Ajax.SendRawText("comment", ct.ToString());
+                core.Response.SendRawText("comment", ct.ToString());
 
                 if (db != null)
                 {

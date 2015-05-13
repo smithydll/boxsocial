@@ -1654,7 +1654,7 @@ namespace BoxSocial.Applications.Gallery
 
                 JsonSerializer js;
                 StringWriter jstw;
-                JsonWriter jtw;
+                JsonTextWriter jtw;
 
                 js = new JsonSerializer();
                 jstw = new StringWriter();
@@ -1731,6 +1731,7 @@ namespace BoxSocial.Applications.Gallery
 
                 Size hdSize = galleryItem.GetSize(new Size(1920, 1080));
 
+                e.Core.Meta.Add("og:site_name", e.Core.Settings.SiteTitle);
                 e.Core.Meta.Add("twitter:card", "photo");
                 if (!string.IsNullOrEmpty(e.Core.Settings.TwitterName))
                 {
@@ -1746,7 +1747,11 @@ namespace BoxSocial.Applications.Gallery
                     e.Core.Meta.Add("twitter:title", galleryItem.ItemTitle);
                     e.Core.Meta.Add("og:title", galleryItem.ItemTitle);
                 }
-                e.Core.Meta.Add("og:type", "photo");
+                else
+                {
+                    e.Core.Meta.Add("og:title", galleryItem.Path);
+                }
+                e.Core.Meta.Add("og:type", "boxsocialapp:photo");
                 e.Core.Meta.Add("og:url", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.Uri)));
                 e.Core.Meta.Add("og:image", e.Core.Hyperlink.StripSid(e.Core.Hyperlink.AppendCurrentSid(galleryItem.DisplayUri)));
 

@@ -49,7 +49,7 @@ namespace BoxSocial.FrontEnd
 
             if (!core.Session.SignedIn)
             {
-                core.Ajax.ShowMessage(isAjax, "notSignedIn", "Subscription Error", "You must be logged in to subscribe.");
+                core.Response.ShowMessage("notSignedIn", "Subscription Error", "You must be logged in to subscribe.");
             }
 
             string mode = core.Http["mode"];
@@ -63,7 +63,7 @@ namespace BoxSocial.FrontEnd
 			}
 			catch
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
                 return;
 			}
 
@@ -92,12 +92,12 @@ namespace BoxSocial.FrontEnd
             }
 			catch (InvalidItemTypeException)
 			{
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
                 return;
 			}
             catch (InvalidApplicationException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to rate is invalid.");
                 return;
             }
 
@@ -114,7 +114,7 @@ namespace BoxSocial.FrontEnd
                         {
                             if (isAjax)
                             {
-                                core.Ajax.SendStatus("subscriptionAccepted");
+                                core.Response.SendStatus("subscriptionAccepted");
                             }
                             else
                             {
@@ -123,7 +123,7 @@ namespace BoxSocial.FrontEnd
                         }
                         else
                         {
-                            core.Ajax.ShowMessage(isAjax, "error", "Error", "Subscription unsuccessful.");
+                            core.Response.ShowMessage("error", "Error", "Subscription unsuccessful.");
                         }
                         break;
                     case "unsubscribe":
@@ -134,7 +134,7 @@ namespace BoxSocial.FrontEnd
                         {
                             if (isAjax)
                             {
-                                core.Ajax.SendStatus("unsubscriptionAccepted");
+                                core.Response.SendStatus("unsubscriptionAccepted");
                             }
                             else
                             {
@@ -143,22 +143,22 @@ namespace BoxSocial.FrontEnd
                         }
                         else
                         {
-                            core.Ajax.ShowMessage(isAjax, "error", "Error", "Unsubscription unsuccessful.");
+                            core.Response.ShowMessage("error", "Error", "Unsubscription unsuccessful.");
                         }
                         break;
                 }
             }
             catch (InvalidItemException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
+                core.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
             }
             catch (InvalidSubscriptionException)
             {
-                core.Ajax.ShowMessage(isAjax, "invalidSubscription", "Invalid Subscription", "The subscription is not valid.");
+                core.Response.ShowMessage("invalidSubscription", "Invalid Subscription", "The subscription is not valid.");
             }
             catch (AlreadySubscribedException)
             {
-                core.Ajax.ShowMessage(isAjax, "alreadySubscribed", "Already Subscribed", "You have already subscribe to this item, you cannot subscribe to it again");
+                core.Response.ShowMessage("alreadySubscribed", "Already Subscribed", "You have already subscribe to this item, you cannot subscribe to it again");
             }
         }
     }

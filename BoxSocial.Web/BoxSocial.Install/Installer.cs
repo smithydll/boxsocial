@@ -509,7 +509,7 @@ namespace BoxSocial.Install
 
             Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
             Template template = new Template(Path.Combine(root, "templates"), "default.html");
-            Core core = new Core(null, db, template);
+            Core core = new Core(null, ResponseFormats.Html, db, template);
             UnixTime tz = new UnixTime(core, 0);
 
             InstallEmoticons(core);
@@ -527,7 +527,7 @@ namespace BoxSocial.Install
 
             //Setup
             Mysql db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-            Core core = new Core(null, db, null);
+            Core core = new Core(null, ResponseFormats.Html, db, null);
 
             Console.Clear();
 
@@ -544,7 +544,7 @@ namespace BoxSocial.Install
                 db.CloseConnection();
                 Thread.Sleep(100);
                 db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-                core = new Core(null, db, null);
+                core = new Core(null, ResponseFormats.Html, db, null);
 
                 SelectQuery query = User.GetSelectQueryStub(core, typeof(User));
                 query.LimitStart = (int)offset;
@@ -667,7 +667,7 @@ namespace BoxSocial.Install
         {
             //Setup
             Mysql db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-            Core core = new Core(null, db, null);
+            Core core = new Core(null, ResponseFormats.Html, db, null);
 
             Dictionary<string, long> typeIds = new Dictionary<string, long>();
 
@@ -690,7 +690,7 @@ namespace BoxSocial.Install
                     db.CloseConnection();
                     Thread.Sleep(100);
                     db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-                    core = new Core(null, db, null);
+                    core = new Core(null, ResponseFormats.Html, db, null);
 
                     DataTable dt = db.Query("SELECT * FROM user_profile LIMIT " + offset.ToString() + ", 100;");
                     rows = dt.Rows.Count;
@@ -741,7 +741,7 @@ namespace BoxSocial.Install
                     db.CloseConnection();
                     Thread.Sleep(100);
                     db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-                    core = new Core(null, db, null);
+                    core = new Core(null, ResponseFormats.Html, db, null);
 
                     DataTable dt = db.Query("SELECT * FROM user_pages LIMIT " + offset.ToString() + ", 100;");
                     rows = dt.Rows.Count;
@@ -777,7 +777,7 @@ namespace BoxSocial.Install
                     db.CloseConnection();
                     Thread.Sleep(100);
                     db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-                    core = new Core(null, db, null);
+                    core = new Core(null, ResponseFormats.Html, db, null);
 
                     DataTable dt = db.Query("SELECT * FROM user_blog LIMIT " + offset.ToString() + ", 100;");
                     rows = dt.Rows.Count;
@@ -828,7 +828,7 @@ namespace BoxSocial.Install
                     db.CloseConnection();
                     Thread.Sleep(100);
                     db = new Mysql("root", Installer.mysqlRootPassword, Installer.mysqlDatabase, "localhost");
-                    core = new Core(null, db, null);
+                    core = new Core(null, ResponseFormats.Html, db, null);
 
                     DataTable dt = db.Query("SELECT * FROM user_galleries LIMIT " + offset.ToString() + ", 100;");
                     rows = dt.Rows.Count;
@@ -1453,7 +1453,7 @@ namespace BoxSocial.Install
 
                 Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
                 Template template = new Template(Path.Combine(root, "templates"), "default.html");
-                Core core = new Core(null, db, template);
+                Core core = new Core(null, ResponseFormats.Html, db, template);
                 UnixTime tz = new UnixTime(core, 0);
 
                 SelectQuery query = new SelectQuery(typeof(User));
@@ -1656,7 +1656,7 @@ namespace BoxSocial.Install
 
             Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
             Template template = new Template(Path.Combine(root, "templates"), "default.html");
-            Core core = new Core(null, db, template);
+            Core core = new Core(null, ResponseFormats.Html, db, template);
             UnixTime tz = new UnixTime(core, 0);
 
             //User anonymous = User.Register(core, "Anonymous", "anonymous@example.com", "Anonymous", "Anonymous");
@@ -2719,7 +2719,7 @@ namespace BoxSocial.Install
 
             Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
             Template template = new Template(Path.Combine(root, "templates"), "default.html");
-            Core core = new Core(null, db, template);
+            Core core = new Core(null, ResponseFormats.Html, db, template);
             UnixTime tz = new UnixTime(core, 0);
 
             // disable application

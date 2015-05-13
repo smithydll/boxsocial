@@ -55,7 +55,8 @@ namespace BoxSocial.Internals
         private Display display;
         private Email email;
         private SmsGateway sms;
-        private AjaxWriter ajax;
+        private ResponseFormats responseFormat;
+        private ResponseWriter response;
         private Hyperlink hyperlink;
         private Settings applicationSettings;
         private Storage storage;
@@ -637,15 +638,27 @@ namespace BoxSocial.Internals
         /// <summary>
         /// Gets the Ajax Interface
         /// </summary>
-        public AjaxWriter Ajax
+        public ResponseWriter Response
         {
             get
             {
-                if (ajax == null)
+                if (response == null)
                 {
-                    ajax = new AjaxWriter(this);
+                    switch (responseFormat)
+                    {
+                        case ResponseFormats.Xml:
+
+                            response = new AjaxWriter(this);
+                            break;
+                        case ResponseFormats.Json:
+                            response = new JsonWriter(this);
+                            break;
+                        default:
+                            response = new HtmlWriter(this);
+                            break;
+                    }
                 }
-                return ajax;
+                return response;
             }
         }
 
@@ -944,11 +957,11 @@ namespace BoxSocial.Internals
             }
         }
 
-        public bool IsAjax
+        public ResponseFormats ResponseFormat
         {
             get
             {
-                return page.IsAjax;
+                return responseFormat;
             }
         }
 
@@ -991,7 +1004,7 @@ namespace BoxSocial.Internals
             applicationEntryCache.Add(assemblyName, GetApplication(assemblyName));
         }
 
-        public Core(TPage page, Mysql db, Template template)
+        public Core(TPage page, ResponseFormats responseFormat, Mysql db, Template template)
         {
             HeadHooks += new HookHandler(Core_HeadHooks);
             PrimitiveHeadHooks += new HookHandler(Core_PrimitiveHeadHooks);
@@ -1003,6 +1016,7 @@ namespace BoxSocial.Internals
             this.page = page;
             this.db = db;
             this.template = template;
+            this.responseFormat = responseFormat;
 			
 			ItemKey.populateItemTypeCache(this);
             //QueryCache.populateQueryCache();
@@ -1014,11 +1028,12 @@ namespace BoxSocial.Internals
             primitiveTypes = ItemKey.GetPrimitiveTypes(this);
         }
 
-        public Core(OPage page, Mysql db)
+        public Core(OPage page, ResponseFormats responseFormat, Mysql db)
         {
             LoadApplication += new LoadHandler(Core_LoadApplication);
 
             this.db = db;
+            this.responseFormat = responseFormat;
 
             ItemKey.populateItemTypeCache(this);
             //QueryCache.populateQueryCache();
@@ -1181,11 +1196,6 @@ namespace BoxSocial.Internals
             if (ae == null)
             {
                 // Internal calls
-
-                JsonSerializer js;
-                StringWriter jstw;
-                JsonWriter jtw;
-
                 switch (callName)
                 {
                     case "item_types":
@@ -1197,7 +1207,7 @@ namespace BoxSocial.Internals
                     case "primitive":
                         break;
                     case "permission_groups":
-                        this.Functions.ReturnPermissionGroupList(ResponseFormat.Json);
+                        this.Functions.ReturnPermissionGroupList(ResponseFormats.Json);
                         break;
                     case "page_list":
                         {
@@ -1219,13 +1229,7 @@ namespace BoxSocial.Internals
 
                                 List<Page> pages = Display.GetPageList(owner, Session.LoggedInMember, page);
 
-                                js = new JsonSerializer();
-                                jstw = new StringWriter();
-                                jtw = new JsonTextWriter(jstw);
-
-                                js.NullValueHandling = NullValueHandling.Ignore;
-
-                                Http.WriteJson(js, pages);
+                                Response.WriteObject(pages);
                             }
                         }
                         break;
@@ -1255,13 +1259,7 @@ namespace BoxSocial.Internals
                             {
                                 List<Comment> comments = Comment.GetComments(this, itemKey, order, page, perPage, null);
 
-                                js = new JsonSerializer();
-                                jstw = new StringWriter();
-                                jtw = new JsonTextWriter(jstw);
-
-                                js.NullValueHandling = NullValueHandling.Ignore;
-
-                                Http.WriteJson(js, comments);
+                                Response.WriteObject(comments);
                             }
                         }
                         break;
@@ -1269,6 +1267,7 @@ namespace BoxSocial.Internals
                         Comment.Post(this);
                         break;
                     case "comment_delete":
+                        
                         break;
                     case "rate":
                         {
@@ -1286,6 +1285,26 @@ namespace BoxSocial.Internals
                             }
 
                             Rating.Vote(this, itemKey, rating);
+                        }
+                        break;
+                    case "get_rating":
+                        {
+                            long itemId = Functions.RequestLong("item", 0);
+                            long itemTypeId = Functions.RequestLong("type", 0);
+
+                            ItemKey itemKey = null;
+
+                            try
+                            {
+                                itemKey = new ItemKey(itemId, itemTypeId);
+                            }
+                            catch
+                            {
+                            }
+
+                            ItemInfo info = new ItemInfo(this, itemKey);
+
+                            Response.WriteObject(info.Rating);
                         }
                         break;
                 }

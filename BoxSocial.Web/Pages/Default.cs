@@ -51,7 +51,7 @@ namespace BoxSocial.Applications.Pages
 
                 JsonSerializer js;
                 StringWriter jstw;
-                JsonWriter jtw;
+                JsonTextWriter jtw;
 
                 js = new JsonSerializer();
                 jstw = new StringWriter();

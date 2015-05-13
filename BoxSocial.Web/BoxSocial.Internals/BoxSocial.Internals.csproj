@@ -136,9 +136,11 @@
     <Compile Include="Emoticon.cs" />
     <Compile Include="Facebook.cs" />
     <Compile Include="HibernateItem.cs" />
+    <Compile Include="HtmlWriter.cs" />
     <Compile Include="IEmbeddableItem.cs" />
     <Compile Include="INotifiableItem.cs" />
     <Compile Include="IPermissibleControlPanelSubModule.cs" />
+    <Compile Include="JsonWriter.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OAuthApplication.cs" />
     <Compile Include="OAuthToken.cs" />
@@ -309,5 +311,8 @@
   <PropertyGroup>
     <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">"C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
     <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">"resgen2" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"C:\Program Files (x86)\Microsoft SDKs\Windows\v8.0A\Bin\NETFX 4.0 Tools\ResGen.exe" "$(ProjectDir)languages\Internals.en.resx"</PostBuildEvent>
   </PropertyGroup>
 </Project>

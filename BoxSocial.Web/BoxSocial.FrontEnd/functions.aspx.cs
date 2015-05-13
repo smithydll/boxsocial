@@ -58,11 +58,11 @@ namespace BoxSocial.FrontEnd
             {
                 case "date":
                     string date = core.Functions.InterpretDate(core.Http.Form["date"], (DisplayMedium)int.Parse(core.Http.Form["Medium"]));
-                    core.Ajax.SendRawText("date", date);
+                    core.Response.SendRawText("date", date);
                     return;
                 case "time":
                     string time = core.Functions.InterpretTime(core.Http.Form["time"]);
-                    core.Ajax.SendRawText("time", time);
+                    core.Response.SendRawText("time", time);
                     return;
                 case "friend-list":
                     ReturnFriendList();
@@ -79,7 +79,7 @@ namespace BoxSocial.FrontEnd
                     CheckNewFeedItems();
                     return;
                 case "permission-groups-list":
-                    core.Functions.ReturnPermissionGroupList(ResponseFormat.Xml);
+                    core.Functions.ReturnPermissionGroupList(ResponseFormats.Xml);
                     return;
                 case "embed":
                     ReturnItemEmbedCode();
@@ -232,7 +232,7 @@ namespace BoxSocial.FrontEnd
                     }
                     else
                     {
-                        core.Ajax.SendRawText("", string.Format("oauth_token={0}&oauth_verifier={1}", Uri.EscapeDataString(token.Token), Uri.EscapeDataString(verifier.Verifier)));
+                        core.Response.SendRawText("", string.Format("oauth_token={0}&oauth_verifier={1}", Uri.EscapeDataString(token.Token), Uri.EscapeDataString(verifier.Verifier)));
                     }
                 }
                 else
@@ -343,7 +343,7 @@ namespace BoxSocial.FrontEnd
                 tagsText.Add(tag.Id.ToString(), tag.TagText);
             }
 
-            core.Ajax.SendDictionary("tagSelect", tagsText);
+            core.Response.SendDictionary("tagSelect", tagsText);
 
         }
 
@@ -362,7 +362,7 @@ namespace BoxSocial.FrontEnd
                     friendNames.Add(friend.Id, new string[] { friend.DisplayName, friend.Tile });
                 }
 
-                core.Ajax.SendUserDictionary("friendSelect", friendNames);
+                core.Response.SendUserDictionary("friendSelect", friendNames);
             }
         }
 
@@ -393,7 +393,7 @@ namespace BoxSocial.FrontEnd
                 userInfo.Add("id", user.ItemKey.Id.ToString());
                 userInfo.Add("type", user.ItemKey.TypeId.ToString());
 
-                core.Ajax.SendDictionary("contactCard", userInfo);
+                core.Response.SendDictionary("contactCard", userInfo);
             }
             catch (InvalidUserException)
             {
@@ -481,7 +481,7 @@ namespace BoxSocial.FrontEnd
                         default:
                             JsonSerializer js;
                             StringWriter jstw;
-                            JsonWriter jtw;
+                            JsonTextWriter jtw;
 
                             js = new JsonSerializer();
                             jstw = new StringWriter();
@@ -520,7 +520,7 @@ namespace BoxSocial.FrontEnd
             if (!core.Session.IsLoggedIn)
             {
                 Dictionary<string, string> returnValues = new Dictionary<string, string>();
-                core.Ajax.SendDictionary("noNewContent", returnValues);
+                core.Response.SendDictionary("noNewContent", returnValues);
             }
 
             if (mode == "query")
@@ -536,11 +536,11 @@ namespace BoxSocial.FrontEnd
                 {
                     returnValues.Add("feed-count", count.ToString());
 
-                    core.Ajax.SendDictionary("newContent", returnValues);
+                    core.Response.SendDictionary("newContent", returnValues);
                 }
                 else
                 {
-                    core.Ajax.SendDictionary("noNewContent", returnValues);
+                    core.Response.SendDictionary("noNewContent", returnValues);
                 }
             }
             else if (mode == "fetch")
@@ -623,7 +623,7 @@ namespace BoxSocial.FrontEnd
                 returnValues.Add("notifications", session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
                 returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
 
-                core.Ajax.SendDictionary("newFeedItems", returnValues);
+                core.Response.SendDictionary("newFeedItems", returnValues);
             }
             else
             {
@@ -632,7 +632,7 @@ namespace BoxSocial.FrontEnd
                 returnValues.Add("notifications", session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
                 returnValues.Add("mail", session.LoggedInMember.UserInfo.UnseenMail.ToString());
 
-                core.Ajax.SendDictionary("unreadItems", returnValues);
+                core.Response.SendDictionary("unreadItems", returnValues);
             }
         }
     }

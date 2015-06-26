@@ -630,6 +630,10 @@ namespace BoxSocial.Internals
                     {
                         sms = new HttpSmsGateway(Settings.SmsHttpGateway);
                     }
+                    else if (Settings.SmsProvider == "oauth")
+                    {
+                        sms = new OAuthSmsGateway(Settings.SmsOAuthTokenUri, Settings.SmsOAuthSmsUri, Settings.SmsOAuthKey, Settings.SmsOAuthSecret);
+                    }
                 }
                 return sms;
             }
@@ -1266,8 +1270,22 @@ namespace BoxSocial.Internals
                     case "comment_post":
                         Comment.Post(this);
                         break;
+                    case "comment_report":
+                        //Comment.Report(this);
+                        break;
                     case "comment_delete":
-                        
+                        try
+                        {
+                            Comment.Delete(this);
+                        }
+                        catch (InvalidCommentException)
+                        {
+                            this.Response.ShowMessage("error", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
+                        }
+                        catch (PermissionDeniedException)
+                        {
+                            this.Response.ShowMessage("permission-denied", "Permission Denied", "You do not have the permissions to delete this comment.");
+                        }
                         break;
                     case "rate":
                         {
@@ -1305,6 +1323,27 @@ namespace BoxSocial.Internals
                             ItemInfo info = new ItemInfo(this, itemKey);
 
                             Response.WriteObject(info.Rating);
+                        }
+                        break;
+                    case "subscribe":
+                        {
+                            string mode = this.Http["mode"];
+                            long itemId = this.Functions.RequestLong("item_id", 0);
+                            long itemTypeId = this.Functions.RequestLong("item_type_id", 0);
+
+                            ItemKey itemKey = null;
+
+                            try
+                            {
+                                itemKey = new ItemKey(itemId, itemTypeId);
+                            }
+                            catch
+                            {
+                                this.Response.ShowMessage("invalidItem", "Invalid Item", "The item you have attempted to subscribe to is invalid.");
+                                return;
+                            }
+
+                            //Subscription.Register();
                         }
                         break;
                 }

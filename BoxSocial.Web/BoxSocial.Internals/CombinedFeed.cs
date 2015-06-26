@@ -22,8 +22,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -31,6 +35,81 @@ namespace BoxSocial.Internals
 {
     public static class CombinedFeed
     {
+        public static List<Action> GetNewerItems(Core core, User owner, long newerThanOffset)
+        {
+            List<Action> feedItems = new List<Action>(10);
+
+            SelectQuery query = Action.GetSelectQueryStub(core, typeof(Action));
+            query.AddSort(SortOrder.Descending, "action_time_ut");
+            query.LimitCount = 20;
+
+            List<long> friendIds = new List<long> { owner.Id };
+
+            QueryCondition qc1 = query.AddCondition("action_id", ConditionEquality.GreaterThan, newerThanOffset);
+
+            List<IPermissibleItem> tempMessages = new List<IPermissibleItem>(10);
+            List<Action> tempActions = new List<Action>(10);
+
+            System.Data.Common.DbDataReader feedReader = core.Db.ReaderQuery(query);
+
+            if (!feedReader.HasRows)
+            {
+                feedReader.Close();
+                feedReader.Dispose();
+                return feedItems;
+            }
+
+            while (feedReader.Read())
+            {
+                Action action = new Action(core, owner, feedReader);
+                tempActions.Add(action);
+            }
+
+            feedReader.Close();
+            feedReader.Dispose();
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(new ItemKey(action.ActionItemKey.GetType(core).ApplicationId, ItemType.GetTypeId(core, typeof(ApplicationEntry))));
+            }
+
+            foreach (Action action in tempActions)
+            {
+                core.ItemCache.RequestItem(action.ActionItemKey);
+                if (!action.ActionItemKey.Equals(action.InteractItemKey))
+                {
+                    core.ItemCache.RequestItem(action.InteractItemKey);
+                }
+            }
+
+            foreach (Action action in tempActions)
+            {
+                tempMessages.Add(action.PermissiveParent);
+            }
+
+            if (tempMessages.Count > 0)
+            {
+                core.AcessControlCache.CacheGrants(tempMessages);
+            }
+
+            foreach (Action action in tempActions)
+            {
+                if (action.PermissiveParent.Access.Can("VIEW"))
+                {
+                    if (feedItems.Count == 10)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        feedItems.Add(action);
+                    }
+                }
+            }
+
+            return feedItems;
+        }
+
         public static List<Action> GetItems(Core core, User owner, int currentPage, int perPage, long currentOffset, out bool moreContent)
         {
             double pessimism = 2.0;
@@ -333,5 +412,47 @@ namespace BoxSocial.Internals
             core.Response.SendRawText(moreContent ? loadMoreUri : "noMoreContent", template.ToString());
         }
 
+        public static void ShowMore(Core core, User owner)
+        {
+            long newestId = core.Functions.RequestLong("newest-id", 0);
+            long oldestId = core.Functions.RequestLong("oldest-id", 0);
+            long newerId = 0;
+
+            bool moreContent = false;
+            long lastId = 0;
+
+            List<Action> feedActions = null;
+
+            if (newestId > 0)
+            {
+                feedActions = CombinedFeed.GetNewerItems(core, owner, newestId);
+            }
+            else
+            {
+                feedActions = CombinedFeed.GetItems(core, owner, 1, 20, oldestId, out moreContent);
+            }
+
+            if (feedActions != null)
+            {
+                JsonSerializer js;
+                StringWriter jstw;
+                JsonTextWriter jtw;
+
+                js = new JsonSerializer();
+                jstw = new StringWriter();
+                jtw = new JsonTextWriter(jstw);
+
+                js.NullValueHandling = NullValueHandling.Ignore;
+
+                core.Http.WriteJson(js, feedActions);
+            }
+
+            if (core.Db != null)
+            {
+                core.Db.CloseConnection();
+            }
+
+            core.Http.End();
+        }
     }
 }

@@ -106,7 +106,7 @@ function SentAction(r, e, a) {
 }
 
 function DeleteComment(id, iid) {
-    return PostToPage(DeletedComment, "api/comment?mode=delete&item=" + id, ".c" + id, { ajax: "true" });
+    return PostToPage(DeletedComment, "api/comment?mode=delete&id=" + id, ".c" + id, { ajax: "true" });
 }
 
 function DeletedComment(r, e) {
@@ -144,7 +144,7 @@ function SubmitComment(id, type, zero, sort, text) {
         text = $("#comment-text-" + id).val();
     }
     if (!$("#comment-text-" + id).hasClass('blur')) {
-        return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", item: id, type: type, comment: text });
+        return PostToPage(SubmitedComment, "api/comment", $('.comments-for-' + type + '-' + id), { ajax: "true", "item_id": id, "item_type_id": type, comment: text });
     }
     return false;
 }

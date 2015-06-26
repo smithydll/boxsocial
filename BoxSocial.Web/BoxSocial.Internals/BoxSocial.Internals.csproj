@@ -143,6 +143,7 @@
     <Compile Include="JsonWriter.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OAuthApplication.cs" />
+    <Compile Include="OAuthSmsGateway.cs" />
     <Compile Include="OAuthToken.cs" />
     <Compile Include="OAuthVerifier.cs" />
     <Compile Include="OPage.cs">

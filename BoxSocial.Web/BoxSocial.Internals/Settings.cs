@@ -78,6 +78,38 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string SmsOAuthTokenUri
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-token-uri"];
+            }
+        }
+
+        public string SmsOAuthSmsUri
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-sms-uri"];
+            }
+        }
+
+        public string SmsOAuthKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-key"];
+            }
+        }
+
+        public string SmsOAuthSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-secret"];
+            }
+        }
+
         public string QueueProvider
         {
             get

@@ -268,6 +268,24 @@ namespace BoxSocial.Internals
             ActionableItem.CleanUp(core, this);
         }
 
+        public long Delete(bool parentDeleted)
+        {
+            long returnValue = 0;
+            if (parentDeleted)
+            {
+                returnValue = base.Delete();
+            }
+            else
+            {
+                db.BeginTransaction();
+                returnValue = db.UpdateQuery(string.Format("UPDATE comments SET comment_deleted = TRUE WHERE comment_id = {0}",
+                    Id));
+            }
+
+            Comment.CommentDeleted(core, this.CommentedItemKey);
+            return returnValue;
+        }
+
         public static void Post(Core core)
         {
             long itemId = core.Functions.FormLong("item_id", 0);
@@ -275,10 +293,10 @@ namespace BoxSocial.Internals
             string comment = core.Http.Form["comment"];
 
             ItemKey itemKey = new ItemKey(itemId, itemTypeId);
+            ItemType itemType = new ItemType(core, itemTypeId);
 
             NumberedItem item = null;
             ICommentableItem thisItem = null;
-
 
             item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
 
@@ -320,15 +338,66 @@ namespace BoxSocial.Internals
             {
                 if (item is IActionableItem || item is IActionableSubItem)
                 {
+                    // Touch Feed
                 }
                 else
                 {
-                    //ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
+                    ApplicationEntry ae = core.GetApplication(itemType.ApplicationId);
+                    ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
                 }
 
                 ICommentableItem citem = (ICommentableItem)item;
 
                 citem.CommentPosted(new CommentPostedEventArgs(commentObject, core.Session.LoggedInMember, new ItemKey(itemId, itemTypeId)));
+
+                try
+                {
+                    Subscription.SubscribeToItem(core, itemKey);
+                }
+                catch (AlreadySubscribedException)
+                {
+                    // not a problem
+                }
+            }
+        }
+
+        public static bool Edit(Core core)
+        {
+            return false;
+        }
+
+        public static bool Delete(Core core)
+        {
+            long commentId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+            Comment comment;
+
+            bool canDelete = false;
+            comment = new Comment(core, commentId);
+
+            ICommentableItem item = comment.CommentedItem;
+
+            if (comment.PermissiveParent.Access.Can("DELETE_COMMENTS"))
+            {
+                canDelete = true;
+            }
+            else
+            {
+                throw new PermissionDeniedException("UNAUTHORISED_TO_DELETE_COMMENT");
+            }
+
+            if (comment.OwnerKey == core.LoggedInMemberItemKey)
+            {
+                canDelete = true;
+            }
+
+            if (canDelete)
+            {
+                comment.Delete();
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 

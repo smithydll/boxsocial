@@ -199,6 +199,13 @@ namespace BoxSocial.Applications.Profile
                 case "status":
                     break;
                 case "feed":
+                    {
+                        long ownerId = core.Functions.RequestLong("owner_id", core.Session.LoggedInMember.Id);
+                        long ownerTypeId = core.Functions.RequestLong("owner_type_id", core.Session.LoggedInMember.ItemKey.TypeId);
+                        User user = new User(core, ownerId);
+
+                        CombinedFeed.ShowMore(core, user);
+                    }
                     break;
             }
         }

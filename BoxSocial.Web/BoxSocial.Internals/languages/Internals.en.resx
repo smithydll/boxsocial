@@ -998,6 +998,12 @@
   <data name="TWO_WEEKS_AGO" xml:space="preserve">
     <value>Two Weeks Ago</value>
   </data>
+  <data name="UNAUTHORISED_TO_COMMENT" xml:space="preserve">
+    <value>You are unauthorised to leave comments for this item</value>
+  </data>
+  <data name="UNAUTHORISED_TO_DELETE_COMMENT" xml:space="preserve">
+    <value>You do not have the permissions to delete this comment</value>
+  </data>
   <data name="UNINSTALL" xml:space="preserve">
     <value>Uninstall</value>
   </data>

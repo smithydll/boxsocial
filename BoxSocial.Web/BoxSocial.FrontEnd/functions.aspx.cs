@@ -144,6 +144,8 @@ namespace BoxSocial.FrontEnd
                             return;
                     }
                     break;
+                case "sms":
+                    break;
             }
         }
 

@@ -50,7 +50,7 @@ namespace BoxSocial.FrontEnd
             string comment;
             long itemId;
             long itemTypeId;
-			ItemKey itemKey = null;
+            ItemKey itemKey = null;
             ICommentableItem thisItem = null;
             long commentId = -1;
             bool isAjax = false;
@@ -265,284 +265,220 @@ namespace BoxSocial.FrontEnd
 
             if (mode == "delete")
             {
-                try
-                {
-                    itemId = long.Parse((string)Request.QueryString["item"]);
-                }
-                catch
-                {
-                    core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
-                    return;
-                }
-
                 // select the comment
                 try
                 {
-                    Comment thisComment = new Comment(core, itemId);
-
-                    itemId = thisComment.ItemId;
-                    itemTypeId = thisComment.ItemTypeId;
-
-                    try
-                    {
-                        // This isn't the most elegant fix, but it works
-                        if (core.IsPrimitiveType(itemTypeId))
-                        {
-                            ae = core.GetApplication("GuestBook");
-                        }
-                        else
-                        {
-                            ItemType itemType = new ItemType(core, itemTypeId);
-                            if (itemType.ApplicationId == 0)
-                            {
-                                ae = core.GetApplication("GuestBook");
-                            }
-                            else
-                            {
-                                ae = new ApplicationEntry(core, itemType.ApplicationId);
-                            }
-                        }
-
-                        BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
-                    }
-                    catch (InvalidApplicationException)
-                    {
-                        core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x01)");
-                        return;
-                    }
-
-                    try
-                    {
-                        if (!thisComment.PermissiveParent.Access.Can("DELETE_COMMENTS"))
-                        {
-                            core.Response.ShowMessage("permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
-                        }
-                    }
-                    catch (InvalidItemException)
-                    {
-                        core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
-                    }
-
-                    // delete the comment
-                    if (thisComment.SpamScore >= 10)
-                    {
-                        // keep for spam system
-                        db.BeginTransaction();
-                        db.UpdateQuery(string.Format("UPDATE comments SET comment_deleted = TRUE WHERE comment_id = {0}",
-                            itemId));
-                    }
-                    else
-                    {
-                        
-                        // do not need to keep
-                        db.BeginTransaction();
-                        thisComment.Delete();
-                        /*db.UpdateQuery(string.Format("DELETE FROM comments WHERE comment_id = {0}",
-                            itemId));*/
-
-                        ItemType itemType = new ItemType(core, itemTypeId);
-                        //Notification.DeleteItem(itemType, itemId);
-                    }
-
-                    Comment.CommentDeleted(core, thisComment.CommentedItemKey);
+                    Comment.Delete(core);
                 }
                 catch (InvalidCommentException)
                 {
                     core.Response.ShowMessage("errorDeletingComment", "Error", "An error was encountered while deleting the comment, the comment has not been deleted.");
                 }
+                catch (PermissionDeniedException)
+                {
+                    core.Response.ShowMessage("permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
+                }
 
                 core.Response.SendRawText("commentDeleted", "You have successfully deleted the comment.");
             }
 
-            try
+            // else we post a comment
             {
-                comment = (string)Request.Form["comment"];
-                itemId = core.Functions.RequestLong("item", 0);
-                itemTypeId = core.Functions.RequestLong("type", 0);
-				itemKey = new ItemKey(itemId, itemTypeId);
-            }
-            catch
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x02)");
-                return;
-            }
-
-            if (itemId == 0 || itemTypeId == 0)
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x08)");
-                return;
-            }
-
-            try
-            {
-                // This isn't the most elegant fix, but it works
-                if (core.IsPrimitiveType(itemTypeId))
+                try
                 {
-                    ae = core.GetApplication("GuestBook");
+                    comment = (string)Request.Form["comment"];
+                    itemId = core.Functions.RequestLong("item_id", 0);
+                    itemTypeId = core.Functions.RequestLong("item_type_id", 0);
+                    itemKey = new ItemKey(itemId, itemTypeId);
                 }
-                else
+                catch
                 {
-                    ItemType itemType = new ItemType(core, itemTypeId);
-                    if (itemType.ApplicationId == 0)
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x02)");
+                    return;
+                }
+
+                if (itemId == 0 || itemTypeId == 0)
+                {
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x08)");
+                    return;
+                }
+
+                try
+                {
+                    // This isn't the most elegant fix, but it works
+                    if (core.IsPrimitiveType(itemTypeId))
                     {
                         ae = core.GetApplication("GuestBook");
                     }
                     else
                     {
-                        ae = new ApplicationEntry(core, itemType.ApplicationId);
-                    }
-                }
-
-                BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
-            }
-            catch (InvalidApplicationException)
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x03)");
-                return;
-            }
-
-            /* save comment in the database */
-
-            NumberedItem item = null;
-            try
-            {
-                item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
-                if (item is ICommentableItem)
-                {
-                    thisItem = (ICommentableItem)item;
-
-                    IPermissibleItem pItem = null;
-                    if (item is IPermissibleItem)
-                    {
-                        pItem = (IPermissibleItem)item;
-                    }
-                    else if (item is IPermissibleSubItem)
-                    {
-                        pItem = ((IPermissibleSubItem)item).PermissiveParent;
-                    }
-                    else
-                    {
-                        pItem = thisItem.Owner;
-                    }
-
-                    if (!pItem.Access.Can("COMMENT"))
-                    {
-                        core.Response.ShowMessage("notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
-                    }
-                }
-                else
-                {
-                    core.Response.ShowMessage("invalidComment", "Invalid Item", "The comment you have attempted to post is invalid. (0x07)");
-                }
-            }
-            catch (InvalidItemException)
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
-            }
-
-            Comment commentObject = null;
-            try
-            {
-                commentObject = Comment.Create(Core, itemKey, comment);
-                commentId = commentObject.CommentId;
-
-                if (item != null)
-                {
-                    if (item is IActionableItem || item is IActionableSubItem)
-                    {
-                        //ae.TouchFeed(core.Session.LoggedInMember, item);
-                    }
-                    else
-                    {
-                        ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
-                    }
-                    ICommentableItem citem = (ICommentableItem)item;
-
-                    citem.CommentPosted(new CommentPostedEventArgs(commentObject, core.Session.LoggedInMember, new ItemKey(itemId, itemTypeId)));
-                }
-
-                Comment.Commented(core, itemKey);
-
-                // Notify everyone who comments on the item by default, track this so people can unsubscribe later
-                //NotificationSubscription.Create(core, loggedInMember, itemKey);
-                try
-                {
-                    Subscription.SubscribeToItem(core, itemKey);
-                }
-                catch (AlreadySubscribedException)
-                {
-                    // not a problem
-                }
-                
-            }
-            catch (NotLoggedInException)
-            {
-                core.Response.ShowMessage("notLoggedIn", "Not Logged In", "You must be logged in to post a comment.");
-            }
-            catch (CommentFloodException)
-            {
-                core.Response.ShowMessage("rejectedByFloodControl", "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
-            }
-            catch (CommentTooLongException)
-            {
-                core.Response.ShowMessage("commentTooLong", "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
-            }
-            catch (CommentTooShortException)
-            {
-                core.Response.ShowMessage("commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
-            }
-            catch (InvalidCommentException)
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x05)");
-            }
-            catch (Exception ex)
-            {
-                core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x06) " + ex.ToString());
-            }
-
-            if (Request.Form["ajax"] == "true")
-            {
-                Template ct = new Template(Server.MapPath("./templates"), "pane.comment.html");
-                template.Medium = core.Template.Medium;
-                ct.SetProse(core.Prose);
-
-                if (core.Session.IsLoggedIn && loggedInMember != null)
-                {
-                    ct.Parse("LOGGED_IN", "TRUE");
-                    ct.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
-                    ct.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
-                    ct.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
-                }
-
-                VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
-
-                //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment), core.session.LoggedInMember));
-                core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment);
-                // TODO: finish comments this
-                commentsVariableCollection.Parse("ID", commentId.ToString());
-                commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
-                commentsVariableCollection.Parse("USER_ID", loggedInMember.Id.ToString());
-                commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);
-                commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(commentId));
-                commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(commentId));
-                commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(commentId));
-                commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
-                commentsVariableCollection.Parse("USER_TILE", loggedInMember.Tile);
-                commentsVariableCollection.Parse("USER_ICON", loggedInMember.Icon);
-
-                try
-                {
-                    if (core.Session.IsLoggedIn)
-                    {
-                        if (thisItem.Owner.CanModerateComments(loggedInMember))
+                        ItemType itemType = new ItemType(core, itemTypeId);
+                        if (itemType.ApplicationId == 0)
                         {
-                            commentsVariableCollection.Parse("MODERATE", "TRUE");
+                            ae = core.GetApplication("GuestBook");
+                        }
+                        else
+                        {
+                            ae = new ApplicationEntry(core, itemType.ApplicationId);
+                        }
+                    }
+
+                    BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                }
+                catch (InvalidApplicationException)
+                {
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x03)");
+                    return;
+                }
+
+                /* save comment in the database */
+
+                NumberedItem item = null;
+                try
+                {
+                    item = NumberedItem.Reflect(core, new ItemKey(itemId, itemTypeId));
+                    if (item is ICommentableItem)
+                    {
+                        thisItem = (ICommentableItem)item;
+
+                        IPermissibleItem pItem = null;
+                        if (item is IPermissibleItem)
+                        {
+                            pItem = (IPermissibleItem)item;
+                        }
+                        else if (item is IPermissibleSubItem)
+                        {
+                            pItem = ((IPermissibleSubItem)item).PermissiveParent;
+                        }
+                        else
+                        {
+                            pItem = thisItem.Owner;
                         }
 
-                        if (thisItem.Owner.IsItemOwner(loggedInMember))
+                        if (!pItem.Access.Can("COMMENT"))
                         {
-                            commentsVariableCollection.Parse("OWNER", "TRUE");
-                            commentsVariableCollection.Parse("NORMAL", "FALSE");
+                            core.Response.ShowMessage("notLoggedIn", "Permission Denied", "You do not have the permissions to post a comment to this item.");
+                        }
+                    }
+                    else
+                    {
+                        core.Response.ShowMessage("invalidComment", "Invalid Item", "The comment you have attempted to post is invalid. (0x07)");
+                    }
+                }
+                catch (InvalidItemException)
+                {
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x04)");
+                }
+
+                Comment commentObject = null;
+                try
+                {
+                    commentObject = Comment.Create(Core, itemKey, comment);
+                    commentId = commentObject.CommentId;
+
+                    if (item != null)
+                    {
+                        if (item is IActionableItem || item is IActionableSubItem)
+                        {
+                            //ae.TouchFeed(core.Session.LoggedInMember, item);
+                        }
+                        else
+                        {
+                            ae.PublishToFeed(core, core.Session.LoggedInMember, commentObject, item, Functions.SingleLine(core.Bbcode.Flatten(commentObject.Body)));
+                        }
+                        ICommentableItem citem = (ICommentableItem)item;
+
+                        citem.CommentPosted(new CommentPostedEventArgs(commentObject, core.Session.LoggedInMember, new ItemKey(itemId, itemTypeId)));
+                    }
+
+                    Comment.Commented(core, itemKey);
+
+                    // Notify everyone who comments on the item by default, track this so people can unsubscribe later
+                    //NotificationSubscription.Create(core, loggedInMember, itemKey);
+                    try
+                    {
+                        Subscription.SubscribeToItem(core, itemKey);
+                    }
+                    catch (AlreadySubscribedException)
+                    {
+                        // not a problem
+                    }
+
+                }
+                catch (NotLoggedInException)
+                {
+                    core.Response.ShowMessage("notLoggedIn", "Not Logged In", "You must be logged in to post a comment.");
+                }
+                catch (CommentFloodException)
+                {
+                    core.Response.ShowMessage("rejectedByFloodControl", "Posting Too Fast", "You are posting too fast. Please wait a minute and try again.");
+                }
+                catch (CommentTooLongException)
+                {
+                    core.Response.ShowMessage("commentTooLong", "Comment Too Long", "The comment you have attempted to post is too long, maximum size is 511 characters.");
+                }
+                catch (CommentTooShortException)
+                {
+                    core.Response.ShowMessage("commentTooShort", "Comment Too Short", "The comment you have attempted to post is too short, must be longer than two characters.");
+                }
+                catch (InvalidCommentException)
+                {
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x05)");
+                }
+                catch (Exception ex)
+                {
+                    core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comment you have attempted to post is invalid. (0x06) " + ex.ToString());
+                }
+
+                if (core.ResponseFormat == ResponseFormats.Xml)
+                {
+                    Template ct = new Template(Server.MapPath("./templates"), "pane.comment.html");
+                    template.Medium = core.Template.Medium;
+                    ct.SetProse(core.Prose);
+
+                    if (core.Session.IsLoggedIn && loggedInMember != null)
+                    {
+                        ct.Parse("LOGGED_IN", "TRUE");
+                        ct.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
+                        ct.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
+                        ct.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
+                    }
+
+                    VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
+
+                    //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment), core.session.LoggedInMember));
+                    core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment);
+                    // TODO: finish comments this
+                    commentsVariableCollection.Parse("ID", commentId.ToString());
+                    commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
+                    commentsVariableCollection.Parse("USER_ID", loggedInMember.Id.ToString());
+                    commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);
+                    commentsVariableCollection.Parse("U_QUOTE", core.Hyperlink.BuildCommentQuoteUri(commentId));
+                    commentsVariableCollection.Parse("U_REPORT", core.Hyperlink.BuildCommentReportUri(commentId));
+                    commentsVariableCollection.Parse("U_DELETE", core.Hyperlink.BuildCommentDeleteUri(commentId));
+                    commentsVariableCollection.Parse("TIME", tz.DateTimeToString(tz.Now));
+                    commentsVariableCollection.Parse("USER_TILE", loggedInMember.Tile);
+                    commentsVariableCollection.Parse("USER_ICON", loggedInMember.Icon);
+
+                    try
+                    {
+                        if (core.Session.IsLoggedIn)
+                        {
+                            if (thisItem.Owner.CanModerateComments(loggedInMember))
+                            {
+                                commentsVariableCollection.Parse("MODERATE", "TRUE");
+                            }
+
+                            if (thisItem.Owner.IsItemOwner(loggedInMember))
+                            {
+                                commentsVariableCollection.Parse("OWNER", "TRUE");
+                                commentsVariableCollection.Parse("NORMAL", "FALSE");
+                            }
+                            else
+                            {
+                                commentsVariableCollection.Parse("OWNER", "FALSE");
+                                commentsVariableCollection.Parse("NORMAL", "TRUE");
+                            }
                         }
                         else
                         {
@@ -550,34 +486,29 @@ namespace BoxSocial.FrontEnd
                             commentsVariableCollection.Parse("NORMAL", "TRUE");
                         }
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        commentsVariableCollection.Parse("OWNER", "FALSE");
-                        commentsVariableCollection.Parse("NORMAL", "TRUE");
+                        commentsVariableCollection.Parse("NORMAL", "FALSE");
                     }
-                }
-                catch (Exception ex)
-                {
-                    commentsVariableCollection.Parse("NORMAL", "FALSE");
-                }
 
-                core.Response.SendRawText("comment", ct.ToString());
+                    core.Response.SendRawText("comment", ct.ToString());
 
-                if (db != null)
-                {
-                    db.CloseConnection();
+                    if (db != null)
+                    {
+                        db.CloseConnection();
+                    }
+                    Response.End();
+                    return;
                 }
-                Response.End();
-                return;
-            }
-            else
-            {
-                string redirect = Request["redirect"];
-                if (!string.IsNullOrEmpty(redirect))
+                else
                 {
-                    template.Parse("REDIRECT_URI", redirect);
+                    string redirect = Request["redirect"];
+                    if (!string.IsNullOrEmpty(redirect))
+                    {
+                        template.Parse("REDIRECT_URI", redirect);
+                    }
+                    core.Display.ShowMessage("Comment Posted", "Your comment has been successfully posted.");
                 }
-                core.Display.ShowMessage("Comment Posted", "Your comment has been successfully posted.");
             }
         }
     }

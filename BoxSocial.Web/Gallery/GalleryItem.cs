@@ -1623,6 +1623,8 @@ namespace BoxSocial.Applications.Gallery
 
         public static void Show(Core core)
         {
+            long itemId = core.Functions.RequestLong("item_id", 0);
+            long itemTypeId = core.Functions.RequestLong("item_type_id", 0);
             string path = core.Http.Query["path"];
             long ownerId = core.Functions.RequestLong("owner_id", 0);
             long ownerTypeId = core.Functions.RequestLong("owner_type_id", 0);
@@ -1633,7 +1635,15 @@ namespace BoxSocial.Applications.Gallery
                 core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
                 Primitive owner = core.PrimitiveCache[ownerKey];
 
-                GalleryItem galleryItem = new GalleryItem(core, owner, path);
+                GalleryItem galleryItem = null;
+                if (itemId != 0)
+                {
+                    galleryItem = new GalleryItem(core, itemId);
+                }
+                else
+                {
+                    galleryItem = new GalleryItem(core, owner, path);
+                }
 
                 Gallery gallery = null;
 
@@ -1904,57 +1914,14 @@ namespace BoxSocial.Applications.Gallery
                     tagsVariableCollection.Parse("TAG_USER_ID", tag.TaggedMember.Id.ToString());
                 }
 
-                GalleryItem nextItem = null;
-                GalleryItem prevItem = null;
-
-                SelectQuery nextQuery = GetSelectQueryStub(e.Core, typeof(GalleryItem));
-                nextQuery.AddCondition("gallery_id", gallery.Id);
-                nextQuery.AddCondition("gallery_item_item_id", gallery.Owner.Id);
-                nextQuery.AddCondition("gallery_item_item_type_id", gallery.Owner.TypeId);
-                nextQuery.AddCondition("gallery_item_id", ConditionEquality.GreaterThan, galleryItem.Id);
-                nextQuery.AddSort(SortOrder.Ascending, "gallery_item_id");
-                nextQuery.LimitCount = 1;
-
-                SelectQuery prevQuery = GetSelectQueryStub(e.Core, typeof(GalleryItem));
-                prevQuery.AddCondition("gallery_id", gallery.Id);
-                prevQuery.AddCondition("gallery_item_item_id", gallery.Owner.Id);
-                prevQuery.AddCondition("gallery_item_item_type_id", gallery.Owner.TypeId);
-                prevQuery.AddCondition("gallery_item_id", ConditionEquality.LessThan, galleryItem.Id);
-                prevQuery.AddSort(SortOrder.Descending, "gallery_item_id");
-                prevQuery.LimitCount = 1;
-
-                System.Data.Common.DbDataReader nextDataReader = e.Db.ReaderQuery(nextQuery);
-
-                if (nextDataReader.HasRows)
+                if (galleryItem.NextItem != null)
                 {
-                    nextDataReader.Read();
-
-                    nextItem = new GalleryItem(e.Core, nextDataReader);
+                    e.Template.Parse("U_NEXT_PHOTO", galleryItem.NextItem.Uri);
                 }
 
-                nextDataReader.Close();
-                nextDataReader.Dispose();
-
-                System.Data.Common.DbDataReader prevDataReader = e.Db.ReaderQuery(prevQuery);
-
-                if (prevDataReader.HasRows)
+                if (galleryItem.PreviousItem != null)
                 {
-                    prevDataReader.Read();
-
-                    prevItem = new GalleryItem(e.Core, prevDataReader);
-                }
-
-                prevDataReader.Close();
-                prevDataReader.Dispose();
-
-                if (nextItem != null)
-                {
-                    e.Template.Parse("U_NEXT_PHOTO", nextItem.Uri);
-                }
-
-                if (prevItem != null)
-                {
-                    e.Template.Parse("U_PREVIOUS_PHOTO", prevItem.Uri);
+                    e.Template.Parse("U_PREVIOUS_PHOTO", galleryItem.PreviousItem.Uri);
                 }
 
                 /*string path1 = TPage.GetStorageFilePath(galleryItem.StoragePath);
@@ -4029,6 +3996,102 @@ namespace BoxSocial.Applications.Gallery
             get
             {
                 return applicationId;
+            }
+        }
+
+        private GalleryItem previousItem = null;
+        private GalleryItem nextItem = null;
+        private bool previousLoaded = false;
+        private bool nextLoaded = false;
+
+        [JsonIgnore]
+        public GalleryItem PreviousItem
+        {
+            get
+            {
+                if (!previousLoaded)
+                {
+                    previousLoaded = true;
+
+                    SelectQuery prevQuery = GetSelectQueryStub(core, typeof(GalleryItem));
+                    prevQuery.AddCondition("gallery_id", Parent.Id);
+                    prevQuery.AddCondition("gallery_item_item_id", Parent.Owner.Id);
+                    prevQuery.AddCondition("gallery_item_item_type_id", Parent.Owner.TypeId);
+                    prevQuery.AddCondition("gallery_item_id", ConditionEquality.LessThan, Id);
+                    prevQuery.AddSort(SortOrder.Descending, "gallery_item_id");
+                    prevQuery.LimitCount = 1;
+
+                    System.Data.Common.DbDataReader prevDataReader = core.Db.ReaderQuery(prevQuery);
+
+                    if (prevDataReader.HasRows)
+                    {
+                        prevDataReader.Read();
+
+                        previousItem = new GalleryItem(core, prevDataReader);
+                    }
+
+                    prevDataReader.Close();
+                    prevDataReader.Dispose();
+                }
+                return previousItem;
+            }
+        }
+
+        [JsonIgnore]
+        public GalleryItem NextItem
+        {
+            get
+            {
+                if (!nextLoaded)
+                {
+                    nextLoaded = true;
+                    SelectQuery nextQuery = GetSelectQueryStub(core, typeof(GalleryItem));
+                    nextQuery.AddCondition("gallery_id", Parent.Id);
+                    nextQuery.AddCondition("gallery_item_item_id", Parent.Owner.Id);
+                    nextQuery.AddCondition("gallery_item_item_type_id", Parent.Owner.TypeId);
+                    nextQuery.AddCondition("gallery_item_id", ConditionEquality.GreaterThan, Id);
+                    nextQuery.AddSort(SortOrder.Ascending, "gallery_item_id");
+                    nextQuery.LimitCount = 1;
+
+                    System.Data.Common.DbDataReader nextDataReader = core.Db.ReaderQuery(nextQuery);
+
+                    if (nextDataReader.HasRows)
+                    {
+                        nextDataReader.Read();
+
+                        nextItem = new GalleryItem(core, nextDataReader);
+                    }
+
+                    nextDataReader.Close();
+                    nextDataReader.Dispose();
+                }
+                return nextItem;
+            }
+        }
+
+        [JsonProperty("previous_item_key")]
+        public ItemKey PreviousItemKey
+        {
+            get
+            {
+                if (PreviousItem != null)
+                {
+                    return PreviousItem.ItemKey;
+                }
+                return null;
+            }
+        }
+
+        [JsonProperty("next_item_key")]
+        public ItemKey NextItemKey
+        {
+            get
+            {
+                if (NextItem != null)
+                {
+                    return NextItem.ItemKey;
+                }
+                return null;
             }
         }
     }

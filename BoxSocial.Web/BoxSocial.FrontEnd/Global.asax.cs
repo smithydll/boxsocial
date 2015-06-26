@@ -302,10 +302,21 @@ namespace BoxSocial.FrontEnd
             HttpContext httpContext = HttpContext.Current;
             string[] redir = httpContext.Request.RawUrl.Split(';');
             string host = httpContext.Request.Url.Host.ToLower();
+            bool isSecure = httpContext.Request.Url.Scheme.ToLower() == Uri.UriSchemeHttps.ToLower();
+
+            Settings settings = new Settings(null);
 
             if (host == "www." + Hyperlink.Domain)
             {
-                Response.Redirect("http://" + Hyperlink.Domain);
+                UriBuilder noWwwUri = new UriBuilder(httpContext.Request.Url);
+                noWwwUri.Host = Hyperlink.Domain;
+                if (settings.UseSecureCookies)
+                {
+                    noWwwUri.Scheme = Uri.UriSchemeHttps;
+                    noWwwUri.Port = -1;
+                }
+
+                Response.Redirect(noWwwUri.ToString());
                 return;
             }
 
@@ -373,6 +384,17 @@ namespace BoxSocial.FrontEnd
 
             if (currentURI != null)
             {
+                if (settings.UseSecureCookies && (!isSecure))
+                {
+                    UriBuilder secureUri = new UriBuilder(cUri);
+                    secureUri.Host = host;
+                    secureUri.Scheme = Uri.UriSchemeHttps;
+                    secureUri.Port = -1;
+
+                    Response.Redirect(secureUri.ToString());
+                    return;
+                }
+
                 List<string[]> patterns = new List<string[]>();
 
                 if (host != Hyperlink.Domain)
@@ -560,6 +582,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/facebook/callback(/|)$", @"/functions.aspx?fun=facebook" });
                     patterns.Add(new string[] { @"^/api/tumblr/callback(/|)$", @"/functions.aspx?fun=tumblr" });
                     patterns.Add(new string[] { @"^/api/boxsocial/callback(/|)$", @"/functions.aspx?fun=boxsocial" });
+                    patterns.Add(new string[] { @"^/api/sms/callback/([a-z\-]+)(/|)$", @"/functions.aspx?fun=sms&provider=$1" });
 
                     patterns.Add(new string[] { @"^/oauth/request_token(/|)$", @"/oauth.aspx?global_method=request_token" });
                     patterns.Add(new string[] { @"^/oauth/authorize(/|)$", @"/functions.aspx?fun=oauth&method=authorize" });

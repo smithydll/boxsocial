@@ -686,6 +686,14 @@ namespace BoxSocial.Applications.Calendar
                 return "task";
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidTaskException : InvalidItemException

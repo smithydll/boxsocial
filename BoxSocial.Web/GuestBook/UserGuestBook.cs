@@ -130,5 +130,13 @@ namespace BoxSocial.Applications.GuestBook
 
             //core.CallingApplication.SendNotification(core, comment.OwnerKey, ev.ItemKey, string.Format("[user]{0}[/user] commented on [user]{2}[/user] [iurl=\"{1}\"]blog post[/iurl]", comment.OwnerKey.Id, comment.BuildUri(ev), ev.OwnerKey.Id), string.Empty, emailTemplate);
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Owner.Access.Can("COMMENT");
+            }
+        }
     }
 }

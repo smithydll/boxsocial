@@ -1106,6 +1106,14 @@ namespace BoxSocial.Applications.Calendar
                 return Subject;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidEventException : InvalidItemException

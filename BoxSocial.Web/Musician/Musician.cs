@@ -1517,6 +1517,14 @@ namespace BoxSocial.Musician
                 return string.Empty;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidMusicianException : Exception

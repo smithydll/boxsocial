@@ -925,6 +925,11 @@ namespace BoxSocial.Applications.Gallery
 
             DataTable galleryItemTable = db.Query(query);
 
+            if (galleryItemTable.Rows.Count < 1)
+            {
+                throw new GalleryItemNotFoundException();
+            }
+
             try
             {
                 loadItemInfo(galleryItemTable.Rows[0]);
@@ -1151,7 +1156,7 @@ namespace BoxSocial.Applications.Gallery
 
         public static GalleryItem Create(Core core, Primitive owner, Gallery parent, string title, ref string slug, string fileName, string contentType, ulong bytes, string description, byte license, Classifications classification, Stream stream, bool highQuality /*int width, int height*/)
         {
-            return Create(core, owner, parent, title, ref slug, fileName, contentType, bytes, description, license, classification, stream, highQuality);
+            return Create(core, owner, parent, title, ref slug, fileName, contentType, bytes, description, license, classification, stream, highQuality, 0);
         }
 
         /// <summary>
@@ -4092,6 +4097,14 @@ namespace BoxSocial.Applications.Gallery
                     return NextItem.ItemKey;
                 }
                 return null;
+            }
+        }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Parent.Access.Can("COMMENT");
             }
         }
     }

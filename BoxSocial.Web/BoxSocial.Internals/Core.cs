@@ -1268,7 +1268,9 @@ namespace BoxSocial.Internals
                         }
                         break;
                     case "comment_post":
-                        Comment.Post(this);
+                        Comment newComment = Comment.Post(this);
+
+                        Response.WriteObject(newComment);
                         break;
                     case "comment_report":
                         //Comment.Report(this);

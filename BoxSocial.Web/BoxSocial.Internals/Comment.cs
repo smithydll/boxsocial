@@ -286,7 +286,7 @@ namespace BoxSocial.Internals
             return returnValue;
         }
 
-        public static void Post(Core core)
+        public static Comment Post(Core core)
         {
             long itemId = core.Functions.FormLong("item_id", 0);
             long itemTypeId = core.Functions.FormLong("item_type_id", 0);
@@ -358,7 +358,11 @@ namespace BoxSocial.Internals
                 {
                     // not a problem
                 }
+
+                return commentObject;
             }
+
+            return null;
         }
 
         public static bool Edit(Core core)

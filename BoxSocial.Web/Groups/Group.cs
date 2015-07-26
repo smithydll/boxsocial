@@ -2505,6 +2505,14 @@ namespace BoxSocial.Groups
                 return DisplayName;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidGroupException : Exception

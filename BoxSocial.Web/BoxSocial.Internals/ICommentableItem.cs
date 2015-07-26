@@ -24,6 +24,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Text;
 using System.Web;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 
@@ -99,6 +102,12 @@ namespace BoxSocial.Internals
         }
 
         string Noun
+        {
+            get;
+        }
+
+        [JsonProperty("access_comment")]
+        bool CanComment
         {
             get;
         }

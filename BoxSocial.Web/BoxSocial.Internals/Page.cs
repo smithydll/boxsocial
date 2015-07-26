@@ -1492,6 +1492,14 @@ namespace BoxSocial.Internals
                 return "page";
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class PageNotFoundException : Exception

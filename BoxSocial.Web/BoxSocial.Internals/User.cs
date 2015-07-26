@@ -3004,6 +3004,14 @@ namespace BoxSocial.Internals
                 return DisplayName;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidUserException : Exception

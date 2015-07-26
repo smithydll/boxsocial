@@ -761,6 +761,14 @@ namespace BoxSocial.Internals
                 return applicationId;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidStatusMessageException : InvalidItemException

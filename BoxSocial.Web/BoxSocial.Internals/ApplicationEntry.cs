@@ -2175,6 +2175,13 @@ namespace BoxSocial.Internals
             return true;
         }
 
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidApplicationException : Exception

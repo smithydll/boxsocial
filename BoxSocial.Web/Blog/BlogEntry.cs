@@ -1032,6 +1032,14 @@ namespace BoxSocial.Applications.Blog
                 return 0;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     /// <summary>

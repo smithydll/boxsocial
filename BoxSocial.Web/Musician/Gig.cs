@@ -525,6 +525,14 @@ namespace BoxSocial.Musician
                 return "gig";
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Owner.Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidGigException : InvalidItemException

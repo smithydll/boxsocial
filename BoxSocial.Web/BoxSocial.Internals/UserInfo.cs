@@ -155,6 +155,15 @@ namespace BoxSocial.Internals
         [DataField("user_two_factor_auth_verified")]
         private bool twoFactorAuthVerified;
 
+        // If a user has a compatible device with the app installed they can get push notifications
+        // or if they use a compatible browser they can get push notifications
+        [DataField("user_windows_authentication_enabled")]
+        private bool windowsNotificationEnabled;
+        [DataField("user_android_authentication_enabled")]
+        private bool androidNotificationEnabled;
+        [DataField("user_ios_authentication_enabled")]
+        private bool iosNotificationEnabled;   
+
         private User user;
         private string userNameOwnership;
         private UnixTime timeZone;

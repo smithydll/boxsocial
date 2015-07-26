@@ -180,6 +180,7 @@ namespace BoxSocial.Applications.Gallery
                     GalleryItem.NotifyGalleryItemComment(core, job);
                     return true;
                 case "create_ultra":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -194,8 +195,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_full":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -210,8 +216,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_display":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -235,8 +246,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_mobile":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -251,8 +267,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_thumb":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -267,8 +288,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_tiny":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -283,8 +309,13 @@ namespace BoxSocial.Applications.Gallery
                             }
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_high":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -296,8 +327,13 @@ namespace BoxSocial.Applications.Gallery
                             gi.Update();
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_square":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -309,8 +345,13 @@ namespace BoxSocial.Applications.Gallery
                             gi.Update();
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_tile":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -322,8 +363,13 @@ namespace BoxSocial.Applications.Gallery
                             gi.Update();
                         }
                     }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
+                    }
                     return true;
                 case "create_icon":
+                    try
                     {
                         GalleryItem gi = new GalleryItem(core, job.ItemId);
 
@@ -334,6 +380,10 @@ namespace BoxSocial.Applications.Gallery
                             gi.IconExists = true;
                             gi.Update();
                         }
+                    }
+                    catch (GalleryItemNotFoundException)
+                    {
+                        return true; // no big deal if this job fails
                     }
                     return true;
             }

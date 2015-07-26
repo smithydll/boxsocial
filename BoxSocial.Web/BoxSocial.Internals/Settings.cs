@@ -583,5 +583,21 @@ namespace BoxSocial.Internals
                 return WebConfigurationManager.AppSettings["tumblr-api-secret"];
             }
         }
+
+        public string WindowsNotificationKey
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["windows-notification-key"];
+            }
+        }
+
+        public string WindowsNotificationSecret
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["windows-notification-secret"];
+            }
+        }
     }
 }

@@ -1192,6 +1192,14 @@ namespace BoxSocial.Networks
                 return string.Empty;
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     public class InvalidNetworkException : Exception

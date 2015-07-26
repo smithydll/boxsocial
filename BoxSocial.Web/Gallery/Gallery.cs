@@ -2914,6 +2914,14 @@ namespace BoxSocial.Applications.Gallery
             {
             }
         }
+
+        public bool CanComment
+        {
+            get
+            {
+                return Access.Can("COMMENT");
+            }
+        }
     }
 
     /// <summary>

@@ -77,6 +77,47 @@
             });
 
         $.sceditor.plugins.bbcode.bbcode.set(
+            'thumb',
+            {
+                tags: {
+                    img: {
+                        src: null,
+                        data: ['thumb']
+                    }
+                },
+                allowedChildren: ['#'],
+                format: function (element, content) {
+                    var $el = $(element);
+                    var src = $el.attr('data-src');
+                    var width = $el.attr('width');
+                    width = (!(typeof width === 'undefined')) ? ' width=' + width : '';
+                    var height = $el.attr('height');
+                    height = (!(typeof height === 'undefined')) ? ' height=' + height : '';
+
+                    return '[thumb' + width + height + ']' + src + '[/thumb]'
+                },
+                html: function (token, attrs, content) {
+                    var undef, width, height, match,
+                        attribs = '';
+
+                    // handle [inline width=340 height=240]url[/img]
+                    width = attrs.width;
+                    height = attrs.height;
+
+                    if (width !== undef) {
+                        attribs += ' width="' + $.sceditor.escapeEntities(width, true) + '"';
+                    }
+
+                    if (height !== undef) {
+                        attribs += ' height="' + $.sceditor.escapeEntities(height, true) + '"';
+                    }
+
+                    return '<img' + attribs +
+                        ' data="thumb" data-src="' + $.sceditor.escapeUriScheme(content) + '" style="max-width: 100px; max-height: 100px;" src="' + $.sceditor.escapeUriScheme(ownerStub + 'images/_tile/' + content) + '" />';
+                }
+            });
+
+        $.sceditor.plugins.bbcode.bbcode.set(
             'float',
             {
                 tags: {

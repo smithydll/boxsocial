@@ -36,6 +36,27 @@
             });
 
         $.sceditor.plugins.bbcode.bbcode.set(
+            'align',
+            {
+                styles: {
+                    'text-align': [
+                        'center',
+                        'left',
+                        'right',
+                        'justify'
+                    ]
+                },
+                isInline: false,
+                format: function (element, content) {
+                    var $el = $(element);
+                    return '[align=' + $el.css('text-align') + ']' + content + '[/align]';
+                },
+                html: function (token, attrs, content) {
+                    return '<div style="text-align:' + attrs.defaultattr + '">' + content + '</div>';
+                }
+            });
+
+        $.sceditor.plugins.bbcode.bbcode.set(
             'inline',
             {
                 tags: {

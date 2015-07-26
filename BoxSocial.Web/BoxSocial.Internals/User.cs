@@ -2460,7 +2460,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                if (string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile)
+                if ((string.IsNullOrEmpty(domain) || core.Session.IsBot || core.IsMobile || core.Session.SessionMethod == SessionMethods.OAuth || (core.Http == null && core.Settings.UseSecureCookies) || (core.Http != null && core.Http.IsSecure) || (core.Http != null && core.Http.ForceDomain)))
                 {
                     return core.Hyperlink.AppendAbsoluteSid(UriStub);
                 }

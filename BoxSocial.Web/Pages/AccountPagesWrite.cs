@@ -69,6 +69,14 @@ namespace BoxSocial.Applications.Pages
         {
             SetTemplate("account_write");
 
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
+
+            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+            styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
+
+            core.Template.Parse("OWNER_STUB", Owner.UriStubAbsolute);
+
             long pageId = 0;
             long pageParentId = 0;
             byte licenseId = 0;

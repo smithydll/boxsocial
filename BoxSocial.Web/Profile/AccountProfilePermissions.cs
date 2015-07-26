@@ -76,7 +76,7 @@ namespace BoxSocial.Applications.Profile
             // Mobile doesn't include jQuery UI by default, but is needed to userselectbox
             if (core.IsMobile)
             {
-                VariableCollection javaScriptVariableCollection = template.CreateChild("javascript_list");
+                VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
                 javaScriptVariableCollection.Parse("URI", @"/scripts/jquery-ui-1.10.3.boxsocial.min.js");
 
                 VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");

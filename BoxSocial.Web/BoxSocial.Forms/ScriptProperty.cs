@@ -34,6 +34,7 @@ namespace BoxSocial.Forms
         private string onkeyup;
         private string onfocus;
         private string onblur;
+        private string onclick;
 
         public string OnChange
         {
@@ -107,6 +108,18 @@ namespace BoxSocial.Forms
             }
         }
 
+        public string OnClick
+        {
+            get
+            {
+                return onclick;
+            }
+            set
+            {
+                onclick = value;
+            }
+        }
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -150,6 +163,13 @@ namespace BoxSocial.Forms
             {
                 sb.Append(" onblur=\"");
                 sb.Append(onblur);
+                sb.Append("\"");
+            }
+
+            if (!string.IsNullOrEmpty(onclick))
+            {
+                sb.Append(" onclick=\"");
+                sb.Append(onclick);
                 sb.Append("\"");
             }
 

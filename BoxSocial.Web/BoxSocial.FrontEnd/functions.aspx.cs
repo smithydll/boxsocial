@@ -266,6 +266,7 @@ namespace BoxSocial.FrontEnd
 
             SubmitButton submitButton = new SubmitButton("submit", core.Prose.GetString("AUTHORISE"));
             Button cancelButton = new Button("cancel", core.Prose.GetString("CANCEL"), "cancel");
+            cancelButton.Script.OnClick = "window.external.notify('cancel'); return false;";
 
             template.SetTemplate("oauth_authorize.html");
             template.Parse("U_POST", core.Hyperlink.AppendSid("/oauth/approve", true, sessionId));
@@ -299,6 +300,7 @@ namespace BoxSocial.FrontEnd
 
                 SubmitButton submitButton = new SubmitButton("submit", core.Prose.GetString("AUTHORISE"));
                 Button cancelButton = new Button("cancel", core.Prose.GetString("CANCEL"), "cancel");
+                cancelButton.Script.OnClick = "window.external.notify('cancel'); return false;";
 
                 if (token.TokenExpired)
                 {

@@ -130,15 +130,15 @@ $(function () {
 
 $(document).ready(function () {
     $(window).on('swiperight', function (event, obj) {
-        if (obj.direction.startX < 10) {
+        /*if (obj.direction.startX < 10) {
             //showSideBar(event);
-        }
+        }*/
     });
 
     $(window).on('swipeleft', function (event, obj) {
-        if ($('#boxsocial-menu').is(":visible")) {
+        /*if ($('#boxsocial-menu').is(":visible")) {
             //hideSideBar();
-        }
+        }*/
     });
 });
 

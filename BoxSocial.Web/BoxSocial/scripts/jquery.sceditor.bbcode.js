@@ -4867,7 +4867,7 @@
 
 						if (val) {
 							editor.wysiwygEditorInsertHtml(
-								'<img' + attrs + ' src="' + val + '" />'
+								'<img' + attrs + ' style="max-width: 100%;" src="' + val + '" />'
 							);
 						}
 
@@ -9585,16 +9585,12 @@
 					return content;
 				}
 
-				width = $element.attr('width') || style('width');
-				height = $element.attr('height') || style('height');
+				var width = style('width') || $element.attr('width');
+				width = (!(typeof width === 'undefined')) ? ' width=' + width : '';
+				var height = style('height') || $element.attr('height');
+				height = (!(typeof height === 'undefined')) ? ' height=' + height : '';
 
-				// only add width and height if one is specified
-				if ((element.complete && (width || height)) ||
-					(width && height)) {
-					attribs = '=' + $element.width() + 'x' + $element.height();
-				}
-
-				return '[img' + attribs + ']' + $element.attr('src') + '[/img]';
+				return '[img' + width + height + ']' + $element.attr('src') + '[/img]';
 			},
 			html: function (token, attrs, content) {
 				var	undef, width, height, match,
@@ -9621,7 +9617,7 @@
 				}
 
 				return '<img' + attribs +
-					' src="' + escapeUriScheme(content) + '" />';
+					' style="max-width: 100%;" src="' + escapeUriScheme(content) + '" />';
 			}
 		},
 	    // END_COMMAND

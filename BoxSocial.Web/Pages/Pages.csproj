@@ -109,6 +109,10 @@
       <Project>{D4B59B41-0120-4245-A6D7-648419928D0C}</Project>
       <Name>BoxSocial.IO</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Gallery\Gallery.csproj">
+      <Project>{fef04e07-92c9-4ab8-bb0b-4ac71d8bffe0}</Project>
+      <Name>Gallery</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Groups\Groups.csproj">
       <Project>{5167D049-B052-435C-BD6C-6A002AF15009}</Project>
       <Name>Groups</Name>

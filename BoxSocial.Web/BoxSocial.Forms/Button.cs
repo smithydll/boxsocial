@@ -32,6 +32,7 @@ namespace BoxSocial.Forms
         protected bool visible;
         private string caption;
         private string value;
+        private ScriptProperty script;
 
         public string Caption
         {
@@ -42,6 +43,22 @@ namespace BoxSocial.Forms
             set
             {
                 caption = value;
+            }
+        }
+
+        public ScriptProperty Script
+        {
+            get
+            {
+                if (script == null)
+                {
+                    script = new ScriptProperty();
+                }
+                return script;
+            }
+            set
+            {
+                script = value;
             }
         }
 
@@ -98,12 +115,13 @@ namespace BoxSocial.Forms
 
         public override string ToString(DisplayMedium medium)
         {
-            return string.Format("<button name=\"{0}\" value=\"{1}\" style=\"{4}\"{3}>{2}</button>",
+            return string.Format("<button name=\"{0}\" value=\"{1}\" style=\"{4}\"{5}{3}>{2}</button>",
                 HttpUtility.HtmlEncode(name),
                 HttpUtility.HtmlEncode(value),
                 HttpUtility.HtmlEncode(caption),
                 (IsDisabled) ? " disabled=\"disabled\"" : "",
-                (!IsVisible) ? " display: none;" : "");
+                (!IsVisible) ? " display: none;" : "",
+                Script.ToString());
         }
 
         public override void SetValue(string value)

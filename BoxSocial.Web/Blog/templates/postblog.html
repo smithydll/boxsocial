@@ -1,4 +1,16 @@
-﻿<form action="{S_ACCOUNT}" method="post">
+﻿
+<script type="text/javascript">
+    $(function () {
+        $("#post").sceditor({
+            plugins: "bbcode",
+            style: "/styles/bbcode.min.css",
+            toolbar: "bold,italic,underline|bulletlist,orderedlist|quote,code|link,unlink,image,youtube|source"
+        });
+        $('#post').sceditor('instance').width('100%');
+    });
+</script>
+
+<form action="{S_ACCOUNT}" method="post">
 		<div id="compose-status">
 		<dl>
 			<dt><label for="title">{L_TITLE}</label></dt>

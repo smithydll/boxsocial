@@ -6,6 +6,8 @@
 	<link rel="icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/favicon.png"/>
 	<link href="{U_STATIC}/styles/boxsocial.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi, minimal-ui" />
+
 	<style type="text/css">
 		<!--
 
@@ -19,6 +21,12 @@
 		    margin-right: 200px;
 		    max-width: 700px;
 		}
+
+        #header {
+            background-color: #ff9955;
+            height: 48pt;
+            position: relative;
+        }
 }
 
 @media screen and (max-width: 480px) {
@@ -28,6 +36,12 @@
 		.form-app {
 		    max-width: 700px;
 		}
+
+        #header {
+            background-color: #ff9955;
+            height: 32pt;
+            position: relative;
+        }
 }
 		
 		#page {
@@ -36,9 +50,35 @@
 		    padding: 10px;
 		}
 
+        .form-app dl {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            clear: both;
+            overflow: hidden;
+        }
+
+        .form-app dl dt {
+            clear: left;
+            margin-left: 0;
+            padding: 0;
+            float: left;
+            width: 30%;
+        }
+
+        .form-app dl dd {
+            padding: 0;
+            margin-left: 0;
+            float: left;
+            width: 70%;
+        }
+
 --></style>
 </head>
 <body>
+    <div id="header">
+        <img src="/images/boxsocial-logo-mobile@2x.png" style="height: 100%" />
+    </div>
 	<div id="page">
         <div class="about-app">
             <!-- IF APP_ICON -->

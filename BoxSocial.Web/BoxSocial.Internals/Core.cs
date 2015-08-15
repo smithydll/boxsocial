@@ -1327,6 +1327,61 @@ namespace BoxSocial.Internals
                             Response.WriteObject(info.Rating);
                         }
                         break;
+                    case "like":
+                        {
+                            long itemId = Functions.RequestLong("item", 0);
+                            long itemTypeId = Functions.RequestLong("type", 0);
+                            string type = this.Http["like"];
+                            ItemKey itemKey = null;
+
+                            try
+                            {
+                                itemKey = new ItemKey(itemId, itemTypeId);
+                            }
+                            catch
+                            {
+                            }
+
+                            try
+                            {
+                                LikeType like = LikeType.Neutral;
+                                switch (type)
+                                {
+                                    case "like":
+                                        like = LikeType.Like;
+                                        break;
+                                    case "dislike":
+                                        like = LikeType.Dislike;
+                                        break;
+                                }
+                                Like.LikeItem(this, itemKey, like);
+
+                                switch (like)
+                                {
+                                    case LikeType.Like:
+                                        //NotificationSubscription.Create(core, loggedInMember, itemKey);
+                                        try
+                                        {
+                                            Subscription.SubscribeToItem(this, itemKey);
+                                        }
+                                        catch (AlreadySubscribedException)
+                                        {
+                                            // not a problem
+                                        }
+                                        break;
+                                    case LikeType.Neutral:
+                                    case LikeType.Dislike:
+                                        //NotificationSubscription.Unsubscribe(core, loggedInMember, itemKey);
+                                        Subscription.UnsubscribeFromItem(this, itemKey);
+                                        break;
+                                }
+                            }
+                            catch
+                            {
+
+                            }
+                        }
+                        break;
                     case "subscribe":
                         {
                             string mode = this.Http["mode"];

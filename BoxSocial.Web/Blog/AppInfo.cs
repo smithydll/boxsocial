@@ -369,6 +369,14 @@ namespace BoxSocial.Applications.Blog
 
         void PostContent(HookEventArgs e)
         {
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
+
+            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+            styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
+
+            core.Template.Parse("OWNER_STUB", e.Owner.UriStubAbsolute);
+
             Template template = new Template(Assembly.GetExecutingAssembly(), "postblog");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);

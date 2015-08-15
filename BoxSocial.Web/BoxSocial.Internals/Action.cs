@@ -97,7 +97,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonIgnore]
+        [JsonProperty("action_item_key")]
         public ItemKey ActionItemKey
         {
             get
@@ -106,7 +106,7 @@ namespace BoxSocial.Internals
             }
         }
 
-        [JsonIgnore]
+        [JsonProperty("intereact_item_key")]
         public ItemKey InteractItemKey
         {
             get

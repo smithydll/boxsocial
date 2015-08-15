@@ -35,6 +35,7 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using BoxSocial.Internals;
 using BoxSocial.IO;
+using BoxSocial.Applications.Gallery;
 
 namespace BoxSocial.Applications.Blog
 {
@@ -103,6 +104,8 @@ namespace BoxSocial.Applications.Blog
         private bool allowComment;
         [DataField("post_simple_permissions")]
         private bool simplePermissions;
+        [DataField("post_gallery_id", typeof(Gallery.Gallery))]
+        private long galleryId;
 
         private Primitive owner;
         private Blog blog;
@@ -460,6 +463,7 @@ namespace BoxSocial.Applications.Blog
             loadValue(postEntryRow, "post_modified_ut", out modifiedRaw);
             loadValue(postEntryRow, "post_allow_comment", out allowComment);
             loadValue(postEntryRow, "post_simple_permissions", out simplePermissions);
+            loadValue(postEntryRow, "post_gallery_id", out galleryId);
 
             itemLoaded(postEntryRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

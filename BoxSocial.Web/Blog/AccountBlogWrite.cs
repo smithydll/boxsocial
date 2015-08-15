@@ -90,6 +90,14 @@ namespace BoxSocial.Applications.Blog
         {
             SetTemplate("account_post");
 
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
+
+            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+            styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
+
+            core.Template.Parse("OWNER_STUB", Owner.UriStubAbsolute);
+
             Blog blog = new Blog(core, (User)Owner);
 
             /* Title TextBox */
@@ -325,6 +333,11 @@ namespace BoxSocial.Applications.Blog
             }
 
             string sqlPostTime = "";
+
+            // Save image attachments
+            {
+
+            }
 
             // update, must happen before save new because it populates postId
             if (postId > 0)

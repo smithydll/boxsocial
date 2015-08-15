@@ -99,6 +99,8 @@ namespace BoxSocial.Internals
         private ItemKey ownerKey;
         [DataField("page_simple_permissions")]
         private bool simplePermissions;
+        [DataField("page_gallery_id")]
+        private long galleryId;
 
         private User creator;
         private Primitive owner;
@@ -732,6 +734,7 @@ namespace BoxSocial.Internals
             loadValue(pageRow, "page_hierarchy", out hierarchy);
             loadValue(pageRow, "page_item", out ownerKey);
             loadValue(pageRow, "page_simple_permissions", out simplePermissions);
+            loadValue(pageRow, "page_gallery_id", out galleryId);
 
             itemLoaded(pageRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -763,6 +766,7 @@ namespace BoxSocial.Internals
             loadValue(pageRow, "page_hierarchy", out hierarchy);
             loadValue(pageRow, "page_item", out ownerKey);
             loadValue(pageRow, "page_simple_permissions", out simplePermissions);
+            loadValue(pageRow, "page_gallery_id", out galleryId);
 
             itemLoaded(pageRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

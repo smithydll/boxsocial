@@ -270,20 +270,20 @@ namespace BoxSocial.Internals
             if (!isAjax)
             {
                 isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
-                if (isAjax)
-                {
-                    responseFormat = ResponseFormats.Xml;
-                }
+            }
+            if (isAjax)
+            {
+                responseFormat = ResponseFormats.Xml;
             }
 
             isJson = (HttpContext.Current.Request.QueryString["json"] == "true");
             if (!isJson)
             {
                 isJson = (HttpContext.Current.Request.Form["json"] == "true");
-                if (isJson)
-                {
-                    responseFormat = ResponseFormats.Json;
-                }
+            }
+            if (isJson)
+            {
+                responseFormat = ResponseFormats.Json;
             }
 
             core = new Core(this, responseFormat, db, template);

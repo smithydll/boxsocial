@@ -1,5 +1,15 @@
 <h3>{L_WRITE_BLOG_POST}</h3>
 
+<script type="text/javascript">
+    $(function () {
+        $("#post").sceditor({
+            plugins: "bbcode",
+            style: "/styles/bbcode.min.css",
+            toolbar: "bold,italic,underline|bulletlist,orderedlist|quote,code|link,unlink,image,youtube|source"
+        });
+    });
+</script>
+
 <form action="{U_ACCOUNT}" method="post">
 	<fieldset>
 		<legend>{L_WRITE_BLOG_POST}</legend>

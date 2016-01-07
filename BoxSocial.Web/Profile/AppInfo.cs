@@ -197,6 +197,22 @@ namespace BoxSocial.Applications.Profile
                     core.Response.WriteObject(newMessage);
                     break;
                 case "status":
+                    {
+                        long statusId = core.Functions.RequestLong("id", 0);
+
+                        if (statusId > 0)
+                        {
+                            try
+                            {
+                                StatusMessage status = new StatusMessage(core, statusId);
+
+                                core.Response.WriteObject(status);
+                            }
+                            catch (InvalidStatusMessageException)
+                            {
+                            }
+                        }
+                    }
                     break;
                 case "feed":
                     {

@@ -175,7 +175,14 @@ namespace BoxSocial.FrontEnd
                         List<Job> jobs = null;
                         lock (queueLock)
                         {
-                            jobs = Queue.ClaimJobs(queueName, queues[queueName]);
+                            try
+                            {
+                                jobs = Queue.ClaimJobs(queueName, queues[queueName]);
+                            }
+                            catch
+                            {
+                                return;
+                            }
                         }
 
                         foreach (Job job in jobs)
@@ -317,6 +324,7 @@ namespace BoxSocial.FrontEnd
                 }
 
                 Response.Redirect(noWwwUri.ToString());
+                Response.End();
                 return;
             }
 
@@ -368,6 +376,29 @@ namespace BoxSocial.FrontEnd
 
             if (!httpContext.Request.RawUrl.Contains("404.aspx"))
             {
+                if (settings.UseSecureCookies && (!isSecure) && host == Hyperlink.Domain)
+                {
+                    UriBuilder secureUri = new UriBuilder(httpContext.Request.RawUrl);
+
+                    secureUri.Host = host;
+                    secureUri.Scheme = Uri.UriSchemeHttps;
+                    secureUri.Port = -1;
+
+                    if (secureUri.Path.ToLower() == "/default.aspx")
+                    {
+                        secureUri.Path = "/";
+                    }
+
+                    if (secureUri.Query == "?")
+                    {
+                        secureUri.Query = "";
+                    }
+
+                    Response.Redirect(secureUri.ToString());
+                    Response.End();
+                    return;
+                }
+
                 if (host == Hyperlink.Domain)
                 {
                     return;
@@ -384,14 +415,21 @@ namespace BoxSocial.FrontEnd
 
             if (currentURI != null)
             {
-                if (settings.UseSecureCookies && (!isSecure))
+                if (settings.UseSecureCookies && (!isSecure) && host == Hyperlink.Domain)
                 {
                     UriBuilder secureUri = new UriBuilder(cUri);
+
                     secureUri.Host = host;
                     secureUri.Scheme = Uri.UriSchemeHttps;
                     secureUri.Port = -1;
 
+                    if (secureUri.Query == "?")
+                    {
+                        secureUri.Query = "";
+                    }
+
                     Response.Redirect(secureUri.ToString());
+                    Response.End();
                     return;
                 }
 

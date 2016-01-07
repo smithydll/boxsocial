@@ -1205,6 +1205,9 @@ namespace BoxSocial.Internals
                     case "item_types":
                         this.Functions.ReturnItemTypeIds();
                         break;
+                    case "update":
+
+                        break;
                     case "feed":
                         Feed.ShowMore(this, Session.LoggedInMember);
                         break;

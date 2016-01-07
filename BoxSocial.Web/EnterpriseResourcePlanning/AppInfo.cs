@@ -127,12 +127,12 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             return aii;
         }
 
-        public override Dictionary<string, string> PageSlugs
+        public override Dictionary<string, PageSlugAttribute> PageSlugs
         {
             get
             {
-                Dictionary<string, string> slugs = new Dictionary<string, string>();
-                slugs.Add("erp", "Enterprise Resource Planning");
+                Dictionary<string, PageSlugAttribute> slugs = new Dictionary<string, PageSlugAttribute>();
+                slugs.Add("erp", new PageSlugAttribute("Enterprise Resource Planning", AppPrimitives.Group));
                 return slugs;
             }
         }

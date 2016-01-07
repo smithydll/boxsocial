@@ -24,6 +24,7 @@ using System.Data;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Applications.Gallery;
 using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
@@ -334,11 +335,6 @@ namespace BoxSocial.Applications.Blog
 
             string sqlPostTime = "";
 
-            // Save image attachments
-            {
-
-            }
-
             // update, must happen before save new because it populates postId
             if (postId > 0)
             {
@@ -367,6 +363,11 @@ namespace BoxSocial.Applications.Blog
                             db.Query(uQuery);
                             break;
                     }
+                }
+
+                // Save image attachments
+                {
+                    postBody = core.Bbcode.ExtractAndSaveImageData(postBody, myBlogEntry, saveImage);
                 }
 
                 myBlogEntry.Title = title;
@@ -430,6 +431,14 @@ namespace BoxSocial.Applications.Blog
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, TagSelectBox.FormTags(core, "tags"), true);
 
+                // Save image attachments
+                {
+                    postBody = core.Bbcode.ExtractAndSaveImageData(postBody, myBlogEntry, saveImage);
+
+                    myBlogEntry.Body = postBody;
+                    myBlogEntry.Update(); // only triggers if postBody has been updated
+                }
+
                 if (publishToFeed && publishStatus == PublishStatuses.Publish)
                 {
                     core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry, myBlogEntry.Title);
@@ -447,6 +456,58 @@ namespace BoxSocial.Applications.Blog
                 SetRedirectUri(BuildUri("manage"));
                 core.Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
             }
+        }
+
+        private string saveImage(NumberedItem post, string imageType, byte[] imageData)
+        {
+            BlogEntry myBlogEntry = null;
+            if (post is BlogEntry)
+            {
+                myBlogEntry = (BlogEntry)myBlogEntry;
+            }
+
+            string imagePath = string.Empty;
+
+            Gallery.Gallery parent = null;
+            Gallery.Gallery grandParent = null;
+
+            string grandParentSlug = "photos-from-posts";
+            try
+            {
+                grandParent = new Gallery.Gallery(core, Owner, grandParentSlug);
+            }
+            catch (InvalidGalleryException)
+            {
+                Gallery.Gallery root = new Gallery.Gallery(core, Owner);
+                grandParent = Gallery.Gallery.Create(core, Owner, root, "Photos From Posts", ref grandParentSlug, "All my unsorted uploads");
+            }
+
+            string gallerySlug = "blog-" + post.Id.ToString();
+
+            try
+            {
+                parent = new Gallery.Gallery(core, Owner, gallerySlug);
+
+                parent.GalleryTitle = myBlogEntry.Title;
+                parent.Update();
+            }
+            catch (InvalidGalleryException)
+            {
+                parent = Gallery.Gallery.Create(core, Owner, grandParent, myBlogEntry.Title, ref gallerySlug, string.Empty);
+            }
+
+            AccessControlLists acl = new AccessControlLists(core, parent);
+            acl.SaveNewItemPermissions();
+
+            MemoryStream stream = new MemoryStream();
+            stream.Write(imageData, 0, imageData.Length);
+
+            string slug = "image-" + parent.Items.ToString();
+            GalleryItem newGalleryItem = GalleryItem.Create(core, Owner, parent, string.Empty, ref slug, slug, imageType, (ulong)imageData.Length, string.Empty, core.Functions.GetLicenseId(), core.Functions.GetClassification(), stream, true /*, width, height*/);
+
+            imagePath = newGalleryItem.FullPath;
+
+            return imagePath;
         }
 
         /// <summary>

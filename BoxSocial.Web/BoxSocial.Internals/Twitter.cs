@@ -308,6 +308,121 @@ namespace BoxSocial.Internals
             return null;
         }
 
+        public long UploadMedia(TwitterAccessToken token, byte[] media, string mediaContentType)
+        {
+            string method = "POST";
+
+            string oAuthSignatureMethod = "HMAC-SHA1";
+
+            string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
+
+            string parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0"; ;
+            string twitterEndpoint = "https://upload.twitter.com/1.1/media/upload.json";
+
+            string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
+
+            String oauthSignature = string.Empty;
+            try
+            {
+                oauthSignature = computeSignature(signature, consumerSecret + "&" + token.Secret);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
+                oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
+
+            string guid = Guid.NewGuid().ToString();
+            string boundary = "----BSFB" + UnixTime.UnixTimeStamp().ToString() + guid.Replace("-", string.Empty);
+            StringBuilder body = new StringBuilder();
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(twitterEndpoint);
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.Method = method;
+            wr.Headers["Authorization"] = authorisationHeader;
+
+            string extension = "";
+            switch (mediaContentType)
+            {
+                case "image/jpeg":
+                    extension = ".jpg";
+                    break;
+                case "image/gif":
+                    extension = ".gif";
+                    break;
+                case "image/png":
+                    extension = ".png";
+                    break;
+            }
+
+            body.Append("--" + boundary + "\r\n");
+            body.Append("Content-Disposition: form-data; name=\"media\"; filename=\"" + guid + extension + "\"\r\n");
+            body.Append("Content-Type: " + mediaContentType + "\r\n\r\n");
+
+            wr.ContentType = "multipart/form-data; boundary=" + boundary;
+
+            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());
+            byte[] boundaryBytes = UTF8Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
+
+            wr.ContentLength = bodyBytes.Length + media.Length + boundaryBytes.Length;
+
+            Stream stream = wr.GetRequestStream();
+            stream.Write(bodyBytes, 0, bodyBytes.Length);
+            if (media != null)
+            {
+                stream.Write(media, 0, media.Length);
+                stream.Write(boundaryBytes, 0, boundaryBytes.Length);
+            }
+
+            stream.Close();
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+            long mediaId = 0;
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+            }
+            else
+            {
+                Encoding encode = Encoding.GetEncoding("utf-8");
+                StreamReader sr = new StreamReader(response.GetResponseStream(), encode);
+
+                string responseString = sr.ReadToEnd();
+
+                JsonTextReader reader = new JsonTextReader(new StringReader(responseString));
+
+                string lastToken = string.Empty;
+
+                while (reader.Read())
+                {
+                    if (reader.Value != null)
+                    {
+                        if (reader.TokenType == JsonToken.PropertyName)
+                        {
+                            lastToken = reader.Value.ToString();
+                            if (lastToken == "user")
+                            {
+                                reader.Skip();
+                                lastToken = string.Empty;
+                            }
+                        }
+                        if (reader.TokenType == JsonToken.String && lastToken == "media_id_string")
+                        {
+                            long.TryParse(reader.Value.ToString(), out mediaId);
+                            //tweetId = reader.Value.ToString();
+                            lastToken = string.Empty;
+                        }
+                    }
+                }
+            }
+
+            return mediaId;
+        }
+
         //public Tweet StatusesUpdate(TwitterAccessToken token, string tweet)
         public Tweet StatusesUpdate(TwitterAccessToken token, ActionableItemType type, string tweet, byte[] media, string mediaContentType)
         {
@@ -328,18 +443,14 @@ namespace BoxSocial.Internals
                 type = ActionableItemType.Text;
             }
 
-            switch (type)
+            twitterEndpoint = "https://api.twitter.com/1.1/statuses/update.json";
+            parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&status=" + UrlEncode(tweet);
+
+            long mediaId = 0;
+            if (type == ActionableItemType.Photo)
             {
-                case ActionableItemType.Photo:
-                    twitterEndpoint = "https://api.twitter.com/1.1/statuses/update_with_media.json";
-                    parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0";
-                    break;
-                case ActionableItemType.Audio:
-                case ActionableItemType.Video:
-                default:
-                    twitterEndpoint = "https://api.twitter.com/1.1/statuses/update.json";
-                    parameters = "oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&status=" + UrlEncode(tweet);
-                    break;
+                mediaId = UploadMedia(token, media, mediaContentType);
+                parameters = "media_ids=" + UrlEncode(mediaId.ToString()) + "&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&status=" + UrlEncode(tweet);
             }
 
             string signature = method + "&" + UrlEncode(twitterEndpoint) + "&" + UrlEncode(parameters);
@@ -372,50 +483,17 @@ namespace BoxSocial.Internals
             }
             else
             {
-                string extension = "";
-                switch (mediaContentType)
-                {
-                    case "image/jpeg":
-                        extension = ".jpg";
-                        break;
-                    case "image/gif":
-                        extension = ".gif";
-                        break;
-                    case "image/png":
-                        extension = ".png";
-                        break;
-                }
-
-                body.Append("--" + boundary + "\r\n");
-                body.Append("Content-Disposition: form-data; name=\"status\"\r\n\r\n");
-                body.Append(tweet + "\r\n");
-
-                body.Append("--" + boundary + "\r\n");
-                body.Append("Content-Disposition: form-data; name=\"media[]\"; filename=\"" + guid + extension + "\"\r\n");
-                body.Append("Content-Type: " + mediaContentType + "\r\n\r\n");
-
-                wr.ContentType = "multipart/form-data; boundary=" + boundary;
+                body.Append("media_ids=" + UrlEncode(mediaId.ToString()) + "&status=" + UrlEncode(tweet));
+                wr.ContentType = "application/x-www-form-urlencoded";
             }
 
             byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());
             byte[] boundaryBytes = UTF8Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
 
-            if (media == null)
-            {
-                wr.ContentLength = bodyBytes.Length;
-            }
-            else
-            {
-                wr.ContentLength = bodyBytes.Length + media.Length + boundaryBytes.Length;
-            }
+            wr.ContentLength = bodyBytes.Length;
 
             Stream stream = wr.GetRequestStream();
             stream.Write(bodyBytes, 0, bodyBytes.Length);
-            if (media != null)
-            {
-                stream.Write(media, 0, media.Length);
-                stream.Write(boundaryBytes, 0, boundaryBytes.Length);
-            }
 
             stream.Close();
 

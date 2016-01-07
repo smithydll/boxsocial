@@ -369,39 +369,47 @@ namespace BoxSocial.Applications.Blog
 
         void PostContent(HookEventArgs e)
         {
-            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
-            javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
+            Template template = GetPostTemplate(e.core, e.Owner);
+            if (template != null)
+            {
+                VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+                javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
 
-            VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
-            styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
+                VariableCollection styleSheetVariableCollection = core.Template.CreateChild("style_sheet_list");
+                styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
 
-            core.Template.Parse("OWNER_STUB", e.Owner.UriStubAbsolute);
+                core.Template.Parse("OWNER_STUB", e.Owner.UriStubAbsolute);
+                e.core.AddPostPanel(e.core.Prose.GetString("BLOG"), template);
+            }
+        }
 
+        public Template GetPostTemplate(Core core, Primitive owner)
+        {
             Template template = new Template(Assembly.GetExecutingAssembly(), "postblog");
             template.Medium = core.Template.Medium;
             template.SetProse(core.Prose);
 
-            string formSubmitUri = core.Hyperlink.AppendSid(e.Owner.AccountUriStub, true);
+            string formSubmitUri = core.Hyperlink.AppendSid(owner.AccountUriStub, true);
             template.Parse("U_ACCOUNT", formSubmitUri);
             template.Parse("S_ACCOUNT", formSubmitUri);
 
-            template.Parse("USER_DISPLAY_NAME", e.Owner.DisplayName);
+            template.Parse("USER_DISPLAY_NAME", owner.DisplayName);
 
             Blog blog = null;
 
             try
             {
-                blog = new Blog(e.core, (User)e.Owner);
+                blog = new Blog(core, (User)owner);
             }
             catch (InvalidBlogException)
             {
-                if (e.Owner.ItemKey.Equals(e.core.LoggedInMemberItemKey))
+                if (owner.ItemKey.Equals(core.LoggedInMemberItemKey))
                 {
                     blog = Blog.Create(core);
                 }
                 else
                 {
-                    return;
+                    return null;
                 }
             }
 
@@ -500,7 +508,7 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("S_PUBLISH_FEED", publishToFeedCheckBox);
 
-            e.core.AddPostPanel(e.core.Prose.GetString("BLOG"), template);
+            return template;
         }
     }
 }

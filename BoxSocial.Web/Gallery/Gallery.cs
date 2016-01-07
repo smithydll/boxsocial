@@ -330,6 +330,10 @@ namespace BoxSocial.Applications.Gallery
             {
                 return galleryTitle;
             }
+            set
+            {
+                SetProperty("galleryTitle", value);
+            }
         }
 
 

@@ -1452,7 +1452,12 @@ namespace BoxSocial.Internals
                         {
                             if (owner.UserInfo.TwitterAuthenticated)
                             {
-                                string twitterDescription = Functions.TrimStringToWord(description, 140 - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
+                                int maxLength = 140;
+                                if (!string.IsNullOrEmpty(sharedItem.DataContentType))
+                                {
+                                    maxLength -= 24; // twitter now considers the image link as part of the tweet
+                                }
+                                string twitterDescription = Functions.TrimStringToWord(description, maxLength - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
                                 if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-twitter"] != null))
                                 {

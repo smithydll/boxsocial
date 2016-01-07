@@ -599,6 +599,7 @@ namespace BoxSocial.Internals
 
         public static void ShowMore(Core core, User owner)
         {
+            string mode = core.Http["mode"];
             long newestId = core.Functions.RequestLong("newest-id", 0);
             long oldestId = core.Functions.RequestLong("oldest-id", 0);
             long newerId = 0;
@@ -606,19 +607,16 @@ namespace BoxSocial.Internals
             bool moreContent = false;
             long lastId = 0;
 
-            List<Action> feedActions = null;
+            if (mode == "query")
+            {
+                int count = Feed.GetNewerItemCount(core, core.Session.LoggedInMember, newestId);
 
-            if (newestId > 0)
-            {
-                feedActions = Feed.GetNewerItems(core, owner, newestId);
-            }
-            else
-            {
-                feedActions = Feed.GetItems(core, owner, 1, 20, oldestId, out moreContent);
-            }
+                Dictionary<string, string> returnValues = new Dictionary<string, string>();
 
-            if (feedActions != null)
-            {
+                returnValues.Add("notifications", core.Session.LoggedInMember.UserInfo.UnreadNotifications.ToString());
+                returnValues.Add("mail", core.Session.LoggedInMember.UserInfo.UnseenMail.ToString());
+                returnValues.Add("feed-count", count.ToString());
+
                 JsonSerializer js;
                 StringWriter jstw;
                 JsonTextWriter jtw;
@@ -629,7 +627,35 @@ namespace BoxSocial.Internals
 
                 js.NullValueHandling = NullValueHandling.Ignore;
 
-                core.Http.WriteJson(js, feedActions);
+                core.Http.WriteJson(js, returnValues);
+            }
+            else if (mode == "fetch")
+            {
+                List<Action> feedActions = null;
+
+                if (newestId > 0)
+                {
+                    feedActions = Feed.GetNewerItems(core, owner, newestId);
+                }
+                else
+                {
+                    feedActions = Feed.GetItems(core, owner, 1, 20, oldestId, out moreContent);
+                }
+
+                if (feedActions != null)
+                {
+                    JsonSerializer js;
+                    StringWriter jstw;
+                    JsonTextWriter jtw;
+
+                    js = new JsonSerializer();
+                    jstw = new StringWriter();
+                    jtw = new JsonTextWriter(jstw);
+
+                    js.NullValueHandling = NullValueHandling.Ignore;
+
+                    core.Http.WriteJson(js, feedActions);
+                }
             }
 
             if (core.Db != null)

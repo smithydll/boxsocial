@@ -76,6 +76,7 @@
     <Content Include="scripts\jquery.fileupload-process.js" />
     <Content Include="scripts\jquery.fileupload.js" />
     <Content Include="scripts\jquery.iframe-transport.js" />
+    <Content Include="scripts\jquery.sceditor.bbcode.js" />
     <Content Include="scripts\load-image.min.js" />
     <Content Include="shorturl.aspx" />
     <Content Include="copyright.aspx" />
@@ -113,6 +114,7 @@
     <Content Include="share.aspx" />
     <Content Include="sitemap.aspx" />
     <Content Include="staticpage.aspx" />
+    <Content Include="styles\bbcode.css" />
     <Content Include="styles\boxsocial.css" />
     <Content Include="styles\boxsocial.min.css" />
     <Content Include="styles\boxsocial.mobile.css" />

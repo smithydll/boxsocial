@@ -4471,6 +4471,24 @@
 			},
 			// END_COMMAND
 
+			// START_COMMAND: stylenormal
+			stylenormal: {
+				exec: 'normal',
+				tooltip: 'Normal Paragraph'
+			},
+			// END_COMMAND
+			// START_COMMAND: styleheading1
+			styleheading1: {
+				exec: 'heading1',
+				tooltip: 'Heading 1'
+			},
+			// END_COMMAND
+			// START_COMMAND: styleheading2
+			styleheading2: {
+				exec: 'heading2',
+				tooltip: 'Heading 2'
+			},
+			// END_COMMAND
 			// START_COMMAND: Font
 			font: {
 				_dropDown: function (editor, caller, callback) {
@@ -7203,8 +7221,29 @@
 		superscript: {
 			txtExec: ['[sup]', '[/sup]']
 		},
-		left: {
-			txtExec: ['[left]', '[/left]']
+		justifyleft: {
+			txtExec: ['[align=left]', '[/align]']
+		},
+		justifyright: {
+			txtExec: ['[align=right]', '[/align]']
+		},
+		justifycenter: {
+			txtExec: ['[align=center]', '[/align]']
+		},
+		heading1: {
+			txtExec: ['[h1]', '[/h1]']
+		},
+		heading2: {
+			txtExec: ['[h2]', '[/h2]']
+		},
+		heading3: {
+			txtExec: ['[h3]', '[/h3]']
+		},
+		heading4: {
+			txtExec: ['[h4]', '[/h4]']
+		},
+		paragraph: {
+			txtExec: ['', '']
 		},
 		font: {
 			txtExec: function (caller) {

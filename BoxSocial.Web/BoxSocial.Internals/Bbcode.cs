@@ -34,6 +34,9 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
+
+    public delegate string SaveBbcodeImage(NumberedItem post, string imageType, byte[] imageData);
+
     /// <summary>
     /// Summary description for Bbcode
     /// </summary>
@@ -476,6 +479,33 @@ namespace BoxSocial.Internals
                 case "a":
                     return "lower-alpha";
             }
+        }
+
+        
+
+        public string ExtractAndSaveImageData(string input, NumberedItem post, SaveBbcodeImage saveImage)
+        {
+            MatchCollection matches = Regex.Matches(input, "\\[img\\]data\\:(image/png|image/jpeg);base64,([a-zA-Z0-9\\+/=+)\\[/img\\]", RegexOptions.IgnoreCase);
+
+            foreach (Match match in matches)
+            {
+                string imageType = match.Groups[1].Value;
+                string imageString = match.Groups[2].Value;
+                byte[] imageData = Convert.FromBase64String(imageString);
+
+                string name = string.Empty;
+                if (saveImage != null)
+                {
+                    name = saveImage(post, imageType, imageData);
+                }
+
+                if (!string.IsNullOrEmpty(name))
+                {
+                    input = input.Replace(match.Value, string.Format("[inline]{0}[/inline]", name));
+                }
+            }
+
+            return input;
         }
 
         public List<string> ExtractImages(string input, Primitive owner, bool forceThumbnail, bool firstOnly)

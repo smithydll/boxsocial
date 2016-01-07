@@ -529,7 +529,7 @@ namespace BoxSocial.FrontEnd
 
             if (mode == "query")
             {
-                int count = Feed.GetNewerItemCount(core, core.Session.LoggedInMember, newestId); ;
+                int count = Feed.GetNewerItemCount(core, core.Session.LoggedInMember, newestId);
 
                 Dictionary<string, string> returnValues = new Dictionary<string, string>();
 

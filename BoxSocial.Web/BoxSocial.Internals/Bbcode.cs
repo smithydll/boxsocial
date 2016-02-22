@@ -485,7 +485,12 @@ namespace BoxSocial.Internals
 
         public string ExtractAndSaveImageData(string input, NumberedItem post, SaveBbcodeImage saveImage)
         {
-            MatchCollection matches = Regex.Matches(input, "\\[img\\]data\\:(image/png|image/jpeg);base64,([a-zA-Z0-9\\+/=+)\\[/img\\]", RegexOptions.IgnoreCase);
+            if (string.IsNullOrEmpty(input))
+            {
+                return input;
+            }
+
+            MatchCollection matches = Regex.Matches(input, "\\[img\\]data\\:(image/png|image/jpeg|image/jpg);base64,([a-zA-Z0-9\\+/=]+)\\[/img\\]", RegexOptions.IgnoreCase);
 
             foreach (Match match in matches)
             {
@@ -1603,12 +1608,12 @@ namespace BoxSocial.Internals
                         {
                             if (!e.InList)
                             {
-                                e.PrefixText = "</p><ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                                e.PrefixText = "</p><ul style=\"list-style-type:" + Bbcode.UlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
                                 e.SuffixText = "</ul><p>";
                             }
                             else
                             {
-                                e.PrefixText = "<ul style=\"list-style-type:" + Bbcode.OlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
+                                e.PrefixText = "<ul style=\"list-style-type:" + Bbcode.UlTypeToCssName(e.Attributes.GetAttribute("default")) + "\">";
                                 e.SuffixText = "</ul>";
                             }
                         }

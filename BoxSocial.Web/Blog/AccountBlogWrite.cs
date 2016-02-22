@@ -371,6 +371,7 @@ namespace BoxSocial.Applications.Blog
                 }
 
                 myBlogEntry.Title = title;
+                myBlogEntry.BodyCache = string.Empty;
                 myBlogEntry.Body = postBody;
                 myBlogEntry.License = license;
                 myBlogEntry.Status = publishStatus;
@@ -409,7 +410,12 @@ namespace BoxSocial.Applications.Blog
                     LoggedInMember.UriStubAbsolute, DateTime.Now.Year, DateTime.Now.Month, postId));
 
                 myBlogEntry.Guid = postGuid;
-                myBlogEntry.Update();
+                long updated = myBlogEntry.Update();
+
+                if (updated > 0)
+                {
+                    
+                }
 
                 switch (publishStatus)
                 {
@@ -435,6 +441,7 @@ namespace BoxSocial.Applications.Blog
                 {
                     postBody = core.Bbcode.ExtractAndSaveImageData(postBody, myBlogEntry, saveImage);
 
+                    myBlogEntry.BodyCache = string.Empty;
                     myBlogEntry.Body = postBody;
                     myBlogEntry.Update(); // only triggers if postBody has been updated
                 }

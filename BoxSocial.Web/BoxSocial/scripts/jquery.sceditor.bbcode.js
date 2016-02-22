@@ -7302,7 +7302,7 @@
 						'[li]' + this + '[/li]';
 				});
 
-				this.insertText('[ul]\n' + content + '\n[/ul]');
+				this.insertText('[list]\n' + content + '\n[/list]');
 			}
 		},
 		orderedlist: {
@@ -7316,7 +7316,7 @@
 
 				sceditorPlugins.bbcode.bbcode.get('');
 
-				this.insertText('[ol]\n' + content + '\n[/ol]');
+				this.insertText('[list=1]\n' + content + '\n[/list]');
 			}
 		},
 		table: {
@@ -8575,8 +8575,9 @@
 						if (breakEnd) {
 							ret.push('\n');
 						}
-
-						ret.push('[/' + token.name + ']');
+						if (token.name != '*') {
+						    ret.push('[/' + token.name + ']');
+						}
 					}
 
 					if (breakAfter) {
@@ -9312,6 +9313,48 @@
 		return colorStr;
 	};
 
+	var _olTypeToCssName = function (input) {
+	    switch (input) {
+	        default: //case "1":
+	            return "decimal";
+	        case "I":
+	            return "upper-roman";
+	        case "i":
+	            return "lower-roman";
+	        case "A":
+	            return "upper-alpha";
+	        case "a":
+	            return "lower-alpha";
+	    }
+	}
+
+	var _olTypeFromCssName = function (input) {
+	    if (input == null) return "1"
+	    switch (input.toLowerCase()) {
+	        default: //case "1":
+	            return "1";
+	        case "upper-roman":
+	            return "I";
+	        case "lower-roman":
+	            return "i";
+	        case "upper-alpha":
+	            return "A";
+	        case "lower-alpha":
+	            return "a";
+	    }
+	}
+
+	var _ulTypeToCssName = function (input) {
+	    switch (input) {
+	        default: //case "disc":
+	            return "disc";
+	        case "circle":
+	            return "circle";
+	        case "square":
+	            return "square";
+	    }
+	}
+
 	var bbcodes = {
 		// START_COMMAND: Bold
 		b: {
@@ -9502,45 +9545,65 @@
 		},
 		// END_COMMAND
 
-		// START_COMMAND: Lists
-		ul: {
-			tags: {
-				ul: null
-			},
-			breakStart: true,
-			isInline: false,
-			skipLastLineBreak: true,
-			format: '[ul]{0}[/ul]',
-			html: '<ul>{0}</ul>'
-		},
+	    // START_COMMAND: Lists
 		list: {
+		    tags: {
+		        ol: null,
+                ul: null
+		    },
+		    breakStart: true,
+		    isInline: false,
+		    skipLastLineBreak: true,
+		    format: function ($element, content) {
+		        if ($element.is('ol')) {
+		            var order;
+		            order = $element[0].style.listStyleType || $element.css('list-style-type');
+
+		            return '[list=' + _olTypeFromCssName(order) + ']' +
+                        content + '[/list]';
+		        }
+
+		        if ($element.is('ul')) {
+		            return '[list]' + content + '[/list]';
+		        }
+		    },
+		    html: function (token, attrs, content) {
+		        if (attrs.defaultattr == null || attrs.defaultattr == '' || attrs.defaultattr == 'square' || attrs.defaultattr == 'circle') {
+		            return '<ul>' + content + '</ul>';
+		        } else {
+		            return '<ol style="' +
+                       escapeEntities(_olTypeToCssName(attrs.defaultattr), true) +
+                       '">' + content + '</ol>';
+		        }
+		    }
+		},
+		ul: {
 			breakStart: true,
 			isInline: false,
 			skipLastLineBreak: true,
 			html: '<ul>{0}</ul>'
 		},
 		ol: {
-			tags: {
-				ol: null
-			},
 			breakStart: true,
 			isInline: false,
 			skipLastLineBreak: true,
-			format: '[ol]{0}[/ol]',
 			html: '<ol>{0}</ol>'
 		},
 		li: {
-			tags: {
-				li: null
-			},
+
 			isInline: false,
 			closedBy: ['/ul', '/ol', '/list', '*', 'li'],
-			format: '[li]{0}[/li]',
 			html: '<li>{0}</li>'
 		},
 		'*': {
+		    tags: {
+		        li: null
+		    },
 			isInline: false,
 			closedBy: ['/ul', '/ol', '/list', '*', 'li'],
+			format: function ($element, content) {
+			    return '[*]' + content;
+			},
 			html: '<li>{0}</li>'
 		},
 		// END_COMMAND
@@ -10070,6 +10133,9 @@
 	 * @deprecated
 	 */
 	sceditorPlugins.bbcode.normaliseColour = _normaliseColour;
+	sceditorPlugins.bbcode.olTypeToCssName = _olTypeToCssName;
+	sceditorPlugins.bbcode.olTypeFromCssName = _olTypeFromCssName;
+	sceditorPlugins.bbcode.ulTypeToCssName = _ulTypeToCssName;
 	sceditorPlugins.bbcode.formatString    = _formatString;
 	sceditorPlugins.bbcode.stripQuotes     = _stripQuotes;
 	sceditorPlugins.bbcode.bbcodes         = bbcodes;

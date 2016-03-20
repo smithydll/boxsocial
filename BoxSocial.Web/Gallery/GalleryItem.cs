@@ -1101,7 +1101,7 @@ namespace BoxSocial.Applications.Gallery
         /// <summary>
         /// Delete the gallery item
         /// </summary>
-        public new long Delete()
+        public override long Delete()
         {
             SelectQuery squery = new SelectQuery("gallery_items gi");
             squery.AddFields("COUNT(*) AS number");

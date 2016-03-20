@@ -1265,12 +1265,12 @@ namespace BoxSocial.Internals
             return 0;
         }
 
-        public long Delete()
+        public virtual long Delete()
         {
             return Delete(false);
         }
 
-        public long Delete(bool parentDeleted)
+        public virtual long Delete(bool parentDeleted)
         {
             if (this is IPermissibleItem)
             {

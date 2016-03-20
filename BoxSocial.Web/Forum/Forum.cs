@@ -700,7 +700,7 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
-        public new long Delete()
+        public override long Delete()
         {
             /* Do not delete sub items, post delete method will update post counts in a more efficient manner */
             return ((Item)this).Delete();

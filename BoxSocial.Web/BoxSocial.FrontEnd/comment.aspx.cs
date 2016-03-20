@@ -222,8 +222,8 @@ namespace BoxSocial.FrontEnd
                 else
                 {
                     core.Response.ShowMessage("invalidComment", "Invalid Comment", "The comments you have attempted to fetch are invalid. (0x07)");
-                    return;
                 }
+                return;
             }
 
             if (mode == "report")
@@ -261,6 +261,7 @@ namespace BoxSocial.FrontEnd
                     }
                 }
                 core.Response.ShowMessage("commentReported", "Reported Comment", "You have successfully reported a comment.");
+                return;
             }
 
             if (mode == "delete")
@@ -279,7 +280,15 @@ namespace BoxSocial.FrontEnd
                     core.Response.ShowMessage("permissionDenied", "Permission Denied", "You do not have the permissions to delete this comment.");
                 }
 
-                core.Response.SendRawText("commentDeleted", "You have successfully deleted the comment.");
+                if (core.ResponseFormat == ResponseFormats.Xml)
+                {
+                    core.Response.SendRawText("commentDeleted", "You have successfully deleted the comment.");
+                }
+                else
+                {
+                    core.Response.ShowMessage("commentDeleted", "Comment Deleted", "You have successfully deleted the comment");
+                }
+                return;
             }
 
             // else we post a comment
@@ -444,12 +453,19 @@ namespace BoxSocial.FrontEnd
                         ct.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
                     }
 
+                    if (item != null)
+                    {
+                        template.Parse("ITEM_ID", item.Id.ToString());
+                        template.Parse("ITEM_TYPE", item.ItemKey.TypeId.ToString());
+                    }
+
                     VariableCollection commentsVariableCollection = ct.CreateChild("comment-list");
 
                     //commentsVariableCollection.ParseRaw("COMMENT", Bbcode.Parse(HttpUtility.HtmlEncode(comment), core.session.LoggedInMember));
                     core.Display.ParseBbcode(commentsVariableCollection, "COMMENT", comment);
                     // TODO: finish comments this
                     commentsVariableCollection.Parse("ID", commentId.ToString());
+                    commentsVariableCollection.Parse("TYPE_ID", ItemKey.GetTypeId(core, typeof(Comment)));
                     commentsVariableCollection.Parse("USERNAME", loggedInMember.DisplayName);
                     commentsVariableCollection.Parse("USER_ID", loggedInMember.Id.ToString());
                     commentsVariableCollection.Parse("U_PROFILE", loggedInMember.ProfileUri);

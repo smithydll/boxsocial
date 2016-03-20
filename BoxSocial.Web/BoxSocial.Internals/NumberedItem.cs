@@ -289,12 +289,12 @@ namespace BoxSocial.Internals
             return tags;
         }
 
-        public new long Delete()
+        public override long Delete()
         {
-            return this.Delete(false);
+            return Delete(false);
         }
 
-        public new long Delete(bool parentDeleted)
+        public override long Delete(bool parentDeleted)
         {
             ItemInfo info = this.Info;
 

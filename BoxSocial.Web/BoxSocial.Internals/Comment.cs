@@ -268,7 +268,7 @@ namespace BoxSocial.Internals
             ActionableItem.CleanUp(core, this);
         }
 
-        public long Delete(bool parentDeleted)
+        public override long Delete(bool parentDeleted)
         {
             long returnValue = 0;
             if (parentDeleted)
@@ -278,11 +278,14 @@ namespace BoxSocial.Internals
             else
             {
                 db.BeginTransaction();
-                returnValue = db.UpdateQuery(string.Format("UPDATE comments SET comment_deleted = TRUE WHERE comment_id = {0}",
-                    Id));
+                UpdateQuery uQuery = new UpdateQuery(typeof(Comment));
+                uQuery.AddField("comment_deleted", true);
+                uQuery.AddCondition("comment_id", Id);
+
+                returnValue = db.Query(uQuery);
             }
 
-            Comment.CommentDeleted(core, this.CommentedItemKey);
+            CommentDeleted(core, CommentedItemKey);
             return returnValue;
         }
 

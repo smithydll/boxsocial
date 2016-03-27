@@ -480,6 +480,8 @@ namespace BoxSocial.Internals
                     emoticons = new List<Emoticon>();
 
                     SelectQuery query = Emoticon.GetSelectQueryStub(this, typeof(Emoticon));
+                    query.AddField(new QueryFunction("emoticon_code", QueryFunctions.StringLength, "emoticon_code_length"));
+                    query.AddSort(SortOrder.Descending, "emoticon_code_length");
                     System.Data.Common.DbDataReader emoticonsReader = db.ReaderQuery(query);
 
                     while(emoticonsReader.Read())

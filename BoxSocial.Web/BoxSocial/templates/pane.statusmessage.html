@@ -24,7 +24,7 @@
             <!-- IF status_messages.SHAREABLE -->
             --><span class="img-button share-item"><a href="{U_SHARE}" onclick="return ShareItem({status_messages.ID},{status_messages.TYPE_ID});" title="Share"><span class="sprite share-sprite"></span><span class="shares">{status_messages.SHARES}</span></a></span><!--
             <!-- ENDIF -->
-            --><span class="img-button comment-item"><a href="#" onclick="return toggleStatusComments($(this).parents('.status-post'), {status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));" title="{L_EXPAND_COMMENTS}}">{L_COMMENTS}<span class="likes">{status_messages.COMMENTS}</span></a></span><!--
+            --><span class="img-button comment-item"><a href="#" onclick="return toggleStatusComments($(this).parents('.status-post'), {status_messages.ID}, {status_messages.TYPE_ID}, $('#status-comments-{status_messages.ID}'));" title="{L_EXPAND_COMMENTS}">{L_COMMENTS}<span class="likes">{status_messages.COMMENTS}</span></a></span><!--
             <!-- IF status_messages.IS_OWNER -->
             <!-- IF status_messages.IS_PUBLIC -->
             --><span class="img-button permissions-item"><a href="{status_messages.U_PERMISSIONS}" title="{L_PUBLIC}"><span class="sprite permissions-sprite"></span><span class="perms">{L_PUBLIC}</span></a></span><!--

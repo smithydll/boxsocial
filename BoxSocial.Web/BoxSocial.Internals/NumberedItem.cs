@@ -307,6 +307,8 @@ namespace BoxSocial.Internals
                 }
             }
 
+            Type type = this.GetType();
+
             if (this is IPermissibleSubItem)
             {
                 DeletePermissionAttribute[] deleteAttributes = (DeletePermissionAttribute[])this.GetType().GetCustomAttributes(typeof(DeletePermissionAttribute), false);
@@ -343,7 +345,7 @@ namespace BoxSocial.Internals
                 }
             }
 
-            return base.Delete();
+            return base.Delete(parentDeleted);
         }
 
         public static NumberedItem Reflect(Core core, ItemKey ik)

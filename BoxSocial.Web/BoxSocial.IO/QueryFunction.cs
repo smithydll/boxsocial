@@ -33,6 +33,7 @@ namespace BoxSocial.IO
         Average,
         ToLowerCase,
         ToUpperCase,
+        StringLength
     }
 
     public class QueryFunction
@@ -84,6 +85,8 @@ namespace BoxSocial.IO
                     return "LCASE";
                 case QueryFunctions.ToUpperCase:
                     return "UCASE";
+                case QueryFunctions.StringLength:
+                    return "LENGTH";
             }
 
             return String.Empty;

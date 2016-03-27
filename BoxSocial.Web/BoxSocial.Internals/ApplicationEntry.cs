@@ -1404,7 +1404,8 @@ namespace BoxSocial.Internals
             {
                 /* Post to Twitter, Facebook, individual */
                 string sharePrefix = core.Http.Form["share"];
-                if (!string.IsNullOrEmpty(sharePrefix) || (owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated))
+                // Either the share prefix has been set XOR fallback to the default share settings
+                if ((!string.IsNullOrEmpty(sharePrefix)) ^ ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)))
                 {
                     ItemInfo info = item.Info;
                     IActionableItem sharedItem = item;
@@ -1459,7 +1460,7 @@ namespace BoxSocial.Internals
                                 }
                                 string twitterDescription = Functions.TrimStringToWord(description, maxLength - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
-                                if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-twitter"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-twitter"]))))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription + debug));
                                 }
@@ -1469,7 +1470,7 @@ namespace BoxSocial.Internals
                             {
                                 Uri shareUri = new Uri(info.ShareUri);
 
-                                if ((sharePrefix == null && owner.UserInfo.TumblrSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-tumblr"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.TumblrSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-tumblr"]))))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
                                 }
@@ -1477,7 +1478,7 @@ namespace BoxSocial.Internals
 
                             if (owner.UserInfo.FacebookAuthenticated)
                             {
-                                if ((sharePrefix == null && owner.UserInfo.FacebookSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && core.Http.Form[sharePrefix + "-share-facebook"] != null))
+                                if ((sharePrefix == null && owner.UserInfo.FacebookSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-facebook"]))))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishFacebook", description));
                                 }

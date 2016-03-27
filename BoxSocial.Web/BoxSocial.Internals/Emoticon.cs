@@ -42,12 +42,17 @@ namespace BoxSocial.Internals
         private long emoticonId;
         [DataField("emoticon_title", 63)]
         private string title;
-        [DataField("emoticon_code", 7)]
+        //[DataFieldKey(DataFieldKeys.Unique, "u_emoticons_code")]
+        [DataField("emoticon_code", 12)]
         private string code;
-        [DataField("emoticon_file", 63)]
+        [DataField("emoticon_code_alt", 12)]
+        private string codeAlternate;
+        [DataField("emoticon_file", 127)]
         private string file;
         [DataField("emoticon_category", DataFieldKeys.Index, "category", 31)]
         private string category;
+        [DataField("emoticon_order")]
+        private int emoticonOrder;
 
         public string Title
         {
@@ -89,6 +94,21 @@ namespace BoxSocial.Internals
             try
             {
                 LoadItem(emoticonId);
+            }
+            catch (InvalidItemException)
+            {
+                throw new InvalidEmoticonException();
+            }
+        }
+
+        public Emoticon(Core core, string code)
+            : base(core)
+        {
+            ItemLoad += new ItemLoadHandler(Emoticon_ItemLoad);
+
+            try
+            {
+                LoadItem("emoticon_code", code);
             }
             catch (InvalidItemException)
             {
@@ -146,8 +166,10 @@ namespace BoxSocial.Internals
             emoticonId = (long)emoticonRow["emoticon_id"];
             loadValue(emoticonRow, "emoticon_title", out title);
             loadValue(emoticonRow, "emoticon_code", out code);
+            loadValue(emoticonRow, "emoticon_code_alt", out codeAlternate);
             loadValue(emoticonRow, "emoticon_file", out file);
             loadValue(emoticonRow, "emoticon_category", out category);
+            loadValue(emoticonRow, "emoticon_order", out emoticonOrder);
 
             itemLoaded(emoticonRow);
             //core.ItemCache.RegisterItem((NumberedItem)this);
@@ -158,8 +180,10 @@ namespace BoxSocial.Internals
             emoticonId = (long)emoticonRow["emoticon_id"];
             loadValue(emoticonRow, "emoticon_title", out title);
             loadValue(emoticonRow, "emoticon_code", out code);
+            loadValue(emoticonRow, "emoticon_code_alt", out codeAlternate);
             loadValue(emoticonRow, "emoticon_file", out file);
             loadValue(emoticonRow, "emoticon_category", out category);
+            loadValue(emoticonRow, "emoticon_order", out emoticonOrder);
 
             itemLoaded(emoticonRow);
             //core.ItemCache.RegisterItem((NumberedItem)this);
@@ -170,8 +194,10 @@ namespace BoxSocial.Internals
             emoticonId = (long)emoticonRow["emoticon_id"];
             loadValue(emoticonRow, "emoticon_title", out title);
             loadValue(emoticonRow, "emoticon_code", out code);
+            loadValue(emoticonRow, "emoticon_code_alt", out codeAlternate);
             loadValue(emoticonRow, "emoticon_file", out file);
             loadValue(emoticonRow, "emoticon_category", out category);
+            loadValue(emoticonRow, "emoticon_order", out emoticonOrder);
 
             itemLoaded(emoticonRow);
             //core.ItemCache.RegisterItem((NumberedItem)this);
@@ -181,7 +207,7 @@ namespace BoxSocial.Internals
         {
         }
 
-        private static Emoticon Create(Core core, string title, string code, string file, string category)
+        private static Emoticon Create(Core core, string title, string code, string file, string category, int order = 0)
         {
             if (core == null)
             {
@@ -191,7 +217,25 @@ namespace BoxSocial.Internals
             Item item = Item.Create(core, typeof(Emoticon), new FieldValuePair("emoticon_title", title),
                 new FieldValuePair("emoticon_code", code),
                 new FieldValuePair("emoticon_file", file),
-                new FieldValuePair("emoticon_category", category));
+                new FieldValuePair("emoticon_category", category),
+                new FieldValuePair("emoticon_order", order));
+
+            return (Emoticon)item;
+        }
+
+        private static Emoticon Create(Core core, string title, string code, string codeAlternate, string file, string category, int order = 0)
+        {
+            if (core == null)
+            {
+                throw new NullCoreException();
+            }
+
+            Item item = Item.Create(core, typeof(Emoticon), new FieldValuePair("emoticon_title", title),
+                new FieldValuePair("emoticon_code", code),
+                new FieldValuePair("emoticon_code_alt", codeAlternate),
+                new FieldValuePair("emoticon_file", file),
+                new FieldValuePair("emoticon_category", category),
+                new FieldValuePair("emoticon_order", order));
 
             return (Emoticon)item;
         }
@@ -201,32 +245,122 @@ namespace BoxSocial.Internals
             return string.Empty;
         }
 
-        // Install https://github.com/Genshin/PhantomOpenEmoji
+        // Install emojis
         // The installer process will Download the svg files and convert to png
-        public static void InstallEmoji(Core core, string json)
+        public static void InstallEmoji(Core core, string json, string set)
         {
-            List<Dictionary<string, object>> emoji = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
-
-            foreach (Dictionary<string, object> emoticon in emoji)
+            switch (set)
             {
-                if (emoticon.ContainsKey("moji"))
-                {
-                    bool flag = true;
-
-                    foreach (Emoticon e in core.Emoticons)
+                case "phantom":
                     {
-                        if (e.Code == (string)emoticon["moji"])
+                        List<Dictionary<string, object>> emoji = JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
+
+                        foreach (Dictionary<string, object> emoticon in emoji)
                         {
-                            flag = false;
-                            continue;
+                            if (emoticon.ContainsKey("moji"))
+                            {
+                                bool flag = true;
+
+                                foreach (Emoticon e in core.Emoticons)
+                                {
+                                    if (e.Code == (string)emoticon["moji"])
+                                    {
+                                        flag = false;
+                                        continue;
+                                    }
+                                }
+
+                                if (flag)
+                                {
+                                    string filename = @"/images/emoticons/" + (string)emoticon["name"] + ".png";
+
+                                    Emoticon.Create(core, (string)emoticon["name"], (string)emoticon["moji"], filename, (string)emoticon["category"]);
+                                }
+                            }
                         }
                     }
-
-                    if (flag)
+                    break;
+                case "one":
                     {
-                        Emoticon.Create(core, (string)emoticon["name"], (string)emoticon["moji"], @"/images/emoticons/" + (string)emoticon["name"] + ".png", (string)emoticon["category"]);
+                        Dictionary<string, Dictionary<string, object>> emoji = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, object>>>(json);
+
+                        foreach (Dictionary<string, object> emoticon in emoji.Values)
+                        {
+                            if (emoticon.ContainsKey("unicode"))
+                            {
+                                bool flag = true;
+
+                                foreach (Emoticon e in core.Emoticons)
+                                {
+                                    if (e.Code == (string)emoticon["moji"])
+                                    {
+                                        flag = false;
+                                        continue;
+                                    }
+                                }
+
+                                string moji = string.Empty;
+                                string mojiAlt = string.Empty;
+
+                                {
+                                    string[] unicode = ((string)emoticon["unicode"]).Split('-');
+                                    for (int i = 0; i < unicode.Length; i++)
+                                    {
+                                        int unicodeCode = 0;
+                                        int.TryParse(unicode[i], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out unicodeCode);
+                                        unicode[i] = char.ConvertFromUtf32(unicodeCode);
+                                        moji += unicode[i];
+                                    }
+                                }
+
+                                if (emoticon.ContainsKey("unicode_alternates"))
+                                {
+                                    string[] unicode = ((string)emoticon["unicode_alternates"]).Split('-');
+                                    for (int i = 0; i < unicode.Length; i++)
+                                    {
+                                        int unicodeCode = 0;
+                                        int.TryParse(unicode[i], System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out unicodeCode);
+                                        unicode[i] = char.ConvertFromUtf32(unicodeCode);
+                                        mojiAlt += unicode[i];
+                                    }
+                                }
+
+                                int order = 0;
+                                if (emoticon.ContainsKey("emoji_order"))
+                                {
+                                    int.TryParse((string)emoticon["emoji_order"], out order);
+                                }
+
+                                string name = string.Empty;
+                                if (emoticon.ContainsKey("name"))
+                                {
+                                    name = (string)emoticon["name"];
+                                }
+
+                                string category = string.Empty;
+                                if (emoticon.ContainsKey("category"))
+                                {
+                                    category = (string)emoticon["category"];
+                                }
+
+                                if (flag)
+                                {
+                                    string filename = @"/images/emoticons/" + (string)emoticon["unicode"] + ".png";
+
+                                    try
+                                    {
+                                        Emoticon newEmoji = Emoticon.Create(core, name, moji, mojiAlt, @"/images/emoticons/" + (string)emoticon["unicode"] + ".png", category, order);
+                                    }
+                                    catch
+                                    {
+                                        Console.WriteLine(moji + " failed to load emoji '" + name + "', alt " + mojiAlt);
+                                    }
+
+                                }
+                            }
+                        }
                     }
-                }
+                    break;
             }
         }
 

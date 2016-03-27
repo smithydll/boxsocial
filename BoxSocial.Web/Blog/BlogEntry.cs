@@ -499,6 +499,28 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        /// <summary>
+        /// Increment the number of views
+        /// </summary>
+        /// <param name="viewer">Person viewing the gallery item</param>
+        public void Viewed(User viewer)
+        {
+            if (viewer != null)
+            {
+                if (owner is User)
+                {
+                    if (viewer.UserId == ((User)owner).UserId)
+                    {
+                        return;
+                    }
+                }
+                db.UpdateQuery(string.Format("UPDATE blog_postings SET post_views = post_views + 1 WHERE post_id = {0};",
+                    postId));
+                // otherwise just update the view count
+            }
+            return;
+        }
+
         public static void NotifyBlogComment(Core core, Job job)
         {
             Comment comment = new Comment(core, job.ItemId);

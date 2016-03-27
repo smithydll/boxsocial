@@ -1111,6 +1111,8 @@ namespace BoxSocial.Applications.Blog
                     core.Display.DisplayComments(core.Template, page.User, blogEntries[0]);
                     core.Template.Parse("SINGLE", "TRUE");
 
+                    blogEntries[0].Viewed(core.Session.LoggedInMember);
+
                     page.Core.Meta.Add("twitter:card", "summary");
                     if (!string.IsNullOrEmpty(page.Core.Settings.TwitterName))
                     {

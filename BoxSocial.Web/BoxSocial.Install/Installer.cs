@@ -339,6 +339,7 @@ namespace BoxSocial.Install
 
         static void DoExit()
         {
+            Console.Clear();
             Environment.Exit(0);
         }
 
@@ -512,7 +513,7 @@ namespace BoxSocial.Install
             Core core = new Core(null, ResponseFormats.Html, db, template);
             UnixTime tz = new UnixTime(core, 0);
 
-            InstallEmoticons(core);
+            InstallEmoticons(core, "one");
         }
 
         static void EnterUpdateGDK()
@@ -1703,7 +1704,7 @@ namespace BoxSocial.Install
 
             InstallWww();
             InstallGDK();
-            InstallEmoticons(core);
+            InstallEmoticons(core, "one");
             InstallTemplates();
             InstallScripts();
             InstallStyles();
@@ -1962,7 +1963,12 @@ namespace BoxSocial.Install
             }
         }
 
-        private static void InstallEmoticons(Core core)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="core"></param>
+        /// <param name="set">Either Phantom or One</param>
+        private static void InstallEmoticons(Core core, string set)
         {
             string svgPath = Path.Combine("GDK", "emoticons");
 
@@ -1971,7 +1977,20 @@ namespace BoxSocial.Install
                 Directory.CreateDirectory(svgPath);
             }
 
-            string emoticonPackage = @"https://github.com/Genshin/PhantomOpenEmoji/archive/master.zip";
+            string emoticonPackage = string.Empty;
+            string indexName = string.Empty;
+            switch (set.ToLower())
+            {
+                case "phantom":
+                    emoticonPackage = @"https://github.com/Genshin/PhantomOpenEmoji/archive/master.zip";
+                    indexName = @"poe.json";
+                    break;
+                case "one":
+                default:
+                    emoticonPackage = @"https://github.com/Ranks/emojione/archive/master.zip";
+                    indexName = @"emoji.json";
+                    break;
+            }
 
             List<string> images = new List<string>();
 
@@ -2002,7 +2021,7 @@ namespace BoxSocial.Install
 
                 string filename = Path.GetFileName(ze.Name);
 
-                if (filename == "index.json")
+                if (filename == indexName)
                 {
                     string output = Path.Combine(svgPath, filename);
                     if (File.Exists(output))
@@ -2059,6 +2078,8 @@ namespace BoxSocial.Install
             {
                 string input = Path.Combine(svgPath, image + ".svg");
                 string output = Path.Combine(Path.Combine(imagesRoot, "emoticons"), image + ".png");
+#if DEBUG
+#else
                 if (File.Exists(input))
                 {
                     if (File.Exists(output))
@@ -2092,13 +2113,15 @@ namespace BoxSocial.Install
                     p1.WaitForExit();
                     p1.Close();
                 }
+#endif
             }
 
-            if (File.Exists(Path.Combine(svgPath, "index.json")))
+            if (File.Exists(Path.Combine(svgPath, indexName)))
             {
                 Console.WriteLine("Installing emoticons");
-                Emoticon.InstallEmoji(core, OpenTextFile(Path.Combine(svgPath, "index.json")));
+                Emoticon.InstallEmoji(core, OpenTextFile(Path.Combine(svgPath, indexName)), set);
             }
+
         }
 
         /// <summary>

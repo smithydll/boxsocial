@@ -120,6 +120,7 @@
     <Compile Include="Application.cs" />
     <Compile Include="ApplicationDeveloper.cs" />
     <Compile Include="ApplicationEntry.cs" />
+    <Compile Include="ApplicationError.cs" />
     <Compile Include="ApplicationInstallationInfo.cs" />
     <Compile Include="ApplicationSlug.cs" />
     <Compile Include="Bbcode.cs" />

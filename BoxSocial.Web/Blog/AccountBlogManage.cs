@@ -87,13 +87,13 @@ namespace BoxSocial.Applications.Blog
             }
             template.Parse("U_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", myBlog.Id, ItemType.GetTypeId(core, typeof(Blog))), true));
 
-            List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, core.TopLevelPageNumber, 25);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(null, null, -1, -1, -1, core.TopLevelPageNumber, 25, true);
 
             foreach (BlogEntry be in blogEntries)
             {
                 VariableCollection blogVariableCollection = template.CreateChild("blog_list");
 
-                DateTime postedTime = be.GetCreatedDate(tz);
+                DateTime postedTime = be.GetPublishedDate(tz);
 
                 blogVariableCollection.Parse("COMMENTS", be.Comments.ToString());
                 blogVariableCollection.Parse("TITLE", be.Title);

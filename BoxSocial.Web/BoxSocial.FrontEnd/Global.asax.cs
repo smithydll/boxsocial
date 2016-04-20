@@ -133,6 +133,7 @@ namespace BoxSocial.FrontEnd
             }
 
             Regex.CacheSize = 256;
+
         }
 
         protected void worker_DoWork(object sender, DoWorkEventArgs e)
@@ -227,18 +228,26 @@ namespace BoxSocial.FrontEnd
                         }
                     }
 
-#if DEBUG
                     if (failedJobs > 0)
                     {
+                        InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                        iQuery.AddField("error_title", "Jobs failed at " + Hyperlink.Domain);
+                        iQuery.AddField("error_body", "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
+                        core.Db.Query(iQuery);
+#if DEBUG
                         core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
-                    }
 #endif
+                    }
                 }
             }
             catch (Exception ex)
             {
                 try
                 {
+                    InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                    iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
+                    iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
+                    core.Db.Query(iQuery);
                     core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
@@ -531,8 +540,8 @@ namespace BoxSocial.FrontEnd
                                 patterns.Add(new string[] { @"^/comment(/|)$", @"/comment.aspx" });
 
                                 patterns.Add(new string[] { string.Format(@"^/styles/group/{0}.css$", dnsOwnerKey), string.Format(@"/groupstyle.aspx?gn={0}", dnsOwnerKey) });
-                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1", dnsOwnerKey) });
-                                patterns.Add(new string[] { string.Format(@"^/images/group/\_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1&retina=true", dnsOwnerKey) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1", dnsOwnerKey) });
+                                patterns.Add(new string[] { string.Format(@"^/images/group/_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?gn={0}&mode=$1&retina=true", dnsOwnerKey) });
 
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1&sub=$2", dnsOwnerKey) });
                                 patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", string.Format(@"/groupaccount.aspx?gn={0}&module=$1", dnsOwnerKey) });
@@ -560,8 +569,8 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
 
                             patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", dnsOwnerKey), string.Format(@"/userstyle.aspx?un={0}", dnsOwnerKey) });
-                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1", dnsOwnerKey) });
-                            patterns.Add(new string[] { string.Format(@"^/images/user/\_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", dnsOwnerKey) });
+                            patterns.Add(new string[] { string.Format(@"^/images/user/_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1", dnsOwnerKey) });
+                            patterns.Add(new string[] { string.Format(@"^/images/user/_([a-z]+)/{0}@2x.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1&retina=true", dnsOwnerKey) });
 
                             patterns.Add(new string[] { @"^/account/([a-z\-]+)/([a-z\-]+)(/|)$", @"/account.aspx?module=$1&sub=$2" });
                             patterns.Add(new string[] { @"^/account/([a-z\-]+)(/|)$", @"/account.aspx?module=$1" });
@@ -646,14 +655,14 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/styles/group/([A-Za-z0-9\-_\.]+).css$", @"/groupstyle.aspx?gn=$1" });
                     patterns.Add(new string[] { @"^/styles/music/([A-Za-z0-9\-_\.]+).css$", @"/musicstyle.aspx?gn=$1" });
 
-                    patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?un=$2&mode=$1"});
-                    patterns.Add(new string[] { @"^/images/user/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?un=$2&mode=$1&retina=true" });
+                    patterns.Add(new string[] { @"^/images/user/_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?un=$2&mode=$1"});
+                    patterns.Add(new string[] { @"^/images/user/_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?un=$2&mode=$1&retina=true" });
 
-                    patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?gn=$2&mode=$1" });
-                    patterns.Add(new string[] { @"^/images/group/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?gn=$2&mode=$1&retina=true" });
+                    patterns.Add(new string[] { @"^/images/group/_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?gn=$2&mode=$1" });
+                    patterns.Add(new string[] { @"^/images/group/_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?gn=$2&mode=$1&retina=true" });
 
-                    patterns.Add(new string[] { @"^/images/application/\_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?an=$2&mode=$1" });
-                    patterns.Add(new string[] { @"^/images/application/\_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?an=$2&mode=$1&retina=true" });
+                    patterns.Add(new string[] { @"^/images/application/_([a-z]+)/([A-Za-z0-9\-_\.]+).png$", @"/identicon.aspx?an=$2&mode=$1" });
+                    patterns.Add(new string[] { @"^/images/application/_([a-z]+)/([A-Za-z0-9\-_\.]+)@2x.png$", @"/identicon.aspx?an=$2&mode=$1&retina=true" });
 
                     patterns.Add(new string[] { @"^/help(/|)$", @"/help.aspx" });
                     patterns.Add(new string[] { @"^/help/([a-z\-]+)(/|)$", @"/help.aspx?topic=$1" });

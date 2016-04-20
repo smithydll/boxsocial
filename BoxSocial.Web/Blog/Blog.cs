@@ -375,7 +375,7 @@ namespace BoxSocial.Applications.Blog
         internal List<BlogEntry> GetDrafts(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
             bool moreContent = false;
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, true, out moreContent);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, true, true, out moreContent);
         }
 
         /// <summary>
@@ -392,7 +392,13 @@ namespace BoxSocial.Applications.Blog
         internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage)
         {
             bool moreContent = false;
-            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, false, out moreContent);
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, false, false, out moreContent);
+        }
+
+        internal List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, bool future)
+        {
+            bool moreContent = false;
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, false, future, out moreContent);
         }
 
         /// <summary>
@@ -407,7 +413,7 @@ namespace BoxSocial.Applications.Blog
         /// <param name="drafts">Flag to select draft posts or published posts (true for drafts)</param>
         /// <returns>A list of blog entries</returns>
         /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
-        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, long currentOffset, bool drafts, out bool moreContent)
+        private List<BlogEntry> GetEntries(string category, string tag, long post, int year, int month, int currentPage, int perPage, long currentOffset, bool drafts, bool future, out bool moreContent)
         {
             double pessimism = 1.2;
 
@@ -456,6 +462,12 @@ namespace BoxSocial.Applications.Blog
                 query.AddCondition("tag_text_normalised", tag);
             }
 
+            // Include blog entries from the past only if future is false
+            if (!future)
+            {
+                query.AddCondition(new DataField(typeof(BlogEntry), "post_time_ut"), ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
+            }
+
             int bpage = currentPage;
             if (post > 0)
             {
@@ -464,7 +476,7 @@ namespace BoxSocial.Applications.Blog
 
             int limitStart = (bpage - 1) * perPage;
 
-            PublishStatuses status = (drafts) ? PublishStatuses.Draft : PublishStatuses.Publish;
+            PublishStatuses status = (drafts) ? PublishStatuses.Draft : PublishStatuses.Published;
 
             query.AddCondition("post_status", (byte)status);
             query.AddCondition("user_id", UserId);
@@ -839,7 +851,7 @@ namespace BoxSocial.Applications.Blog
 
             bool moreContent = false;
             long lastPostId = 0;
-            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, page.TopLevelPageOffset, false, out moreContent);
+            List<BlogEntry> blogEntries = myBlog.GetEntries(category, tag, post, year, month, page.TopLevelPageNumber, 10, page.TopLevelPageOffset, false, false, out moreContent);
 
             if (!rss)
             {
@@ -978,7 +990,7 @@ namespace BoxSocial.Applications.Blog
                 doc.channels[0].items = new RssDocumentItem[blogEntries.Count];
                 for (int i = 0; i < blogEntries.Count; i++)
                 {
-                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
+                    DateTime postDateTime = blogEntries[i].GetPublishedDate(core.Tz);
 
                     doc.channels[0].items[i] = new RssDocumentItem();
                     doc.channels[0].items[i].description = core.Bbcode.Parse(HttpUtility.HtmlEncode(blogEntries[i].Body), core.Session.LoggedInMember, page.User);
@@ -1020,7 +1032,7 @@ namespace BoxSocial.Applications.Blog
 
                     blogPostVariableCollection.Parse("TITLE", blogEntries[i].Title);
 
-                    DateTime postDateTime = blogEntries[i].GetCreatedDate(core.Tz);
+                    DateTime postDateTime = blogEntries[i].GetPublishedDate(core.Tz);
 
                     blogPostVariableCollection.Parse("DATE", core.Tz.DateTimeToString(postDateTime));
                     blogPostVariableCollection.Parse("URL", blogEntries[i].Uri);

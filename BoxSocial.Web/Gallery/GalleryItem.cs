@@ -1057,15 +1057,24 @@ namespace BoxSocial.Applications.Gallery
 
         public static void NotifyGalleryItemComment(Core core, Job job)
         {
-            Comment comment = new Comment(core, job.ItemId);
-            GalleryItem ev = new GalleryItem(core, comment.CommentedItemKey.Id);
+            try {
+                Comment comment = new Comment(core, job.ItemId);
+                GalleryItem ev = new GalleryItem(core, comment.CommentedItemKey.Id);
 
-            if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
-            {
-                core.CallingApplication.SendNotification(core, comment.User, (User)ev.Owner, ev.OwnerKey, ev.ItemKey, "_COMMENTED_GALLERY_ITEM", comment.BuildUri(ev));
+                if (ev.Owner is User && (!comment.OwnerKey.Equals(ev.OwnerKey)))
+                {
+                    core.CallingApplication.SendNotification(core, comment.User, (User)ev.Owner, ev.OwnerKey, ev.ItemKey, "_COMMENTED_GALLERY_ITEM", comment.BuildUri(ev));
+                }
+
+                core.CallingApplication.SendNotification(core, comment.OwnerKey, comment.User, ev.OwnerKey, ev.ItemKey, "_COMMENTED_GALLERY_ITEM", comment.BuildUri(ev));
             }
+            catch (InvalidCommentException)
+            {
+            }
+            catch (GalleryItemNotFoundException)
+            {
 
-            core.CallingApplication.SendNotification(core, comment.OwnerKey, comment.User, ev.OwnerKey, ev.ItemKey, "_COMMENTED_GALLERY_ITEM", comment.BuildUri(ev));
+            }
         }
 
         public void CommentPosted(CommentPostedEventArgs e)

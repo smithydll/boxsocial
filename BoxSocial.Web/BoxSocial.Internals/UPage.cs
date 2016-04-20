@@ -109,6 +109,11 @@ namespace BoxSocial.Internals
                 template.Parse("ANALYTICS_CODE", User.UserInfo.AnalyticsCode);
             }
 
+            if (User.UserInfo.AllowMonetisation && !string.IsNullOrEmpty(User.UserInfo.AdsenseCode))
+            {
+                template.Parse("ADSENSE_CODE", User.UserInfo.AdsenseCode);
+            }
+
             if (loggedInMember != null)
             {
                 if (loggedInMember.UserInfo.ShowCustomStyles)

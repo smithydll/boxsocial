@@ -154,6 +154,10 @@ namespace BoxSocial.Internals
         private string twoFactorAuthKey;
         [DataField("user_two_factor_auth_verified")]
         private bool twoFactorAuthVerified;
+        [DataField("user_allow_monetisation")]
+        private bool allowMonetisation;
+        [DataField("user_adsense_code", 12)]
+        private string adsenseCode;
 
         // If a user has a compatible device with the app installed they can get push notifications
         // or if they use a compatible browser they can get push notifications
@@ -841,6 +845,32 @@ namespace BoxSocial.Internals
             }
         }
 
+        [JsonIgnore]
+        public bool AllowMonetisation
+        {
+            get
+            {
+                return allowMonetisation;
+            }
+            internal set
+            {
+                SetPropertyByRef(new { allowMonetisation }, value);
+            }
+        }
+
+        [JsonIgnore]
+        internal string AdsenseCode
+        {
+            get
+            {
+                return adsenseCode;
+            }
+            set
+            {
+                SetPropertyByRef(new { adsenseCode }, value);
+            }
+        }
+
         /// <summary>
         /// Gets the user's registration date
         /// </summary>
@@ -975,6 +1005,8 @@ namespace BoxSocial.Internals
             loadValue(userRow, "user_tumblr_authenticated", out userTumblrAthenticated);
             loadValue(userRow, "user_two_factor_auth_key", out twoFactorAuthKey);
             loadValue(userRow, "user_two_factor_auth_verified", out twoFactorAuthVerified);
+            loadValue(userRow, "user_adsense_code", out adsenseCode);
+            loadValue(userRow, "user_allow_monetisation", out allowMonetisation);
 
             itemLoaded(userRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -1042,6 +1074,8 @@ namespace BoxSocial.Internals
             loadValue(userRow, "user_tumblr_authenticated", out userTumblrAthenticated);
             loadValue(userRow, "user_two_factor_auth_key", out twoFactorAuthKey);
             loadValue(userRow, "user_two_factor_auth_verified", out twoFactorAuthVerified);
+            loadValue(userRow, "user_adsense_code", out adsenseCode);
+            loadValue(userRow, "user_allow_monetisation", out allowMonetisation);
 
             itemLoaded(userRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

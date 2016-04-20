@@ -1405,7 +1405,7 @@ namespace BoxSocial.Internals
                 /* Post to Twitter, Facebook, individual */
                 string sharePrefix = core.Http.Form["share"];
                 // Either the share prefix has been set XOR fallback to the default share settings
-                if ((!string.IsNullOrEmpty(sharePrefix)) ^ ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)))
+                if ((!string.IsNullOrEmpty(sharePrefix)) || ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)))
                 {
                     ItemInfo info = item.Info;
                     IActionableItem sharedItem = item;

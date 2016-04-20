@@ -654,10 +654,10 @@ namespace BoxSocial.Internals
             if (core.Session.IsLoggedIn && core.Session.LoggedInMember != null)
             {
                 template.Parse("LOGGED_IN", "TRUE");
-                template.Parse("USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
-                template.Parse("USER_ICON", core.Session.LoggedInMember.Icon);
-                template.Parse("USER_TILE", core.Session.LoggedInMember.Tile);
-                template.Parse("USER_SQUARE", core.Session.LoggedInMember.Square);
+                template.Parse("LOGGED_IN_USER_DISPLAY_NAME", core.Session.LoggedInMember.DisplayName);
+                template.Parse("LOGGED_IN_USER_ICON", core.Session.LoggedInMember.Icon);
+                template.Parse("LOGGED_IN_USER_TILE", core.Session.LoggedInMember.Tile);
+                template.Parse("LOGGED_IN_USER_SQUARE", core.Session.LoggedInMember.Square);
             }
 
             List<Comment> comments = Comment.GetComments(core, item.ItemKey, item.CommentSortOrder, page, item.CommentsPerPage, commenters);
@@ -957,9 +957,9 @@ namespace BoxSocial.Internals
                     template.Parse("LOGGED_IN", "TRUE");
                     template.Parse("USERNAME", session.LoggedInMember.UserName);
                     template.Parse("USER_ID", session.LoggedInMember.Id.ToString());
-                    template.Parse("USER_DISPLAY_NAME", session.LoggedInMember.DisplayName);
-                    template.Parse("USER_TILE", session.LoggedInMember.Tile);
-                    template.Parse("USER_ICON", session.LoggedInMember.Icon);
+                    template.Parse("LOGGED_IN_USER_DISPLAY_NAME", session.LoggedInMember.DisplayName);
+                    template.Parse("LOGGED_IN_USER_TILE", session.LoggedInMember.Tile);
+                    template.Parse("LOGGED_IN_USER_ICON", session.LoggedInMember.Icon);
                     template.Parse("U_USER_PROFILE", session.LoggedInMember.Uri);
                     template.Parse("U_ACCOUNT", core.Hyperlink.BuildAccountUri());
 

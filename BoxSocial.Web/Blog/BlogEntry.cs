@@ -48,11 +48,19 @@ namespace BoxSocial.Applications.Blog
         /// <summary>
         /// 
         /// </summary>
-        Publish = 0x00,
+        /// Unpublished = 0x00,
+        /// <summary>
+        /// 
+        /// </summary>
+        Published = 0x00,
         /// <summary>
         /// 
         /// </summary>
         Draft = 0x01,
+        /// <summary>
+        /// 
+        /// </summary>
+        Queued = 0x02,
     }
 
     /// <summary>
@@ -98,6 +106,8 @@ namespace BoxSocial.Applications.Blog
         private string ip;
         [DataField("post_time_ut")]
         private long createdRaw;
+        [DataField("post_published_ut")]
+        private long publishedRaw;
         [DataField("post_modified_ut")]
         private long modifiedRaw;
         [DataField("post_allow_comment")]
@@ -334,8 +344,8 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
-        [JsonProperty("published_date_ut")]
-        public long PublishedDateRaw
+        [JsonIgnore]
+        public long CreatedDateRaw
         {
             get
             {
@@ -344,6 +354,19 @@ namespace BoxSocial.Applications.Blog
             set
             {
                 SetProperty("createdRaw", value);
+            }
+        }
+
+        [JsonProperty("published_date_ut")]
+        public long PublishedDateRaw
+        {
+            get
+            {
+                return publishedRaw;
+            }
+            set
+            {
+                SetProperty("publishedRaw", value);
             }
         }
 
@@ -368,6 +391,16 @@ namespace BoxSocial.Applications.Blog
         public DateTime GetCreatedDate(UnixTime tz)
         {
             return tz.DateTimeFromMysql(createdRaw);
+        }
+
+        /// <summary>
+        /// Gets the date the blog post was published.
+        /// </summary>
+        /// <param name="tz">Timezone</param>
+        /// <returns>DateTime object</returns>
+        public DateTime GetPublishedDate(UnixTime tz)
+        {
+            return tz.DateTimeFromMysql(publishedRaw);
         }
 
         /// <summary>
@@ -460,6 +493,7 @@ namespace BoxSocial.Applications.Blog
             loadValue(postEntryRow, "post_guid", out guid);
             loadValue(postEntryRow, "post_ip", out ip);
             loadValue(postEntryRow, "post_time_ut", out createdRaw);
+            loadValue(postEntryRow, "post_published_ut", out publishedRaw);
             loadValue(postEntryRow, "post_modified_ut", out modifiedRaw);
             loadValue(postEntryRow, "post_allow_comment", out allowComment);
             loadValue(postEntryRow, "post_simple_permissions", out simplePermissions);
@@ -625,7 +659,7 @@ namespace BoxSocial.Applications.Blog
         /// <exception cref="NullCoreException">Throws exception when core token is null</exception>
         /// <exception cref="InvalidBlogException">Throws exception when blog token is null</exception>
         /// <exception cref="UnauthorisedToCreateItemException">Throws exception when unauthorised to create a new BlogEntry</exception>
-        public static BlogEntry Create(Core core, AccessControlToken token, Blog blog, string title, string body, byte license, string status, short category, long postTime)
+        public static BlogEntry Create(Core core, AccessControlToken token, Blog blog, string title, string body, byte license, PublishStatuses status, short category, long postTime)
         {
             if (core == null)
             {
@@ -653,15 +687,18 @@ namespace BoxSocial.Applications.Blog
                 bodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(body), null, blog.Owner, true, string.Empty, string.Empty);
             }
 
+            long now = UnixTime.UnixTimeStamp();
+
             BlogEntry blogEntry = (BlogEntry)Item.Create(core, typeof(BlogEntry), new FieldValuePair("user_id", blog.UserId),
-                new FieldValuePair("post_time_ut", postTime),
+                new FieldValuePair("post_time_ut", now),
                 new FieldValuePair("post_title", title),
-                new FieldValuePair("post_modified_ut", postTime),
+                new FieldValuePair("post_published_ut", postTime),
+                new FieldValuePair("post_modified_ut", now),
                 new FieldValuePair("post_ip", core.Session.IPAddress.ToString()),
                 new FieldValuePair("post_text", body),
                 new FieldValuePair("post_text_cache", bodyCache),
                 new FieldValuePair("post_license", license),
-                new FieldValuePair("post_status", status),
+                new FieldValuePair("post_status", (byte)status),
                 new FieldValuePair("post_category", category),
                 new FieldValuePair("post_simple_permissions", true));
 
@@ -694,7 +731,7 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 UnixTime tz = new UnixTime(core, ((User)Owner).UserInfo.TimeZoneCode);
-                return core.Hyperlink.BuildBlogPostUri((User)Owner, GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, postId);
+                return core.Hyperlink.BuildBlogPostUri((User)Owner, GetPublishedDate(tz).Year, GetPublishedDate(tz).Month, postId);
             }
         }
 
@@ -882,7 +919,7 @@ namespace BoxSocial.Applications.Blog
 
             blogPostVariableCollection.Parse("TITLE", Title);
 
-            DateTime postDateTime = GetCreatedDate(core.Tz);
+            DateTime postDateTime = GetPublishedDate(core.Tz);
 
             string postUrl = HttpUtility.HtmlEncode(string.Format("{0}blog/{1}/{2:00}/{3}",
                     Owner.UriStub, postDateTime.Year, postDateTime.Month, PostId));
@@ -954,7 +991,7 @@ namespace BoxSocial.Applications.Blog
 
                 string strippedBody = HttpUtility.HtmlDecode(core.Bbcode.StripTags(HttpUtility.HtmlEncode(Body)));
                 string uri = string.Format("blog/{0:0000}/{1:00}/{2}",
-                    GetCreatedDate(tz).Year, GetCreatedDate(tz).Month, Id);
+                    GetPublishedDate(tz).Year, GetPublishedDate(tz).Month, Id);
 
                 if (string.IsNullOrEmpty(strippedBody.Trim()))
                 {

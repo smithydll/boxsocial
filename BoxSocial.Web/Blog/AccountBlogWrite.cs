@@ -158,7 +158,7 @@ namespace BoxSocial.Applications.Blog
                     licenseId = be.License;
                     categoryId = be.Category;
 
-                    postTime = be.GetCreatedDate(tz);
+                    postTime = be.GetPublishedDate(tz);
 
                     List<Tag> tags = Tag.GetTags(core, be);
 
@@ -267,9 +267,9 @@ namespace BoxSocial.Applications.Blog
             byte license = 0;
             short category = 1;
             long postId = 0;
-            string status = "PUBLISH";
-            PublishStatuses publishStatus = PublishStatuses.Publish;
+            PublishStatuses publishStatus = PublishStatuses.Published;
             string postGuid = "";
+            long currentTimestamp = UnixTime.UnixTimeStamp();
 
             /*
              * Create a blog if they do not already have one
@@ -286,17 +286,15 @@ namespace BoxSocial.Applications.Blog
 
             bool postEditTimestamp = false;
             int postYear, postMonth, postDay, postHour, postMinute;
-            DateTime postTime = DateTime.Now;
+            DateTime postTime = core.Tz.DateTimeFromMysql(currentTimestamp);
 
             if (core.Http.Form["publish"] != null)
             {
-                status = "PUBLISH";
-                publishStatus = PublishStatuses.Publish;
+                publishStatus = PublishStatuses.Published;
             }
 
             if (core.Http.Form["save"] != null)
             {
-                status = "DRAFT";
                 publishStatus = PublishStatuses.Draft;
             }
 
@@ -346,7 +344,7 @@ namespace BoxSocial.Applications.Blog
                 {
                     switch (publishStatus)
                     {
-                        case PublishStatuses.Publish:
+                        case PublishStatuses.Published:
                             UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
                             uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
                             uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Subtraction, 1));
@@ -376,7 +374,7 @@ namespace BoxSocial.Applications.Blog
                 myBlogEntry.License = license;
                 myBlogEntry.Status = publishStatus;
                 myBlogEntry.Category = category;
-                myBlogEntry.ModifiedDateRaw = UnixTime.UnixTimeStamp();
+                myBlogEntry.ModifiedDateRaw = currentTimestamp;
                 if (postEditTimestamp)
                 {
                     myBlogEntry.PublishedDateRaw = tz.GetUnixTimeStamp(postTime);
@@ -396,12 +394,17 @@ namespace BoxSocial.Applications.Blog
                 }
                 else
                 {
-                    postTimeRaw = UnixTime.UnixTimeStamp();
+                    postTimeRaw = currentTimestamp;
+                }
+
+                if (postTimeRaw > UnixTime.UnixTimeStamp())
+                {
+                    publishStatus = PublishStatuses.Queued;
                 }
 
                 db.BeginTransaction();
 
-                BlogEntry myBlogEntry = BlogEntry.Create(core, AccessControlLists.GetNewItemPermissionsToken(core), myBlog, title, postBody, license, status, category, postTimeRaw);
+                BlogEntry myBlogEntry = BlogEntry.Create(core, AccessControlLists.GetNewItemPermissionsToken(core), myBlog, title, postBody, license, publishStatus, category, postTimeRaw);
 
                 /*AccessControlLists acl = new AccessControlLists(core, myBlogEntry);
                 acl.SaveNewItemPermissions();*/
@@ -419,7 +422,7 @@ namespace BoxSocial.Applications.Blog
 
                 switch (publishStatus)
                 {
-                    case PublishStatuses.Publish:
+                    case PublishStatuses.Published:
                         UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
                         uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
                         uQuery.AddCondition("user_id", Owner.Id);
@@ -446,22 +449,27 @@ namespace BoxSocial.Applications.Blog
                     myBlogEntry.Update(); // only triggers if postBody has been updated
                 }
 
-                if (publishToFeed && publishStatus == PublishStatuses.Publish)
+                if (publishToFeed && publishStatus == PublishStatuses.Published)
                 {
                     core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry, myBlogEntry.Title);
                 }
 
             }
 
-            if (status == "DRAFT")
+            switch (publishStatus)
             {
-                SetRedirectUri(BuildUri("drafts"));
-                core.Display.ShowMessage("Draft Saved", "Your draft has been saved.");
-            }
-            else
-            {
-                SetRedirectUri(BuildUri("manage"));
-                core.Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
+                case PublishStatuses.Draft:
+                    SetRedirectUri(BuildUri("drafts"));
+                    core.Display.ShowMessage("Draft Saved", "Your draft has been saved.");
+                    break;
+                case PublishStatuses.Published:
+                    SetRedirectUri(BuildUri("manage"));
+                    core.Display.ShowMessage("Blog Post Published", "Your blog post has been published.");
+                    break;
+                case PublishStatuses.Queued:
+                    SetRedirectUri(BuildUri("queue"));
+                    core.Display.ShowMessage("Blog Post Queued", "Your blog post has been placed in the publish queue.");
+                    break;
             }
         }
 

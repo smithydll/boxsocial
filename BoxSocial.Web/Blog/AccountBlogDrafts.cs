@@ -95,7 +95,7 @@ namespace BoxSocial.Applications.Blog
             {
                 VariableCollection blogVariableCollection = template.CreateChild("blog_list");
 
-                DateTime postedTime = be.GetCreatedDate(tz);
+                DateTime postedTime = be.GetPublishedDate(tz);
 
                 blogVariableCollection.Parse("COMMENTS", be.Comments.ToString());
                 blogVariableCollection.Parse("TITLE", be.Title);

@@ -2975,6 +2975,8 @@ namespace BoxSocial.Install
                                 query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", updateApplication.Key));
                                 query.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", updateApplication.Key));
                                 query.AddField("application_tile", string.Format(@"/images/{0}/tile.png", updateApplication.Key));
+                                query.AddField("application_cron_enabled", newApplication.CronEnabled);
+                                query.AddField("application_cron_frequency", newApplication.CronFrequency);
                                 query.AddCondition("application_assembly_name", repo);
 
                                 db.BeginTransaction();
@@ -2998,6 +3000,8 @@ namespace BoxSocial.Install
                                 query.AddField("application_icon", string.Format(@"/images/{0}/icon.png", repo));
                                 query.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", repo));
                                 query.AddField("application_tile", string.Format(@"/images/{0}/tile.png", repo));
+                                query.AddField("application_cron_enabled", newApplication.CronEnabled);
+                                query.AddField("application_cron_frequency", newApplication.CronFrequency);
 
                                 applicationId = db.Query(query);
 

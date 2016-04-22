@@ -130,6 +130,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public virtual bool ExecuteCron()
+        {
+            return false;
+        }
+
         public virtual bool ExecuteJob(Job job)
         {
             return false;
@@ -534,6 +539,28 @@ namespace BoxSocial.Internals
         public abstract string JavaScript
         {
             get;
+        }
+
+        /// <summary>
+        /// Turn cron off my default
+        /// </summary>
+        public virtual bool CronEnabled
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Default the cron frequency to disabled
+        /// </summary>
+        public virtual int CronFrequency
+        {
+            get
+            {
+                return 0;
+            }
         }
 
         private static SelectQuery GetApplicationQuery(Core core, Primitive owner)

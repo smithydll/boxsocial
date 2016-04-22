@@ -154,6 +154,28 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Enable cron
+        /// </summary>
+        public override bool CronEnabled
+        {
+            get
+            {
+                return true;
+            }
+        }
+
+        /// <summary>
+        /// Have the cron run every minute
+        /// </summary>
+        public override int CronFrequency
+        {
+            get
+            {
+                return 60;
+            }
+        }
+
+        /// <summary>
         /// Initialises the application
         /// </summary>
         /// <param name="core">Core token</param>
@@ -171,6 +193,11 @@ namespace BoxSocial.Applications.Blog
             core.LoadApplication += new Core.LoadHandler(core_LoadApplication);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="job"></param>
+        /// <returns></returns>
         public override bool ExecuteJob(Job job)
         {
             if (job.ItemId == 0)
@@ -188,6 +215,39 @@ namespace BoxSocial.Applications.Blog
             return false;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override bool ExecuteCron()
+        {
+            // In this cron we will find any queued unpublished blog posts
+            // ready to publish and publish them
+
+            SelectQuery query = BlogEntry.GetSelectQueryStub(core, typeof(BlogEntry));
+            query.AddCondition("post_status", (byte)PublishStatuses.Queued);
+            query.AddCondition("post_published_ut", ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
+
+            DataTable blogPosts = core.Db.Query(query);
+
+            foreach (DataRow row in blogPosts.Rows)
+            {
+                BlogEntry be = new BlogEntry(core, row);
+
+                UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
+                uQuery.AddField("post_status", (byte)PublishStatuses.Published);
+                uQuery.AddCondition("post_id", be.Id);
+
+                core.Db.Query(uQuery);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="callName"></param>
         public override void ExecuteCall(string callName)
         {
             switch (callName)

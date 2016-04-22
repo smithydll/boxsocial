@@ -159,6 +159,58 @@ namespace BoxSocial.FrontEnd
 
             Core core = new Core(db);
 
+            string cronApplication = WebConfigurationManager.AppSettings["queue-cron-application"];
+            if (!string.IsNullOrEmpty(cronApplication))
+            {
+                List<ApplicationEntry> aes = new List<ApplicationEntry>();
+
+                if (cronApplication == "*")
+                {
+                    aes.AddRange(core.GetCronApplications());
+                }
+                else
+                {
+                    ApplicationEntry ae = core.GetApplication(cronApplication);
+                    if (ae != null)
+                    {
+                        BoxSocial.Internals.Application.LoadApplication(core, AppPrimitives.Any, ae);
+                        aes.Add(ae);
+                    }
+                }
+
+                foreach (ApplicationEntry ae in aes)
+                {
+                    if (UnixTime.UnixTimeStamp() % ae.CronFrequency < 15)
+                    {
+                        Application jobApplication = BoxSocial.Internals.Application.GetApplication(core, AppPrimitives.Any, ae);
+
+                        if (jobApplication != null)
+                        {
+                            try
+                            {
+                                if (!jobApplication.ExecuteCron())
+                                {
+                                    StringBuilder failedCronLog = new StringBuilder();
+                                    failedCronLog.AppendLine("Application Id: " + ae.ApplicationId);
+
+                                    InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                                    iQuery.AddField("error_title", "Cron failed at " + Hyperlink.Domain);
+                                    iQuery.AddField("error_body", "FAILED CRON:\n" + failedCronLog.ToString());
+                                    core.Db.Query(iQuery);
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                                iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
+                                iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
+                                core.Db.Query(iQuery);
+                            }
+                        }
+                    }
+                }
+            }
+
             try
             {
                 if (Queue != null)

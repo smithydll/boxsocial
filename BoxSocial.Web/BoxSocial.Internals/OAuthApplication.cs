@@ -205,6 +205,8 @@ namespace BoxSocial.Internals
             iQuery.AddField("application_style", false);
             iQuery.AddField("application_script", false);
             iQuery.AddField("application_type", (byte)ApplicationType.OAuth);
+            iQuery.AddField("application_cron_enabled", false);
+            iQuery.AddField("application_cron_frequency", 0);
 
             long applicationId = core.Db.Query(iQuery);
 

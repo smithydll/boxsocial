@@ -735,7 +735,7 @@ namespace BoxSocial.Internals
             ItemCache.RequestItem(ik); // Not normally needed, but in-case the persisted NumberedItems cache is purged
             ApplicationEntry ae = (ApplicationEntry)ItemCache[ik];
 
-            if (Prose != null)
+            if (Prose != null && ae.ApplicationType == ApplicationType.Native)
             {
                 Prose.AddApplication(ae.Key);
             }
@@ -781,6 +781,32 @@ namespace BoxSocial.Internals
 
                 return ae;
             }
+        }
+
+        public List<ApplicationEntry> GetCronApplications()
+        {
+            loadAssemblies();
+
+            SelectQuery query = ApplicationEntry.GetSelectQueryStub(this, typeof(ApplicationEntry));
+            query.AddCondition("application_cron_enabled", true);
+            query.AddCondition("application_cron_frequency", ConditionEquality.GreaterThan, 0);
+
+            DataTable applicationDataTable = Db.Query(query);
+
+            List<ApplicationEntry> aes = new List<ApplicationEntry>();
+
+            foreach (DataRow row in applicationDataTable.Rows)
+            {
+                ApplicationEntry ae = new ApplicationEntry(this, row);
+                aes.Add(ae);
+
+                if (Prose != null && ae.ApplicationType == ApplicationType.Native)
+                {
+                    Prose.AddApplication(ae.Key);
+                }
+            }
+
+            return aes;
         }
 
         public List<string> GetLoadedAssemblyNames()

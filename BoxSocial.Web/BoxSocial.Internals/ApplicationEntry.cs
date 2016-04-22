@@ -99,6 +99,10 @@ namespace BoxSocial.Internals
         private bool simplePermissions;
         [DataField("application_type")]
         private byte applicationType;
+        [DataField("application_cron_enabled")]
+        private bool applicationCronEnabled;
+        [DataField("application_cron_frequency")]
+        private int applicationCronFrequency;
 
         //TODO: USER_APPLICATION_FIELDS
         private ushort permissions;
@@ -526,6 +530,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool CronEnabled
+        {
+            get
+            {
+                return applicationCronEnabled;
+            }
+        }
+
+        public int CronFrequency
+        {
+            get
+            {
+                return applicationCronFrequency;
+            }
+        }
+
         public void LoadSlugEx(string ex)
         {
             if (slugExs == null)
@@ -696,6 +716,8 @@ namespace BoxSocial.Internals
             loadValue(applicationRow, "application_simple_permissions", out simplePermissions);
             loadValue(applicationRow, "application_type", out applicationType);
             loadValue(applicationRow, "application_gallery_icon", out applicationGalleryIcon);
+            loadValue(applicationRow, "application_cron_enabled", out applicationCronEnabled);
+            loadValue(applicationRow, "application_cron_frequency", out applicationCronFrequency);
 
             itemLoaded(applicationRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -725,6 +747,8 @@ namespace BoxSocial.Internals
             loadValue(applicationRow, "application_simple_permissions", out simplePermissions);
             loadValue(applicationRow, "application_type", out applicationType);
             loadValue(applicationRow, "application_gallery_icon", out applicationGalleryIcon);
+            loadValue(applicationRow, "application_cron_enabled", out applicationCronEnabled);
+            loadValue(applicationRow, "application_cron_frequency", out applicationCronFrequency);
 
             itemLoaded(applicationRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -776,6 +800,8 @@ namespace BoxSocial.Internals
             iQuery.AddField("application_thumb", string.Format(@"/images/{0}/thumb.png", assembly));
             iQuery.AddField("application_tile", string.Format(@"/images/{0}/tile.png", assembly));
             iQuery.AddField("application_type", (byte)ApplicationType.Native);
+            iQuery.AddField("application_cron_enabled", application.CronEnabled);
+            iQuery.AddField("application_cron_frequency", application.CronFrequency);
 
             long applicationId = core.Db.Query(iQuery);
 

@@ -53,6 +53,8 @@ namespace BoxSocial.Applications.Blog
         private string title;
         [DataField("blog_entries")]
         private long entries;
+        [DataField("blog_queued_entries")]
+        private long queuedEntries;
         [DataField("blog_drafts")]
         private long drafts;
         [DataField("blog_comments")]
@@ -99,6 +101,14 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return entries;
+            }
+        }
+
+        public long QueuedEntries
+        {
+            get
+            {
+                return queuedEntries;
             }
         }
 
@@ -243,6 +253,7 @@ namespace BoxSocial.Applications.Blog
             loadValue(blogRow, "user_id", out userId);
             loadValue(blogRow, "blog_title", out title);
             loadValue(blogRow, "blog_entries", out entries);
+            loadValue(blogRow, "blog_queued_entries", out queuedEntries);
             loadValue(blogRow, "blog_drafts", out drafts);
             loadValue(blogRow, "blog_comments", out comments);
             loadValue(blogRow, "blog_visits", out visits);
@@ -379,6 +390,23 @@ namespace BoxSocial.Applications.Blog
         }
 
         /// <summary>
+        /// Gets a list of draft entries in the blog fullfilling a given criteria.
+        /// </summary>
+        /// <param name="category">Category to select</param>
+        /// <param name="post">Post id to select</param>
+        /// <param name="year">Year to select</param>
+        /// <param name="month">Month to select</param>
+        /// <param name="currentPage">Current page</param>
+        /// <param name="perPage">Number to show on each page</param>
+        /// <returns>A list of blog entries</returns>
+        /// <remarks>A number of conditions may be omitted. Integer values can be omitted by passing -1. String values by passing a null or empty string.</remarks>
+        internal List<BlogEntry> GetQueuedPosts(string category, string tag, long post, int year, int month, int currentPage, int perPage)
+        {
+            bool moreContent = false;
+            return GetEntries(category, tag, post, year, month, currentPage, perPage, 0, false, true, out moreContent);
+        }
+
+        /// <summary>
         /// Gets a list of published entries in the blog fullfilling a given criteria.
         /// </summary>
         /// <param name="category">Category to select</param>
@@ -436,12 +464,12 @@ namespace BoxSocial.Applications.Blog
 
                 if (year > 0)
                 {
-                    query.AddCondition("YEAR(FROM_UNIXTIME(post_time_ut))", year);
+                    query.AddCondition("YEAR(FROM_UNIXTIME(post_published_ut))", year);
                 }
 
                 if (month > 0)
                 {
-                    query.AddCondition("MONTH(FROM_UNIXTIME(post_time_ut))", month);
+                    query.AddCondition("MONTH(FROM_UNIXTIME(post_published_ut))", month);
                 }
             }
             else if (string.IsNullOrEmpty(tag))
@@ -465,7 +493,7 @@ namespace BoxSocial.Applications.Blog
             // Include blog entries from the past only if future is false
             if (!future)
             {
-                query.AddCondition(new DataField(typeof(BlogEntry), "post_time_ut"), ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
+                query.AddCondition(new DataField(typeof(BlogEntry), "post_published_ut"), ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
             }
 
             int bpage = currentPage;
@@ -476,11 +504,11 @@ namespace BoxSocial.Applications.Blog
 
             int limitStart = (bpage - 1) * perPage;
 
-            PublishStatuses status = (drafts) ? PublishStatuses.Draft : PublishStatuses.Published;
+            PublishStatuses status = (drafts) ? PublishStatuses.Draft : ((future) ? PublishStatuses.Queued : PublishStatuses.Published);
 
             query.AddCondition("post_status", (byte)status);
             query.AddCondition("user_id", UserId);
-            query.AddSort(SortOrder.Descending, "post_time_ut");
+            query.AddSort(SortOrder.Descending, "post_published_ut");
             /*query.LimitStart = (bpage - 1) * perPage;*/
             if ((currentOffset > 0 && currentPage > 1) || currentOffset == 0)
             {
@@ -489,9 +517,13 @@ namespace BoxSocial.Applications.Blog
                 QueryCondition qc1 = null;
                 QueryCondition qc2 = null;
 
+                SelectQuery offsetQuery = new SelectQuery(typeof(BlogEntry));
+                offsetQuery.AddField(new DataField(typeof(BlogEntry), "post_published_ut"));
+                offsetQuery.AddCondition("post_id", currentOffset);
+
                 if (currentOffset > 0)
                 {
-                    qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, currentOffset);
+                    qc1 = query.AddCondition("post_published_ut", ConditionEquality.LessThan, offsetQuery);
                 }
                 query.LimitCount = (int)(perPage * pessimism);
 
@@ -553,7 +585,11 @@ namespace BoxSocial.Applications.Blog
                     //query.LimitStart += query.LimitCount;
                     if (qc1 == null)
                     {
-                        qc1 = query.AddCondition("post_id", ConditionEquality.LessThan, lastId);
+                        SelectQuery oQuery = new SelectQuery(typeof(BlogEntry));
+                        oQuery.AddField(new DataField(typeof(BlogEntry), "post_published_ut"));
+                        oQuery.AddCondition("post_id", currentOffset);
+
+                        qc1 = query.AddCondition("post_published_ut", ConditionEquality.LessThan, oQuery);
                     }
                     else
                     {
@@ -562,7 +598,7 @@ namespace BoxSocial.Applications.Blog
 
                     if (qc2 == null)
                     {
-                        qc2 = query.AddCondition("post_time_ut", ConditionEquality.LessThanEqual, lastPostTime);
+                        qc2 = query.AddCondition("post_published_ut", ConditionEquality.LessThanEqual, lastPostTime);
                     }
                     else
                     {

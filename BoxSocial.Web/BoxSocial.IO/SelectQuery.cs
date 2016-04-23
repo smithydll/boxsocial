@@ -571,6 +571,11 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
+            return ToString(true);
+        }
+
+        public string ToString(bool terminate)
+        {
             StringBuilder query = new StringBuilder();
 
             string newFields = string.Empty;
@@ -738,7 +743,11 @@ namespace BoxSocial.IO
             }
 
             /*return string.Format("{0};", query);*/
-            query.Append(";");
+            if (terminate)
+            {
+                query.Append(";");
+            }
+
             string retQuery = query.ToString();
 
             if (newFields != string.Empty)

@@ -37,7 +37,7 @@ namespace BoxSocial.Internals
     public class ContentLicense : NumberedItem
     {
         [DataField("license_id", DataFieldKeys.Primary)]
-        private byte licenseId;
+        private int licenseId;
         [DataField("license_title", 63)]
         private string title;
         [DataField("license_icon", 63)]
@@ -47,7 +47,7 @@ namespace BoxSocial.Internals
         [DataField("license_text", MYSQL_TEXT)]
         private string text;
 
-        public byte LicenseId
+        public int LicenseId
         {
             get
             {
@@ -190,7 +190,7 @@ namespace BoxSocial.Internals
 
             while (licensesReader.Read())
             {
-                licenses.Add(((byte)licensesReader["license_id"]).ToString(), (string)licensesReader["license_title"]);
+                licenses.Add(((int)licensesReader["license_id"]).ToString(), (string)licensesReader["license_title"]);
             }
 
             licensesReader.Close();

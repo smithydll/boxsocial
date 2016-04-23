@@ -117,6 +117,7 @@ namespace BoxSocial.Applications.Blog
         [DataField("post_gallery_id", typeof(Gallery.Gallery))]
         private long galleryId;
 
+        private User author;
         private Primitive owner;
         private Blog blog;
         private Access access;
@@ -144,6 +145,27 @@ namespace BoxSocial.Applications.Blog
             get
             {
                 return ownerId;
+            }
+        }
+
+        /// <summary>
+        /// Gets the author of the blog post
+        /// </summary>
+        public User Author
+        {
+            get
+            {
+                if (author == null || ownerId != owner.Id)
+                {
+                    core.LoadUserProfile(ownerId);
+                    owner = core.PrimitiveCache[ownerId];
+                    return author;
+                }
+                else
+                {
+                    return author;
+                }
+
             }
         }
 
@@ -704,8 +726,6 @@ namespace BoxSocial.Applications.Blog
 
             AccessControlLists acl = new AccessControlLists(core, blogEntry);
             acl.SaveNewItemPermissions(token);
-
-            core.Search.Index(blogEntry);
 
             return blogEntry;
         }

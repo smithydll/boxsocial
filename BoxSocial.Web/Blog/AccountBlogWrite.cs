@@ -120,10 +120,10 @@ namespace BoxSocial.Applications.Blog
             long postId = core.Functions.RequestLong("id", 0);
             byte licenseId = (byte)0;
             short categoryId = (short)1;
-            DateTime postTime = DateTime.Now;
+            DateTime postTime = core.Tz.Now;
 
             SelectBox postYearsSelectBox = new SelectBox("post-year");
-            for (int i = DateTime.Now.AddYears(-7).Year; i <= DateTime.Now.Year; i++)
+            for (int i = core.Tz.Now.AddYears(-7).Year; i <= core.Tz.Now.Year; i++)
             {
                 postYearsSelectBox.Add(new SelectBoxItem(i.ToString(), i.ToString()));
             }
@@ -340,6 +340,18 @@ namespace BoxSocial.Applications.Blog
 
                 BlogEntry myBlogEntry = new BlogEntry(core, postId);
 
+                long postTimeRaw;
+                bool doPublish = false;
+                if (postEditTimestamp)
+                {
+                    postTimeRaw = tz.GetUnixTimeStamp(postTime);
+
+                    if (postTimeRaw > UnixTime.UnixTimeStamp())
+                    {
+                        publishStatus = PublishStatuses.Queued;
+                    }
+                }
+
                 if (publishStatus != myBlogEntry.Status)
                 {
                     switch (publishStatus)
@@ -347,15 +359,49 @@ namespace BoxSocial.Applications.Blog
                         case PublishStatuses.Published:
                             UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
                             uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
-                            uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Subtraction, 1));
+                            switch (myBlogEntry.Status)
+                            {
+                                case PublishStatuses.Draft:
+                                    uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Subtraction, 1));
+                                    break;
+                                case PublishStatuses.Queued:
+                                    uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Subtraction, 1));
+                                    break;
+                            }
                             uQuery.AddCondition("user_id", Owner.Id);
 
                             db.Query(uQuery);
+
+                            doPublish = true;
                             break;
                         case PublishStatuses.Draft:
                             uQuery = new UpdateQuery(typeof(Blog));
                             uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Addition, 1));
-                            uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Subtraction, 1));
+                            switch (myBlogEntry.Status)
+                            {
+                                case PublishStatuses.Published:
+                                    uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Subtraction, 1));
+                                    break;
+                                case PublishStatuses.Queued:
+                                    uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Subtraction, 1));
+                                    break;
+                            }
+                            uQuery.AddCondition("user_id", Owner.Id);
+
+                            db.Query(uQuery);
+                            break;
+                        case PublishStatuses.Queued:
+                            uQuery = new UpdateQuery(typeof(Blog));
+                            uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Addition, 1));
+                            switch (myBlogEntry.Status)
+                            {
+                                case PublishStatuses.Published:
+                                    uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Subtraction, 1));
+                                    break;
+                                case PublishStatuses.Draft:
+                                    uQuery.AddField("blog_drafts", new QueryOperation("blog_drafts", QueryOperations.Subtraction, 1));
+                                    break;
+                            }
                             uQuery.AddCondition("user_id", Owner.Id);
 
                             db.Query(uQuery);
@@ -372,15 +418,21 @@ namespace BoxSocial.Applications.Blog
                 myBlogEntry.BodyCache = string.Empty;
                 myBlogEntry.Body = postBody;
                 myBlogEntry.License = license;
-                myBlogEntry.Status = publishStatus;
                 myBlogEntry.Category = category;
                 myBlogEntry.ModifiedDateRaw = currentTimestamp;
                 if (postEditTimestamp)
                 {
                     myBlogEntry.PublishedDateRaw = tz.GetUnixTimeStamp(postTime);
                 }
+                myBlogEntry.Status = publishStatus;
 
                 myBlogEntry.Update();
+
+                if (publishToFeed && publishStatus == PublishStatuses.Published && doPublish)
+                {
+                    core.Search.Index(myBlogEntry);
+                    core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry, myBlogEntry.Title);
+                }
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, TagSelectBox.FormTags(core, "tags"));
             }
@@ -436,6 +488,13 @@ namespace BoxSocial.Applications.Blog
 
                         db.Query(uQuery);
                         break;
+                    case PublishStatuses.Queued:
+                        uQuery = new UpdateQuery(typeof(Blog));
+                        uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Addition, 1));
+                        uQuery.AddCondition("user_id", Owner.Id);
+
+                        db.Query(uQuery);
+                        break;
                 }
 
                 Tag.LoadTagsIntoItem(core, myBlogEntry, TagSelectBox.FormTags(core, "tags"), true);
@@ -451,6 +510,7 @@ namespace BoxSocial.Applications.Blog
 
                 if (publishToFeed && publishStatus == PublishStatuses.Published)
                 {
+                    core.Search.Index(myBlogEntry);
                     core.CallingApplication.PublishToFeed(core, LoggedInMember, myBlogEntry, myBlogEntry.Title);
                 }
 

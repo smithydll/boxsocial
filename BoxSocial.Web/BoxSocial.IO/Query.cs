@@ -255,7 +255,7 @@ namespace BoxSocial.IO
             else if (value is SelectQuery)
             {
                 return string.Format("({0})",
-                    ((SelectQuery)value).ToString());
+                    ((SelectQuery)value).ToString(false));
             }
             else if (value is QueryField)
             {

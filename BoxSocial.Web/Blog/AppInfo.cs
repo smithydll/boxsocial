@@ -234,11 +234,21 @@ namespace BoxSocial.Applications.Blog
             {
                 BlogEntry be = new BlogEntry(core, row);
 
-                UpdateQuery uQuery = new UpdateQuery(typeof(BlogEntry));
+                UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
+                uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
+                uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Subtraction, 1));
+                uQuery.AddCondition("user_id", be.OwnerId);
+
+                core.Db.Query(uQuery);
+
+                uQuery = new UpdateQuery(typeof(BlogEntry));
                 uQuery.AddField("post_status", (byte)PublishStatuses.Published);
                 uQuery.AddCondition("post_id", be.Id);
 
                 core.Db.Query(uQuery);
+
+                core.Search.Index(be);
+                core.CallingApplication.PublishToFeed(core, be.Author, be, be.Title);
             }
 
             return true;

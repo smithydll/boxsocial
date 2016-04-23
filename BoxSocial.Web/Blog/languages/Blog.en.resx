@@ -183,6 +183,9 @@
   <data name="POST_TEXT" xml:space="preserve">
     <value>Post Text</value>
   </data>
+  <data name="QUEUED_BLOG_POSTS" xml:space="preserve">
+    <value>Queued Blog Posts</value>
+  </data>
   <data name="RSS_FEED" xml:space="preserve">
     <value>RSS Feed</value>
   </data>

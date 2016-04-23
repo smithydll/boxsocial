@@ -44,7 +44,7 @@ namespace BoxSocial.Applications.Blog
         {
             get
             {
-                return 1;
+                return 5;
             }
         }
 

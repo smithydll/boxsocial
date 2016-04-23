@@ -2226,7 +2226,8 @@ namespace BoxSocial.Internals
                     e.PrefixText = string.Empty;
                     break;
                 case BbcodeParseMode.Normal:
-                    if (!Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase)) e.AbortParse();
+                    if (!(Regex.IsMatch(e.Contents, "^((http|ftp|https|ftps)://)([^ \\?&=\\#\\\"\\n\\r\\t<]*?(\\.(jpg|jpeg|gif|png)))$", RegexOptions.IgnoreCase) ||
+                        Regex.IsMatch(e.Contents, "^(http|https)://instagram\\.com/p/([a-z0-9]+)/media/.*$", RegexOptions.IgnoreCase))) e.AbortParse();
                     if (TagAllowed(e.Tag.Tag, e.Options))
                     {
                         e.PrefixText = "<img alt=\"Bbcode image\" style=\"max-width: 100%;\" src=\"";

@@ -613,6 +613,19 @@ namespace BoxSocial.Internals
                     bots.Add("Yahoo! DE Slurp", "Yahoo Slurp");
                     bots.Add("Yahoo! Slurp", "Yahoo");
                     bots.Add("YahooSeeker/", "YahooSeeker");
+                    bots.Add("Twitterbot/", "Twitter");
+                    bots.Add("facebookexternalhit/", "Facebook");
+                    bots.Add("Facebot", "Facebook");
+                    bots.Add("LinkedInBot/", "LinkedIn");
+                    bots.Add("Slackbot", "Slack");
+                    bots.Add("Grammarly/", "Grammarly");
+                    bots.Add("vkShare", "vk");
+                    bots.Add("Norton-Safeweb", "Norton");
+                    bots.Add("Applebot/", "Apple");
+                    bots.Add("Buzzbot/", "BuzzStream");
+                    bots.Add("SkypeUriPreview", "Skype");
+                    bots.Add("Embedly/", "Embedly");
+                    bots.Add("WordPress.com mShots", "WordPress");
                 }
 
                 foreach (string key in bots.Keys)

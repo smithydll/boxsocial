@@ -56,6 +56,8 @@ namespace BoxSocial.FrontEnd
 
             switch (function)
             {
+                case "form":
+                    break;
                 case "date":
                     string date = core.Functions.InterpretDate(core.Http.Form["date"], (DisplayMedium)int.Parse(core.Http.Form["Medium"]));
                     core.Response.SendRawText("date", date);

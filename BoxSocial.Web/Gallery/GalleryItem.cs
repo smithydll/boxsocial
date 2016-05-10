@@ -1738,6 +1738,7 @@ namespace BoxSocial.Applications.Gallery
                 e.Core.Display.ParsePageList(e.Page.Owner, true);
 
                 galleryItem.Viewed(e.Core.Session.LoggedInMember);
+                ItemView.LogView(e.Core, galleryItem);
 
                 /* check gallery item has width and height information saved */
 
@@ -1784,7 +1785,7 @@ namespace BoxSocial.Applications.Gallery
                 e.Template.Parse("PAGE_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_TITLE", galleryItem.ItemTitle);
                 e.Template.Parse("PHOTO_ID", galleryItem.ItemId.ToString());
-                e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", galleryItem.ItemAbstract);
+                e.Core.Display.ParseBbcode("PHOTO_DESCRIPTION", e.Core.Bbcode.FromStatusCode(galleryItem.ItemAbstract));
                 e.Template.Parse("HD_WIDTH", hdSize.Width);
                 e.Template.Parse("HD_HEIGHT", hdSize.Height);
                 e.Template.Parse("PHOTO_COMMENTS", e.Core.Functions.LargeIntegerToString(galleryItem.Comments));

@@ -4537,11 +4537,13 @@
 							e.preventDefault();
 						};
 
-					for (var i = 1; i <= 7; i++) {
-						content.append(_tmpl('sizeOpt', {
-							size: i
-						}, true).click(clickFunc));
-					}
+					//for (var i = 1; i <= 7; i++) {
+					content.append(_tmpl('sizeOpt', { size: 50, label: "Tiny" }, true).click(clickFunc));
+					content.append(_tmpl('sizeOpt', { size: 85, label: "Small" }, true).click(clickFunc));
+					content.append(_tmpl('sizeOpt', { size: 100, label: "Normal" }, true).click(clickFunc));
+					content.append(_tmpl('sizeOpt', { size: 150, label: "Large" }, true).click(clickFunc));
+					content.append(_tmpl('sizeOpt', { size: 200, label: "Huge" }, true).click(clickFunc));
+					//}
 
 					editor.createDropDown(caller, 'fontsize-picker', content);
 				},
@@ -4552,7 +4554,8 @@
 						editor,
 						caller,
 						function (fontSize) {
-							editor.execCommand('fontsize', fontSize);
+						    //editor.execCommand('fontsize', fontSize);
+						    editor.wysiwygEditorInsertHtml('<span style="font-size:' + fontSize + '%">', '</style>');
 						}
 					);
 				},
@@ -5454,43 +5457,10 @@
 			emoticonsRoot: '',
 			emoticons: {
 				dropdown: {
-					':)': 'emoticons/smile.png',
-					':angel:': 'emoticons/angel.png',
-					':angry:': 'emoticons/angry.png',
-					'8-)': 'emoticons/cool.png',
-					':\'(': 'emoticons/cwy.png',
-					':ermm:': 'emoticons/ermm.png',
-					':D': 'emoticons/grin.png',
-					'<3': 'emoticons/heart.png',
-					':(': 'emoticons/sad.png',
-					':O': 'emoticons/shocked.png',
-					':P': 'emoticons/tongue.png',
-					';)': 'emoticons/wink.png'
 				},
 				more: {
-					':alien:': 'emoticons/alien.png',
-					':blink:': 'emoticons/blink.png',
-					':blush:': 'emoticons/blush.png',
-					':cheerful:': 'emoticons/cheerful.png',
-					':devil:': 'emoticons/devil.png',
-					':dizzy:': 'emoticons/dizzy.png',
-					':getlost:': 'emoticons/getlost.png',
-					':happy:': 'emoticons/happy.png',
-					':kissing:': 'emoticons/kissing.png',
-					':ninja:': 'emoticons/ninja.png',
-					':pinch:': 'emoticons/pinch.png',
-					':pouty:': 'emoticons/pouty.png',
-					':sick:': 'emoticons/sick.png',
-					':sideways:': 'emoticons/sideways.png',
-					':silly:': 'emoticons/silly.png',
-					':sleeping:': 'emoticons/sleeping.png',
-					':unsure:': 'emoticons/unsure.png',
-					':woot:': 'emoticons/w00t.png',
-					':wassat:': 'emoticons/wassat.png'
 				},
 				hidden: {
-					':whistling:': 'emoticons/whistling.png',
-					':love:': 'emoticons/wub.png'
 				}
 			},
 
@@ -7084,7 +7054,7 @@
 				'data-font="{font}"><font face="{font}">{font}</font></a>',
 
 			sizeOpt: '<a class="sceditor-fontsize-option" data-size="{size}" ' +
-				'href="#"><font size="{size}">{size}</font></a>',
+				'href="#"><span style="font-size: {size}%">{label}</span></a>',
 
 			pastetext:
 				'<div><label for="txt">{label}</label> ' +
@@ -9443,43 +9413,66 @@
 				'font-size': null
 			},
 			format: function (element, content) {
-				var	fontSize = element.attr('size'),
-					size     = 2;
+			    var	fontSize = element.attr('size'),
+					size     = 100;
 
-				if (!fontSize) {
-					fontSize = element.css('fontSize');
-				}
+			    if (!fontSize) {
+			        fontSize = element.css('fontSize');
+			    }
 
-				// Most browsers return px value but IE returns 1-7
-				if (fontSize.indexOf('px') > -1) {
-					// convert size to an int
-					fontSize = fontSize.replace('px', '') - 0;
+			    // Most browsers return px value but IE returns 1-7
+			    if (fontSize.indexOf('px') > -1) {
+			        // convert size to an int
+			        fontSize = fontSize.replace('px', '') - 0;
 
-					if (fontSize < 12) {
-						size = 1;
-					}
-					if (fontSize > 15) {
-						size = 3;
-					}
-					if (fontSize > 17) {
-						size = 4;
-					}
-					if (fontSize > 23) {
-						size = 5;
-					}
-					if (fontSize > 31) {
-						size = 6;
-					}
-					if (fontSize > 47) {
-						size = 7;
-					}
-				} else {
-					size = fontSize;
-				}
+			        if (fontSize < 12) {
+			            size = 85;
+			        }
+			        if (fontSize < 7) {
+			            size = 50;
+			        }
+			        if (fontSize > 17) {
+			            size = 150;
+			        }
+			        if (fontSize > 23) {
+			            size = 200;
+			        }
+			    } else if (fontSize.indexOf('%') > -1) {
+			        fontSize = fontSize.replace('%', '') - 0;
+			    } else {
+			        switch (fontSize - 0)
+			        {
+			            case 1:
+			                fontSize = 50;
+			                break;
+			            case 2:
+			                fontSize = 85;
+			                break;
+			            case 3:
+			                fontSize = 100;
+			                break;
+			            case 4:
+			                fontSize = 150;
+			                break;
+			            case 5:
+			                fontSize = 200;
+			                break;
+			            case 6:
+			                fontSize = 250;
+			                break;
+			            case 7:
+			                fontSize = 300;
+			                break;
+			        }
+			    }
 
-				return '[size=' + size + ']' + content + '[/size]';
+			    if (size == 100) {
+			        return content;
+			    } else {
+				    return '[size=' + size + ']' + content + '[/size]';
+			    }
 			},
-			html: '<font size="{defaultattr}">{!0}</font>'
+			html: '<span style="font-size: {defaultattr}%">{!0}</span>'
 		},
 	    // END_COMMAND
 

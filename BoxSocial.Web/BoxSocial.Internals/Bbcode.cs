@@ -719,6 +719,29 @@ namespace BoxSocial.Internals
             return output.Trim(new char[] { '\n' });
         }
 
+        public static string ParseHashtags(Core core, string input)
+        {
+            string output = input;
+            MatchCollection matches = Regex.Matches(input, "(?:^|\\s)((\\#)([a-z0-9]+)?)", RegexOptions.IgnoreCase);
+            int offset = 0;
+            foreach (Match match in matches)
+            {
+                string hashtag = match.Groups[1].Value;
+                if (!string.IsNullOrEmpty(hashtag))
+                {
+                    string searchUri = core.Hyperlink.AppendAbsoluteSid("/search?q=" + HttpUtility.UrlEncode(hashtag));
+                    string startTag = "[url=\"" + searchUri + "\"]";
+                    string endTag = "[/url]";
+
+                    output = output.Insert(match.Groups[1].Index + offset, startTag).Insert(match.Groups[1].Index + match.Groups[1].Length + offset + startTag.Length, endTag);
+
+                    offset += (startTag + endTag).Length;
+                }
+            }
+
+            return input;
+        }
+
         private static volatile Regex urlRegex = null;
         private static volatile Regex urlRegex2 = null;
         private static volatile Regex urlRegex3 = null;

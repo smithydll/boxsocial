@@ -47,29 +47,36 @@ namespace BoxSocial.Applications.Forum
             PostForm poster = new PostForm(e.Core, e.Page);
 
             e.Template.SetTemplate("Forum", "post");
+
+            VariableCollection javaScriptVariableCollection = e.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/jquery.sceditor.bbcode.min.js");
+
+            VariableCollection styleSheetVariableCollection = e.Template.CreateChild("style_sheet_list");
+            styleSheetVariableCollection.Parse("URI", @"/styles/jquery.sceditor.theme.default.min.css");
+
             ForumSettings.ShowForumHeader(e.Core, e.Page);
 
             e.Template.Parse("PAGE_TITLE", e.Core.Prose.GetString("POST"));
 
             if (e.Core.Http.Form["save"] != null) // DRAFT
             {
-                poster.ShowPostingScreen("draft");
+                poster.ShowPostingScreen("draft", e);
             }
             else if (e.Core.Http.Form["preview"] != null) // PREVIEW
             {
-                poster.ShowPostingScreen("preview");
+                poster.ShowPostingScreen("preview", e);
             }
             else if (e.Core.Http.Form["submit"] != null) // POST
             {
-                poster.ShowPostingScreen("post");
+                poster.ShowPostingScreen("post", e);
             }
             else
             {
-                poster.ShowPostingScreen("none");
+                poster.ShowPostingScreen("none", e);
             }
         }
 
-        private void ShowPostingScreen(string submitMode)
+        private void ShowPostingScreen(string submitMode, ShowPPageEventArgs e)
         {
             long forumId = core.Functions.FormLong("f", core.Functions.RequestLong("f", 0));
             long topicId = core.Functions.FormLong("t", core.Functions.RequestLong("t", 0));
@@ -278,6 +285,23 @@ namespace BoxSocial.Applications.Forum
                 }
                 catch (InvalidForumMemberException)
                 {
+                }
+            }
+
+            foreach (Emoticon emoticon in core.Emoticons)
+            {
+                if (emoticon.Category == "modifier") continue;
+                if (emoticon.Category == "people" && emoticon.Code.Length < 3)
+                {
+                    VariableCollection emoticonVariableCollection = e.Template.CreateChild("emoticon_list");
+                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    emoticonVariableCollection.Parse("URI", emoticon.File);
+                }
+                else
+                {
+                    VariableCollection emoticonVariableCollection = e.Template.CreateChild("emoticon_hidden_list");
+                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    emoticonVariableCollection.Parse("URI", emoticon.File);
                 }
             }
 

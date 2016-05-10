@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.staticpage" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.staticpage" %>

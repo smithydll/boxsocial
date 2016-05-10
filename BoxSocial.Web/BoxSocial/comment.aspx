@@ -1,1 +1,1 @@
-<%@ Page Language="C#" ValidateRequest="false" Inherits="BoxSocial.FrontEnd.comment" %>
+﻿<%@ Page Language="C#" ValidateRequest="false" Inherits="BoxSocial.FrontEnd.comment" %>

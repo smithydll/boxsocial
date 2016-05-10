@@ -1160,6 +1160,7 @@ namespace BoxSocial.Applications.Blog
                     core.Template.Parse("SINGLE", "TRUE");
 
                     blogEntries[0].Viewed(core.Session.LoggedInMember);
+                    ItemView.LogView(core, blogEntries[0]);
 
                     page.Core.Meta.Add("twitter:card", "summary");
                     if (!string.IsNullOrEmpty(page.Core.Settings.TwitterName))

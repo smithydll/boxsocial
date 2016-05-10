@@ -1,11 +1,23 @@
-<h3>{L_WRITE_BLOG_POST}</h3>
+﻿<h3>{L_WRITE_BLOG_POST}</h3>
 
 <script type="text/javascript">
     $(function () {
         $("#post").sceditor({
             plugins: "bbcode",
             style: "/styles/bbcode.min.css",
-            toolbar: "bold,italic,underline|bulletlist,orderedlist|quote,code|link,unlink,image,youtube|source"
+            toolbar: "bold,italic,underline|size,color|bulletlist,orderedlist|quote,code|link,unlink,image,emoticon,youtube|source",
+            emoticons: {
+                dropdown: {
+                    <!-- BEGIN emoticon_list -->
+                    "{emoticon_list.CODE}": "{emoticon_list.URI}",
+                    <!-- END emoticon_list -->
+                },
+                hidden: {
+                <!-- BEGIN emoticon_hidden_list -->
+                "{emoticon_hidden_list.CODE}": "{emoticon_hidden_list.URI}",
+                <!-- END emoticon_hidden_list -->
+                }
+            }
         });
     });
 </script>

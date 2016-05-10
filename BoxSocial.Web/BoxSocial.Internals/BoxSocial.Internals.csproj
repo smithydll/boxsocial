@@ -145,6 +145,7 @@
     <Compile Include="IEmbeddableItem.cs" />
     <Compile Include="INotifiableItem.cs" />
     <Compile Include="IPermissibleControlPanelSubModule.cs" />
+    <Compile Include="ItemView.cs" />
     <Compile Include="JsonWriter.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OAuthApplication.cs" />

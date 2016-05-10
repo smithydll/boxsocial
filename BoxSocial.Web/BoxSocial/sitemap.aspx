@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.sitemap" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.sitemap" %>

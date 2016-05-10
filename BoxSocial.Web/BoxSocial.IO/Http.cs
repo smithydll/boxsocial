@@ -43,6 +43,7 @@ namespace BoxSocial.IO
         
         public Http()
         {
+            HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
             current = HttpContext.Current;
             forceDomain = false;
             //HttpContext.Current = null;
@@ -252,7 +253,14 @@ namespace BoxSocial.IO
         {
             get
             {
-                return current.Request.UrlReferrer.ToString();
+                if (current.Request.UrlReferrer != null)
+                {
+                    return current.Request.UrlReferrer.ToString();
+                }
+                else
+                {
+                    return string.Empty;
+                }
             }
         }
         

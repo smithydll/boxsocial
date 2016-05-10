@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.functions" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.functions" %>

@@ -1,26 +1,27 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en-au" dir="ltr">
+<!DOCTYPE HTML>
+<html>
 <head>
-	<title>{TITLE}</title>
-	<link rel="shortcut icon" href="/favicon.ico" />
-	<link rel="icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/favicon.png"/>
-	<link href="{U_STATIC}/styles/boxsocial.mobile.css" rel="Stylesheet" media="screen, projection" type="text/css"/>
-	<!-- BEGIN style_sheet_list -->
-	<link href="{style_sheet_list.URI}" rel="Stylesheet" media="screen, projection" type="text/css"/>
-	<!-- END style_sheet_list -->
-	<!-- IF CANONICAL_URI -->
-	<link rel="canonical" href="{CANONICAL_URI}" />
-	<!-- ENDIF -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{TITLE}</title>
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
+    <link href="{U_STATIC}/styles/boxsocial.mobile.css" rel="Stylesheet" media="screen, projection" type="text/css" />
+    <!-- BEGIN style_sheet_list -->
+    <link href="{style_sheet_list.URI}" rel="Stylesheet" media="screen, projection" type="text/css" />
+    <!-- END style_sheet_list -->
+    <!-- IF CANONICAL_URI -->
+    <link rel="canonical" href="{CANONICAL_URI}" />
+    <!-- ENDIF -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, target-densityDpi=device-dpi, minimal-ui" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
-	<!-- IF REDIRECT_URI -->
-	<meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
-	<!-- ENDIF -->
+    <!-- IF REDIRECT_URI -->
+    <meta http-equiv="refresh" content="3;url={REDIRECT_URI}" />
+    <!-- ENDIF -->
     <script type="text/javascript" src="{U_STATIC}/scripts/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="{U_STATIC}/scripts/jquery-ui-1.10.3.boxsocial.min.js"></script>
-	<script type="text/javascript">
+    <script type="text/javascript">
 	<!--
 	    var sid = '{SID}';
 	    var medium = 'mobile';
@@ -36,11 +37,11 @@
 	        }
 	    });
 	-->
-	</script>
+    </script>
     <script type="text/javascript" src="{U_STATIC}/scripts/jgestures.min.js"></script>
-	<!-- BEGIN javascript_list -->
-	<script type="text/javascript" src="{javascript_list.URI}"></script>
-	<!-- END javascript_list -->
+    <!-- BEGIN javascript_list -->
+    <script type="text/javascript" src="{javascript_list.URI}"></script>
+    <!-- END javascript_list -->
     <script type="text/javascript" src="{U_STATIC}/scripts/ajax.common.min.js"></script>
     <script type="text/javascript" src="{U_STATIC}/scripts/ajax.mobile.min.js"></script>
 </head>
@@ -59,11 +60,12 @@
         <ul class="mobile-list">
             <!-- BEGIN module_list -->
             <!-- IF module_list.CURRENT -->
-            <li class="page-li"><a href="{module_list.URI}" onclick="$('#account-modules').toggle(); return false;">{module_list.NAME}</a>
+            <li class="page-li">
+                <a href="{module_list.URI}" onclick="$('#account-modules').toggle(); return false;">{module_list.NAME}</a>
                 <ul id="account-modules" style="display: block;">
-	                <!-- BEGIN module_list.account_links -->
+                    <!-- BEGIN module_list.account_links -->
                     <li class="page-li"><a href="{module_list.account_links.URI}"><span>{module_list.account_links.TITLE}</span></a></li>
-	                <!-- END module_list.account_links -->
+                    <!-- END module_list.account_links -->
                 </ul>
             </li>
             <!-- ELSE -->
@@ -76,63 +78,64 @@
     <!-- ENDIF -->
     <div id="search-menu" class="side-menu bottom-menu">
         <h2>{L_SEARCH}</h2>
-		<form action="{S_SEARCH}" id="search-form" method="get">
-			<fieldset>
+        <form action="{S_SEARCH}" id="search-form" method="get">
+            <fieldset>
                 <div class="action-bar">
                     <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
                     <input type="submit" value="{L_SEARCH}" style="float: right;" />
                 </div>
                 <div class="popup-content">
-				    <input type="text" id="search-text" name="q" value="" maxlength="127" />
+                    <input type="text" id="search-text" name="q" value="" maxlength="127" />
                 </div>
-			</fieldset>
-		</form>
+            </fieldset>
+        </form>
     </div>
-        <!-- IF LOGGED_IN -->
+    <!-- IF LOGGED_IN -->
     <div id="post-menu" class="side-menu bottom-menu">
         <h2>{L_POST_STATUS}</h2>
-			<form action="{S_ACCOUNT}" method="post" id="post-form" class="status-form" onsubmit="submitPost(); return false;" enctype="multipart/form-data">
-                <div class="action-bar">
-                    <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
-                    <input type="submit" id="status-submit" value="{L_POST}" style="float: right;" />
+        <form action="{S_ACCOUNT}" method="post" id="post-form" class="status-form" onsubmit="submitPost(); return false;" enctype="multipart/form-data">
+            <div class="action-bar">
+                <button onclick="return hideSideBar();" style="float: left;">{L_CANCEL}</button>
+                <input type="submit" id="status-submit" value="{L_POST}" style="float: right;" />
+            </div>
+            <div class="popup-content">
+                <!-- The name of this field clashes with other forms -->
+                <!--div class="permission-group-droplist">
+                    <span class="group">Public</span>
                 </div>
-                <div class="popup-content">
-                    <!-- The name of this field clashes with other forms -->
-                    <!--div class="permission-group-droplist">
-                        <span class="group">Public</span>
-                    </div>
-                    <p><strong>Permissions</strong>:</p>
-                    <div id="permissions" class="permission-group-droplist" onclick="showUsersBar(event, 'permissions', 'permissions');" style="width: 100%;">
-                        <span class="item-3--2 group">Everyone</span><input type="text" name="permissions-text" id="permissions-text" value="" class="textbox" style="display: none;"><input type="hidden" name="permissions-ids" id="permissions-ids" class="ids" value="3--2"><input type="hidden" name="permissions-id" id="permissions-id" class="item-id" value="2"><input type="hidden" name="permissions-type-id" id="permissions-type-id" class="item-type-id" value="85">
-                    </div-->
-			        <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
-                    <div id="post-type">
-                        <span id="fileupload-label"><span>&nbsp;<input id="fileupload" type="file" name="photo-files[]" onchange="checkPhotoUpload();" /></span></span>
-                    </div>
-                    <div id="upload">
-                    </div>
-			        <input type="hidden" id="form-module" name="module" value="profile" />
-			        <input type="hidden" id="form-sub" name="sub" value="status" />
-                    <input type="hidden" name="save" value="Upload" />
-                    <input type="hidden" name="album" value="create" />
-                    <input type="hidden" name="publish-feed" value="checked" />
-                    <input type="hidden" name="gallery-id" value="-1" />
+                <p><strong>Permissions</strong>:</p>
+                <div id="permissions" class="permission-group-droplist" onclick="showUsersBar(event, 'permissions', 'permissions');" style="width: 100%;">
+                    <span class="item-3--2 group">Everyone</span><input type="text" name="permissions-text" id="permissions-text" value="" class="textbox" style="display: none;"><input type="hidden" name="permissions-ids" id="permissions-ids" class="ids" value="3--2"><input type="hidden" name="permissions-id" id="permissions-id" class="item-id" value="2"><input type="hidden" name="permissions-type-id" id="permissions-type-id" class="item-type-id" value="85">
+                </div-->
+                <textarea rows="4" cols="50" id="message" name="message" style="border: none; outline: none; width: 100%;"></textarea>
+                <div id="post-type">
+                    <span id="fileupload-label"><span>&nbsp;<input id="fileupload" type="file" name="photo-files[]" onchange="checkPhotoUpload();" /></span></span>
                 </div>
-			</form>
+                <div id="upload">
+                </div>
+                <input type="hidden" id="form-module" name="module" value="profile" />
+                <input type="hidden" id="form-sub" name="sub" value="status" />
+                <input type="hidden" name="save" value="Upload" />
+                <input type="hidden" name="album" value="create" />
+                <input type="hidden" name="publish-feed" value="checked" />
+                <input type="hidden" name="gallery-id" value="-1" />
+            </div>
+        </form>
     </div>
-        <!-- ENDIF -->
+    <!-- ENDIF -->
     <div id="boxsocial-menu" class="side-menu">
         <ul class="mobile-list">
             <li><a href="{U_HOME}" data-theme="" data-icon="home">{L_HOME}</a></li>
-<!-- IF LOGGED_IN -->
-    		<li><a href="{U_USER_PROFILE}">{L_ME}</a></li>
-            <li><a href="{U_ACCOUNT}#pages-menu">{L_MY_ACCOUNT}</a>
+            <!-- IF LOGGED_IN -->
+            <li><a href="{U_USER_PROFILE}">{L_ME}</a></li>
+            <li>
+                <a href="{U_ACCOUNT}#pages-menu">{L_MY_ACCOUNT}</a>
             </li>
             <li><a href="{U_SIGNOUT}">{L_SIGNOUT}</a></li>
-<!-- ELSE -->
+            <!-- ELSE -->
             <li><a href="{U_REGISTER}">{L_REGISTER}</a></li>
             <li><a href="{U_SIGNIN}">{L_SIGNIN}</a></li>
-<!-- ENDIF -->
+            <!-- ENDIF -->
             <li><a href="{U_HELP}">{L_HELP}</a></li>
         </ul>
 
@@ -141,36 +144,40 @@
             <li><a href="{U_FOOT_NETWORKS}">{L_NETWORKS}</a></li>
             <!--li>Music
                 <ul>
-						<li><a href="{U_FOOT_MUSIC}">Music Home</a></li>
+                        <li><a href="{U_FOOT_MUSIC}">Music Home</a></li>
 
-						<li><a href="{U_FOOT_MUSIC_DIRECTORY}">Artists</a></li>
-						<li><a href="{U_FOOT_MUSIC_CHART}">Charts</a></li>
+                        <li><a href="{U_FOOT_MUSIC_DIRECTORY}">Artists</a></li>
+                        <li><a href="{U_FOOT_MUSIC_CHART}">Charts</a></li>
                 </ul></li-->
-            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">{SITE_TITLE}</a>
+            <li>
+                <a href="#" onclick="$(this).siblings().toggle(); return false;">{SITE_TITLE}</a>
                 <ul>
-                        <li><a href="{U_ABOUT}">{L_ABOUT}</a></li>
-						<li><a href="{U_PRIVACY}">{L_PRIVACY}</a></li>
-						<li><a href="{U_TOS}">{L_TERMS_OF_SERVICE}</a></li>
-						<li><a href="{U_SITEMAP}">{L_SITE_MAP}</a></li>
-                </ul></li>
-            <li><a href="#"onclick="$(this).siblings().toggle(); return false;">{L_HELP}</a>
+                    <li><a href="{U_ABOUT}">{L_ABOUT}</a></li>
+                    <li><a href="{U_PRIVACY}">{L_PRIVACY}</a></li>
+                    <li><a href="{U_TOS}">{L_TERMS_OF_SERVICE}</a></li>
+                    <li><a href="{U_SITEMAP}">{L_SITE_MAP}</a></li>
+                </ul>
+            </li>
+            <li>
+                <a href="#" onclick="$(this).siblings().toggle(); return false;">{L_HELP}</a>
                 <ul>
-						<li><a href="{U_SAFETY}">{L_SAFETY}</a></li>
-						<li><a href="{U_HELP}">{L_HELP}</a></li>
-                </ul></li>
+                    <li><a href="{U_SAFETY}">{L_SAFETY}</a></li>
+                    <li><a href="{U_HELP}">{L_HELP}</a></li>
+                </ul>
+            </li>
         </ul>
         <p><a href="{U_COPYRIGHT}">{L_COPYRIGHT}</a> &copy; {YEAR} {SITE_TITLE}, {L_POWERED_BY} <a href="http://boxsocial.net/">Box Social</a></p>
     </div>
-<div id="main-page" onclick="hideSideBar();">
-	<div id="head">
+    <div id="main-page" onclick="hideSideBar();">
+        <div id="head">
             <!-- IF TAB_LIST -->
             <!-- TAB_LIST {TAB_LIST_HOW} -->
             <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
             <!-- ELSE -->
-                <!-- IF PAGE_LIST -->
-                <!-- PAGE_LIST {PAGE_LIST_HOW} -->
-                <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
-                <!-- ENDIF -->
+            <!-- IF PAGE_LIST -->
+            <!-- PAGE_LIST {PAGE_LIST_HOW} -->
+            <a href="#" id="pages-button" onclick="return showPagesBar(event);"><span>{L_PAGES}</span></a>
+            <!-- ENDIF -->
             <!-- ENDIF -->
             <!-- IF account_links -->
             <!-- account_links -->
@@ -180,13 +187,13 @@
             <a href="#" id="post-button" onclick="return showPostBar(event);"><span>{L_POST}</span></a>
             <!-- ENDIF -->
             <a href="#" id="search-button" onclick="return showSearchBar(event);"><span>{L_SEARCH}</span></a>
-			<h1 id="page-title"><a href="#" onclick="return showSideBar(event);"><span>{HEADING}</span></a></h1>
+            <h1 id="page-title"><a href="#" onclick="return showSideBar(event);"><span>{HEADING}</span></a></h1>
             <!-- IF SITE_SLOGAN -->
-			<h2 id="sub-title">{SITE_SLOGAN}</h2>
+            <h2 id="sub-title">{SITE_SLOGAN}</h2>
             <!-- ENDIF -->
-	</div>
-	    <!-- BEGIN head_hook -->
-{head_hook.BODY}
-		<!-- END head_hook -->
-		<div id="body">
+        </div>
+        <!-- BEGIN head_hook -->
+        {head_hook.BODY}
+        <!-- END head_hook -->
+        <div id="body">
 

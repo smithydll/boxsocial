@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.search" ValidateRequest="false" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.search" ValidateRequest="false" %>

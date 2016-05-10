@@ -245,6 +245,23 @@ namespace BoxSocial.Applications.Blog
 
             template.Parse("S_ID", postId.ToString());
 
+            foreach (Emoticon emoticon in core.Emoticons)
+            {
+                if (emoticon.Category == "modifier") continue;
+                if (emoticon.Category == "people" && emoticon.Code.Length < 3)
+                {
+                    VariableCollection emoticonVariableCollection = template.CreateChild("emoticon_list");
+                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    emoticonVariableCollection.Parse("URI", emoticon.File);
+                }
+                else
+                {
+                    VariableCollection emoticonVariableCollection = template.CreateChild("emoticon_hidden_list");
+                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    emoticonVariableCollection.Parse("URI", emoticon.File);
+                }
+            }
+
             Save(new EventHandler(AccountBlogWrite_Save));
             if (core.Http.Form["publish"] != null)
             {

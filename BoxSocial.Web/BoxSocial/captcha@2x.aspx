@@ -1,1 +1,1 @@
-<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.captcha" %>
+﻿<%@ Page Language="C#" Inherits="BoxSocial.FrontEnd.captcha" %>

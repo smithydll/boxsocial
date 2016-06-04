@@ -224,19 +224,31 @@ function PostToAccount(onPost, module, sub, id, params, a) {
 }
 
 function PostToPage(onPost, page, nodes, params, a, format) {
+    return SendToPage('POST', true, onPost, page, nodes, params, a, format);
+}
+
+function SendToPage(method, async, onPost, page, nodes, params, a, format) {
     var u = page;
     if (page.indexOf(host) != 0) {
         u = host + page;
     }
-    $.post(AppendSid(u), params, function (data) {
-        if (onPost != null) {
-            var r = ProcessAjaxResult(data, format);
-            if (r != null) onPost(r['result'], nodes, a, r['code']);
+    var m = (method == 'POST' ? $.post : $.get);
+    $.ajax({
+        method: method,
+        url: AppendSid(u),
+        data: params,
+        async: async,
+        dataType: 'xml',
+        success: function (data) {
+            if (onPost != null) {
+                var r = ProcessAjaxResult(data, format);
+                if (r != null) onPost(r['result'], nodes, a, r['code']);
+            }
+            else {
+                ProcessAjaxResult(data, format);
+            }
         }
-        else {
-            ProcessAjaxResult(data, format);
-        }
-    }, 'xml');
+    });
 
     return false;
 }
@@ -430,6 +442,8 @@ function DeletedStatus(r, e, a) {
 var lastScrollPosn = 0;
 var infiniteLoading = false;
 var loadCount = 0;
+var activityTimeout = null;
+var inactive = false;
 
 $(document).ready(function () {
     var iMore = $(".infinite-more");
@@ -439,6 +453,8 @@ $(document).ready(function () {
         iMore.hide();
     }
     $(window).scroll(function () {
+        pageActive();
+
         var trigger = 200;
 
         if (infiniteLoading == false && loadCount < 2) {
@@ -456,7 +472,29 @@ $(document).ready(function () {
             }
         }
     });
+
+    $(document).on('mousemove', function () {
+        pageActive();
+    });
 });
+
+function pageActive()
+{
+    if (itvid > 0) {
+        if (inactive && activityTimeout != null) {
+            inactive = false;
+            SendToPage('POST', false, null, '/api/log-view', null, { ajax: 'true', 'view-mode': 'active', 'vid': itvid });
+        }
+
+        clearTimeout(activityTimeout);
+        activityTimeout = setTimeout(function () {
+            if (!(document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)) {
+                inactive = true;
+                SendToPage('POST', false, null, '/api/log-view', null, { ajax: 'true', 'view-mode': 'inactive', 'vid': itvid });
+            }
+        }, 180000);
+    }
+}
 
 function loadInfiniteContent(u, n) {
 
@@ -526,10 +564,47 @@ function Parameter_Saved(r, e, a) {
 $(document).ready(function () {
     // Set to check new content every minute, otherwise could generate a lot of traffic
     setInterval(checkNewContent, 60000);
+
+    if (itvid > 0) {
+        setTimeout(logView, 5000);
+
+        $(window).on('beforeunload', function () {
+            if (!(document.hidden || document.mozHidden || document.webkitHidden || document.msHidden)) {
+                SendToPage('POST', false, null, '/api/log-view', null, { ajax: 'true', 'view-mode': 'unload', 'vid': itvid });
+            }
+        });
+
+        var visibilityEvent = '';
+        if (typeof document.hidden !== "undefined") visibilityEvent = "visibilitychange";
+        if (typeof document.mozHidden !== "undefined") visibilityEvent = "mozvisibilitychange";
+        if (typeof document.webkitHidden !== "undefined") visibilityEvent = "webkitvisibilitychange";
+        if (typeof document.msHidden !== "undefined") visibilityEvent = "msvisibilitychange";
+
+        $(window).on(visibilityEvent, function () {
+            if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden) {
+                logView2('background');
+            }
+            else {
+                logView2('foreground');
+            }
+        });
+
+        pageActive();
+    }
 });
 
+function logView() {
+    logView2('tick');
+}
+
+function logView2(mode) {
+    if (itvid > 0) {
+        PostToPage(null, '/api/log-view', null, { ajax: 'true', 'view-mode': mode, 'vid': itvid });
+    }
+}
+
 function checkNewContent() {
-    if (document.hidden || document.webkitHidden || document.msHidden) {
+    if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden) {
         return;
     }
     if (queryMode == 'query') {
@@ -542,7 +617,7 @@ function checkNewContent() {
 }
 
 function loadNewContent(mode, n) {
-    PostToPage(LoadedNew, '/api/feed', n, { ajax: 'true', mode: mode, 'newest-id': nid });
+    PostToPage(LoadedNew, '/api/feed', n, { ajax: 'true', mode: mode, 'newest-id': nid, 'view-mode': 'tick', 'vid': itvid });
     return false;
 }
 

@@ -554,6 +554,14 @@ namespace BoxSocial.Applications.Calendar
 
         #endregion
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

@@ -29,37 +29,97 @@ using System.Web.UI.WebControls.WebParts;
 using System.Web.UI.HtmlControls;
 using BoxSocial;
 using BoxSocial.Internals;
+using BoxSocial.IO;
 
 namespace BoxSocial.FrontEnd
 {
     public partial class statistics : TPage
     {
         public statistics()
-            : base()
+            : base("statistics.html")
         {
             this.Load += new EventHandler(Page_Load);
         }
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            DataTable userData = db.Query("SELECT COUNT(user_id) as registrations FROM user_keys");
-            DataTable inviteData = db.Query("SELECT COUNT(email_key) as invites FROM invite_keys");
-            DataTable lastUserData = db.Query("SELECT * FROM user_keys ORDER BY user_id DESC LIMIT 1");
+            string mode = core.Http["mode"];
 
-            Response.Clear();
-            Response.ContentType = "text/plain";
-            if (inviteData.Rows.Count > 0)
+            switch (mode)
             {
-                Response.Write("Invites Sent: " + inviteData.Rows[0]["invites"].ToString() + "\n");
-            }
-            if (userData.Rows.Count > 0)
-            {
-                Response.Write("Users: " + userData.Rows[0]["registrations"].ToString() + "\n");
+                case "primitive":
+                    ShowPrimitiveStatistics();
+                    break;
+                case "item":
+                    ShowItemStatistics();
+                    break;
             }
 
-            Response.Write("Newest user: " + lastUserData.Rows[0]["user_name"].ToString() + "\n");
+            EndResponse();
+        }
 
-            Response.End();
+        private void ShowPrimitiveStatistics()
+        {
+
+        }
+
+        private void ShowItemStatistics()
+        {
+            long itemId = core.Functions.FormLong("id", core.Functions.RequestLong("id", 0));
+            long itemTypeId = core.Functions.FormLong("type", core.Functions.RequestLong("type", 0));
+
+            if (itemId == 0 || itemTypeId == 0)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            ItemKey itemKey = null;
+
+            try
+            {
+                itemKey = new ItemKey(itemId, itemTypeId);
+            }
+            catch (InvalidItemTypeException)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            NumberedItem ni = null;
+
+            try
+            {
+                ni = NumberedItem.Reflect(core, itemKey);
+            }
+            catch (MissingMethodException)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            if (!(ni is IPermissibleItem))
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            IPermissibleItem pi = (IPermissibleItem)ni;
+
+            if (!pi.Owner.GetIsMemberOfPrimitive(core.Session.LoggedInMember.ItemKey, pi.ItemKey))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
+            SelectQuery query = ItemViewCountByHour.GetSelectQueryStub(core, typeof(ItemViewCountByHour));
+            query.AddCondition("view_hourly_item_id", itemId);
+            query.AddCondition("view_hourly_item_type_id", itemTypeId);
+            query.AddCondition("view_hourly_time", ConditionEquality.GreaterThanEqual, UnixTime.UnixTimeStamp() - 29 * 24 * 60 * 60);
+            query.AddCondition("view_hourly_time", ConditionEquality.LessThan, UnixTime.UnixTimeStamp() - 24 * 60 * 60);
+
+            template.Parse("S_ITEM_ID", itemId.ToString());
+            template.Parse("S_ITEM_TYPE_ID", itemTypeId.ToString());
         }
     }
 }

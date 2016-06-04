@@ -146,6 +146,7 @@
     <Compile Include="INotifiableItem.cs" />
     <Compile Include="IPermissibleControlPanelSubModule.cs" />
     <Compile Include="ItemView.cs" />
+    <Compile Include="ItemViewCountByHour.cs" />
     <Compile Include="JsonWriter.cs" />
     <Compile Include="OAuth.cs" />
     <Compile Include="OAuthApplication.cs" />

@@ -42,6 +42,7 @@ namespace BoxSocial.FrontEnd
         {
             string domain = Request.QueryString["domain"];
             string path = Request.QueryString["path"];
+            string urlreferer = Request.QueryString["urlreferer"];
             //string sessionId = Request.QueryString["sid"];
 
             try
@@ -53,7 +54,13 @@ namespace BoxSocial.FrontEnd
                     core.session.SessionEnd(sessionId, 0, record);
                 }*/
 
-                string sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
+                Uri referer = null;
+                if (!string.IsNullOrEmpty(urlreferer))
+                {
+                    referer = new Uri(urlreferer);
+                }
+
+                string sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record, referer);
 
                 Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + path, true));
             }

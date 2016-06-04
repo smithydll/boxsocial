@@ -114,6 +114,7 @@
     <Content Include="share.aspx" />
     <Content Include="sitemap.aspx" />
     <Content Include="staticpage.aspx" />
+    <Content Include="statistics.aspx" />
     <Content Include="styles\bbcode.css" />
     <Content Include="styles\boxsocial.css" />
     <Content Include="styles\boxsocial.min.css" />
@@ -193,6 +194,7 @@
     <Content Include="templates\oauth_authorize.html" />
     <Content Include="templates\primitive_footer.html" />
     <Content Include="templates\registerapplication.html" />
+    <Content Include="templates\statistics.html" />
     <Content Include="templates\viewsubscriptions.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />

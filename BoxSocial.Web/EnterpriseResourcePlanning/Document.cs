@@ -111,6 +111,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             return tz.DateTimeFromMysql(documentReleasedDate);
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

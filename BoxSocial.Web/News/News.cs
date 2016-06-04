@@ -318,6 +318,14 @@ namespace BoxSocial.Applications.News
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

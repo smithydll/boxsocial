@@ -307,6 +307,15 @@ namespace BoxSocial.Internals
         }
 
         [JsonIgnore]
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ItemKey;
+            }
+        }
+
+        [JsonIgnore]
         public Primitive Owner
         {
             get

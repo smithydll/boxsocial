@@ -31,6 +31,11 @@ namespace BoxSocial.Internals
 {
     public interface IPermissibleSubItem
     {
+        ItemKey OwnerKey
+        {
+            get;
+        }
+
         /// <summary>
         /// Owner of the item
         /// </summary>

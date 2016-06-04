@@ -69,6 +69,8 @@ namespace BoxSocial.Internals
         private string sessionIp;
         [DataField("session_domain", 63)]
         private string sessionDomain;
+        [DataField("session_http_referer", 1024)]
+        private string sessionHttpReferer;
 
         private User user;
 
@@ -126,6 +128,14 @@ namespace BoxSocial.Internals
             get
             {
                 return sessionTimeRaw;
+            }
+        }
+
+        internal string HttpReferer
+        {
+            get
+            {
+                return sessionHttpReferer;
             }
         }
 
@@ -558,7 +568,7 @@ namespace BoxSocial.Internals
         private static object botsLock = new object();
         private static Dictionary<string, string> bots = null;
 
-        private string IsBotUserAgent(string ua)
+        internal static string IsBotUserAgent(string ua)
         {
             /* This list of bots from phpBB 3.0.12 */
 
@@ -626,6 +636,22 @@ namespace BoxSocial.Internals
                     bots.Add("SkypeUriPreview", "Skype");
                     bots.Add("Embedly/", "Embedly");
                     bots.Add("WordPress.com mShots", "WordPress");
+                    bots.Add("MetaURI API/", "MetaURI");
+                    bots.Add("linkdexbot/", "Linkdex");
+                    bots.Add("AhrefsBot/", "Ahrefs");
+                    bots.Add("SeznamBot/", "Seznam");
+                    bots.Add("Feedly/", "Feedly");
+                    bots.Add("DotBot/", "DotBot");
+                    bots.Add("oBot/", "oBot");
+                    bots.Add("YandexBot/", "Yandex");
+                    bots.Add("FlipboardRSS/", "Flipboard");
+                    bots.Add("FlipboardProxy/", "Flipboard");
+                    bots.Add("Pinterest/", "Pinterest");
+                    bots.Add("PiplBot;", "PiplBot");
+                    bots.Add("MegaIndex.ru/", "MegaIndex");
+                    bots.Add("MegaIndex.com/", "MegaIndex");
+                    bots.Add("Mail.RU_Bot/", "Mail.RU");
+                    bots.Add("WBSearchBot/", "Warebay");
                 }
 
                 foreach (string key in bots.Keys)
@@ -689,7 +715,7 @@ namespace BoxSocial.Internals
 
         public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor)
         {
-            return SessionBegin(userId, autoCreate, enableAutologin, twoFactor, null);
+            return SessionBegin(userId, autoCreate, enableAutologin, twoFactor, null, null);
         }
 
         /// <summary>
@@ -699,7 +725,7 @@ namespace BoxSocial.Internals
         /// <param name="autoCreate"></param>
         /// <param name="enableAutologin"></param>
         /// <param name="admin"></param>
-        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor, DnsRecord record)
+        public string SessionBegin(long userId, bool autoCreate, bool enableAutologin, bool twoFactor, DnsRecord record, Uri urlreferer)
         {
             string cookieName = "hailToTheChef";
             /*XmlSerializer xs;
@@ -982,7 +1008,7 @@ namespace BoxSocial.Internals
 
             if (record == null)
             {
-                changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), user_id = {0}, session_signed_in = {1} WHERE session_string = '{3}' AND session_ip = '{2}';",
+                changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), user_id = {0}, session_signed_in = {1}, session_http_referer = '' WHERE session_string = '{3}' AND session_ip = '{2}';",
                     userId, (byte)signInState, ipAddress.ToString(), sessionId));
             }
 
@@ -991,8 +1017,13 @@ namespace BoxSocial.Internals
                 // This should force new sessions on external domains to re-auth rather than logout
                 if (core.Hyperlink.CurrentDomain != Hyperlink.Domain)
                 {
-                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
-                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    string referer = string.Empty;
+                    if (HttpContext.Current.Request.UrlReferrer != null)
+                    {
+                        referer = HttpContext.Current.Request.UrlReferrer.ToString();
+                    }
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}&urlreferer={2}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' }), referer));
                     return string.Empty;
                 }
                 else
@@ -1010,8 +1041,13 @@ namespace BoxSocial.Internals
                     {
                         rootSessionId = sessionId;
                     }
-                    db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}')",
-                        sessionId, (byte)signInState, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain)));
+                    string referer = string.Empty;
+                    if (urlreferer != null)
+                    {
+                        referer = urlreferer.ToString();
+                    }
+                    db.UpdateQuery(string.Format("INSERT INTO user_sessions (session_string, session_time_ut, session_start_ut, session_signed_in, session_ip, user_id, session_root_string, session_domain, session_http_referer) VALUES ('{0}', UNIX_TIMESTAMP(), UNIX_TIMESTAMP(), {1}, '{2}', {3}, '{4}', '{5}', '{6}')",
+                        sessionId, (byte)signInState, ipAddress.ToString(), userId, Mysql.Escape(rootSessionId), Mysql.Escape(currentDomain), Mysql.Escape(referer)));
                 }
             }
 
@@ -1291,7 +1327,7 @@ namespace BoxSocial.Internals
                         //
                         if (nowUt - sessionTimeUt >= 60)
                         {
-                            long changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP() WHERE session_string = '{0}';",
+                            long changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), session_http_referer = '' WHERE session_string = '{0}';",
                                 sessionId));
 
 

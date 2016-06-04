@@ -124,6 +124,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return new ItemKey(userId, ItemType.GetTypeId(core, typeof(User)));
+            }
+        }
+
         public User Owner
         {
             get

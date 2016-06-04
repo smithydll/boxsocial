@@ -46,6 +46,11 @@ namespace BoxSocial.Internals
             set;
         }
 
+        ItemKey OwnerKey
+        {
+            get;
+        }
+
         /// <summary>
         /// Owner of the item
         /// </summary>

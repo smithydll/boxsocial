@@ -145,6 +145,14 @@ namespace BoxSocial.Applications.Pages
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return new ItemKey(ownerId, ItemType.GetTypeId(core, typeof(User)));
+            }
+        }
+
         public User Owner
         {
             get

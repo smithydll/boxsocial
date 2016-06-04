@@ -144,6 +144,14 @@ namespace BoxSocial.Applications.Forum
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return rankOwner;
+            }
+        }
+
         public Primitive Owner
         {
             get

@@ -36,11 +36,11 @@ namespace BoxSocial.IO
 {
     public class Http
     {
-        
+
         HttpContext current;
 
         private bool forceDomain;
-        
+
         public Http()
         {
             HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
@@ -76,7 +76,7 @@ namespace BoxSocial.IO
         {
             // List syndicated from http://wikimedia.org/trusted-xff.html
             // TODO: automatically parse the above url with a script into a text file of IP addresses, will be faster
-            string[] legitFowardFor = { "61.91.190.242", 
+            string[] legitFowardFor = { "61.91.190.242",
             "61.91.190.246",
             "61.91.190.248",
             "61.91.190.249",
@@ -111,7 +111,7 @@ namespace BoxSocial.IO
 
             return ServerVariables["REMOTE_ADDR"];
         }
-        
+
         public void SetToImageResponse(string contextType, DateTime lastModified)
         {
             current.Response.Clear();
@@ -120,22 +120,22 @@ namespace BoxSocial.IO
             current.Response.Cache.SetExpires(DateTime.Now.AddDays(1));
             current.Response.Cache.SetCacheability(HttpCacheability.ServerAndPrivate);
         }
-        
+
         public void SwitchContextType(string contextType)
         {
             current.Response.Clear();
             current.Response.ContentType = contextType;
         }
-        
+
         public void WriteXml(XmlSerializer serializer, object obj)
         {
             SwitchContextType("text/xml");
             HttpContext.Current.Response.ContentEncoding = Encoding.UTF8;
-            
+
             StringWriter sw = new StringWriter();
-            
+
             serializer.Serialize(sw, obj);
-            
+
             Write(sw.ToString().Replace("<?xml version=\"1.0\" encoding=\"utf-16\"?>", "<?xml version=\"1.0\" encoding=\"utf-8\"?>"));
         }
 
@@ -150,27 +150,27 @@ namespace BoxSocial.IO
 
             Write(sw.ToString());
         }
-        
+
         public void TransmitFile(string fileName)
         {
             current.Response.TransmitFile(fileName);
         }
-        
+
         public void WriteStream(System.IO.MemoryStream stream)
         {
             stream.WriteTo(HttpContext.Current.Response.OutputStream);
         }
-        
+
         internal void Write(string input)
         {
             current.Response.Write(input);
         }
-        
+
         public void Write(Template template)
         {
             Write(template.ToString());
         }
-        
+
         public void WriteAndEndResponse(Template template)
         {
             Write(template);
@@ -197,12 +197,12 @@ namespace BoxSocial.IO
             Write(responseString);
             End();
         }
-        
+
         public void End()
         {
             current.Response.End();
         }
-        
+
         public string this[string key]
         {
             get
@@ -217,7 +217,7 @@ namespace BoxSocial.IO
                 }
             }
         }
-        
+
         public NameValueCollection Form
         {
             get
@@ -263,7 +263,7 @@ namespace BoxSocial.IO
                 }
             }
         }
-        
+
         public NameValueCollection Query
         {
             get
@@ -271,7 +271,7 @@ namespace BoxSocial.IO
                 return current.Request.QueryString;
             }
         }
-        
+
         public HttpFileCollection Files
         {
             get
@@ -279,12 +279,12 @@ namespace BoxSocial.IO
                 return current.Request.Files;
             }
         }
-        
+
         public HttpCookie GetCookieValue(string key)
         {
             return current.Request.Cookies[key];
         }
-        
+
         public void SetCookieValue(HttpCookie cookie)
         {
             current.Response.Cookies.Add(cookie);
@@ -305,7 +305,7 @@ namespace BoxSocial.IO
                 return current.Request.Url.GetLeftPart(UriPartial.Authority);
             }
         }
-        
+
         public string Status
         {
             get
@@ -317,7 +317,7 @@ namespace BoxSocial.IO
                 current.Response.Status = value;
             }
         }
-        
+
         public int StatusCode
         {
             get
@@ -329,7 +329,7 @@ namespace BoxSocial.IO
                 current.Response.StatusCode = value;
             }
         }
-        
+
         public string StatusDescription
         {
             get
@@ -341,7 +341,7 @@ namespace BoxSocial.IO
                 current.Response.StatusDescription = value;
             }
         }
-        
+
         public string AssemblyPath
         {
             get
@@ -349,7 +349,7 @@ namespace BoxSocial.IO
                 return current.Server.MapPath("./bin/");
             }
         }
-        
+
         public string LanguagePath
         {
             get
@@ -357,7 +357,7 @@ namespace BoxSocial.IO
                 return current.Server.MapPath("./language/");
             }
         }
-        
+
         public string TemplatePath
         {
             get
@@ -365,7 +365,7 @@ namespace BoxSocial.IO
                 return current.Server.MapPath("./templates/");
             }
         }
-        
+
         public string TemplateEmailPath
         {
             get
@@ -373,7 +373,7 @@ namespace BoxSocial.IO
                 return current.Server.MapPath("./templates/emails/");
             }
         }
-        
+
         public string Domain
         {
             get
@@ -381,7 +381,7 @@ namespace BoxSocial.IO
                 return current.Request.Url.Host.ToLower();
             }
         }
-        
+
         public void Redirect(string location)
         {
             current.Response.Redirect(location);
@@ -439,6 +439,22 @@ namespace BoxSocial.IO
             get
             {
                 return current.Request.UserAgent;
+            }
+        }
+
+        public bool BrowserIdentifiesJavascript
+        {
+            get
+            {
+                return (current.Request.Browser.JScriptVersion != null && current.Request.Browser.JScriptVersion.Major > 0) || (current.Request.Browser.EcmaScriptVersion != null && current.Request.Browser.EcmaScriptVersion.Major > 0);
+            }
+        }
+
+        public bool BrowserIdentifiesBot
+        {
+            get
+            {
+                return current.Request.Browser.Crawler;
             }
         }
     }

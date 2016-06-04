@@ -130,6 +130,8 @@ namespace BoxSocial.Applications.Pages
                 }
             }
 
+            ItemView.LogView(core, thePage);
+
             if (thePage.License != null)
             {
                 if (!string.IsNullOrEmpty(thePage.License.Title))

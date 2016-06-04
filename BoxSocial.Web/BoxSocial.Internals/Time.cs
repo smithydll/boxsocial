@@ -675,8 +675,8 @@ namespace BoxSocial.Internals
         /// <returns></returns>
         public string DateTimeToString(DateTime dt, bool today)
         {
-            DateTime now = new DateTime(Now.Year, Now.Month, Now.Day);
-            DateTime then = new DateTime(dt.Year, dt.Month, dt.Day);
+            DateTime now = Now;
+            DateTime then = dt;
             TimeSpan ts = now.Subtract(then);
 
             if (today)

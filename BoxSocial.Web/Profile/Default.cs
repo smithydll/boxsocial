@@ -232,6 +232,7 @@ namespace BoxSocial.Applications.Profile
             e.Core.InvokeHooks(new HookEventArgs(e.Core, AppPrimitives.Member, e.Page.User));
 
             e.Page.User.ProfileViewed(e.Core.Session.LoggedInMember);
+            ItemView.LogView(e.Core, e.Page.User);
 
             List<string[]> breadCrumbParts = new List<string[]>();
             if (!e.Core.IsMobile)

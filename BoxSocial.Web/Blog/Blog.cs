@@ -169,6 +169,14 @@ namespace BoxSocial.Applications.Blog
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return new ItemKey(userId, ItemType.GetTypeId(core, typeof(User)));
+            }
+        }
+
         /// <summary>
         /// Gets the owner of the blog
         /// </summary>

@@ -159,6 +159,23 @@ namespace BoxSocial.FrontEnd
 
             Core core = new Core(db);
 
+            string processViews = WebConfigurationManager.AppSettings["queue-process-views"];
+
+            if (!string.IsNullOrEmpty(processViews) && processViews.ToLower() == "true")
+            {
+                try
+                {
+                    ItemView.ProcessViews(core);
+                }
+                catch (Exception ex)
+                {
+                    InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                    iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
+                    iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
+                    core.Db.Query(iQuery);
+                }
+            }
+
             string cronApplication = WebConfigurationManager.AppSettings["queue-cron-application"];
             if (!string.IsNullOrEmpty(cronApplication))
             {
@@ -608,6 +625,7 @@ namespace BoxSocial.FrontEnd
 
                             patterns.Add(new string[] { @"^/api/acl/get-groups(/|)$", @"/functions.aspx?fun=permission-groups-list" });
                             patterns.Add(new string[] { @"^/api/acl(/|)$", @"/acl.aspx" });
+                            patterns.Add(new string[] { @"^/api/statistics(/|)$", @"/statistics.aspx" });
                             patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
                             patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });
                             patterns.Add(new string[] { @"^/api/like(/|)$", @"/like.aspx" });
@@ -619,6 +637,7 @@ namespace BoxSocial.FrontEnd
                             patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
                             patterns.Add(new string[] { @"^/api/feed(/|)$", @"/functions.aspx?fun=feed" });
                             patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
+                            patterns.Add(new string[] { @"^/api/log-view(/|)$", @"/functions.aspx?fun=log-view" });
 
                             patterns.Add(new string[] { string.Format(@"^/styles/user/{0}.css$", dnsOwnerKey), string.Format(@"/userstyle.aspx?un={0}", dnsOwnerKey) });
                             patterns.Add(new string[] { string.Format(@"^/images/user/_([a-z]+)/{0}.png$", dnsOwnerKey), string.Format(@"/identicon.aspx?un={0}&mode=$1", dnsOwnerKey) });
@@ -665,6 +684,7 @@ namespace BoxSocial.FrontEnd
 
                     patterns.Add(new string[] { @"^/api/acl/get-groups(/|)$", @"/functions.aspx?fun=permission-groups-list" });
                     patterns.Add(new string[] { @"^/api/acl(/|)$", @"/acl.aspx" });
+                    patterns.Add(new string[] { @"^/api/statistics(/|)$", @"/statistics.aspx" });
                     patterns.Add(new string[] { @"^/api/rate(/|)$", @"/rate.aspx" });
                     patterns.Add(new string[] { @"^/api/comment(/|)$", @"/comment.aspx" });
                     patterns.Add(new string[] { @"^/api/like(/|)$", @"/like.aspx" });
@@ -676,6 +696,7 @@ namespace BoxSocial.FrontEnd
                     patterns.Add(new string[] { @"^/api/card(/|)$", @"/functions.aspx?fun=contact-card" });
                     patterns.Add(new string[] { @"^/api/feed(/|)$", @"/functions.aspx?fun=feed" });
                     patterns.Add(new string[] { @"^/api/oembed(/|)$", @"/functions.aspx?fun=embed" });
+                    patterns.Add(new string[] { @"^/api/log-view(/|)$", @"/functions.aspx?fun=log-view" });
                     patterns.Add(new string[] { @"^/api/twitter/callback(/|)$", @"/functions.aspx?fun=twitter" });
                     patterns.Add(new string[] { @"^/api/googleplus/callback(/|)$", @"/functions.aspx?fun=googleplus" });
                     patterns.Add(new string[] { @"^/api/facebook/callback(/|)$", @"/functions.aspx?fun=facebook" });

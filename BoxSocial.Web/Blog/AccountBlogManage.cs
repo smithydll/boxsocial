@@ -96,6 +96,7 @@ namespace BoxSocial.Applications.Blog
                 DateTime postedTime = be.GetPublishedDate(tz);
 
                 blogVariableCollection.Parse("COMMENTS", be.Comments.ToString());
+                blogVariableCollection.Parse("VIEWS", be.Info.ViewedTimes.ToString());
                 blogVariableCollection.Parse("TITLE", be.Title);
                 blogVariableCollection.Parse("POSTED", tz.DateTimeToString(postedTime));
 

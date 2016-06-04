@@ -111,6 +111,14 @@ namespace BoxSocial.Applications.EnterpriseResourcePlanning
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

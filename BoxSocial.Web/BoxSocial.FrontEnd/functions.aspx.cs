@@ -78,6 +78,17 @@ namespace BoxSocial.FrontEnd
                     ReturnContactCard();
                     return;
                 case "feed":
+                    if (core.Http.Form["view-mode"] == "tick")
+                    {
+                        long viewId = 0;
+                        viewId = core.Functions.FormLong("vid", core.Functions.RequestLong("vid", 0));
+
+                        if (viewId > 0)
+                        {
+                            ItemView.UpdateView(core, false);
+                        }
+                    }
+
                     CheckNewFeedItems();
                     return;
                 case "permission-groups-list":
@@ -147,6 +158,9 @@ namespace BoxSocial.FrontEnd
                     }
                     break;
                 case "sms":
+                    break;
+                case "log-view":
+                    ItemView.UpdateView(core);
                     break;
             }
         }

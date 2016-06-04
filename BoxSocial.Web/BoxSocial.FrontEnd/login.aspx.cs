@@ -85,7 +85,7 @@ namespace BoxSocial.FrontEnd
                             core.Session.SessionEnd(sessionId, 0, record);
                         }
 
-                        sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record);
+                        sessionId = core.Session.SessionBegin(core.LoggedInMemberId, false, false, false, record, null);
 
                         Response.Redirect(core.Hyperlink.AppendSid("http://" + record.Domain + "/" + redirect.TrimStart(new char[] { '/' }), true));
                     }
@@ -189,7 +189,7 @@ namespace BoxSocial.FrontEnd
                         }
                         if ((!string.IsNullOrEmpty(domain)) && (record != null))
                         {
-                            string sessionId = core.Session.SessionBegin(core.Session.CandidateMember.UserId, false, false, true, record);
+                            string sessionId = core.Session.SessionBegin(core.Session.CandidateMember.UserId, false, false, true, record, null);
 
                             core.Hyperlink.Sid = sessionId;
                             if (!string.IsNullOrEmpty(redirect))
@@ -304,7 +304,7 @@ namespace BoxSocial.FrontEnd
                                 }
                                 if ((!string.IsNullOrEmpty(domain)) && (record != null))
                                 {
-                                    string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record);
+                                    string sessionId = core.Session.SessionBegin((long)userRow["user_id"], false, false, false, record, null);
 
                                     core.Hyperlink.Sid = sessionId;
                                     if (!string.IsNullOrEmpty(redirect))

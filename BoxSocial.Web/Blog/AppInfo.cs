@@ -234,6 +234,8 @@ namespace BoxSocial.Applications.Blog
             {
                 BlogEntry be = new BlogEntry(core, row);
 
+                core.CreateNewSession(core.PrimitiveCache[be.OwnerId]);
+
                 UpdateQuery uQuery = new UpdateQuery(typeof(Blog));
                 uQuery.AddField("blog_entries", new QueryOperation("blog_entries", QueryOperations.Addition, 1));
                 uQuery.AddField("blog_queued_entries", new QueryOperation("blog_queued_entries", QueryOperations.Subtraction, 1));

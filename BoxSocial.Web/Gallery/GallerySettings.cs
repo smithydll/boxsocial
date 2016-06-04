@@ -299,6 +299,14 @@ namespace BoxSocial.Applications.Gallery
             }
         }
 
+        public ItemKey OwnerKey
+        {
+            get
+            {
+                return ownerKey;
+            }
+        }
+
         public Primitive Owner
         {
             get

@@ -35,6 +35,37 @@ namespace BoxSocial.IO
         BinaryOr,
     }
 
+    public struct QueryBinaryInverse
+    {
+        private string field;
+        private object value;
+
+        public QueryBinaryInverse(string field)
+        {
+            this.field = field;
+            this.value = null;
+        }
+
+        public QueryBinaryInverse(object value)
+        {
+            this.field = null;
+            this.value = value;
+        }
+
+        public override string ToString()
+        {
+            if (field != null)
+            {
+                return string.Format("~{0}", field);
+            }
+            if (value != null)
+            {
+                return string.Format("~{0}", value.ToString());
+            }
+            return string.Empty;
+        }
+    }
+
     public class QueryOperation
     {
         private string field;

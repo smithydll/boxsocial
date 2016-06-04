@@ -1037,6 +1037,9 @@
   <data name="VIEW" xml:space="preserve">
     <value>View</value>
   </data>
+  <data name="VIEWS" xml:space="preserve">
+    <value>Views</value>
+  </data>
   <data name="VIEW_ALL" xml:space="preserve">
     <value>View All</value>
   </data>

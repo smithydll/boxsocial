@@ -38,7 +38,17 @@ namespace BoxSocial.IO
         {
             fieldValues.Add(field, value);
         }
-        
+
+        public void SetBitField(string field, object value)
+        {
+            fieldValues.Add(field, new QueryOperation(field, QueryOperations.BinaryOr, value));
+        }
+
+        public void UnsetBitField(string field, object value)
+        {
+            fieldValues.Add(field, new QueryOperation(field, QueryOperations.BinaryAnd, new QueryBinaryInverse(value)));
+        }
+
         public QueryCondition AddCondition(string field, object value)
         {
             if (conditions.Count == 0)

@@ -1142,6 +1142,8 @@ namespace BoxSocial.Applications.Forum
                     thisTopic.Read(posts[posts.Count - 1]);
                 }
 
+                ItemView.LogView(core, thisTopic);
+
                 if (thisForum.Access.Can("CREATE_TOPICS"))
                 {
                     core.Template.Parse("U_NEW_TOPIC", thisForum.NewTopicUri);

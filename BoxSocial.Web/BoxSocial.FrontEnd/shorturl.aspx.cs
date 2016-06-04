@@ -51,6 +51,16 @@ namespace BoxSocial.FrontEnd
             {
                 ItemInfo info = new ItemInfo(core, key);
 
+                // about to redirect, preserve the referer
+
+                string urlreferer = Request.QueryString["urlreferer"];
+                if (!string.IsNullOrEmpty(urlreferer))
+                {
+                    // update the session record
+                    db.UpdateQuery(string.Format("UPDATE user_sessions SET session_http_referer = '{2}' WHERE session_string = '{1}' AND session_ip = '{0}';",
+                    core.Session.IPAddress.ToString(), core.Session.SessionId, urlreferer));
+                }
+
                 core.Http.StatusCode = 301;
                 core.Http.ForceDomain = true;
                 core.Http.Redirect(info.Uri);

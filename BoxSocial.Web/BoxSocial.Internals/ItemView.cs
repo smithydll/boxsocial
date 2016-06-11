@@ -537,6 +537,8 @@ namespace BoxSocial.Internals
                         iQuery.AddField("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                         iQuery.AddField("view_hourly_item_id", view.ViewKey.Id);
                         iQuery.AddField("view_hourly_item_type_id", view.ViewKey.TypeId);
+                        iQuery.AddField("view_hourly_item_owner_id", view.ownerKey.Id);
+                        iQuery.AddField("view_hourly_item_owner_type_id", view.ownerKey.TypeId);
 
                         core.Db.Query(iQuery);
                     }

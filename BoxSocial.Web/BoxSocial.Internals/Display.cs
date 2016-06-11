@@ -445,34 +445,57 @@ namespace BoxSocial.Internals
 
         public string GenerateBreadCrumbs(List<string[]> parts)
         {
-            string output = "";
+            string output = string.Empty;
             string path = "/";
 
             if (core.IsMobile)
             {
                 if (parts.Count > 1)
                 {
+                    bool lastAbsolute = parts[parts.Count - 2][0].StartsWith("!");
+                    if (!lastAbsolute)
+                    {
+                        for (int i = 0; i < parts.Count - 2; i++)
+                        {
+                            bool absolute = parts[i][0].StartsWith("!");
+                            bool ignore = parts[i][0].StartsWith("*");
+
+                            if ((!ignore) && (!absolute))
+                            {
+                                path += parts[i][0] + "/";
+                            }
+                        }
+                    }
+
                     output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
-                        parts[parts.Count - 2][1], path + parts[parts.Count - 2][0].TrimStart(new char[] { '*' }));
+                        parts[parts.Count - 2][1], core.Hyperlink.AppendSid((!lastAbsolute ? path : string.Empty) + parts[parts.Count - 2][0].TrimStart(new char[] { '*', '!' })));
                 }
                 if (parts.Count == 1)
                 {
                     output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
-                        Hyperlink.Domain, path);
+                        Hyperlink.Domain, core.Hyperlink.AppendSid(path));
+                }
+                if (parts.Count == 0)
+                {
+                    output += string.Format("<span class=\"breadcrumbs\"><strong>&#8249;</strong> <a href=\"{1}\">{0}</a></span>",
+                        core.Prose.GetString("HOME"), core.Hyperlink.AppendCoreSid("/"));
                 }
             }
             else
             {
                 output = string.Format("<a href=\"{1}\">{0}</a>",
-                        Hyperlink.Domain, path);
+                        Hyperlink.Domain, core.Hyperlink.AppendSid(path));
 
                 for (int i = 0; i < parts.Count; i++)
                 {
-                    if (parts[i][0] != "")
+                    if (parts[i][0] != string.Empty)
                     {
+                        bool absolute = parts[i][0].StartsWith("!");
+                        bool ignore = parts[i][0].StartsWith("*");
+
                         output += string.Format(" <strong>&#8249;</strong> <a href=\"{1}\">{0}</a>",
-                            parts[i][1], path + parts[i][0].TrimStart(new char[] { '*' }));
-                        if (!parts[i][0].StartsWith("*", StringComparison.Ordinal))
+                            parts[i][1], core.Hyperlink.AppendSid((!absolute ? path : string.Empty) + parts[i][0].TrimStart(new char[] { '*', '!' })));
+                        if ((!ignore) && (!absolute))
                         {
                             path += parts[i][0] + "/";
                         }

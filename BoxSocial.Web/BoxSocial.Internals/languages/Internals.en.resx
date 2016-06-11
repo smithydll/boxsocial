@@ -914,6 +914,9 @@
   <data name="SITE_MAP" xml:space="preserve">
     <value>Site Map</value>
   </data>
+  <data name="STATISTICS" xml:space="preserve">
+    <value>Statistics</value>
+  </data>
   <data name="STRAIGHT" xml:space="preserve">
     <value>Straight</value>
   </data>

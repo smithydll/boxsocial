@@ -22,6 +22,7 @@ using System;
 using System.Data;
 using System.Configuration;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -50,6 +51,9 @@ namespace BoxSocial.FrontEnd
                 case "primitive":
                     ShowPrimitiveStatistics();
                     break;
+                case "type":
+                    ShowTypeStatistics();
+                    break;
                 case "item":
                     ShowItemStatistics();
                     break;
@@ -60,7 +64,154 @@ namespace BoxSocial.FrontEnd
 
         private void ShowPrimitiveStatistics()
         {
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/chart.bundle.min.js");
 
+            long primitiveId = core.Functions.FormLong("primitive_id", core.Functions.RequestLong("primitive_id", 0));
+            long primitiveTypeId = core.Functions.FormLong("primitive_type", core.Functions.RequestLong("primitive_type", 0));
+            int period = Math.Min(core.Functions.RequestInt("period", core.Functions.RequestInt("period", 30)), 1000);
+
+            if (primitiveId == 0 || primitiveTypeId == 0)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            ItemKey primitiveKey = new ItemKey(primitiveId, primitiveTypeId);
+            core.PrimitiveCache.LoadPrimitiveProfile(primitiveKey);
+            Primitive primitive = core.PrimitiveCache[primitiveKey];
+
+            if (!primitive.GetIsMemberOfPrimitive(core.Session.LoggedInMember.ItemKey, primitive.OwnerKey))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
+            DateTime now = core.Tz.Now;
+            DateTime firstDate = core.Tz.Now.Subtract(new TimeSpan(period + 1, now.Hour, now.Minute, now.Second));
+            DateTime lastDate = core.Tz.Now.Subtract(new TimeSpan(1, now.Hour, now.Minute, now.Second));
+
+            SelectQuery query = ItemViewCountByHour.GetSelectQueryStub(core, typeof(ItemViewCountByHour));
+            query.AddCondition("view_hourly_item_owner_id", primitiveId);
+            query.AddCondition("view_hourly_item_owner_type_id", primitiveTypeId);
+            query.AddCondition("view_hourly_time_ut", ConditionEquality.GreaterThanEqual, core.Tz.GetUnixTimeStamp(firstDate));
+            query.AddCondition("view_hourly_time_ut", ConditionEquality.LessThan, core.Tz.GetUnixTimeStamp(lastDate));
+
+            long[] views = new long[period];
+            long[] time = new long[period];
+
+            DataTable itemViewsDataTable = core.Db.Query(query);
+            //HttpContext.Current.Response.Write(query.ToString() + "<br />");
+
+            foreach (DataRow row in itemViewsDataTable.Rows)
+            {
+                ItemViewCountByHour ivcbh = new ItemViewCountByHour(core, row);
+
+                int index = (int)((ivcbh.TimeRaw - core.Tz.GetUnixTimeStamp(firstDate)) / (24 * 60 * 60));
+                //HttpContext.Current.Response.Write(index.ToString() + "<br />");
+
+                if (index >= 0 && index < period)
+                {
+                    views[index] += ivcbh.ViewCount;
+                    time[index] += ivcbh.Timespan;
+                }
+            }
+
+            for (int i = 0; i < period; i++)
+            {
+                DateTime date = firstDate.Add(new TimeSpan(i, 0, 0, 0));
+
+                VariableCollection viewsVariableCollection = core.Template.CreateChild("views_data");
+                viewsVariableCollection.Parse("DATE", date.ToString("yyyy-MM-dd"));
+                viewsVariableCollection.Parse("VIEWS", views[i].ToString());
+            }
+
+            for (int i = 0; i < period; i++)
+            {
+                DateTime date = firstDate.Add(new TimeSpan(i, 0, 0, 0));
+
+                VariableCollection timeVariableCollection = core.Template.CreateChild("time_data");
+                timeVariableCollection.Parse("DATE", date.ToString("yyyy-MM-dd"));
+                timeVariableCollection.Parse("TIME", (Math.Round(time[i] / 60.0, 2)).ToString());
+            }
+        }
+
+        private void ShowTypeStatistics()
+        {
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/chart.bundle.min.js");
+
+            long primitiveId = core.Functions.FormLong("primitive_id", core.Functions.RequestLong("primitive_id", 0));
+            long primitiveTypeId = core.Functions.FormLong("primitive_type", core.Functions.RequestLong("primitive_type", 0));
+            long itemTypeId = core.Functions.FormLong("type", core.Functions.RequestLong("type", 0));
+            int period = Math.Min(core.Functions.RequestInt("period", core.Functions.RequestInt("period", 30)), 1000);
+
+            if (itemTypeId == 0 || primitiveId == 0 || primitiveTypeId == 0)
+            {
+                core.Functions.Generate404();
+                return;
+            }
+
+            ItemKey primitiveKey = new ItemKey(primitiveId, primitiveTypeId);
+            core.PrimitiveCache.LoadPrimitiveProfile(primitiveKey);
+            Primitive primitive = core.PrimitiveCache[primitiveKey];
+
+            if (!primitive.GetIsMemberOfPrimitive(core.Session.LoggedInMember.ItemKey, primitive.OwnerKey))
+            {
+                core.Functions.Generate403();
+                return;
+            }
+
+            DateTime now = core.Tz.Now;
+            DateTime firstDate = core.Tz.Now.Subtract(new TimeSpan(period + 1, now.Hour, now.Minute, now.Second));
+            DateTime lastDate = core.Tz.Now.Subtract(new TimeSpan(1, now.Hour, now.Minute, now.Second));
+
+            SelectQuery query = ItemViewCountByHour.GetSelectQueryStub(core, typeof(ItemViewCountByHour));
+            query.AddCondition("view_hourly_item_owner_id", primitiveId);
+            query.AddCondition("view_hourly_item_owner_type_id", primitiveTypeId);
+            query.AddCondition("view_hourly_item_type_id", itemTypeId);
+            query.AddCondition("view_hourly_time_ut", ConditionEquality.GreaterThanEqual, core.Tz.GetUnixTimeStamp(firstDate));
+            query.AddCondition("view_hourly_time_ut", ConditionEquality.LessThan, core.Tz.GetUnixTimeStamp(lastDate));
+
+            long[] views = new long[period];
+            long[] time = new long[period];
+
+            DataTable itemViewsDataTable = core.Db.Query(query);
+            //HttpContext.Current.Response.Write(query.ToString() + "<br />");
+
+            foreach (DataRow row in itemViewsDataTable.Rows)
+            {
+                ItemViewCountByHour ivcbh = new ItemViewCountByHour(core, row);
+
+                int index = (int)((ivcbh.TimeRaw - core.Tz.GetUnixTimeStamp(firstDate)) / (24 * 60 * 60));
+                //HttpContext.Current.Response.Write(index.ToString() + "<br />");
+
+                if (index >= 0 && index < period)
+                {
+                    views[index] += ivcbh.ViewCount;
+                    time[index] += ivcbh.Timespan;
+                }
+            }
+
+            for (int i = 0; i < period; i++)
+            {
+                DateTime date = firstDate.Add(new TimeSpan(i, 0, 0, 0));
+
+                VariableCollection viewsVariableCollection = core.Template.CreateChild("views_data");
+                viewsVariableCollection.Parse("DATE", date.ToString("yyyy-MM-dd"));
+                viewsVariableCollection.Parse("VIEWS", views[i].ToString());
+            }
+
+            for (int i = 0; i < period; i++)
+            {
+                DateTime date = firstDate.Add(new TimeSpan(i, 0, 0, 0));
+
+                VariableCollection timeVariableCollection = core.Template.CreateChild("time_data");
+                timeVariableCollection.Parse("DATE", date.ToString("yyyy-MM-dd"));
+                timeVariableCollection.Parse("TIME", (Math.Round(time[i] / 60.0, 2)).ToString());
+            }
+
+            template.Parse("S_ITEM_TYPE_ID", itemTypeId.ToString());
         }
 
         private void ShowItemStatistics()
@@ -179,6 +330,15 @@ namespace BoxSocial.FrontEnd
 
             template.Parse("S_ITEM_ID", itemId.ToString());
             template.Parse("S_ITEM_TYPE_ID", itemTypeId.ToString());
+
+            ItemType type = new ItemType(core, itemTypeId);
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid("!/api/statistics", true), core.Prose.GetString("STATISTICS") });
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid(string.Format("!/api/statistics?mode=primitive&primitive_id={0}&primitive_type={1}", pi.OwnerKey.Id, pi.OwnerKey.TypeId), true), pi.Owner.DisplayName });
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid(string.Format("!/api/statistics?mode=type&primitive_id={0}&primitive_type={1}&type={2}", pi.OwnerKey.Id, pi.OwnerKey.TypeId, itemTypeId), true), type.TypeNamespace });
+
+            core.Display.ParseBreadCrumbs(breadCrumbParts);
         }
     }
 }

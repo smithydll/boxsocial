@@ -42,12 +42,49 @@ namespace BoxSocial.Internals
         [DataField("view_hourly_time")]
         private long viewHourlyTime;
 
-        private ItemViewCountByHour(Core core, DataRow viewRow)
+        public long TimeRaw
+        {
+            get
+            {
+                return viewHourlyTimeRaw;
+            }
+        }
+
+        public long Timespan
+        {
+            get
+            {
+                return viewHourlyTime;
+            }
+        }
+
+        public long ViewCount
+        {
+            get
+            {
+                return viewHourlyCount;
+            }
+        }
+
+        public ItemViewCountByHour(Core core, DataRow viewRow)
             : base(core)
         {
             ItemLoad += new ItemLoadHandler(ItemViewCountByHour_ItemLoad);
 
             loadItemInfo(viewRow);
+        }
+
+        protected override void loadItemInfo(DataRow viewRow)
+        {
+            loadValue(viewRow, "view_hourly_id", out viewHourlyId);
+            loadValue(viewRow, "view_hourly_time_ut", out viewHourlyTimeRaw);
+            loadValue(viewRow, "view_hourly_item", out itemKey);
+            loadValue(viewRow, "view_hourly_item_owner", out ownerKey);
+            loadValue(viewRow, "view_hourly_count", out viewHourlyCount);
+            loadValue(viewRow, "view_hourly_time", out viewHourlyTime);
+
+            itemLoaded(viewRow);
+            core.ItemCache.RegisterItem((NumberedItem)this);
         }
 
         void ItemViewCountByHour_ItemLoad()

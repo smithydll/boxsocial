@@ -38,6 +38,7 @@ namespace BoxSocial.Internals
         IpAddress = 0x0010,
         ShortViewTime = 0x0020,
         BadUserAgent = 0x0040,
+        OldUserAgent = 0x0080,
     }
 
     public enum ItemViewState : int
@@ -523,7 +524,7 @@ namespace BoxSocial.Internals
                 {
                     uQuery = new UpdateQuery(typeof(ItemViewCountByHour));
                     uQuery.AddField("view_hourly_count", new QueryOperation("view_hourly_count", QueryOperations.Addition, increment));
-                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Max(view.viewTimespan, 20 * 60))); // attention span is 20 minutes
+                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Min(view.viewTimespan, 20 * 60))); // attention span is 20 minutes
                     uQuery.AddCondition("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                     uQuery.AddCondition("view_hourly_item_id", view.ViewKey.Id);
                     uQuery.AddCondition("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -532,7 +533,7 @@ namespace BoxSocial.Internals
                     {
                         InsertQuery iQuery = new InsertQuery(typeof(ItemViewCountByHour));
                         iQuery.AddField("view_hourly_count", 1);
-                        iQuery.AddField("view_hourly_time", Math.Max(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
+                        iQuery.AddField("view_hourly_time", Math.Min(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
                         iQuery.AddField("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                         iQuery.AddField("view_hourly_item_id", view.ViewKey.Id);
                         iQuery.AddField("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -626,11 +627,26 @@ namespace BoxSocial.Internals
             {
                 viewQuality++;
             }
+            else
+            {
+                // cookies can't be detected on the landing page, but a legit IP with a cookie is unlikely to go bad even if shared
+                query = new SelectQuery(typeof(ItemView));
+                query.AddField(new QueryFunction("view_id", QueryFunctions.Count, "real_views"));
+                query.AddCondition("view_ip", view.viewIp);
+                query.AddCondition("view_cookies", true);
+                if ((long)core.Db.Query(query).Rows[0]["real_views"] > 0)
+                {
+                    viewQuality++;
+                }
+            }
 
             if (IsRecentBrowser(view.viewHttpUserAgent))
             {
                 viewQuality += 2;
-                returnValue = returnValue | ItemViewDiscountedReason.BadUserAgent;
+            }
+            else
+            {
+                returnValue = returnValue | ItemViewDiscountedReason.OldUserAgent;
             }
 
             if (!string.IsNullOrEmpty(view.viewHttpReferer))
@@ -650,17 +666,17 @@ namespace BoxSocial.Internals
         {
             Dictionary<string, List<string>> matches = ParseUserAgent(userAgent);
 
-            if (userAgent.Contains("Edge/"))
+            if (userAgent.Contains("Edge/") && matches.ContainsKey("Edge"))
             {
                 string versionString = matches["Edge"][0];
                 List<int> version = GetVersionParts(versionString);
 
-                if (version[0] < 20)
+                if (version[0] < 13)
                 {
                     return false;
                 }
             }
-            else if (userAgent.Contains("OPR/"))
+            else if (userAgent.Contains("OPR/") && matches.ContainsKey("OPR"))
             {
                 string versionString = matches["OPR"][0];
                 List<int> version = GetVersionParts(versionString);
@@ -670,7 +686,7 @@ namespace BoxSocial.Internals
                     return false;
                 }
             }
-            else if (userAgent.Contains("SamsungBrowser/"))
+            else if (userAgent.Contains("SamsungBrowser/") && matches.ContainsKey("SamsungBrowser"))
             {
                 string versionString = matches["SamsungBrowser"][0];
                 List<int> version = GetVersionParts(versionString);
@@ -680,27 +696,7 @@ namespace BoxSocial.Internals
                     return false;
                 }
             }
-            else if (userAgent.Contains("Chrome/"))
-            {
-                string versionString = matches["Chrome"][0];
-                List<int> version = GetVersionParts(versionString);
-
-                if (version[0] < 45)
-                {
-                    return false;
-                }
-            }
-            else if (userAgent.Contains("Chromium/"))
-            {
-                string versionString = matches["Chromium"][0];
-                List<int> version = GetVersionParts(versionString);
-
-                if (version[0] < 45)
-                {
-                    return false;
-                }
-            }
-            else if (userAgent.Contains("Firefox/"))
+            else if (userAgent.Contains("Firefox/") && matches.ContainsKey("Firefox"))
             {
                 string versionString = matches["Firefox"][0];
                 List<int> version = GetVersionParts(versionString);
@@ -710,7 +706,27 @@ namespace BoxSocial.Internals
                     return false;
                 }
             }
-            else if (userAgent.Contains("Android") && userAgent.Contains("Version/"))
+            else if (userAgent.Contains("Chrome/") && matches.ContainsKey("Chrome"))
+            {
+                string versionString = matches["Chrome"][0];
+                List<int> version = GetVersionParts(versionString);
+
+                if (version[0] < 45)
+                {
+                    return false;
+                }
+            }
+            else if (userAgent.Contains("Chromium/") && matches.ContainsKey("Chromium"))
+            {
+                string versionString = matches["Chromium"][0];
+                List<int> version = GetVersionParts(versionString);
+
+                if (version[0] < 45)
+                {
+                    return false;
+                }
+            }
+            else if (userAgent.Contains("Android") && userAgent.Contains("Version/") && matches.ContainsKey("Version"))
             {
                 string versionString = matches["Version"][0];
                 List<int> version = GetVersionParts(versionString);
@@ -720,7 +736,7 @@ namespace BoxSocial.Internals
                     return false;
                 }
             }
-            else if (userAgent.Contains("Safari/") && userAgent.Contains("AppleWebKit/") && userAgent.Contains("Version/"))
+            else if (userAgent.Contains("Safari/") && userAgent.Contains("AppleWebKit/") && userAgent.Contains("Version/") && matches.ContainsKey("Version"))
             {
                 string versionString = matches["Version"][0];
                 List<int> version = GetVersionParts(versionString);

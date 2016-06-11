@@ -88,9 +88,12 @@ namespace BoxSocial.Applications.Pages
 
                 pagesVariableCollection.Parse("TITLE", levelString + page.Title);
                 pagesVariableCollection.Parse("UPDATED", tz.DateTimeToString(page.GetModifiedDate(tz)));
+                pagesVariableCollection.Parse("VIEWS", page.Info.ViewedTimes.ToString());
+
                 pagesVariableCollection.Parse("U_VIEW", page.Uri);
                 pagesVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", page.Id));
                 pagesVariableCollection.Parse("U_PERMS", Access.BuildAclUri(core, page));
+                pagesVariableCollection.Parse("U_STATISTICS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/statistics?mode=item&id={0}&type={1}", page.Id, ItemType.GetTypeId(core, typeof(Page))), true));
                 pagesVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", page.Id));
 
                 if (i % 2 == 0)

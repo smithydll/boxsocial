@@ -9,6 +9,82 @@
 
     <p>View statistics for your content for the last period.</p>
 
+    <canvas id="dailyViews" width="640" height="200"></canvas>
+    <script>
+        var ctx = document.getElementById("dailyViews");
+        var data = {
+            labels: [
+                <!-- BEGIN views_data -->
+                '{views_data.DATE}',
+                <!-- END views_data -->
+            ],            
+            datasets: [{
+                label: 'Views',
+                fill: true,
+                lineTension: 0,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                data:
+                [
+                    <!-- BEGIN views_data -->
+                    {views_data.VIEWS},
+                    <!-- END views_data -->
+                ]
+            }]
+        };
+        var myLineChart = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: {
+                showLines: true,
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'day'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 
+    <canvas id="dailyTime" width="640" height="200"></canvas>
+    <script>
+        var ctx2 = document.getElementById("dailyTime");
+        var data2 = {
+            labels: [
+                <!-- BEGIN time_data -->
+                '{time_data.DATE}',
+                <!-- END time_data -->
+            ],
+            datasets: [{
+                label: 'Time (minutes)',
+                fill: true,
+                lineTension: 0,
+                backgroundColor: "rgba(75,192,192,0.4)",
+                borderColor: "rgba(75,192,192,1)",
+                data:
+                [
+                    <!-- BEGIN time_data -->
+                    {time_data.TIME},
+                    <!-- END time_data -->
+                ]
+            }]
+        };
+        var myLineChart = new Chart(ctx2, {
+            type: 'line',
+            data: data2,
+            options: {
+                showLines: true,
+                scales: {
+                    xAxes: [{
+                        time: {
+                            unit: 'day'
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
 </div>
 <!-- INCLUDE page_footer.html -->

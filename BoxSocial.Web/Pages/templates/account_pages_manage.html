@@ -26,9 +26,10 @@
 <tr>
 	<th>Page Title</th>
 	<th>Last Updated</th>
+    <th>{L_VIEWS}</th>
 	<th></th>
 	<th></th>
-  <th></th>
+    <th></th>
 	<th></th>
 </tr>
 <!-- BEGIN page_list -->
@@ -39,6 +40,7 @@
 <!-- ENDIF -->
 	<td>{page_list.TITLE}</td>
 	<td>{page_list.UPDATED}</td>
+    <td><a href="{page_list.U_STATISTICS}">{page_list.VIEWS}</a></td>
 	<td><a href="{page_list.U_VIEW}">View</a></td>
 	<td><a href="{page_list.U_EDIT}">Edit</a></td>
   <td><a href="{page_list.U_PERMS}"><img src="/images/permissions.png" alt="{L_EDIT_PERMISSIONS}" title="{L_EDIT_PERMISSIONS}"/></a></td>

@@ -104,6 +104,7 @@ namespace BoxSocial.Applications.Blog
 
                 blogVariableCollection.Parse("U_EDIT", BuildUri("write", "edit", be.Id));
                 blogVariableCollection.Parse("U_EDIT_PERMISSIONS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/acl?id={0}&type={1}", be.Id, ItemType.GetTypeId(core, typeof(BlogEntry))), true));
+                blogVariableCollection.Parse("U_STATISTICS", core.Hyperlink.AppendAbsoluteSid(string.Format("/api/statistics?mode=item&id={0}&type={1}", be.Id, ItemType.GetTypeId(core, typeof(BlogEntry))), true));
                 blogVariableCollection.Parse("U_DELETE", BuildUri("write", "delete", be.Id));
             }
 

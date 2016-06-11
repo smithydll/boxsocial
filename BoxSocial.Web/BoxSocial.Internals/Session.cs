@@ -1008,8 +1008,8 @@ namespace BoxSocial.Internals
 
             if (record == null)
             {
-                changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), user_id = {0}, session_signed_in = {1}, session_http_referer = '' WHERE session_string = '{3}' AND session_ip = '{2}';",
-                    userId, (byte)signInState, ipAddress.ToString(), sessionId));
+                changedRows = db.UpdateQuery(string.Format("UPDATE user_sessions SET session_time_ut = UNIX_TIMESTAMP(), user_id = {0}, session_signed_in = {1} WHERE session_string = '{3}' AND session_ip = '{2}';",
+                    userId, (byte)signInState, ipAddress.ToString(), sessionId)); // , session_http_referer = ''
             }
 
             if (changedRows == 0)
@@ -1225,8 +1225,13 @@ namespace BoxSocial.Internals
 
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
-                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    string referer = string.Empty;
+                    if (HttpContext.Current.Request.UrlReferrer != null)
+                    {
+                        referer = HttpContext.Current.Request.UrlReferrer.ToString();
+                    }
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}&urlreferer={2}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' }), referer));
                     //return;
                 }
 
@@ -1243,8 +1248,13 @@ namespace BoxSocial.Internals
 
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
-                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    string referer = string.Empty;
+                    if (HttpContext.Current.Request.UrlReferrer != null)
+                    {
+                        referer = HttpContext.Current.Request.UrlReferrer.ToString();
+                    }
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}&urlreferer={2}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' }), referer));
                     //return;
                 }
             }
@@ -1423,8 +1433,13 @@ namespace BoxSocial.Internals
             {
                 if ((core.Hyperlink.CurrentDomain != Hyperlink.Domain) && string.IsNullOrEmpty(sessionId))
                 {
-                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}",
-                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' })));
+                    string referer = string.Empty;
+                    if (HttpContext.Current.Request.UrlReferrer != null)
+                    {
+                        referer = HttpContext.Current.Request.UrlReferrer.ToString();
+                    }
+                    HttpContext.Current.Response.Redirect(protocol + Hyperlink.Domain + string.Format("/session.aspx?domain={0}&path={1}&urlreferer={2}",
+                        HttpContext.Current.Request.Url.Host, core.PagePath.TrimStart(new char[] { '/' }), referer));
                     //return;
                 }
             }

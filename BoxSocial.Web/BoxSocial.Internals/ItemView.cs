@@ -278,6 +278,7 @@ namespace BoxSocial.Internals
                         case "inactive":
                             {
                                 UpdateQuery uQuery = new UpdateQuery(typeof(ItemView));
+                                uQuery.AddField("view_javascript", true);
                                 if (timestamp - view.viewUpdateTimeRaw < 120)
                                 {
                                     uQuery.AddField("view_timespan", new QueryOperation("view_timespan", QueryOperations.Addition, timestamp - view.viewUpdateTimeRaw));

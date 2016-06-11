@@ -57,9 +57,22 @@ namespace BoxSocial.FrontEnd
                 case "item":
                     ShowItemStatistics();
                     break;
+                default:
+                    ShowDefault();
+                    break;
             }
 
             EndResponse();
+        }
+
+        public void ShowDefault()
+        {
+            template.LoadTemplateFile("statistics_default.html");
+
+            VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
+            javaScriptVariableCollection.Parse("URI", @"/scripts/chart.bundle.min.js");
+
+
         }
 
         private void ShowPrimitiveStatistics()

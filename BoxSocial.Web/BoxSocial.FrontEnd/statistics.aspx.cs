@@ -72,7 +72,9 @@ namespace BoxSocial.FrontEnd
             VariableCollection javaScriptVariableCollection = core.Template.CreateChild("javascript_list");
             javaScriptVariableCollection.Parse("URI", @"/scripts/chart.bundle.min.js");
 
+            List<string[]> breadCrumbParts = new List<string[]>();
 
+            core.Display.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private void ShowPrimitiveStatistics()
@@ -114,14 +116,12 @@ namespace BoxSocial.FrontEnd
             long[] time = new long[period];
 
             DataTable itemViewsDataTable = core.Db.Query(query);
-            //HttpContext.Current.Response.Write(query.ToString() + "<br />");
 
             foreach (DataRow row in itemViewsDataTable.Rows)
             {
                 ItemViewCountByHour ivcbh = new ItemViewCountByHour(core, row);
 
                 int index = (int)((ivcbh.TimeRaw - core.Tz.GetUnixTimeStamp(firstDate)) / (24 * 60 * 60));
-                //HttpContext.Current.Response.Write(index.ToString() + "<br />");
 
                 if (index >= 0 && index < period)
                 {
@@ -147,6 +147,11 @@ namespace BoxSocial.FrontEnd
                 timeVariableCollection.Parse("DATE", date.ToString("yyyy-MM-dd"));
                 timeVariableCollection.Parse("TIME", (Math.Round(time[i] / 60.0, 2)).ToString());
             }
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid("!/api/statistics", true), core.Prose.GetString("STATISTICS") });
+
+            core.Display.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private void ShowTypeStatistics()
@@ -190,14 +195,12 @@ namespace BoxSocial.FrontEnd
             long[] time = new long[period];
 
             DataTable itemViewsDataTable = core.Db.Query(query);
-            //HttpContext.Current.Response.Write(query.ToString() + "<br />");
 
             foreach (DataRow row in itemViewsDataTable.Rows)
             {
                 ItemViewCountByHour ivcbh = new ItemViewCountByHour(core, row);
 
                 int index = (int)((ivcbh.TimeRaw - core.Tz.GetUnixTimeStamp(firstDate)) / (24 * 60 * 60));
-                //HttpContext.Current.Response.Write(index.ToString() + "<br />");
 
                 if (index >= 0 && index < period)
                 {
@@ -225,6 +228,12 @@ namespace BoxSocial.FrontEnd
             }
 
             template.Parse("S_ITEM_TYPE_ID", itemTypeId.ToString());
+
+            List<string[]> breadCrumbParts = new List<string[]>();
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid("!/api/statistics", true), core.Prose.GetString("STATISTICS") });
+            breadCrumbParts.Add(new string[] { core.Hyperlink.AppendSid(string.Format("!/api/statistics?mode=primitive&primitive_id={0}&primitive_type={1}", primitive.ItemKey.Id, primitive.ItemKey.TypeId), true), primitive.DisplayName });
+
+            core.Display.ParseBreadCrumbs(breadCrumbParts);
         }
 
         private void ShowItemStatistics()
@@ -307,14 +316,12 @@ namespace BoxSocial.FrontEnd
             long[] time = new long[period];
 
             DataTable itemViewsDataTable = core.Db.Query(query);
-            //HttpContext.Current.Response.Write(query.ToString() + "<br />");
 
             foreach (DataRow row in itemViewsDataTable.Rows)
             {
                 ItemViewCountByHour ivcbh = new ItemViewCountByHour(core, row);
 
                 int index = (int)((ivcbh.TimeRaw - core.Tz.GetUnixTimeStamp(firstDate)) / (24 * 60 * 60));
-                //HttpContext.Current.Response.Write(index.ToString() + "<br />");
 
                 if (index >= 0 && index < period)
                 {

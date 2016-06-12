@@ -90,7 +90,71 @@ namespace BoxSocial.Internals
 
         public override void SendSms(string toNumber, string message)
         {
+            SmsAccessToken token = new SmsAccessToken(consumerKey, consumerSecret);
 
+            string method = "POST";
+
+            string oAuthSignatureMethod = "HMAC-SHA1";
+
+            string oAuthNonce = Guid.NewGuid().ToString().Replace("-", string.Empty);
+            string oAuthTimestamp = UnixTime.UnixTimeStamp().ToString();
+
+            string parameters = string.Empty;
+            string smsEndpoint = string.Empty;
+
+            parameters = "body=" + UrlEncode(message) + "&oauth_consumer_key=" + consumerKey + "&oauth_nonce=" + oAuthNonce + "&oauth_signature_method=" + oAuthSignatureMethod + "&oauth_timestamp=" + oAuthTimestamp + "&oauth_token=" + UrlEncode(token.Token) + "&oauth_version=1.0&to=" + UrlEncode(toNumber);
+
+            string signature = method + "&" + UrlEncode(smsEndpoint) + "&" + UrlEncode(parameters);
+
+            String oauthSignature = string.Empty;
+            try
+            {
+                oauthSignature = computeSignature(signature, consumerSecret + "&" + token.Secret);
+            }
+            catch (Exception ex)
+            {
+            }
+
+            string authorisationHeader = "OAuth oauth_consumer_key=\"" + consumerKey + "\",oauth_signature_method=\"HMAC-SHA1\",oauth_timestamp=\"" +
+                oAuthTimestamp + "\",oauth_nonce=\"" + oAuthNonce + "\",oauth_version=\"1.0\",oauth_signature=\"" + UrlEncode(oauthSignature) + "\",oauth_token=\"" + UrlEncode(token.Token) + "\"";
+
+            string guid = Guid.NewGuid().ToString();
+            string boundary = "----BSFB" + UnixTime.UnixTimeStamp().ToString() + guid.Replace("-", string.Empty);
+            StringBuilder body = new StringBuilder();
+
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(smsEndpoint);
+            wr.ProtocolVersion = HttpVersion.Version11;
+            wr.UserAgent = "HttpCore/1.1";
+            wr.Method = method;
+            wr.Headers["Authorization"] = authorisationHeader;
+
+            body.Append("body=" + UrlEncode(message) + "&to=" + UrlEncode(toNumber));
+            wr.ContentType = "application/x-www-form-urlencoded";
+
+            byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());
+            byte[] boundaryBytes = UTF8Encoding.UTF8.GetBytes("\r\n--" + boundary + "--\r\n");
+
+            wr.ContentLength = bodyBytes.Length;
+
+            Stream stream = wr.GetRequestStream();
+            stream.Write(bodyBytes, 0, bodyBytes.Length);
+
+            stream.Close();
+
+            HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
+
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+            }
+            else
+            {
+                Encoding encode = Encoding.GetEncoding("utf-8");
+                StreamReader sr = new StreamReader(response.GetResponseStream(), encode);
+
+                string responseString = sr.ReadToEnd();
+
+                // we could decode the error, but why?
+            }
         }
 
         public static string UrlEncode(string value)

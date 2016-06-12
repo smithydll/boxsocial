@@ -195,6 +195,7 @@
     <Content Include="templates\primitive_footer.html" />
     <Content Include="templates\registerapplication.html" />
     <Content Include="templates\statistics.html" />
+    <Content Include="templates\statistics_default.html" />
     <Content Include="templates\viewsubscriptions.html" />
     <Content Include="templates\creategroup.html" />
     <Content Include="templates\createmuiscian.html" />

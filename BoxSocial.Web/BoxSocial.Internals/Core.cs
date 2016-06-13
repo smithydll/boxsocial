@@ -54,7 +54,7 @@ namespace BoxSocial.Internals
         private Functions functions;
         private Display display;
         private Email email;
-        private SmsGateway sms;
+        private SmsBroker sms;
         private ResponseFormats responseFormat;
         private ResponseWriter response;
         private Hyperlink hyperlink;
@@ -622,20 +622,13 @@ namespace BoxSocial.Internals
             }
         }
 
-        public SmsGateway Sms
+        public SmsBroker Sms
         {
             get
             {
                 if (sms == null)
                 {
-                    if (Settings.SmsProvider == "http")
-                    {
-                        sms = new HttpSmsGateway(Settings.SmsHttpGateway);
-                    }
-                    else if (Settings.SmsProvider == "oauth")
-                    {
-                        sms = new OAuthSmsGateway(Settings.SmsOAuthTokenUri, Settings.SmsOAuthSmsUri, Settings.SmsOAuthKey, Settings.SmsOAuthSecret);
-                    }
+                    sms = new SmsBroker(this);
                 }
                 return sms;
             }

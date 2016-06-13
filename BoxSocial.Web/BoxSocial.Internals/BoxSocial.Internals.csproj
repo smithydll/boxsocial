@@ -149,6 +149,7 @@
     <Compile Include="ItemViewCountByHour.cs" />
     <Compile Include="JsonWriter.cs" />
     <Compile Include="OAuth.cs" />
+    <Compile Include="OAuth2SmsGateway.cs" />
     <Compile Include="OAuthApplication.cs" />
     <Compile Include="OAuthSmsGateway.cs" />
     <Compile Include="OAuthToken.cs" />
@@ -220,6 +221,7 @@
     <Compile Include="SearchKeyword.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Share.cs" />
+    <Compile Include="SmsBroker.cs" />
     <Compile Include="SolrSearch.cs" />
     <Compile Include="StaticShowAttribute.cs" />
     <Compile Include="Subscription.cs" />

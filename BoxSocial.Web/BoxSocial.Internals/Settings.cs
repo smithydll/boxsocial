@@ -62,12 +62,25 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string SmsPrefixes
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-prefixes"];
+            }
+        }
+
         public string SmsProvider
         {
             get
             {
                 return WebConfigurationManager.AppSettings["sms-provider"];
             }
+        }
+
+        public string GetSmsProvider(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-provider"];
         }
 
         public string SmsHttpGateway
@@ -78,12 +91,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string GetSmsHttpGateway(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-http-gateway"];
+        }
+
         public string SmsOAuthTokenUri
         {
             get
             {
                 return WebConfigurationManager.AppSettings["sms-oauth-token-uri"];
             }
+        }
+
+        public string GetSmsOAuthTokenUri(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-token-uri"];
         }
 
         public string SmsOAuthSmsUri
@@ -94,6 +117,11 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string GetSmsOAuthSmsUri(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-sms-uri"];
+        }
+
         public string SmsOAuthKey
         {
             get
@@ -102,12 +130,22 @@ namespace BoxSocial.Internals
             }
         }
 
+        public string GetSmsOAuthKey(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-key"];
+        }
+
         public string SmsOAuthSecret
         {
             get
             {
                 return WebConfigurationManager.AppSettings["sms-oauth-secret"];
             }
+        }
+
+        public string GetSmsOAuthSecret(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-secret"];
         }
 
         public string QueueProvider

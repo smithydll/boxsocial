@@ -109,6 +109,19 @@ namespace BoxSocial.Internals
             return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-token-uri"];
         }
 
+        public string SmsOauthTokenParameters
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-token-uri"];
+            }
+        }
+
+        public string GetSmsOauthTokenParameters(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-token-parameters"];
+        }
+
         public string SmsOAuthSmsUri
         {
             get
@@ -120,6 +133,32 @@ namespace BoxSocial.Internals
         public string GetSmsOAuthSmsUri(string prefix)
         {
             return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-sms-uri"];
+        }
+
+        public string SmsOAuthSmsAuthorization
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-sms-authorization"];
+            }
+        }
+
+        public string GetSmsOAuthSmsAuthorization(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-sms-authorization"];
+        }
+
+        public string SmsOAuthSmsBody
+        {
+            get
+            {
+                return WebConfigurationManager.AppSettings["sms-oauth-sms-body"];
+            }
+        }
+
+        public string GetSmsOAuthSmsBody(string prefix)
+        {
+            return WebConfigurationManager.AppSettings["sms-" + prefix + "-oauth-sms-body"];
         }
 
         public string SmsOAuthKey

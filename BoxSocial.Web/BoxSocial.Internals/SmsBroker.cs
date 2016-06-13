@@ -78,6 +78,10 @@ namespace BoxSocial.Internals
                     {
                         gateway = new OAuthSmsGateway(core.Settings.SmsOAuthTokenUri, core.Settings.SmsOAuthSmsUri, core.Settings.SmsOAuthKey, core.Settings.SmsOAuthSecret);
                     }
+                    else if (core.Settings.SmsProvider == "oauth2")
+                    {
+                        gateway = new OAuth2SmsGateway(core.Settings.SmsOAuthTokenUri, core.Settings.SmsOAuthSmsUri, core.Settings.SmsOAuthKey, core.Settings.SmsOAuthSecret, core.Settings.SmsOauthTokenParameters, core.Settings.SmsOAuthSmsAuthorization, core.Settings.SmsOAuthSmsBody);
+                    }
                 }
                 return gateway;
             }
@@ -100,6 +104,10 @@ namespace BoxSocial.Internals
                 else if (core.Settings.GetSmsProvider(countryCode.ToString()) == "oauth")
                 {
                     sms = new OAuthSmsGateway(core.Settings.GetSmsOAuthTokenUri(countryCode.ToString()), core.Settings.GetSmsOAuthSmsUri(countryCode.ToString()), core.Settings.GetSmsOAuthKey(countryCode.ToString()), core.Settings.GetSmsOAuthSecret(countryCode.ToString()));
+                }
+                else if (core.Settings.SmsProvider == "oauth2")
+                {
+                    sms = new OAuth2SmsGateway(core.Settings.GetSmsOAuthTokenUri(countryCode.ToString()), core.Settings.GetSmsOAuthSmsUri(countryCode.ToString()), core.Settings.GetSmsOAuthKey(countryCode.ToString()), core.Settings.GetSmsOAuthSecret(countryCode.ToString()), core.Settings.GetSmsOauthTokenParameters(countryCode.ToString()), core.Settings.GetSmsOAuthSmsAuthorization(countryCode.ToString()), core.Settings.GetSmsOAuthSmsBody(countryCode.ToString()));
                 }
 
                 gateways.Add(countryCode.ToString(), sms);

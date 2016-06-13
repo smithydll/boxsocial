@@ -74,13 +74,17 @@ namespace BoxSocial.Internals
         private string oauthTokenParameters;
         private string oauthTokenAuthorization;
         private string oauthSmsUri;
+        private string oauthSmsBody;
 
-        public OAuth2SmsGateway(string oauthTokenUri, string oauthSmsUri, string oauthKey, string oauthSecret)
+        public OAuth2SmsGateway(string oauthTokenUri, string oauthSmsUri, string oauthKey, string oauthSecret, string oauthTokenParameters, string oauthTokenAuthorization, string oauthSmsBody)
         {
             this.oauthTokenUri = oauthTokenUri;
             this.oauthSmsUri = oauthSmsUri;
             this.consumerKey = oauthKey;
             this.consumerSecret = oauthSecret;
+            this.oauthTokenParameters = oauthTokenParameters;
+            this.oauthTokenAuthorization = oauthTokenAuthorization;
+            this.oauthSmsBody = oauthSmsBody;
         }
 
         public override void SendSms(string toNumber, string message)
@@ -99,7 +103,7 @@ namespace BoxSocial.Internals
             wr.Method = method;
             wr.Headers["Authorization"] = authorisationHeader;
 
-            body.Append("body=" + UrlEncode(message) + "&to=" + UrlEncode(toNumber));
+            body.Append(string.Format(oauthSmsBody, UrlEncode(message) , UrlEncode(toNumber)));
             wr.ContentType = "application/x-www-form-urlencoded";
 
             byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());

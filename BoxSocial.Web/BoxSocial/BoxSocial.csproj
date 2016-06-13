@@ -185,6 +185,7 @@
     <Content Include="templates\account_password.html" />
     <Content Include="templates\account_preferences.html" />
     <Content Include="templates\account_security.html" />
+    <Content Include="templates\account_security_twofactor.html" />
     <Content Include="templates\acl.html" />
     <Content Include="templates\help_topic.html" />
     <Content Include="templates\mobile\primitive_footer.html" />

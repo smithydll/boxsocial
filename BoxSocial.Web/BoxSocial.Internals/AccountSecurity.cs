@@ -73,8 +73,16 @@ namespace BoxSocial.Internals
 
             Save(new EventHandler(AccountSecurity_Save));
 
-            if (core.Http.Query["mode"] == "enable" && (!LoggedInMember.UserInfo.TwoFactorAuthVerified))
+            if (core.Http.Query["mode"] == "enrole_phone" && (!LoggedInMember.UserInfo.TwoFactorAuthVerified))
             {
+                template.SetTemplate("account_security_twofactor.html");
+                AuthoriseRequestSid();
+
+
+            }
+            else if (core.Http.Query["mode"] == "enrole_authenticator" && (!LoggedInMember.UserInfo.TwoFactorAuthVerified))
+            {
+                template.SetTemplate("account_security_twofactor.html");
                 AuthoriseRequestSid();
 
                 Authenticator authenticator = new Authenticator();
@@ -90,7 +98,7 @@ namespace BoxSocial.Internals
                 BoxSocial.Forms.HiddenField keyHiddenField = new Forms.HiddenField("key");
                 keyHiddenField.Value = key;
 
-                template.Parse("S_ENABLE", "TRUE");
+                template.Parse("S_ENROLE_AUTHENTICATOR", "TRUE");
                 template.Parse("I_QR_CODE", qrCodeImage);
                 template.Parse("S_KEY", keyHiddenField);
                 template.Parse("S_VERIFY", verifyTextBox);
@@ -107,7 +115,7 @@ namespace BoxSocial.Internals
             else
             {
                 template.Parse("S_DISABLED", "TRUE");
-                template.Parse("U_ENABLE", core.Hyperlink.AppendSid(BuildUri("security", "enable"), true));
+                template.Parse("U_ENABLE", core.Hyperlink.AppendSid(BuildUri("security", "enrole_phone"), true));
             }
 
             // Show all active sessions

@@ -402,6 +402,7 @@ namespace BoxSocial.Applications.Profile
                     TextBox verifyTextBox = new TextBox("verify-code");
                     verifyTextBox.Type = InputType.Telephone;
 
+                    template.Parse("S_ID", phoneNumber.Id.ToString());
                     template.Parse("PHONE_NUMBER", phoneNumber.PhoneNumber);
                     template.Parse("S_VERIFY_CODE", verifyTextBox);
                 }

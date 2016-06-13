@@ -1,0 +1,56 @@
+﻿<h3>Enable Two Factor Authentication</h3>
+<p>Enable two-factor authentication to improve the security of your account.</p>
+<p>Two factor authentication uses something you have (like a smart phone) and something you know (like a password) to sign-in to your account.</p>
+<p>{SITE_TITLE} uses RFC 6238 compliant two-factor authentication compatible with Google Authenticator for <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&hl=en">Android</a> and <a href="https://itunes.apple.com/au/app/google-authenticator/id388497605?mt=8">iPhone</a> or Microsoft Authenticator for <a href="http://www.windowsphone.com/en-us/store/app/authenticator/e7994dbc-2336-4950-91ba-ca22d653759b">Windows Phone</a>.</p>
+
+<!-- IF S_ENROLE_PHONE -->
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Enable Two-Factor Authentication</legend>
+        <p>Select the mobile phone number you want to use for two factor authentication.</p>
+        <p>If you lose your authenticator device you can use your mobile phone number to login.</p>
+
+        <dl>
+            <dt>Select phone number</dt>
+            <dd>{S_SELECT_NUMBER}</dd>
+            <dt>Add phone number</dt>
+            <dd>{S_ADD_NUMBER}</dd>
+            <dt></dt>
+            <dd><input type="submit" name="save" value="Continue" /></dd>
+        </dl>
+        <input type="hidden" name="sub" value="security" />
+        <input type="hidden" name="mode" value="enable" />
+    </fieldset>
+</form>
+<!-- ENDIF -->
+
+<!-- IF S_VERIFY_PHONE -->
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+
+</form>
+<!-- ENDIF -->
+
+<!-- IF S_ENROLE_AUTHENTICATOR -->
+<form action="{S_ACCOUNT}" method="post" enctype="multipart/form-data">
+    <fieldset>
+        <legend>Enable Two-Factor Authentication</legend>
+        <dl>
+            <dt><label for="qr_code">QR Code</label></dt>
+            <dd>
+                <p>{I_QR_CODE}</p>
+                <p>Scan the QR code with your smart phone authenticator app.</p>
+            </dd>
+            <dt><label for="verify">Verification Code</label></dt>
+            <dd>
+                <p>{S_VERIFY}</p>
+                <p>Enter the 6 digit verification code now shown on your smart phone for @{USERNAME} and click submit to finish activating two factor authentication.</p>
+            </dd>
+            <dt></dt>
+            <dd><input type="submit" name="save" value="Save" /></dd>
+        </dl>
+        {S_KEY}
+        <input type="hidden" name="sub" value="security" />
+        <input type="hidden" name="mode" value="enable" />
+    </fieldset>
+</form>
+<!-- ENDIF -->

@@ -113,7 +113,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-                return WebConfigurationManager.AppSettings["sms-oauth-token-uri"];
+                return WebConfigurationManager.AppSettings["sms-oauth-token-parameters"];
             }
         }
 

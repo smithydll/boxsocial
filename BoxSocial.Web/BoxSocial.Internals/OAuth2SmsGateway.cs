@@ -103,7 +103,15 @@ namespace BoxSocial.Internals
             wr.Method = method;
             wr.Headers["Authorization"] = authorisationHeader;
 
-            body.Append(string.Format(oauthSmsBody, UrlEncode(message) , UrlEncode(toNumber)));
+            if (oauthSmsBody.Trim().StartsWith("{"))
+            {
+                // Escape JSON
+                body.Append(string.Format("{" + oauthSmsBody.Trim() + "}", JsonConvert.ToString(toNumber), JsonConvert.ToString(message)));
+            }
+            else
+            {
+                body.Append(string.Format(oauthSmsBody, UrlEncode(toNumber), UrlEncode(message)));
+            }
             wr.ContentType = "application/x-www-form-urlencoded";
 
             byte[] bodyBytes = UTF8Encoding.UTF8.GetBytes(body.ToString());
@@ -137,7 +145,7 @@ namespace BoxSocial.Internals
 
             return reg.Replace(HttpUtility.UrlEncode(value), m => m.Value.ToUpperInvariant()).Replace("+", "%20").Replace("*", "%2A").Replace("!", "%21").Replace("(", "%28").Replace(")", "%29");
         }
-
+        
         public static string BuildParameters(string parametric, Dictionary<string, string> parameters)
         {
             string output = string.Empty;
@@ -175,7 +183,7 @@ namespace BoxSocial.Internals
 
             string body = string.Format(oauthTokenParameters, UrlEncode(consumerKey), UrlEncode(consumerSecret));
 
-            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(oauthSmsUri);
+            HttpWebRequest wr = (HttpWebRequest)HttpWebRequest.Create(oauthTokenUri);
             wr.ProtocolVersion = HttpVersion.Version11;
             wr.UserAgent = "HttpCore/1.1";
             wr.ContentType = "application/x-www-form-urlencoded";
@@ -205,10 +213,18 @@ namespace BoxSocial.Internals
 
                     Dictionary<string, string> responseDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(responseString);
 
-                    if (responseDictionary.ContainsKey("access_token") && responseDictionary.ContainsKey("expires"))
+                    if (responseDictionary.ContainsKey("access_token"))
                     {
                         long expires = 0;
-                        long.TryParse(responseDictionary["expires"], out expires);
+
+                        if (responseDictionary.ContainsKey("expires_in"))
+                        {
+                            long.TryParse(responseDictionary["expires_in"], out expires);
+                        }
+                        if (responseDictionary.ContainsKey("expires"))
+                        {
+                            long.TryParse(responseDictionary["expires"], out expires);
+                        }
 
                         Sms2AccessToken token = new Sms2AccessToken(responseDictionary["access_token"], expires);
                         return token;
@@ -223,7 +239,15 @@ namespace BoxSocial.Internals
                     if (!string.IsNullOrEmpty(responseDictionary["access_token"]))
                     {
                         long expires = 0;
-                        long.TryParse(responseDictionary["expires"], out expires);
+
+                        if (!string.IsNullOrEmpty(responseDictionary["expires_in"]))
+                        {
+                            long.TryParse(responseDictionary["expires_in"], out expires);
+                        }
+                        if (!string.IsNullOrEmpty(responseDictionary["expires"]))
+                        {
+                            long.TryParse(responseDictionary["expires"], out expires);
+                        }
 
                         Sms2AccessToken token = new Sms2AccessToken(responseDictionary["access_token"], expires);
                         return token;

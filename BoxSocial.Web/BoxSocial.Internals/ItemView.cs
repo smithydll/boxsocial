@@ -189,6 +189,7 @@ namespace BoxSocial.Internals
         {
             loadValue(viewRow, "view_id", out viewId);
             loadValue(viewRow, "view_item", out itemKey);
+            loadValue(viewRow, "view_item_owner", out ownerKey);
             loadValue(viewRow, "view_ip", out viewIp);
             loadValue(viewRow, "view_session_id", out viewSessionId);
             loadValue(viewRow, "view_time_ut", out viewTimeRaw);
@@ -475,6 +476,11 @@ namespace BoxSocial.Internals
                     info = ItemInfo.Create(core, view.ViewKey);
                 }
 
+                if (info == null)
+                {
+                    continue;
+                }
+
                 if (!adjustment.ContainsKey(view.ViewKey))
                 {
                     adjustment.Add(view.ViewKey, 0);
@@ -509,11 +515,23 @@ namespace BoxSocial.Internals
                     {
                         uQuery.AddField("view_counted", true);
                         uQuery.AddField("view_discounted", false);
+
+                        if (view.viewDiscounted)
+                        {
+                            adjustment[view.ViewKey]++;
+                            increment++;
+                        }
                     }
                     else
                     {
                         uQuery.AddField("view_counted", false);
                         uQuery.AddField("view_discounted", true);
+
+                        if (view.viewCounted)
+                        {
+                            adjustment[view.ViewKey]--;
+                            increment--;
+                        }
                     }
                 }
                 uQuery.AddField("view_processed", true);
@@ -533,13 +551,41 @@ namespace BoxSocial.Internals
                     if (core.Db.Query(uQuery) == 0)
                     {
                         InsertQuery iQuery = new InsertQuery(typeof(ItemViewCountByHour));
-                        iQuery.AddField("view_hourly_count", 1);
+                        iQuery.AddField("view_hourly_count", increment);
                         iQuery.AddField("view_hourly_time", Math.Min(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
                         iQuery.AddField("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                         iQuery.AddField("view_hourly_item_id", view.ViewKey.Id);
                         iQuery.AddField("view_hourly_item_type_id", view.ViewKey.TypeId);
-                        iQuery.AddField("view_hourly_item_owner_id", view.ownerKey.Id);
-                        iQuery.AddField("view_hourly_item_owner_type_id", view.ownerKey.TypeId);
+                        if (view.ownerKey.Id > 0 && view.ownerKey.TypeId > 0)
+                        {
+                            iQuery.AddField("view_hourly_item_owner_id", view.ownerKey.Id);
+                            iQuery.AddField("view_hourly_item_owner_type_id", view.ownerKey.TypeId);
+                        }
+                        else
+                        {
+                            NumberedItem item = NumberedItem.Reflect(core, view.ViewKey);
+                            ItemKey ownerKey = null;
+
+                            if (item is IPermissibleItem)
+                            {
+                                IPermissibleItem pitem = (IPermissibleItem)item;
+
+                                ownerKey = pitem.OwnerKey;
+                            }
+
+                            if (item is IPermissibleSubItem)
+                            {
+                                IPermissibleSubItem pitem = (IPermissibleSubItem)item;
+
+                                ownerKey = pitem.OwnerKey;
+                            }
+
+                            if (ownerKey != null)
+                            {
+                                iQuery.AddField("view_hourly_item_owner_id", ownerKey.Id);
+                                iQuery.AddField("view_hourly_item_owner_type_id", ownerKey.TypeId);
+                            }
+                        }
 
                         core.Db.Query(iQuery);
                     }
@@ -548,7 +594,7 @@ namespace BoxSocial.Internals
 
             foreach (ItemKey itemKey in adjustment.Keys)
             {
-                if (adjustment[itemKey] > 0)
+                if (adjustment[itemKey] != 0)
                 {
                     UpdateQuery uQuery = new UpdateQuery(typeof(ItemInfo));
                     uQuery.AddField("info_viewed_times", new QueryOperation("info_viewed_times", QueryOperations.Addition, adjustment[itemKey]));
@@ -604,6 +650,18 @@ namespace BoxSocial.Internals
             if ((long)core.Db.Query(query).Rows[0]["real_views"] > 8)
             {
                 returnValue = returnValue | ItemViewDiscountedReason.RateLimited;
+            }
+
+            // ensure that the session is only used by ONE browser, no session hijacking
+            query = new SelectQuery(typeof(ItemView));
+            query.AddField(new DataField(typeof(ItemView), "view_http_user_agent"));
+            query.AddCondition("view_session_id", view.viewSessionId);
+            query.AddCondition("view_time_ut", ConditionEquality.GreaterThan, view.viewTimeRaw - 3600);
+            query.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw + 3600);
+            query.Distinct = true;
+            if ((long)core.Db.Query(query).Rows.Count > 1)
+            {
+                returnValue = returnValue | ItemViewDiscountedReason.BotDetected;
             }
 
             long viewQuality = 0;
@@ -748,6 +806,10 @@ namespace BoxSocial.Internals
                 {
                     return false;
                 }
+            }
+            else if (userAgent.Contains("MSIE 10.0;") || userAgent.Contains("MSIE 9.0;") || userAgent.Contains("MSIE 8.0;") || userAgent.Contains("MSIE 7.0;") || userAgent.Contains("MSIE 6.0;"))
+            {
+                return false;
             }
 
             return true; // default to just accept

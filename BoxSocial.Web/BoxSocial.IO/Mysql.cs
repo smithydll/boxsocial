@@ -46,7 +46,8 @@ namespace BoxSocial.IO
         public Mysql(string username, string database, string host)
         {
             queryCount = 0;
-            connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";";
+            //connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";";
+            connectionString = "Server=" + host + ";Database=" + database + ";Uid=" + username + ";";
             Connect();
         }
 
@@ -55,11 +56,13 @@ namespace BoxSocial.IO
             queryCount = 0;
             if (password.Length > 0)
             {
-                connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";Password=" + password + ";";
+                //connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";Password=" + password + ";";
+                connectionString = "Server=" + host + ";Database=" + database + ";Uid=" + username + ";Pwd=" + password + ";";
             }
             else
             {
-                connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";";
+                //connectionString = "username=" + username + ";Host=" + host + ";Database=" + database + ";";
+                connectionString = "Server=" + host + ";Database=" + database + ";Uid=" + username + ";";
             }
             Connect();
         }

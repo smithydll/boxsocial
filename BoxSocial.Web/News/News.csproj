@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <AssemblyName>News</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
@@ -44,6 +44,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -56,6 +57,7 @@
     <DebugSymbols>true</DebugSymbols>
     <RootNamespace>BoxSocial.Applications.News</RootNamespace>
     <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -76,10 +78,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Templates.Designer.cs">
-      <DependentUpon>Templates.resx</DependentUpon>
-    </Compile>
     <Compile Include="AccountNews.cs" />
+    <None Include="app.config" />
     <None Include="resources\news.svg" />
     <Content Include="templates\account_news_icon_edit.html" />
     <Content Include="templates\account_news_icon_manage.html" />

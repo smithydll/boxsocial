@@ -72,6 +72,10 @@ namespace BoxSocial.FrontEnd
                 }
                 return queue;
             }
+            set
+            {
+                queue = value;
+            }
         }
 
         protected void Application_Start(object sender, EventArgs e)
@@ -119,17 +123,20 @@ namespace BoxSocial.FrontEnd
                     {
                         Queue.CreateQueue(WebConfigurationManager.AppSettings["queue-default-priority"]);
                     }
-
-                    // Starts the queue processor
-                    worker.WorkerReportsProgress = false;
-                    worker.WorkerSupportsCancellation = true;
-                    worker.DoWork += new DoWorkEventHandler(worker_DoWork);
-                    worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-                    worker.RunWorkerAsync();
                 }
 
-                queue.CloseConnection();
-                queue = null;
+                // Starts the queue processor
+                worker.WorkerReportsProgress = false;
+                worker.WorkerSupportsCancellation = true;
+                worker.DoWork += new DoWorkEventHandler(worker_DoWork);
+                worker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
+                worker.RunWorkerAsync();
+
+                if (queue != null)
+                {
+                    Queue.CloseConnection();
+                    Queue = null;
+                }
             }
 
             Regex.CacheSize = 256;
@@ -220,7 +227,7 @@ namespace BoxSocial.FrontEnd
                             {
                                 InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
                                 iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
-                                iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
+                                iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString() + "\n\n" + core.Console.ToString());
                                 core.Db.Query(iQuery);
                             }
                         }
@@ -230,7 +237,16 @@ namespace BoxSocial.FrontEnd
 
             try
             {
-                if (Queue != null)
+                bool flag = false;
+                lock (queueLock)
+                {
+                    if (queue != null)
+                    {
+                        flag = true;
+                    }
+                }
+
+                if (flag)
                 {
                     int failedJobs = 0;
 
@@ -333,8 +349,15 @@ namespace BoxSocial.FrontEnd
 
             // Cleanup
 
-            queue.CloseConnection();
-            queue = null;
+            lock (queueLock)
+            {
+                if (queue != null)
+                {
+                    Queue.CloseConnection();
+                    Queue = null;
+                }
+            }
+
             core.CloseProse();
             core.CloseSearch();
             core.CloseCache();
@@ -373,7 +396,17 @@ namespace BoxSocial.FrontEnd
         {
             if (worker != null && (!worker.CancellationPending))
             {
-                worker.CancelAsync();
+                //worker.WorkerSupportsCancellation = true;
+                try
+                {
+                    worker.CancelAsync();
+                }
+                catch (InvalidOperationException)
+                {
+                }
+                catch (Exception)
+                {
+                }
             }
         }
 

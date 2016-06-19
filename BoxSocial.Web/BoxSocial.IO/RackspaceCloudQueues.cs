@@ -29,6 +29,7 @@ using net.openstack.Core.Domain;
 using net.openstack.Core.Domain.Queues;
 using net.openstack.Core.Exceptions;
 using net.openstack.Providers.Rackspace;
+//using Rackspace.CloudNetworks.v2;
 using Newtonsoft.Json;
 
 namespace BoxSocial.IO
@@ -98,6 +99,7 @@ namespace BoxSocial.IO
 
         public override bool QueueExists(string queue)
         {
+            return true;
             int attempts = 0;
             while (attempts < 3)
             {

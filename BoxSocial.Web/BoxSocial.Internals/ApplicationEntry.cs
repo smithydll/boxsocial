@@ -1410,6 +1410,7 @@ namespace BoxSocial.Internals
 
         public void PublishToFeed(Core core, User owner, IActionableItem item, List<NumberedItem> subItems, string description)
         {
+            core.Console.AppendLine("0x0000");
             ItemKey itemKey = item.ItemKey;
             List<ItemKey> subItemKeys = new List<Internals.ItemKey>();
 
@@ -1418,6 +1419,7 @@ namespace BoxSocial.Internals
                 subItemKeys.Add(i.ItemKey);
             }
 
+            core.Console.AppendLine("0x0001");
             SelectQuery query = new SelectQuery(typeof(Action));
             query.AddField(new QueryFunction("action_id", QueryFunctions.Count, "twentyfour"));
             query.AddCondition("action_primitive_id", owner.ItemKey.Id);
@@ -1425,18 +1427,22 @@ namespace BoxSocial.Internals
             query.AddCondition("action_application", applicationId);
             query.AddCondition("action_time_ut", ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp() - 60 * 60 * 24);
 
+            core.Console.AppendLine("0x0002");
             // maximum 48 per application per day
             if ((long)core.Db.Query(query).Rows[0]["twentyfour"] < 48)
             {
+                core.Console.AppendLine("0x0003");
                 /* Post to Twitter, Facebook, individual */
-                string sharePrefix = core.Http.Form["share"];
+                string sharePrefix = (core.Http != null ? core.Http.Form["share"] : null);
                 // Either the share prefix has been set XOR fallback to the default share settings
                 if ((!string.IsNullOrEmpty(sharePrefix)) || ((owner.UserInfo.TwitterSyndicate && owner.UserInfo.TwitterAuthenticated) || (owner.UserInfo.FacebookSyndicate && owner.UserInfo.FacebookAuthenticated) || (owner.UserInfo.TumblrSyndicate && owner.UserInfo.TumblrAuthenticated)))
                 {
+                    core.Console.AppendLine("0x0004");
                     ItemInfo info = item.Info;
                     IActionableItem sharedItem = item;
                     ItemKey sharedItemKey = item.ItemKey;
 
+                    core.Console.AppendLine("0x0005");
                     if (subItems.Count == 1)
                     {
                         sharedItemKey = subItems[0].ItemKey;
@@ -1455,6 +1461,7 @@ namespace BoxSocial.Internals
                         }
                     }
 
+                    core.Console.AppendLine("0x0006");
                     if (sharedItemKey.GetType(core).Shareable)
                     {
                         bool publicItem = true;
@@ -1475,10 +1482,13 @@ namespace BoxSocial.Internals
                             //debug += ":ps+" + publicItem.ToString();
                         }
 
+                        core.Console.AppendLine("0x0007");
                         if (publicItem)
                         {
+                            core.Console.AppendLine("0x0008");
                             if (owner.UserInfo.TwitterAuthenticated)
                             {
+                                core.Console.AppendLine("0x0009");
                                 int maxLength = 140;
                                 if (!string.IsNullOrEmpty(sharedItem.DataContentType))
                                 {
@@ -1486,8 +1496,12 @@ namespace BoxSocial.Internals
                                 }
                                 string twitterDescription = Functions.TrimStringToWord(description, maxLength - 7 - Hyperlink.Domain.Length - 3 - 11 - 1, true);
 
-                                if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-twitter"]))))
+                                core.Console.AppendLine("0x0010");
+                                string twitterShare = (core.Http != null ? core.Http.Form[sharePrefix + "-share-twitter"] : string.Empty);
+                                core.Console.AppendLine("0x0011");
+                                if ((sharePrefix == null && owner.UserInfo.TwitterSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(twitterShare))))
                                 {
+                                    core.Console.AppendLine("0x0012");
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTweet", twitterDescription + debug));
                                 }
                             }
@@ -1496,7 +1510,8 @@ namespace BoxSocial.Internals
                             {
                                 Uri shareUri = new Uri(info.ShareUri);
 
-                                if ((sharePrefix == null && owner.UserInfo.TumblrSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-tumblr"]))))
+                                string tumblrShare = (core.Http != null ? core.Http.Form[sharePrefix + "-share-tumblr"] : string.Empty);
+                                if ((sharePrefix == null && owner.UserInfo.TumblrSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(tumblrShare))))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishTumblr", core.Bbcode.Parse(HttpUtility.HtmlEncode(sharedItem.PostType == ActionableItemType.Photo ? sharedItem.Caption : sharedItem.GetActionBody(subItemKeys)), owner, true, string.Empty, string.Empty) + "<p><a href=\"" + info.ShareUri + "\">" + shareUri.Authority + shareUri.PathAndQuery + "</a></p>"));
                                 }
@@ -1504,7 +1519,8 @@ namespace BoxSocial.Internals
 
                             if (owner.UserInfo.FacebookAuthenticated)
                             {
-                                if ((sharePrefix == null && owner.UserInfo.FacebookSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(core.Http.Form[sharePrefix + "-share-facebook"]))))
+                                string facebookShare = (core.Http != null ? core.Http.Form[sharePrefix + "-share-facebook"] : string.Empty);
+                                if ((sharePrefix == null && owner.UserInfo.FacebookSyndicate) || ((!string.IsNullOrEmpty(sharePrefix)) && (!string.IsNullOrEmpty(facebookShare))))
                                 {
                                     core.Queue.PushJob(new Job(core.Settings.QueueDefaultPriority, 0, core.LoggedInMemberId, sharedItemKey.TypeId, sharedItemKey.Id, "publishFacebook", description));
                                 }
@@ -1513,6 +1529,7 @@ namespace BoxSocial.Internals
                     }
                 }
 
+                core.Console.AppendLine("0x0013");
                 /* Post to Box Social feed, coalesce */
                 SelectQuery query2 = Action.GetSelectQueryStub(core, typeof(Action));
                 query2.AddCondition("action_primitive_id", owner.ItemKey.Id);

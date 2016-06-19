@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>BoxSocial.Musician</RootNamespace>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <StartupObject>
     </StartupObject>
@@ -44,6 +44,7 @@
     <WarningLevel>3</WarningLevel>
     <NoWarn>649,169</NoWarn>
     <AssemblyName>Musician</AssemblyName>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -54,6 +55,7 @@
     <WarningLevel>4</WarningLevel>
     <NoWarn>649 169</NoWarn>
     <AssemblyName>Musician</AssemblyName>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -99,11 +101,6 @@
     <Compile Include="Sample.cs" />
     <Compile Include="Song.cs" />
     <Compile Include="AccountMemberProfile.cs" />
-    <Compile Include="Templates1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Templates.resx</DependentUpon>
-    </Compile>
     <Compile Include="Tour.cs" />
     <Compile Include="Track.cs" />
   </ItemGroup>
@@ -174,6 +171,7 @@
     <Content Include="templates\viewtours.html" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="resources\musician.svg" />
   </ItemGroup>
   <ItemGroup>

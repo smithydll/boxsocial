@@ -60,7 +60,7 @@ namespace BoxSocial.Internals
         {
             get
             {
-				if (WebConfigurationManager.AppSettings != null &&  WebConfigurationManager.AppSettings.HasKeys())
+				if (WebConfigurationManager.AppSettings != null && WebConfigurationManager.AppSettings.HasKeys())
 				{
 					return WebConfigurationManager.AppSettings["boxsocial-host"].ToLower();
 				}

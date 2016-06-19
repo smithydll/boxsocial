@@ -113,3 +113,5 @@ copy "%1BoxSocial\scripts" "%1Package\scripts"
 md "%1Package\www"
 
 copy "%1BoxSocial" "%1Package\www"
+
+copy "%1Dependencies\bin" "%1Package"

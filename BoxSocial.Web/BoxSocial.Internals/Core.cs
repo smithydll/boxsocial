@@ -64,6 +64,7 @@ namespace BoxSocial.Internals
         private Search search;
         private BoxSocial.IO.Cache cache;
         private List<Emoticon> emoticons;
+        private StringBuilder console;
 
         internal TPage page;
 
@@ -101,6 +102,18 @@ namespace BoxSocial.Internals
             {
                 int p = (int)Environment.OSVersion.Platform;
                 return (p == 4) || (p == 6) || (p == 128);
+            }
+        }
+
+        public StringBuilder Console
+        {
+            get
+            {
+                if (console == null)
+                {
+                    console = new StringBuilder();
+                }
+                return console;
             }
         }
 

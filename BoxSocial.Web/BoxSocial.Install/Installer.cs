@@ -57,6 +57,7 @@ namespace BoxSocial.Install
         private static string languageRoot;
         private static string domain;
         private static string mysqlHost;
+        private static string mysqlRootUser;
         private static string mysqlRootPassword;
         private static string mysqlWebUser;
         private static string mysqlWebPassword;
@@ -392,7 +393,9 @@ namespace BoxSocial.Install
             fs.Close();
 
             Installer.domain = settings.Domain;
+            Installer.mysqlHost = settings.DatabaseHost;
             Installer.mysqlDatabase = settings.DatabaseName;
+            Installer.mysqlRootUser = settings.DatabaseRootUser;
             Installer.mysqlRootPassword = settings.DatabaseRootPassword;
             Installer.root = settings.RootDirectory;
             Installer.languageRoot = Path.Combine(Installer.root, "language");
@@ -2740,7 +2743,7 @@ namespace BoxSocial.Install
         {
             Console.WriteLine("Installing: " + repo);
 
-            Mysql db = new Mysql("root", mysqlRootPassword, mysqlDatabase, "localhost");
+            Mysql db = new Mysql(mysqlRootUser, mysqlRootPassword, mysqlDatabase, mysqlHost);
             Template template = new Template(Path.Combine(root, "templates"), "default.html");
             Core core = new Core(null, ResponseFormats.Html, db, template);
             UnixTime tz = new UnixTime(core, 0);

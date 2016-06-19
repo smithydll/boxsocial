@@ -98,51 +98,65 @@ namespace BoxSocial.FrontEnd
 
         private void loadModulesFromAssembly(Account accountObject, Assembly assembly, string module)
         {
-            Type[] types = assembly.GetTypes();
-            foreach (Type type in types)
+            try
             {
-                if (type.IsSubclassOf(typeof(AccountModule)))
+                Type[] types = assembly.GetTypes();
+                foreach (Type type in types)
                 {
-					try
-					{
-	                    AccountModule newModule = System.Activator.CreateInstance(type, accountObject) as AccountModule;
+                    if (type.IsSubclassOf(typeof(AccountModule)))
+                    {
+                        try
+                        {
+                            AccountModule newModule = System.Activator.CreateInstance(type, accountObject) as AccountModule;
 
-	                    if (newModule != null)
-	                    {
-                            newModule.SetOwner = Owner;
-	                        newModule.assembly = assembly;
-	                        accountModules.Add(newModule);
-	                        if (newModule.Key == module)
-	                        {
-	                            core.AddPageAssembly(assembly);
-	                        }
-	                    }
-					}
-					catch (TargetInvocationException)
-					{
-						continue;
-					}
+                            if (newModule != null)
+                            {
+                                newModule.SetOwner = Owner;
+                                newModule.assembly = assembly;
+                                accountModules.Add(newModule);
+                                if (newModule.Key == module)
+                                {
+                                    core.AddPageAssembly(assembly);
+                                }
+                            }
+                        }
+                        catch (TargetInvocationException)
+                        {
+                            continue;
+                        }
+                    }
                 }
+            }
+            catch
+            {
+
             }
         }
 
         private void loadSubModulesFromAssembly(Account accountObject, Assembly assembly, string module)
         {
-            Type[] types = assembly.GetTypes();
-            foreach (Type type in types)
+            try
             {
-                if (type.IsSubclassOf(typeof(AccountSubModule)))
+                Type[] types = assembly.GetTypes();
+                foreach (Type type in types)
                 {
-                    AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core, User }) as AccountSubModule;
-
-                    if (newModule != null)
+                    if (type.IsSubclassOf(typeof(AccountSubModule)))
                     {
-                        if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Member) == AppPrimitives.Member)
+                        AccountSubModule newModule = System.Activator.CreateInstance(type, new object[] { Core, User }) as AccountSubModule;
+
+                        if (newModule != null)
                         {
-                            accountSubModules.Add(newModule);
+                            if (newModule.ModuleKey == module && (newModule.Primitives & AppPrimitives.Member) == AppPrimitives.Member)
+                            {
+                                accountSubModules.Add(newModule);
+                            }
                         }
                     }
                 }
+            }
+            catch
+            {
+
             }
         }
 

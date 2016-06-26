@@ -539,11 +539,11 @@ namespace BoxSocial.Internals
 
                 core.Db.Query(uQuery);
 
-                if (increment != 0)
+                if (increment != 0 || (viewUniqueReason == ItemViewDiscountedReason.RateLimited && view.viewTimespan > 0))
                 {
                     uQuery = new UpdateQuery(typeof(ItemViewCountByHour));
                     uQuery.AddField("view_hourly_count", new QueryOperation("view_hourly_count", QueryOperations.Addition, increment));
-                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Min(view.viewTimespan, 20 * 60))); // attention span is 20 minutes
+                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Sign(increment) * Math.Min(view.viewTimespan, 20 * 60))); // attention span is 20 minutes
                     uQuery.AddCondition("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                     uQuery.AddCondition("view_hourly_item_id", view.ViewKey.Id);
                     uQuery.AddCondition("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -552,7 +552,7 @@ namespace BoxSocial.Internals
                     {
                         InsertQuery iQuery = new InsertQuery(typeof(ItemViewCountByHour));
                         iQuery.AddField("view_hourly_count", increment);
-                        iQuery.AddField("view_hourly_time", Math.Min(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
+                        iQuery.AddField("view_hourly_time", Math.Sign(increment) * Math.Min(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
                         iQuery.AddField("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                         iQuery.AddField("view_hourly_item_id", view.ViewKey.Id);
                         iQuery.AddField("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -616,7 +616,7 @@ namespace BoxSocial.Internals
                 return ItemViewDiscountedReason.BotDetected;
             }
 
-            // Select the number of views 24 hours either side of the view
+            // Select the number of views within 24 hours of the view
             SelectQuery query = new SelectQuery(typeof(ItemView));
             query.AddField(new QueryFunction("view_id", QueryFunctions.Count, "real_views"));
             query.AddCondition("view_item_id", view.ViewKey.Id);
@@ -624,7 +624,7 @@ namespace BoxSocial.Internals
             //query.AddCondition("view_processed", true);
             QueryCondition qc1 = query.AddCondition("view_ip", view.viewIp);
             QueryCondition qc2 = qc1.AddCondition("view_time_ut", ConditionEquality.GreaterThan, view.viewTimeRaw - 60 * 60 * 24); // last 24 hours
-            qc2.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw + 60 * 60 * 24); // next 24 hours
+            qc2.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw + 60 * 5); // any in the next 5 minutes discounts the whole set
             qc1.AddCondition(ConditionRelations.Or, "view_session_id", view.viewSessionId);
             if (view.userId > 0)
             {

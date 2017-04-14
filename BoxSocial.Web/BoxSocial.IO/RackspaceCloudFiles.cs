@@ -30,7 +30,7 @@ using net.openstack.Core;
 using net.openstack.Core.Domain;
 using net.openstack.Core.Exceptions;
 using net.openstack.Providers.Rackspace;
-//using Rackspace.CloudNetworks.v2;
+using Rackspace.CloudNetworks.v2;
 
 namespace BoxSocial.IO
 {

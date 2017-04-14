@@ -117,8 +117,6 @@ namespace BoxSocial.Groups
                 template.Parse("U_JOIN", Group.JoinUri);
             }
 
-            template.Parse("U_REGISTER", core.Hyperlink.BuildRegisterUri(Group.Id));
-
             if (!core.PagePath.StartsWith("/account", StringComparison.Ordinal))
             {
                 BoxSocial.Internals.Application.LoadApplications(core, AppPrimitives.Group, core.PagePath, BoxSocial.Internals.Application.GetApplications(core, Group));
@@ -138,6 +136,13 @@ namespace BoxSocial.Groups
             core.Template.Parse("PRIMITIVE_SQUARE", Owner.Square);
             core.Template.Parse("PRIMITIVE_COVER_PHOTO", Owner.CoverPhoto);
             core.Template.Parse("PRIMITIVE_MOBILE_COVER_PHOTO", Owner.MobileCoverPhoto);
+
+            core.Template.Parse("U_REGISTER", core.Hyperlink.BuildRegisterUri(Group.Id));
+
+            if (Group.GroupInfo.CollapseHeader)
+            {
+                core.Template.Parse("COLLAPSE_HEADER", "TRUE");
+            }
         }
 
         void core_FootHooks(HookEventArgs e)

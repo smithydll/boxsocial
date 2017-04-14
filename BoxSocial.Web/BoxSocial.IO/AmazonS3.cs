@@ -21,7 +21,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
+using System.Web;
 using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -32,22 +34,39 @@ namespace BoxSocial.IO
     public class AmazonS3 : Storage
     {
         AmazonS3Config s3Config;
-        Amazon.S3.AmazonS3 client;
+        //Amazon.S3.AmazonS3 client;
         AmazonS3Client s3Client;
 
         public AmazonS3(string keyId, string secretKey, Database db)
             : base (db)
         {
             s3Config = new AmazonS3Config();
+            s3Config.UseHttp = false;
             s3Config.ServiceURL = "s3.amazonaws.com";
-            s3Config.CommunicationProtocol = Protocol.HTTPS;
 
-            client = AWSClientFactory.CreateAmazonS3Client(keyId, secretKey, s3Config);
+            //client = AWSClientFactory.CreateAmazonS3Client(keyId, secretKey, s3Config);
+            s3Client = new AmazonS3Client(keyId, secretKey, s3Config);
+        }
+
+        public AmazonS3(string url, bool secure, string keyId, string secretKey, Database db)
+            : base(db)
+        {
+            if ((!url.ToLower().StartsWith("http://")) && (!url.ToLower().StartsWith("https://")))
+            {
+                url = secure ? "https://" + url + "/": "http://" + url + "/";
+            }
+
+            s3Config = new AmazonS3Config();
+            s3Config.UseHttp = !secure;
+            s3Config.ServiceURL = url;
+
+            //client = AWSClientFactory.CreateAmazonS3Client(keyId, secretKey, s3Config);
+            s3Client = new AmazonS3Client(keyId, secretKey, s3Config);
         }
 
         private string SanitiseBinName(string bin)
         {
-            return bin.Replace('\\', '.').Replace('/', '.');
+            return bin.Replace('\\', '.').Replace('/', '.').Replace('_', '-');
         }
 
         public override string PathSeparator
@@ -66,8 +85,8 @@ namespace BoxSocial.IO
         public override void CreateBin(string bin)
         {
             PutBucketRequest pbr = new PutBucketRequest();
-            pbr.BucketName = bin;
-            PutBucketResponse response = client.PutBucket(pbr);
+            pbr.BucketName = SanitiseBinName(bin);
+            PutBucketResponse response = s3Client.PutBucket(pbr);
         }
 
         public override string SaveFile(string bin, Stream file, string contentType)
@@ -78,13 +97,14 @@ namespace BoxSocial.IO
             if (!FileExists(bin, fileName))
             {
                 PutObjectRequest request = new PutObjectRequest();
-                request.BucketName = bin;
+                request.BucketName = SanitiseBinName(bin);
                 //request.GenerateMD5Digest = true;
                 request.InputStream = file;
                 request.Key = fileName;
                 request.StorageClass = S3StorageClass.Standard;
                 request.ContentType = contentType;
-                PutObjectResponse response = client.PutObject(request);
+                request.CannedACL = S3CannedACL.PublicRead;
+                PutObjectResponse response = s3Client.PutObject(request);
             }
             return fileName;
         }
@@ -95,13 +115,14 @@ namespace BoxSocial.IO
             if (!FileExists(bin, fileName))
             {
                 PutObjectRequest request = new PutObjectRequest();
-                request.BucketName = bin;
+                request.BucketName = SanitiseBinName(bin);
                 //request.GenerateMD5Digest = true;
                 request.InputStream = file;
                 request.Key = fileName;
                 request.StorageClass = S3StorageClass.Standard;
                 request.ContentType = contentType;
-                PutObjectResponse response = client.PutObject(request);
+                request.CannedACL = S3CannedACL.PublicRead;
+                PutObjectResponse response = s3Client.PutObject(request);
             }
 
             return fileName;
@@ -111,35 +132,37 @@ namespace BoxSocial.IO
         {
             string fileName = HashFile(file);
             PutObjectRequest request = new PutObjectRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
             request.ContentType = contentType;
-            PutObjectResponse response = client.PutObject(request);
+            request.CannedACL = S3CannedACL.PublicRead;
+            PutObjectResponse response = s3Client.PutObject(request);
             return fileName;
         }
 
         public override string SaveFileWithReducedRedundancy(string bin, string fileName, Stream file, string contentType)
         {
             PutObjectRequest request = new PutObjectRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             //request.GenerateMD5Digest = true;
             request.InputStream = file;
             request.Key = fileName;
             request.StorageClass = S3StorageClass.ReducedRedundancy;
             request.ContentType = contentType;
-            PutObjectResponse response = client.PutObject(request);
+            request.CannedACL = S3CannedACL.PublicRead;
+            PutObjectResponse response = s3Client.PutObject(request);
             return fileName;
         }
 
         public override void DeleteFile(string bin, string fileName)
         {
             DeleteObjectRequest request = new DeleteObjectRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             request.Key = fileName;
-            DeleteObjectResponse response = client.DeleteObject(request);
+            DeleteObjectResponse response = s3Client.DeleteObject(request);
         }
 
         public override void TouchFile(string bin, string fileName)
@@ -152,12 +175,13 @@ namespace BoxSocial.IO
             try
             {
                 GetObjectRequest request = new GetObjectRequest();
-                request.BucketName = bin;
+                request.BucketName = SanitiseBinName(bin);
                 request.Key = fileName;
-                GetObjectResponse response = client.GetObject(request);
+                GetObjectResponse response = s3Client.GetObject(request);
 
                 MemoryStream ms = new MemoryStream();
                 response.ResponseStream.CopyTo(ms);
+                ms.Position = 0;
                 return ms;
             }
             catch (Amazon.S3.AmazonS3Exception ex)
@@ -169,58 +193,59 @@ namespace BoxSocial.IO
         public override string RetrieveFileUri(string bin, string fileName)
         {
             GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             request.Key = fileName;
             request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
             request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
             request.Expires = DateTime.Now.AddHours(1);
-            return client.GetPreSignedURL(request);
+            return s3Client.GetPreSignedURL(request);
         }
 
         public string RetrieveSecureFileUri(string bin, string fileName)
         {
             // Secure not supported by amazon
             GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             request.Key = fileName;
             request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
             request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
             request.Expires = DateTime.Now.AddHours(1);
-            return client.GetPreSignedURL(request);
+            return s3Client.GetPreSignedURL(request);
         }
 
         public override string RetrieveFileUri(string bin, string fileName, string contentType, string renderFileName)
         {
             GetPreSignedUrlRequest request = new GetPreSignedUrlRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             request.Key = fileName;
             request.ResponseHeaderOverrides.ContentType = contentType;
             request.ResponseHeaderOverrides.ContentDisposition = "inline; filename=" + renderFileName;
             request.ResponseHeaderOverrides.Expires = DateTime.Now.AddDays(1).ToUniversalTime().ToString();
             request.ResponseHeaderOverrides.CacheControl = "private, max-age=864000;";
             request.Expires = DateTime.Now.AddHours(1);
-            return client.GetPreSignedURL(request);
+            return s3Client.GetPreSignedURL(request);
         }
 
         public override void CopyFile(string fromBin, string toBin, string fileName)
         {
             CopyObjectRequest request = new CopyObjectRequest();
-            request.SourceBucket = fromBin;
-            request.DestinationBucket = toBin;
+            request.SourceBucket = SanitiseBinName(fromBin);
+            request.DestinationBucket = SanitiseBinName(toBin);
             request.SourceKey = fileName;
             request.DestinationKey = fileName;
-            CopyObjectResponse response = client.CopyObject(request);
+            request.CannedACL = S3CannedACL.PublicRead;
+            CopyObjectResponse response = s3Client.CopyObject(request);
         }
 
         public override bool FileExists(string bin, string fileName)
         {
             GetObjectMetadataRequest request = new GetObjectMetadataRequest();
-            request.BucketName = bin;
+            request.BucketName = SanitiseBinName(bin);
             request.Key = fileName;
 
             try
             {
-                GetObjectMetadataResponse response = client.GetObjectMetadata(request);
+                GetObjectMetadataResponse response = s3Client.GetObjectMetadata(request);
             }
             catch (Amazon.S3.AmazonS3Exception ex)
             {

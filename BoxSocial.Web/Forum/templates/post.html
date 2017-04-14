@@ -6,6 +6,7 @@
             plugins: "bbcode",
             style: "/styles/bbcode.min.css",
             toolbar: "bold,italic,underline|size,color|bulletlist,orderedlist|quote,code|link,unlink,image,emoticon,youtube|source",
+<!-- IF $_IS_DESKTOP -->
             emoticons: {
                 dropdown: {
                     <!-- BEGIN emoticon_list -->
@@ -16,6 +17,7 @@
                 <!-- BEGIN emoticon_hidden_list -->
                 "{emoticon_hidden_list.CODE}": "{emoticon_hidden_list.URI}",
                 <!-- END emoticon_hidden_list -->
+<!-- ENDIF -->
                 }
             }
         });

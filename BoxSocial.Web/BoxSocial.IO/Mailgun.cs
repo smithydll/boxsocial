@@ -29,6 +29,7 @@ using System.Net;
 using System.Web;
 using System.Web.Configuration;
 using RestSharp;
+using RestSharp.Authenticators;
 
 namespace BoxSocial.IO
 {
@@ -53,7 +54,7 @@ namespace BoxSocial.IO
         override public void SendEmail(string toAddress, string subject, string message)
         {
             RestClient client = new RestClient();
-            client.BaseUrl = baseUri;
+            client.BaseUrl = new Uri(baseUri);
             client.Authenticator =new HttpBasicAuthenticator("api", apiKey);
             RestRequest request = new RestRequest();
             request.AddParameter("domain", domain, ParameterType.UrlSegment);
@@ -69,7 +70,7 @@ namespace BoxSocial.IO
         override public void SendEmail(string toAddress, string subject, Template message)
         {
             RestClient client = new RestClient();
-            client.BaseUrl = baseUri;
+            client.BaseUrl = new Uri(baseUri);
             client.Authenticator = new HttpBasicAuthenticator("api", apiKey);
             RestRequest request = new RestRequest();
             request.AddParameter("domain", domain, ParameterType.UrlSegment);

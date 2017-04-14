@@ -47,8 +47,10 @@ namespace BoxSocial.Applications.News
         private string articleBody;
         [DataField("article_icon_item_id", typeof(NewsIcon))]
         private long newsIconId;
-		
-		private Primitive owner;
+        //[DataField("article_hero_item_id", typeof(NewsIcon))]
+        private long newsHeroId;
+
+        private Primitive owner;
 		private User poster;
         private NewsIcon icon;
 

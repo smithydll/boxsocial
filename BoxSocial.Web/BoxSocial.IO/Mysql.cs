@@ -861,6 +861,7 @@ namespace BoxSocial.IO
             StringBuilder sb = new StringBuilder();
             DataFieldInfo primaryKey = null;
 
+            Console.WriteLine("Creating table: " + tableName);
             sb.Append(string.Format("CREATE TABLE IF NOT EXISTS `{0}` (",
                 Mysql.Escape(tableName)));
 
@@ -893,7 +894,8 @@ namespace BoxSocial.IO
                         notNull = " NOT NULL";
                         if (Index.GetFields(field.PrimaryIndex.Key, fields).Count == 1)
                         {
-                            defaultValue = " DEFAULT NULL AUTO_INCREMENT";
+                            defaultValue = "";
+                            key = " AUTO_INCREMENT";
                         }
                         else
                         {
@@ -972,7 +974,16 @@ namespace BoxSocial.IO
 
             sb.Append(") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4");
 
-            UpdateQuery(sb.ToString());
+            try
+            {
+                Console.WriteLine(sb.ToString());
+                UpdateQuery(sb.ToString());
+            }
+            catch (MySql.Data.MySqlClient.MySqlException ex)
+            {
+                Console.WriteLine("Mysql error in query:");
+                Console.WriteLine(ex.ToString());
+            }
         }
 
         public override void UpdateTableKeys(string tableName, List<DataFieldInfo> fields)

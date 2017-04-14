@@ -476,6 +476,14 @@ namespace BoxSocial.Internals
             }
         }
 
+        public bool BehindSecureProxy
+        {
+            get
+            {
+                return (WebConfigurationManager.AppSettings["secure-proxy"].ToLower() == "true");
+            }
+        }
+
         public Settings(Core core)
         {
             this.core = core;

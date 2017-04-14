@@ -13,11 +13,11 @@ $(document).ready(function () {
 function avl(e, i) {
     var l = e.val().split(',');
     for (j in l) {
-        if (l[j] == i) {
+        if (l[j] === i) {
             return false;
         }
     }
-    if (e.val() == '') {
+    if (e.val() === '') {
         e.val(i);
     }
     else {
@@ -31,7 +31,7 @@ function rvl(e, i) {
     var l = e.val().split(',');
     var m = Array();
     for (j in l) {
-        if (l[j] != i) {
+        if (l[j] !== i) {
             m.push(l[j]);
         }
     }
@@ -43,7 +43,7 @@ function cv(e, i) {
     var l = e.val().split(',');
     var c = 0;
     for (j in l) {
-        if (l[j] == i) {
+        if (l[j] === i) {
             c++;
         }
     }
@@ -63,7 +63,7 @@ function DislikeItem(itemId, itemType, node) {
 }
 
 function ItemLiked(r, e) {
-    if (e.text() == '') {
+    if (e.text() === '') {
         e.text(' 1');
     } else {
         e.text(' ' + (parseInt($.trim(e.text())) + 1));
@@ -77,8 +77,8 @@ function SendStatus(u, f) {
 
 function SentStatus(r, e, a) {
     $('#status-form').hide();
-    if (r['update'] == 'true') {
-        $('#status-message').show().text(r['message']).html((a != null ? a + ' ' : '') + $('#status-message').show().text() + ' <em>Updated a second ago</em>');
+    if (r['update'] === 'true') {
+        $('#status-message').show().text(r['message']).html((a !== null ? a + ' ' : '') + $('#status-message').show().text() + ' <em>Updated a second ago</em>');
         $('.status-feed').prepend(r['template']);
     }
 }
@@ -97,7 +97,7 @@ function SentAction(r, e, a) {
     $("#permissions-text").removeAttr("style");
     $("#permissions").children(".group, .username").remove();
     $("#permissions").children(".empty").show();
-    if (r['update'] == 'true') {
+    if (r['update'] === 'true') {
         $('.today-feed ul.feed-list').first().before(r['template']);
     }
     if (r['newest-id'] > 0) {
@@ -140,7 +140,7 @@ var cid;
 function SubmitComment(id, type, zero, sort, text) {
     csort = sort;
     cid = id;
-    if (text == null) {
+    if (text === null) {
         text = $("#comment-text-" + id).val();
     }
     if (!$("#comment-text-" + id).hasClass('blur')) {
@@ -152,7 +152,7 @@ function SubmitComment(id, type, zero, sort, text) {
 function SubmitedComment(r, e) {
     var nli = $('<div>').html(r['message']);
     var n = e.children(".comment-list");
-    if (csort == 'desc' && n.children().length > 0) {
+    if (csort === 'desc' && n.children().length > 0) {
         nli.insertBefore(n.children()[0]);
     }
     else {
@@ -179,7 +179,7 @@ function SubscribedItem(r, e, a) {
     var c = s.children("a");
     var t = s.next('span').eq(0).text();
     var i = parseInt(t);
-    if (i == t) { // If the number ends in k or M then don't bother to increment/decrement
+    if (i === t) { // If the number ends in k or M then don't bother to increment/decrement
         if (s.toggleClass("subscribed").hasClass("subscribed")) {
             c.text('Unsubscribe');
             s.next('span').text(i + 1);
@@ -215,7 +215,7 @@ function LoadedComments(r, e) {
 
 function PostToAccount(onPost, module, sub, id, params, a) {
     var par = { module: module, sub: sub, id: id };
-    if (params != null) {
+    if (params !== null) {
         return PostToPage(onPost, "account/?ajax=true", null, $.extend(par, params), a);
     }
     else {
@@ -229,10 +229,10 @@ function PostToPage(onPost, page, nodes, params, a, format) {
 
 function SendToPage(method, async, onPost, page, nodes, params, a, format) {
     var u = page;
-    if (page.indexOf(host) != 0) {
+    if (page.indexOf(host) !== 0) {
         u = host + page;
     }
-    var m = (method == 'POST' ? $.post : $.get);
+    var m = (method === 'POST' ? $.post : $.get);
     $.ajax({
         method: method,
         url: AppendSid(u),
@@ -240,9 +240,9 @@ function SendToPage(method, async, onPost, page, nodes, params, a, format) {
         async: async,
         dataType: 'xml',
         success: function (data) {
-            if (onPost != null) {
+            if (onPost !== null) {
                 var r = ProcessAjaxResult(data, format);
-                if (r != null) onPost(r['result'], nodes, a, r['code']);
+                if (r !== null) onPost(r['result'], nodes, a, r['code']);
             }
             else {
                 ProcessAjaxResult(data, format);
@@ -264,7 +264,7 @@ function AppendSid(uri) {
 }
 
 function ProcessAjaxResult(body, format) {
-    if (format == 'json') {
+    if (format === 'json') {
         return ProcessAjaxResultJson(body);
     }
     else {
@@ -279,11 +279,11 @@ function ProcessAjaxResultJson(body) {
     var title;
     var message;
 
-    if (type == 'Message') {
+    if (type === 'Message') {
         showModalMessage(doc['title'], doc['message']);
         return null;
     }
-    else if (type == 'Raw') {
+    else if (type === 'Raw') {
         return { code: doc['code'], result: doc };
     }
 }
@@ -293,44 +293,48 @@ function ProcessAjaxResultXml(doc) {
     var status;
     var title;
     var message;
+    var a;
+    var xmlDoc;
+    var xml;
+    var e;
 
-    if (type == 'Message') {
+    if (type === 'Message') {
         showModalMessage(GetNode(doc, 'title'), GetNode(doc, 'message'));
         return null;
     }
-    else if (type == 'Raw') {
+    else if (type === 'Raw') {
         return { code: GetNode(doc, 'code'), result: { code: GetNode(doc, 'code'), message: GetNode(doc, 'message')} };
     }
-    else if (type == 'Status') {
+    else if (type === 'Status') {
         return { code: GetNode(doc, 'code'), result: { code: GetNode(doc, 'code')} };
     }
-    else if (type == 'Array') {
+    else if (type === 'Array') {
         return { code: GetNode(doc, 'code'), result : { code: GetNode(doc, 'code'), 'array': GetNode(doc, 'array') } };
     }
-    else if (type == 'Dictionary') {
-        var a = { };
-        var xmlDoc = $.parseXML(doc);
-        var xml = $(doc);
-        var e = xml.find('array').find('item').each(function () {
+    else if (type === 'Dictionary') {
+        a = { };
+        xmlDoc = $.parseXML(doc);
+        xml = $(doc);
+        e = xml.find('array').find('item').each(function () {
             //a.push({ key: $(this).find('key').text(), value: $(this).find('value').text() });
             a[$(this).find('key').text()] = $(this).find('value').text();
         });
         return { code: GetNode(doc, 'code'), result: a };
     }
-    else if (type == 'UserDictionary') {
-        var a = new Array();
-        var xmlDoc = $.parseXML(doc);
-        var xml = $(doc);
-        var e = xml.find('array').find('item').each(function () {
+    else if (type === 'UserDictionary') {
+        a = new Array();
+        xmlDoc = $.parseXML(doc);
+        xml = $(doc);
+        e = xml.find('array').find('item').each(function () {
             a.push({ id: $(this).find('id').text(), value: $(this).find('value').text(), tile: $(this).find('tile').text() });
         });
         return { code: GetNode(doc, 'code'), result: a };
     }
-    else if (type == 'PermissionGroupDictionary') {
-        var a = new Array();
-        var xmlDoc = $.parseXML(doc);
-        var xml = $(doc);
-        var e = xml.find('array').find('item').each(function () {
+    else if (type === 'PermissionGroupDictionary') {
+        a = new Array();
+        xmlDoc = $.parseXML(doc);
+        xml = $(doc);
+        e = xml.find('array').find('item').each(function () {
             a.push({ id: $(this).find('id').text(), typeId: $(this).find('type-id').text(), value: $(this).find('value').text(), tile: $(this).find('tile').text() });
         });
         return { code: GetNode(doc, 'code'), result: a };
@@ -457,8 +461,8 @@ $(document).ready(function () {
 
         var trigger = 200;
 
-        if (infiniteLoading == false && loadCount < 2) {
-            if ($(window).scrollTop() != lastScrollPosn) {
+        if (infiniteLoading === false && loadCount < 2) {
+            if ($(window).scrollTop() !== lastScrollPosn) {
                 /*console.log($(window).scrollTop());*/
                 $(".infinite").each(function () {
                     if ($(window).scrollTop() + $(window).height() > ($(this).offset().top + $(this).height() - trigger)) {
@@ -481,7 +485,7 @@ $(document).ready(function () {
 function pageActive()
 {
     if (itvid > 0) {
-        if (inactive && activityTimeout != null) {
+        if (inactive && activityTimeout !== null) {
             inactive = false;
             SendToPage('POST', false, null, '/api/log-view', null, { ajax: 'true', 'view-mode': 'active', 'vid': itvid });
         }
@@ -507,7 +511,7 @@ function LoadedInfinite(r, e, a) {
 
     var c = r['code'];
     var more = $('.infinite-more');
-    if (c == 'noMoreContent') {
+    if (c === 'noMoreContent') {
         more.remove();
     }
     else {
@@ -536,7 +540,7 @@ function toggleStatusComments(parent, id, type, el) {
 function SaveParameter(module, submodule, field) {
     var f = $('#' + field);
     var val = f.val();
-    if (f.attr('type') == 'checkbox') {
+    if (f.attr('type') === 'checkbox') {
         val = f.is(':checked') ? 'true' : 'false';
     }
     if (f.hasClass("user-droplist")) {
@@ -548,7 +552,7 @@ function SaveParameter(module, submodule, field) {
 }
 
 function Parameter_Saved(r, e, a) {
-    if (r['code'] == 'SUCCESS') {
+    if (r['code'] === 'SUCCESS') {
         $('#' + a).css("outline", "#99ff55 auto 5px").animate({ outline: "rgba(153, 255, 85, 0) auto 5px" }, { duration: 5000, complete: function () {
             $('#' + a).css("outline", "");
         }
@@ -607,7 +611,7 @@ function checkNewContent() {
     if (document.hidden || document.mozHidden || document.webkitHidden || document.msHidden) {
         return;
     }
-    if (queryMode == 'query') {
+    if (queryMode === 'query') {
         if (nid > 0) {
             loadNewContent(queryMode, $('#feed-infinite'));
             return;
@@ -622,18 +626,18 @@ function loadNewContent(mode, n) {
 }
 
 function LoadedNew(r, e, a, c) {
-    if (c == 'noNewContent') {
+    if (c === 'noNewContent') {
         e.find('.infinite-new').hide();
     }
-    else if (c == 'newContent') {
+    else if (c === 'newContent') {
         var feedCount = parseInt(r['feed-count']);
         if (feedCount > 0) {
             e.find('.infinite-new').show().find('.new-posts').text(r['feed-count']);
         }
     }
-    else if (c == 'newFeedItems') {
+    else if (c === 'newFeedItems') {
         e.find('.infinite-new').hide();
-        if (r['update'] == 'true') {
+        if (r['update'] === 'true') {
             $('.today-feed ul.feed-list').first().before(r['template']);
         }
         if (r['newest-id'] > 0) {
@@ -658,7 +662,7 @@ $(document).ready(function () {
 
 function attachCommentHandler() {
     $('.comment-textarea').keydown(function (event) {
-        if (event.keyCode == 13) {
+        if (event.keyCode === 13) {
             if (!event.shiftKey && !event.altKey) {
                 $(this.form).submit();
                 return false;
@@ -669,7 +673,7 @@ function attachCommentHandler() {
             $(this).removeClass('blur').val('');
         }
     }).blur(function () {
-        if ($(this).val() == '') {
+        if ($(this).val() === '') {
             $(this).addClass('blur').val(lang['POST_A_COMMENT']);
         }
     }).trigger('blur');

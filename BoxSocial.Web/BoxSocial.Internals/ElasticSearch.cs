@@ -28,7 +28,6 @@ using System.Web;
 using System.Web.Configuration;
 using Elasticsearch.Net;
 using Nest;
-using Nest.Aggregations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

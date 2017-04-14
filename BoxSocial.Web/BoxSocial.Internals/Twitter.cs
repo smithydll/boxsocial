@@ -358,6 +358,19 @@ namespace BoxSocial.Internals
                     break;
             }
 
+            //body.Append("command=INIT&total_bytes=" + UrlEncode(media.Length.ToString()) + "&media_type=" + UrlEncode(mediaContentType));
+            //body.Append("--" + boundary + "\r\n");
+            //body.Append("Content-Disposition: form-data; name=\"command\"\r\n\r\n");
+            //body.Append("INIT\r\n");
+
+            //body.Append("--" + boundary + "\r\n");
+            //body.Append("Content-Disposition: form-data; name=\"total_bytes\"\r\n\r\n");
+            //body.Append(media.Length.ToString() + "\r\n");
+
+            //body.Append("--" + boundary + "\r\n");
+            //body.Append("Content-Disposition: form-data; name=\"media_type\"\r\n\r\n");
+            //body.Append(mediaContentType + "\r\n");
+
             body.Append("--" + boundary + "\r\n");
             body.Append("Content-Disposition: form-data; name=\"media\"; filename=\"" + guid + extension + "\"\r\n");
             body.Append("Content-Type: " + mediaContentType + "\r\n\r\n");
@@ -379,9 +392,12 @@ namespace BoxSocial.Internals
 
             stream.Close();
 
+            //throw new Exception("debug: " + Dns.GetHostAddresses("upload.twitter.com")[0].ToString());
+
             HttpWebResponse response = (HttpWebResponse)wr.GetResponse();
 
             long mediaId = 0;
+            string mediaIdString = string.Empty;
 
             if (response.StatusCode != HttpStatusCode.OK)
             {
@@ -412,6 +428,7 @@ namespace BoxSocial.Internals
                         }
                         if (reader.TokenType == JsonToken.String && lastToken == "media_id_string")
                         {
+                            mediaIdString = reader.Value.ToString();
                             long.TryParse(reader.Value.ToString(), out mediaId);
                             //tweetId = reader.Value.ToString();
                             lastToken = string.Empty;
@@ -672,6 +689,7 @@ namespace BoxSocial.Internals
                     return true; // This request cannot succeed, so remove it from the queue
                 }
                 //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain + ": Twitter", ex.ToString());
+                job.Error = ex.ToString();
                 return false; // Failed for other reasons, retry
             }
 

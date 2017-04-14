@@ -73,6 +73,8 @@ namespace BoxSocial.Groups
         private long groupViews;
 		[DataField("group_news_articles")]
         private long groupNewsArticles;
+        [DataField("group_collapse_header")]
+        private bool groupCollapseHeader;
 
         private string displayNameOwnership;
         private string category;
@@ -185,6 +187,18 @@ namespace BoxSocial.Groups
             set
             {
                 SetPropertyByRef(new { coverPhotoId }, value);
+            }
+        }
+
+        public bool CollapseHeader
+        {
+            get
+            {
+                return groupCollapseHeader;
+            }
+            set
+            {
+                SetPropertyByRef(new { groupCollapseHeader }, value);
             }
         }
 
@@ -319,6 +333,7 @@ namespace BoxSocial.Groups
             loadValue(groupRow, "group_bytes", out groupBytes);
             loadValue(groupRow, "group_views", out groupViews);
             loadValue(groupRow, "group_news_articles", out groupNewsArticles);
+            loadValue(groupRow, "group_collapse_header", out groupCollapseHeader);
 
             itemLoaded(groupRow);
             core.ItemCache.RegisterItem((NumberedItem)this);
@@ -345,6 +360,7 @@ namespace BoxSocial.Groups
             loadValue(groupRow, "group_bytes", out groupBytes);
             loadValue(groupRow, "group_views", out groupViews);
             loadValue(groupRow, "group_news_articles", out groupNewsArticles);
+            loadValue(groupRow, "group_collapse_header", out groupCollapseHeader);
 
             itemLoaded(groupRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

@@ -1277,7 +1277,7 @@ namespace BoxSocial.Internals
 
             if (!pageBody.Contains("[user") && !pageBody.Contains("sid=true]"))
             {
-                pageBodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(pageBody), null, core.Session.LoggedInMember, true, string.Empty, string.Empty);
+                pageBodyCache = core.Bbcode.Parse(HttpUtility.HtmlEncode(pageBody), null, owner, true, string.Empty, string.Empty);
             }
 
             uquery = new UpdateQuery("user_pages");

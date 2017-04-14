@@ -664,7 +664,7 @@ namespace BoxSocial.Internals
             catch (System.Net.WebException ex)
             {
                 HttpWebResponse response = (HttpWebResponse)ex.Response;
-                if (response.StatusCode == HttpStatusCode.Forbidden)
+                if (response != null && response.StatusCode == HttpStatusCode.Forbidden)
                 {
                     return true; // This request cannot succeed, so remove it from the queue
                 }

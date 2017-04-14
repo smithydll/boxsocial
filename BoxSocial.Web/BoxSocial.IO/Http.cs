@@ -26,6 +26,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Web;
+using System.Web.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 using Newtonsoft.Json;
@@ -398,7 +399,7 @@ namespace BoxSocial.IO
             {
                 if (current != null && current.Request != null)
                 {
-                    return current.Request.IsSecureConnection;
+                    return current.Request.IsSecureConnection || WebConfigurationManager.AppSettings["secure-proxy"].ToLower() == "true";
                 }
                 else
                 {

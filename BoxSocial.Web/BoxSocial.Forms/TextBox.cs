@@ -208,7 +208,7 @@ namespace BoxSocial.Forms
 
         public override string ToString()
         {
-            return ToString(Forms.DisplayMedium.Desktop);
+            return ToString(DisplayMedium.Desktop);
         }
 
         public override string ToString(DisplayMedium medium)

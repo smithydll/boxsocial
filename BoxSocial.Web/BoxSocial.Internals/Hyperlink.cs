@@ -104,7 +104,7 @@ namespace BoxSocial.Internals
                 }
                 else
                 {
-                    if (core.Settings.UseSecureCookies)
+                    if (core.Settings.UseSecureCookies || core.Settings.BehindSecureProxy)
                     {
                         protocol = "https://";
                     }

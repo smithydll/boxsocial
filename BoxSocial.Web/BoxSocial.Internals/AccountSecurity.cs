@@ -26,6 +26,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
 using System.Web;
+using BoxSocial.Forms;
 using BoxSocial.Internals;
 using BoxSocial.IO;
 using TwoStepsAuthenticator;
@@ -63,6 +64,8 @@ namespace BoxSocial.Internals
         void AccountSecurity_Load(object sender, EventArgs e)
         {
             core.Session.ForceRecentAuthentication();
+            AddModeHandler("enable", new ModuleModeHandler(AccountSecurity_Enable));
+            AddSaveHandler("phone_number", new EventHandler(AccountSecurity_SavePhoneNumber));
             AddModeHandler("qr_code", new ModuleModeHandler(AccountSecurity_QrCode));
             AddModeHandler("disable", new ModuleModeHandler(AccountSecurity_Disable));
         }
@@ -115,7 +118,7 @@ namespace BoxSocial.Internals
             else
             {
                 template.Parse("S_DISABLED", "TRUE");
-                template.Parse("U_ENABLE", core.Hyperlink.AppendSid(BuildUri("security", "enrole_phone"), true));
+                template.Parse("U_ENABLE", core.Hyperlink.AppendSid(BuildUri("security", "enable"), true));
             }
 
             // Show all active sessions
@@ -181,6 +184,39 @@ namespace BoxSocial.Internals
                 core.Display.ShowMessage("Two Factor Authentication Disabled", "Two factor authentication has been disabled for this account.");
             }
             SetRedirectUri(BuildUri());
+        }
+
+        void AccountSecurity_SavePhoneNumber(object sender, EventArgs e)
+        {
+            AuthoriseRequestSid();
+        }
+
+            void AccountSecurity_Enable(object sender, ModuleModeEventArgs e)
+        {
+            AuthoriseRequestSid();
+
+            template.SetTemplate("account_security_twofactor.html");
+
+            SelectBox phoneNumberSelectBox = new SelectBox("two_factor_phone_id");
+            TextBox phoneNumberTextBox = new TextBox("two_factor_phone_number");
+            HiddenField modeHiddenField = new HiddenField("mode");
+
+            modeHiddenField.Value = "phone_number";
+
+            SelectQuery query = UserPhoneNumber.GetSelectQueryStub(core, typeof(UserPhoneNumber));
+            query.AddCondition("phone_user_id", core.LoggedInMemberId);
+
+            DataTable phoneNumberDataTable = core.Db.Query(query);
+
+            foreach (DataRow row in phoneNumberDataTable.Rows)
+            {
+                UserPhoneNumber number = new UserPhoneNumber(core, row);
+                phoneNumberSelectBox.Add(new SelectBoxItem(number.Id.ToString(), number.PhoneNumber));
+            }
+
+            template.Parse("S_SELECT_NUMBER", phoneNumberSelectBox);
+            template.Parse("S_ADD_NUMBER", phoneNumberTextBox);
+            template.Parse("S_MODE", modeHiddenField);
         }
 
         void AccountSecurity_Disable(object sender, ModuleModeEventArgs e)

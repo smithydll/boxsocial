@@ -77,7 +77,7 @@ namespace BoxSocial.Internals
         private string viewReferralUri;
         [DataField("view_http_referer", 2000)]
         private string viewHttpReferer;
-        [DataField("view_http_user_agent", 255)]
+        [DataField("view_http_user_agent", 511)]
         private string viewHttpUserAgent;
         [DataField("view_cookies")]
         private bool viewCookies;
@@ -541,9 +541,46 @@ namespace BoxSocial.Internals
 
                 if (increment != 0 || (viewUniqueReason == ItemViewDiscountedReason.RateLimited && view.viewTimespan > 0))
                 {
+                    long recordedTimespan = Math.Min(view.viewTimespan, 20 * 60);
+
+                    if (viewUniqueReason == ItemViewDiscountedReason.RateLimited)
+                    {
+                        SelectQuery tQuery = new SelectQuery(typeof(ItemView));
+                        tQuery.AddField(new DataField(typeof(ItemView), "view_update_time_ut"));
+                        tQuery.AddCondition("view_id", ConditionEquality.NotEqual, view.Id);
+                        tQuery.AddCondition("view_item_id", view.ViewKey.Id);
+                        tQuery.AddCondition("view_item_type_id", view.ViewKey.TypeId);
+                        //query.AddCondition("view_processed", true);
+                        QueryCondition qc1 = tQuery.AddCondition("view_ip", view.viewIp);
+                        QueryCondition qc2 = tQuery.AddCondition("view_time_ut", ConditionEquality.GreaterThan, view.viewTimeRaw - 60 * 20); // last 20 minutes
+                        qc2.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw); // non-overlapping sessions
+                        qc1.AddCondition(ConditionRelations.Or, "view_session_id", view.viewSessionId);
+                        if (view.userId > 0)
+                        {
+                            qc1.AddCondition(ConditionRelations.Or, "user_id", view.userId);
+                        }
+
+                        DataTable resultTable = core.Db.Query(tQuery);
+                        if (resultTable.Rows.Count > 0 && resultTable.Columns.Contains("view_update_time_ut"))
+                        {
+                            long lastPing = 0;
+                            foreach (DataRow row in resultTable.Rows)
+                            {
+                                lastPing = Math.Max(lastPing, (long)row["view_update_time_ut"]);
+                            }
+
+                            if (lastPing > 0)
+                            {
+                                recordedTimespan = Math.Min(Math.Min(Math.Max(view.viewUpdateTimeRaw - lastPing - ((view.viewUpdateTimeRaw - view.viewTimeRaw) - view.viewTimespan), 0), recordedTimespan), 20 * 60);
+                            }
+                            
+                        }
+
+                    }
+
                     uQuery = new UpdateQuery(typeof(ItemViewCountByHour));
                     uQuery.AddField("view_hourly_count", new QueryOperation("view_hourly_count", QueryOperations.Addition, increment));
-                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Sign(increment) * Math.Min(view.viewTimespan, 20 * 60))); // attention span is 20 minutes
+                    uQuery.AddField("view_hourly_time", new QueryOperation("view_hourly_time", QueryOperations.Addition, Math.Sign(increment) * recordedTimespan)); // attention span is 20 minutes
                     uQuery.AddCondition("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                     uQuery.AddCondition("view_hourly_item_id", view.ViewKey.Id);
                     uQuery.AddCondition("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -552,7 +589,7 @@ namespace BoxSocial.Internals
                     {
                         InsertQuery iQuery = new InsertQuery(typeof(ItemViewCountByHour));
                         iQuery.AddField("view_hourly_count", increment);
-                        iQuery.AddField("view_hourly_time", Math.Sign(increment) * Math.Min(view.viewTimespan, 20 * 60)); // attention span is 20 minutes
+                        iQuery.AddField("view_hourly_time", Math.Sign(increment) * recordedTimespan); // attention span is 20 minutes
                         iQuery.AddField("view_hourly_time_ut", (view.viewTimeRaw / 60 / 60) * 60 * 60);
                         iQuery.AddField("view_hourly_item_id", view.ViewKey.Id);
                         iQuery.AddField("view_hourly_item_type_id", view.ViewKey.TypeId);
@@ -619,19 +656,20 @@ namespace BoxSocial.Internals
             // Select the number of views within 24 hours of the view
             SelectQuery query = new SelectQuery(typeof(ItemView));
             query.AddField(new QueryFunction("view_id", QueryFunctions.Count, "real_views"));
+            query.AddCondition("view_id", ConditionEquality.NotEqual, view.Id);
             query.AddCondition("view_item_id", view.ViewKey.Id);
             query.AddCondition("view_item_type_id", view.ViewKey.TypeId);
             //query.AddCondition("view_processed", true);
             QueryCondition qc1 = query.AddCondition("view_ip", view.viewIp);
-            QueryCondition qc2 = qc1.AddCondition("view_time_ut", ConditionEquality.GreaterThan, view.viewTimeRaw - 60 * 60 * 24); // last 24 hours
-            qc2.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw + 60 * 5); // any in the next 5 minutes discounts the whole set
+            QueryCondition qc2 = query.AddCondition("view_time_ut", ConditionEquality.GreaterThan, view.viewTimeRaw - 60 * 60 * 24); // last 24 hours
+            qc2.AddCondition("view_time_ut", ConditionEquality.LessThan, view.viewTimeRaw + 5); // non-overlapping sessions
             qc1.AddCondition(ConditionRelations.Or, "view_session_id", view.viewSessionId);
             if (view.userId > 0)
             {
                 qc1.AddCondition(ConditionRelations.Or, "user_id", view.userId);
             }
 
-            if ((long)core.Db.Query(query).Rows[0]["real_views"] > 1)
+            if ((long)core.Db.Query(query).Rows[0]["real_views"] > 0)
             {
                 returnValue = returnValue | ItemViewDiscountedReason.RateLimited;
             }

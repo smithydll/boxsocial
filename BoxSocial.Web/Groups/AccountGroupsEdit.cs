@@ -140,6 +140,10 @@ namespace BoxSocial.Groups
             pagesSelectBox.SelectedKey = thisGroup.GroupInfo.GroupHomepage.ToString();
             template.Parse("S_HOMEPAGE", pagesSelectBox);
 
+            CheckBox collapseHeaderCheckBox = new CheckBox("collapse-header");
+            collapseHeaderCheckBox.IsChecked = thisGroup.GroupInfo.CollapseHeader;
+            template.Parse("S_COLLAPSE_HEADER", collapseHeaderCheckBox);
+
             Save(new EventHandler(AccountGroupsEdit_Save));
         }
 
@@ -153,6 +157,7 @@ namespace BoxSocial.Groups
             string description;
             string type;
             string homepage = "/profile";
+            bool collapseHeader = false;
 
             try
             {
@@ -162,6 +167,7 @@ namespace BoxSocial.Groups
                 description = core.Http.Form["description"];
                 type = core.Http.Form["type"];
                 homepage = core.Http.Form["homepage"];
+                collapseHeader = !string.IsNullOrEmpty(core.Http.Form["collapse-header"]);
             }
             catch
             {
@@ -224,8 +230,8 @@ namespace BoxSocial.Groups
                 }
 
                 // save the edits to the group
-                db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}', group_home_page = '{5}' WHERE group_id = {0}",
-                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type), Mysql.Escape(homepage)));
+                db.UpdateQuery(string.Format("UPDATE group_info SET group_name_display = '{1}', group_category = {2}, group_abstract = '{3}', group_type = '{4}', group_home_page = '{5}', group_collapse_header = {6} WHERE group_id = {0}",
+                    thisGroup.GroupId, Mysql.Escape(title), category, Mysql.Escape(description), Mysql.Escape(type), Mysql.Escape(homepage), Mysql.Escape(collapseHeader ? "1" : "0")));
 
                 SetRedirectUri(thisGroup.Uri);
                 core.Display.ShowMessage("Group Saved", "You have successfully edited the group.");

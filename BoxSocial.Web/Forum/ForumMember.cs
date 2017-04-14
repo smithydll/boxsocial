@@ -40,7 +40,7 @@ namespace BoxSocial.Applications.Forum
         [DataField("user_id", DataFieldKeys.Unique, "u_key")]
         private new long userId;
         [DataField("item", DataFieldKeys.Unique, "u_key")]
-        private new ItemKey itemKey;
+        private ItemKey ownerKey;
         [DataField("posts")]
         private long forumPosts;
         [DataField("rank")]
@@ -113,9 +113,10 @@ namespace BoxSocial.Applications.Forum
             this.userName = user.UserName;
             this.domain = user.UserDomain;
             this.emailAddresses = user.EmailAddresses;
+            this.owner = owner;
 
-            SelectQuery sQuery = ForumMember.GetSelectQueryStub(core, typeof(ForumMember));
-			sQuery.AddCondition("user_id", user.Id);
+            SelectQuery sQuery = GetSelectQueryStub(core, UserLoadOptions.All);
+            sQuery.AddCondition("user_keys.user_id", user.Id);
 			sQuery.AddCondition("item_id", owner.Id);
 			sQuery.AddCondition("item_type_id", owner.TypeId);
 
@@ -207,7 +208,7 @@ namespace BoxSocial.Applications.Forum
             try
             {
                 loadValue(memberRow, "user_id", out userId);
-                loadValue(memberRow, "item", out itemKey);
+                loadValue(memberRow, "item", out ownerKey);
                 loadValue(memberRow, "posts", out forumPosts);
                 loadValue(memberRow, "rank", out forumRank);
                 loadValue(memberRow, "signature", out forumSignature);
@@ -226,7 +227,7 @@ namespace BoxSocial.Applications.Forum
             try
             {
                 loadValue(memberRow, "user_id", out userId);
-                loadValue(memberRow, "item", out itemKey);
+                loadValue(memberRow, "item", out ownerKey);
                 loadValue(memberRow, "posts", out forumPosts);
                 loadValue(memberRow, "rank", out forumRank);
                 loadValue(memberRow, "signature", out forumSignature);
@@ -276,10 +277,10 @@ namespace BoxSocial.Applications.Forum
         {
             get
             {
-                if (owner == null || itemKey.Id != owner.Id || itemKey.TypeId != owner.TypeId)
+                if (owner == null || ownerKey.Id != owner.Id || ownerKey.TypeId != owner.TypeId)
                 {
-                    core.PrimitiveCache.LoadPrimitiveProfile(itemKey);
-                    owner = core.PrimitiveCache[itemKey];
+                    core.PrimitiveCache.LoadPrimitiveProfile(ownerKey);
+                    owner = core.PrimitiveCache[ownerKey];
                     return owner;
                 }
                 else

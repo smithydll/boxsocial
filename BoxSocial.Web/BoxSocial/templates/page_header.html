@@ -96,43 +96,71 @@
 	<div id="page">
         <div id="dialog-message"></div>
         <!-- IF S_HEADER -->
-		<div id="head">
-			<h1 id="page-title"><a href="{U_HOME}"><span>{HEADING}</span></a></h1>
-            <!-- IF SITE_SLOGAN -->
-			<h2 id="sub-title">{SITE_SLOGAN}</h2>
+        <!-- IF COLLAPSE_HEADER -->
+  <div id="overview-profile" class="pane">
+		<div class="img-circ img-fl">
+			<!-- IF PRIMITIVE_TILE -->
+			<img src="{PRIMITIVE_TILE}" data-at2x="{PRIMITIVE_SQUARE}" alt="{PRIMITIVE_DISPLAY_NAME}" />
+			<!-- ELSE -->
+			<div class="no-disp-pic">{L_NO_PICTURE}</div>
             <!-- ENDIF -->
-			<div id="head-nav">
-				<!-- IF LOGGED_IN -->
-				{L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
-				<a href="{U_ACCOUNT}">{L_MY_ACCOUNT}</a>
-                <!-- IF UNREAD_NOTIFICATIONS -->
-                <a id="notifications-tile" href="{U_ACCOUNT}" title="{L_NOTIFICATIONS}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
-                <!-- ELSE -->
-                <a id="notifications-tile" title="{L_NOTIFICATIONS}" style="display: none;" href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
-                <!-- ENDIF -->
-                <!-- IF UNSEEN_MAIL -->
-                <a id="mail-notifications-tile" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
-                <!-- ELSE -->
-                <a id="mail-notifications-tile" style="display: none;" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
-                <!-- ENDIF -->
-                |
-				<a href="{U_SIGNOUT}">{L_SIGNOUT}</a> |
-				<!-- ELSE -->
-				<a href="{U_REGISTER}">{L_REGISTER}</a> |
-				<a href="{U_SIGNIN}">{L_SIGNIN}</a> |
-				<!-- ENDIF -->
-				<a href="{U_HELP}">{L_HELP}</a>
-			</div>
-			<div id="search">
-				<form action="{S_SEARCH}" method="get">
-					<fieldset>
-						<input type="text" id="search-text" name="q" value="{SEARCH_QUERY}" maxlength="127" /><input type="submit" value="{L_SEARCH}" />
-					</fieldset>
-				</form>
-			</div>
 		</div>
+        <!-- IF PRIMITIVE_COVER_PHOTO -->
+	  <div class="info parallax" style="height: 100px; background-image: url('{PRIMITIVE_COVER_PHOTO}');">
+        <!-- ELSE -->
+        <div class="info">
         <!-- ENDIF -->
-	    <!-- BEGIN head_hook -->
-{head_hook.BODY}
-		<!-- END head_hook -->
-		<div id="body">
+            <!-- ELSE -->
+            <div id="head">
+                <h1 id="page-title"><a href="{U_HOME}"><span>{HEADING}</span></a></h1>
+                <!-- IF SITE_SLOGAN -->
+                <h2 id="sub-title">{SITE_SLOGAN}</h2>
+                <!-- ENDIF -->
+            <!-- ENDIF -->
+                <div id="head-nav">
+                    <!-- IF LOGGED_IN -->
+                    {L_GREETING} <a href="{U_USER_PROFILE}">{USERNAME}</a> |
+                    <a href="{U_ACCOUNT}">{L_MY_ACCOUNT}</a>
+                    <!-- IF UNREAD_NOTIFICATIONS -->
+                    <a id="notifications-tile" href="{U_ACCOUNT}" title="{L_NOTIFICATIONS}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
+                    <!-- ELSE -->
+                    <a id="notifications-tile" title="{L_NOTIFICATIONS}" style="display: none;" href="{U_ACCOUNT}"><span class="notifications">{UNREAD_NOTIFICATIONS}</span></a>
+                    <!-- ENDIF -->
+                    <!-- IF UNSEEN_MAIL -->
+                    <a id="mail-notifications-tile" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
+                    <!-- ELSE -->
+                    <a id="mail-notifications-tile" style="display: none;" href="{U_UNSEEN_MAIL}" title="{L_NEW_MESSAGES}"><span class="mail-notifications">&nbsp;</span></a>
+                    <!-- ENDIF -->
+                    |
+                    <a href="{U_SIGNOUT}">{L_SIGNOUT}</a> |
+                    <!-- ELSE -->
+                    <a href="{U_REGISTER}">{L_REGISTER}</a> |
+                    <a href="{U_SIGNIN}">{L_SIGNIN}</a> |
+                    <!-- ENDIF -->
+                    <a href="{U_HELP}">{L_HELP}</a>
+                </div>
+                <div id="search">
+                    <form action="{S_SEARCH}" method="get">
+                        <fieldset>
+                            <input type="text" id="search-text" name="q" value="{SEARCH_QUERY}" maxlength="127" /><input type="submit" value="{L_SEARCH}" />
+                        </fieldset>
+                    </form>
+                </div>
+            <!-- IF COLLAPSE_HEADER -->
+                <h2>{PAGE_TITLE}</h2>
+                <!-- IF PAGE_SUB_TITLE -->
+                <h2>{PAGE_SUB_TITLE}</h2>
+                <!-- ENDIF -->
+                </div>
+            </div>
+        <!-- BEGIN primitive_head_hook -->
+        {primitive_head_hook.BODY}
+        <!-- END primitive_head_hook -->
+            <!-- ELSE -->
+            </div>
+            <!-- ENDIF -->
+            <!-- ENDIF -->
+            <!-- BEGIN head_hook -->
+            {head_hook.BODY}
+            <!-- END head_hook -->
+            <div id="body">

@@ -357,7 +357,11 @@ namespace BoxSocial.Internals
             {
                 if (storage == null)
                 {
-                    if (Settings.StorageProvider == "amazon_s3")
+                    if (Settings.StorageProvider == "ceph_s3")
+                    {
+                        storage = new AmazonS3(WebConfigurationManager.AppSettings["ceph-s3-uri"], WebConfigurationManager.AppSettings["ceph-s3-secure"] != "false", WebConfigurationManager.AppSettings["ceph-key-id"], WebConfigurationManager.AppSettings["ceph-secret-key"], db);
+                    }
+                    else if (Settings.StorageProvider == "amazon_s3")
                     {
                         storage = new AmazonS3(WebConfigurationManager.AppSettings["amazon-key-id"], WebConfigurationManager.AppSettings["amazon-secret-key"], db);
                     }
@@ -410,7 +414,7 @@ namespace BoxSocial.Internals
                             break;
                         case "database":
                         default:
-                            //queue = new DatabaseQueue(db);
+                            queue = new DatabaseQueueProvider(this);
                             break;
                     }
                 }

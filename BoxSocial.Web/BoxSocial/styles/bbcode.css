@@ -100,3 +100,33 @@ code {
     font-size: 110%;
     white-space: nowrap;
 }
+
+dl.bbcode {
+    clear: none;
+	width: 100%;
+	overflow: visible;
+}
+
+dl.bbcode dt {
+	float: left;
+	width: 30%;
+	font-weight: bold;
+    font-size: 100%;
+    background: #eeeeee;
+    padding: 0.4em;
+    margin-top: 1px;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+dl.bbcode dd {
+	margin: 0 0 0 30%;
+	position: relative;
+    font-size: 100%;
+    padding: 0.4em;
+    margin-top: 1px;
+	-webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}

@@ -7275,6 +7275,20 @@
 				this.insertText('[list]\n' + content + '\n[/list]');
 			}
 		},
+		definitionlist: {
+		    txtExec: function (caller, selected) {
+		        var content = '';
+
+		        $.each(selected.split(/\r?\n/), function () {
+		            content += (content ? '\n' : '') +
+						'[li]' + this + '[/li]';
+		        });
+
+		        sceditorPlugins.bbcode.bbcode.get('');
+
+		        this.insertText('[list=definition]\n' + content + '\n[/list]');
+		    }
+		},
 		orderedlist: {
 			txtExec: function (caller, selected) {
 				var content = '';
@@ -9476,6 +9490,23 @@
 		},
 	    // END_COMMAND
 
+	    // START_COMMAND: style
+		style: {
+		    tags: {
+		        span: {
+                    'class': null
+		        }
+		    },
+		    format: function (element, content) {
+		        var $el = $(element);
+		        return '[style=' + $el.attr('class') + ']' + content + '[/style]';
+		    },
+		    html: function (token, attrs, content) {
+		        return '<span class="' + attrs.defaultattr + '">' + content + '</span>';
+		    }
+		},
+	    // END_COMMAND
+
 	    // START_COMMAND: h1
 		h1: {
 		    tags: {
@@ -9542,12 +9573,17 @@
 		list: {
 		    tags: {
 		        ol: null,
-                ul: null
+		        ul: null,
+                dl: null
 		    },
 		    breakStart: true,
 		    isInline: false,
 		    skipLastLineBreak: true,
 		    format: function ($element, content) {
+		        if ($element.is('dl')) {
+		            return '[list=definition]' + content + '[/list]';
+		        }
+
 		        if ($element.is('ol')) {
 		            var order;
 		            order = $element[0].style.listStyleType || $element.css('list-style-type');
@@ -9563,6 +9599,8 @@
 		    html: function (token, attrs, content) {
 		        if (attrs.defaultattr == null || attrs.defaultattr == '' || attrs.defaultattr == 'square' || attrs.defaultattr == 'circle') {
 		            return '<ul>' + content + '</ul>';
+		        } else if (attrs.defaultattr == 'definition') {
+		            return '<dl class="bbcode">' + content + '</dl>';
 		        } else {
 		            return '<ol style="' +
                        escapeEntities(_olTypeToCssName(attrs.defaultattr), true) +
@@ -9590,14 +9628,25 @@
 		},
 		'*': {
 		    tags: {
-		        li: null
+		        li: null,
+                dt: null
 		    },
 			isInline: false,
 			closedBy: ['/ul', '/ol', '/list', '*', 'li'],
 			format: function ($element, content) {
-			    return '[*]' + content;
+			    if ($element.is('dt')) {
+			        return '[*="' + content + '"]';
+			    } else {
+			        return '[*]' + content;
+			    }
 			},
-			html: '<li>{0}</li>'
+			html: function (token, attrs, content) {
+			    if (attrs.defaultattr == null || attrs.defaultattr == '') {
+			        return '<li>' + content + '</li>'
+			    } else {
+			        return '<dt>' + escapeEntities(attrs.defaultattr) + '</dt><dd>' + content + '</dd>'
+			    }
+            }
 		},
 		// END_COMMAND
 
@@ -9807,36 +9856,103 @@
 		},
 	    // END_COMMAND
 
-		// START_COMMAND: URL
-		url: {
+	    // START_COMMAND: IURL
+		iurl: {
+		    allowsEmpty: true,
+		    tags: {
+		        a: {
+		            href: null,
+		            data: ['iurl']
+		        }
+		    },
+		    quoteType: BBCodeParser.QuoteType.never,
+		    format: function (element, content) {
+		        var url = element.attr('href');
+		        var $el = $(element);
+		        if ($el.attr('data') == 'purl') {
+		            return content;
+		        }
+
+		        // make sure this link does not have an sid
+
+		        return '[iurl=' + url + ']' + content + '[/iurl]';
+		    },
+		    html: function (token, attrs, content) {
+		        attrs.defaultattr =
+					escapeEntities(attrs.defaultattr, true) || content;
+
+		        return '<a data="iurl" href="' + escapeUriScheme(attrs.defaultattr) +
+					'">' + content + '</a>';
+		    }
+		},
+	    // END_COMMAND
+
+		// START_COMMAND: PURL
+		purl: {
 			allowsEmpty: true,
 			tags: {
 				a: {
-					href: null
+				    href: null,
+				    data: ['purl']
 				}
 			},
 			quoteType: BBCodeParser.QuoteType.never,
 			format: function (element, content) {
-				var url = element.attr('href');
+			    var url = element.attr('href');
+			    var $el = $(element);
+			    if ($el.attr('data') == 'iurl') {
+			        return content;
+			    }
 
-				// make sure this link is not an e-mail,
-				// if it is return e-mail BBCode
-				if (url.substr(0, 7) === 'mailto:') {
-					return '[email="' + url.substr(7) + '"]' +
-						content + '[/email]';
-				}
+				// make sure this link does not have an sid
 
-				return '[url=' + url + ']' + content + '[/url]';
+				return '[purl=' + url + ']' + content + '[/purl]';
 			},
 			html: function (token, attrs, content) {
 				attrs.defaultattr =
 					escapeEntities(attrs.defaultattr, true) || content;
 
-				return '<a href="' + escapeUriScheme(attrs.defaultattr) +
+				return '<a data="purl" href="' + escapeUriScheme(attrs.defaultattr) +
 					'">' + content + '</a>';
 			}
 		},
-		// END_COMMAND
+	    // END_COMMAND
+
+	    // START_COMMAND: URL
+		url: {
+		    allowsEmpty: true,
+		    tags: {
+		        a: {
+		            href: null
+		        }
+		    },
+		    quoteType: BBCodeParser.QuoteType.never,
+		    format: function (element, content) {
+		        var $el = $(element);
+		        var url = $el.attr('href');
+
+		        if ($el.attr('data') == 'purl' || $el.attr('data') == 'iurl') {
+		            return content;
+		        }
+
+		        // make sure this link is not an e-mail,
+		        // if it is return e-mail BBCode
+		        if (url.substr(0, 7) === 'mailto:') {
+		            return '[email="' + url.substr(7) + '"]' +
+						content + '[/email]';
+		        }
+
+		        return '[url=' + url + ']' + content + '[/url]';
+		    },
+		    html: function (token, attrs, content) {
+		        attrs.defaultattr =
+					escapeEntities(attrs.defaultattr, true) || content;
+
+		        return '<a href="' + escapeUriScheme(attrs.defaultattr) +
+					'">' + content + '</a>';
+		    }
+		},
+	    // END_COMMAND
 
 		// START_COMMAND: E-mail
 		email: {
@@ -9978,9 +10094,9 @@
 		    format: function (element, content) {
 		        var $el = $(element);
 		        var width = $el[0].style.width;
-		        width = (!(typeof width === 'undefined')) ? ' width=' + width : '';
+		        width = (!(typeof width === 'undefined') && width !== '') ? ' width=' + width : '';
 		        var height = $el[0].style.height;
-		        height = (!(typeof height === 'undefined')) ? ' height=' + height : '';
+		        height = (!(typeof height === 'undefined') && height !== '') ? ' height=' + height : '';
 
 		        return '[float=' + $el.css('float') + width + height + ']' + content + '[/float]';
 		    },

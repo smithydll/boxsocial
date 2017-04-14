@@ -159,7 +159,7 @@ namespace BoxSocial.IO
             }
         }
 
-        internal Job(string queueName, string jobId, string jobHandle, string message)
+        public Job(string queueName, string jobId, string jobHandle, string message)
         {
             this.queueName = queueName;
             this.jobId = jobId;

@@ -269,7 +269,7 @@ namespace BoxSocial.Internals
             isAjax = (HttpContext.Current.Request.QueryString["ajax"] == "true");
             if (!isAjax)
             {
-                isAjax = (HttpContext.Current.Request.Form["ajax"] == "true");
+                isAjax = (HttpContext.Current.Request.Form != null && HttpContext.Current.Request.Form["ajax"] == "true");
             }
             if (isAjax)
             {
@@ -279,7 +279,7 @@ namespace BoxSocial.Internals
             isJson = (HttpContext.Current.Request.QueryString["json"] == "true");
             if (!isJson)
             {
-                isJson = (HttpContext.Current.Request.Form["json"] == "true");
+                isJson = (HttpContext.Current.Request.Form != null && HttpContext.Current.Request.Form["json"] == "true");
             }
             if (isJson)
             {
@@ -408,6 +408,9 @@ namespace BoxSocial.Internals
 
                 core.InvokePostHooks(new HookEventArgs(core, AppPrimitives.Member, core.Session.LoggedInMember));
             }
+
+           // move this here so it can be overwritten
+            template.Parse("U_REGISTER", Core.Hyperlink.BuildRegisterUri());
 
             loadTime = (initTimer.ElapsedTicks - loadStart);
             initTimer.Stop();

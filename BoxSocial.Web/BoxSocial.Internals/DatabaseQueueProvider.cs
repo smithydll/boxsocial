@@ -26,50 +26,62 @@ using BoxSocial.IO;
 
 namespace BoxSocial.Internals
 {
-    public class DatabaseQueue : JobQueue
+    public class DatabaseQueueProvider : JobQueue
     {
         private Core core;
 
-        public DatabaseQueue(Core core)
+        public DatabaseQueueProvider(Core core)
         {
             this.core = core;
         }
 
         public override void CreateQueue(string queue)
         {
+            Queue.Create(core, queue);
         }
 
         public override void DeleteQueue(string queue)
         {
+            Queue q = new Queue(core, queue);
+            q.Delete();
         }
 
         public override bool QueueExists(string queue)
         {
-            return false;
+            return Queue.Exists(core, queue);
         }
 
         public override void PushJob(Job jobMessage)
         {
+            PushJob(TimeSpan.FromDays(7), jobMessage);
         }
 
         public override void PushJob(TimeSpan ttl, Job jobMessage)
         {
+            QueueJob.Create(core, ttl, jobMessage);
         }
 
         public override List<Job> ClaimJobs(string queue, int count)
         {
             List<Job> claimedJobs = new List<Job>();
 
+            foreach (QueueJob job in Queue.ClaimJobs(core, queue, count, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5)))
+            {
+                claimedJobs.Add(new Job(queue, job.Id.ToString(), null, job.Body.ToString()));
+            }
+
             return claimedJobs;
         }
 
         public override void DeleteJob(Job job)
         {
+            Queue.DeleteJob(core, job.JobId);
         }
 
         public override void CloseConnection()
         {
-
+            // Do nothing, we are using the database from the core object
+            // BoxSocial will close the database connection
         }
     }
 }

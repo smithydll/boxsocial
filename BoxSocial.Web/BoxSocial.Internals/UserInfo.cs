@@ -154,6 +154,8 @@ namespace BoxSocial.Internals
         private string twoFactorAuthKey;
         [DataField("user_two_factor_auth_verified")]
         private bool twoFactorAuthVerified;
+        [DataField("user_google_id", 255)]
+        private string userGoogleId;
         [DataField("user_allow_monetisation")]
         private bool allowMonetisation;
         [DataField("user_adsense_code", 12)]

@@ -9,11 +9,39 @@ namespace BoxSocial.IO
         private string table;
         private Dictionary<string, object> fieldValues;
         private QueryCondition conditions;
+        private List<TableSort> sorts;
+        private int limitCount = -1;
+        private SortOrder limitOrder = SortOrder.Ascending;
+
+        public int LimitCount
+        {
+            get
+            {
+                return limitCount;
+            }
+            set
+            {
+                limitCount = value;
+            }
+        }
+
+        public SortOrder LimitOrder
+        {
+            get
+            {
+                return limitOrder;
+            }
+            set
+            {
+                limitOrder = value;
+            }
+        }
 
         public UpdateQuery(string tableName)
         {
             fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
             conditions = new QueryCondition();
+            sorts = new List<TableSort>();
 
             table = tableName;
         }
@@ -22,6 +50,7 @@ namespace BoxSocial.IO
         {
             fieldValues = new Dictionary<string, object>(StringComparer.Ordinal);
             conditions = new QueryCondition();
+            sorts = new List<TableSort>();
 
             table = DataFieldAttribute.GetTable(type);
         }
@@ -47,6 +76,21 @@ namespace BoxSocial.IO
         public void UnsetBitField(string field, object value)
         {
             fieldValues.Add(field, new QueryOperation(field, QueryOperations.BinaryAnd, new QueryBinaryInverse(value)));
+        }
+
+        public void AddSort(SortOrder order, string field)
+        {
+            sorts.Add(new TableSort(order, field, null));
+        }
+
+        public void AddSort(SortOrder order, DataField field)
+        {
+            sorts.Add(new TableSort(order, field, null));
+        }
+
+        public void AddSort(SortOrder order, QueryCondition lastSort)
+        {
+            sorts.Add(new TableSort(order, string.Empty, lastSort));
         }
 
         public QueryCondition AddCondition(string field, object value)
@@ -99,8 +143,11 @@ namespace BoxSocial.IO
 
         public override string ToString()
         {
-            string query = string.Format("UPDATE {0}",
-                table);
+            StringBuilder query = new StringBuilder();
+            query.AppendFormat("UPDATE {0}", table);
+
+            /*string query = string.Format("UPDATE {0}",
+                table);*/
 
             if (fieldValues.Count > 0)
             {
@@ -109,25 +156,84 @@ namespace BoxSocial.IO
                 {
                     if (first)
                     {
-                        query = string.Format("{0} SET {1} = {2}",
-                            query, field, Query.ObjectToSql(fieldValues[field]));
+                        query.AppendFormat(" SET {0} = {1}", field, Query.ObjectToSql(fieldValues[field]));
                         first = false;
                     }
                     else
                     {
-                        query = string.Format("{0}, {1} = {2}",
-                            query, field, Query.ObjectToSql(fieldValues[field]));
+                        query.AppendFormat(", {0} = {1}", field, Query.ObjectToSql(fieldValues[field]));
                     }
                 }
             }
 
             if (conditions.Count > 0)
             {
-                query = string.Format("{0} WHERE {1}",
-                            query, conditions.ToString());
+                query.AppendFormat(" WHERE {0}", conditions.ToString());
             }
 
-            return string.Format("{0};", query);
+
+            if (sorts.Count > 0)
+            {
+                bool first = true;
+                foreach (TableSort sort in sorts)
+                {
+                    if (first)
+                    {
+                        query.Append(" ORDER BY ");
+                        query.Append(sort.ToString());
+                        first = false;
+                    }
+                    else
+                    {
+                        query.Append(", ");
+                        query.Append(sort.ToString());
+                    }
+                }
+            }
+
+            if (limitCount >= 0)
+            {
+                query.Append(" LIMIT ");
+                query.Append(limitCount.ToString());
+            }
+
+            query.Append(";");
+
+            string retQuery = query.ToString();
+
+            if (LimitOrder == SortOrder.Descending)
+            {
+                StringBuilder limitQuery = new StringBuilder();
+
+                if (sorts.Count > 0)
+                {
+                    bool first = true;
+                    for (int i = sorts.Count - 1; i >= 0; i--)
+                    {
+                        if (first)
+                        {
+                            limitQuery.Append(" ORDER BY ");
+                            first = false;
+                        }
+                        else
+                        {
+                            limitQuery.Append(", ");
+                        }
+                        if (i == 0)
+                        {
+                            limitQuery.Append(sorts[i].ToString(true));
+                        }
+                        else
+                        {
+                            limitQuery.Append(sorts[i].ToString(false));
+                        }
+                    }
+                }
+
+                retQuery = string.Format("({0}) {1}", retQuery.TrimEnd(new char[] { ';', ' ' }), limitQuery.ToString());
+            }
+
+            return retQuery;
         }
     }
 }

@@ -958,7 +958,6 @@ namespace BoxSocial.Internals
             template.Parse("U_TOS", page.Core.Hyperlink.BuildTermsOfServiceUri());
             template.Parse("U_SIGNIN", page.Core.Hyperlink.BuildLoginUri());
             template.Parse("U_SIGNOUT", page.Core.Hyperlink.BuildLogoutUri());
-            template.Parse("U_REGISTER", page.Core.Hyperlink.BuildRegisterUri());
             template.Parse("U_HELP", page.Core.Hyperlink.BuildHelpUri());
             template.Parse("U_SITEMAP", page.Core.Hyperlink.BuildSitemapUri());
             template.Parse("U_COPYRIGHT", page.Core.Hyperlink.BuildCopyrightUri());

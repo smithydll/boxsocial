@@ -35,7 +35,7 @@ namespace BoxSocial.IO
     public class AmazonSQS : JobQueue
     {
         AmazonSQSConfig sqsConfig;
-        Amazon.SQS.AmazonSQS client;
+        //Amazon.SQS.AmazonSQS client;
         AmazonSQSClient sqsClient;
         Dictionary<string, string> queueUrls;
 
@@ -44,7 +44,8 @@ namespace BoxSocial.IO
             sqsConfig = new AmazonSQSConfig();
             //sqsConfig.ServiceURL = "https://sqs.amazonaws.com";
 
-            client = AWSClientFactory.CreateAmazonSQSClient(keyId, secretKey, sqsConfig);
+            //client = AWSClientFactory.CreateAmazonSQSClient(keyId, secretKey, sqsConfig);
+            sqsClient = new AmazonSQSClient(keyId, secretKey, sqsConfig);
             queueUrls = new Dictionary<string, string>();
         }
 
@@ -57,7 +58,7 @@ namespace BoxSocial.IO
         {
             CreateQueueRequest request = new CreateQueueRequest();
             request.QueueName = SanitiseQueueName(queue);
-            CreateQueueResponse response = client.CreateQueue(request);
+            CreateQueueResponse response = sqsClient.CreateQueue(request);
         }
 
         private string GetQueueUrl(string queue)
@@ -73,9 +74,9 @@ namespace BoxSocial.IO
                     {
                         GetQueueUrlRequest request = new GetQueueUrlRequest();
                         request.QueueName = SanitiseQueueName(queue);
-                        GetQueueUrlResponse response = client.GetQueueUrl(request);
+                        GetQueueUrlResponse response = sqsClient.GetQueueUrl(request);
 
-                        queueUrls.Add(queue, response.GetQueueUrlResult.QueueUrl);
+                        queueUrls.Add(queue, response.QueueUrl);
                     }
 
                     return queueUrls[queue];
@@ -96,7 +97,7 @@ namespace BoxSocial.IO
         {
             DeleteQueueRequest request = new DeleteQueueRequest();
             request.QueueUrl = GetQueueUrl(SanitiseQueueName(queue));
-            DeleteQueueResponse response = client.DeleteQueue(request);
+            DeleteQueueResponse response = sqsClient.DeleteQueue(request);
         }
 
         public override bool QueueExists(string queue)
@@ -105,7 +106,7 @@ namespace BoxSocial.IO
             {
                 GetQueueUrlRequest request = new GetQueueUrlRequest();
                 request.QueueName = SanitiseQueueName(queue);
-                GetQueueUrlResponse response = client.GetQueueUrl(request);
+                GetQueueUrlResponse response = sqsClient.GetQueueUrl(request);
 
                 return true;
             }
@@ -128,7 +129,7 @@ namespace BoxSocial.IO
                 //request.DelaySeconds = (int)(ttl.Ticks / TimeSpan.TicksPerSecond);
                 request.QueueUrl = GetQueueUrl(SanitiseQueueName(jobMessage.QueueName));
                 request.MessageBody = JsonConvert.SerializeObject(jobMessage);
-                SendMessageResponse response = client.SendMessage(request);
+                SendMessageResponse response = sqsClient.SendMessage(request);
             }
             catch (System.Net.WebException)
             {
@@ -144,11 +145,11 @@ namespace BoxSocial.IO
                 ReceiveMessageRequest request = new ReceiveMessageRequest();
                 request.MaxNumberOfMessages = count;
                 request.QueueUrl = GetQueueUrl(SanitiseQueueName(queue));
-                ReceiveMessageResponse response = client.ReceiveMessage(request);
+                ReceiveMessageResponse response = sqsClient.ReceiveMessage(request);
 
-                for (int i = 0; i < response.ReceiveMessageResult.Message.Count; i++)
+                for (int i = 0; i < response.Messages.Count; i++)
                 {
-                    Message message = response.ReceiveMessageResult.Message[i];
+                    Message message = response.Messages[i];
                     claimedJobs.Add(new Job(queue, message.MessageId, message.ReceiptHandle, message.Body));
                 }
             }
@@ -166,7 +167,7 @@ namespace BoxSocial.IO
                 DeleteMessageRequest request = new DeleteMessageRequest();
                 request.QueueUrl = GetQueueUrl(SanitiseQueueName(job.QueueName));
                 request.ReceiptHandle = job.Handle;
-                DeleteMessageResponse response = client.DeleteMessage(request);
+                DeleteMessageResponse response = sqsClient.DeleteMessage(request);
             }
             catch (System.Net.WebException)
             {
@@ -176,10 +177,10 @@ namespace BoxSocial.IO
 
         public override void CloseConnection()
         {
-            if (client != null)
+            if (sqsClient != null)
             {
-                client.Dispose();
-                client = null;
+                sqsClient.Dispose();
+                sqsClient = null;
             }
         }
     }

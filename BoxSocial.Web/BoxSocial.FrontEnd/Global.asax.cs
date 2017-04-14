@@ -240,7 +240,7 @@ namespace BoxSocial.FrontEnd
                 bool flag = false;
                 lock (queueLock)
                 {
-                    if (queue != null)
+                    if (Queue != null)
                     {
                         flag = true;
                     }
@@ -265,8 +265,12 @@ namespace BoxSocial.FrontEnd
                             {
                                 jobs = Queue.ClaimJobs(queueName, queues[queueName]);
                             }
-                            catch
+                            catch (Exception ex)
                             {
+                                InsertQuery iQuery = new InsertQuery(typeof(ApplicationError));
+                                iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
+                                iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
+                                core.Db.Query(iQuery);
                                 return;
                             }
                         }
@@ -320,7 +324,7 @@ namespace BoxSocial.FrontEnd
                         iQuery.AddField("error_body", "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
                         core.Db.Query(iQuery);
 #if DEBUG
-                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
+                        //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "Jobs failed at " + Hyperlink.Domain, "FAILED JOB COUNT:\n" + failedJobs.ToString() + "\n\n" + failedJobsLog.ToString());
 #endif
                     }
                 }
@@ -333,13 +337,13 @@ namespace BoxSocial.FrontEnd
                     iQuery.AddField("error_title", "An Error occured at " + Hyperlink.Domain + " in global.asax");
                     iQuery.AddField("error_body", "EXCEPTION THROWN:\n" + ex.ToString());
                     core.Db.Query(iQuery);
-                    core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
+                    //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
                 }
                 catch
                 {
                     try
                     {
-                        core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
+                        //core.Email.SendEmail(WebConfigurationManager.AppSettings["error-email"], "An Error occured at " + Hyperlink.Domain + " in global.asax", "EXCEPTION THROWN:\n" + ex.ToString());
                     }
                     catch
                     {

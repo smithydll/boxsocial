@@ -57,15 +57,16 @@ namespace BoxSocial.Internals
             List<QueueJob> jobs = new List<QueueJob>();
 
             long claimId = QueueClaim.Create(core, timeToLive);
+            long time = UnixTime.UnixTimeStamp();
 
             UpdateQuery uQuery = new UpdateQuery(typeof(QueueJob));
             uQuery.AddField("job_claim_id", claimId);
             uQuery.AddField("job_claimed", true);
-            uQuery.AddField("job_claimed_time", UnixTime.UnixTimeStamp());
+            uQuery.AddField("job_claimed_time", time);
             uQuery.AddCondition("job_queue_name", queueName);
             QueryCondition qc1 = uQuery.AddCondition("job_claimed", false);
             QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "job_claimed", true);
-            qc2.AddCondition(new QueryOperation("job_claimed_time", QueryOperations.Addition, timeToLive.TotalSeconds), ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp());
+            qc2.AddCondition(new QueryOperation("job_claimed_time", QueryOperations.Addition, timeToLive.TotalSeconds), ConditionEquality.GreaterThan, time);
             uQuery.AddCondition("job_processed", false);
             uQuery.AddSort(SortOrder.Ascending, "job_time"); // Oldest first, FIFO
             uQuery.LimitCount = limit;
@@ -80,6 +81,14 @@ namespace BoxSocial.Internals
             foreach (DataRow jobRow in jobsTable.Rows)
             {
                 jobs.Add(new QueueJob(core, jobRow));
+            }
+
+            // cleanup claims, once an hour to reduce table locking queries
+            if (DateTime.Now.Minute == 0)
+            {
+                DeleteQuery dQuery = new DeleteQuery(typeof(QueueClaim));
+                dQuery.AddCondition(new QueryOperation("claim_time", QueryOperations.Addition, new QueryField("claim_ttl")), ConditionEquality.GreaterThan, time);
+                core.Db.Query(dQuery);
             }
 
             return jobs;

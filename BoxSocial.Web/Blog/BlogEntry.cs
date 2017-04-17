@@ -116,6 +116,12 @@ namespace BoxSocial.Applications.Blog
         private bool simplePermissions;
         [DataField("post_gallery_id", typeof(Gallery.Gallery))]
         private long galleryId;
+        [DataField("post_claim_id")]
+        private long claimId;
+        [DataField("post_claim_ut")]
+        private long claimTime;
+        [DataField("post_claimed")]
+        private bool claimed;
 
         private User author;
         private Primitive owner;
@@ -520,6 +526,9 @@ namespace BoxSocial.Applications.Blog
             loadValue(postEntryRow, "post_allow_comment", out allowComment);
             loadValue(postEntryRow, "post_simple_permissions", out simplePermissions);
             loadValue(postEntryRow, "post_gallery_id", out galleryId);
+            loadValue(postEntryRow, "post_claim_id", out claimId);
+            loadValue(postEntryRow, "post_claim_ut", out claimTime);
+            loadValue(postEntryRow, "post_claimed", out claimed);
 
             itemLoaded(postEntryRow);
             core.ItemCache.RegisterItem((NumberedItem)this);

@@ -224,9 +224,25 @@ namespace BoxSocial.Applications.Blog
             // In this cron we will find any queued unpublished blog posts
             // ready to publish and publish them
 
+            TimeSpan ttl = TimeSpan.FromMinutes(1);
+            long claimId = BlogQueueClaim.Create(core, ttl);
+            long time = UnixTime.UnixTimeStamp();
+
+            UpdateQuery uQuery0 = new UpdateQuery(typeof(BlogEntry));
+            uQuery0.AddField("post_claim_id", claimId);
+            uQuery0.AddField("post_claim_ut", time);
+            uQuery0.AddCondition("post_status", (byte)PublishStatuses.Queued);
+            uQuery0.AddCondition("post_published_ut", ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
+            QueryCondition qc1 = uQuery0.AddCondition("post_claimed", false);
+            QueryCondition qc2 = qc1.AddCondition(ConditionRelations.Or, "post_claimed", true);
+            qc2.AddCondition(new QueryOperation("post_claim_ut", QueryOperations.Addition, ttl.TotalSeconds), ConditionEquality.GreaterThan, UnixTime.UnixTimeStamp());
+            uQuery0.AddSort(SortOrder.Ascending, "post_published_ut"); // the oldest queued publish time are processed first
+            uQuery0.LimitCount = 25;
+
+            core.Db.Query(uQuery0);
+
             SelectQuery query = BlogEntry.GetSelectQueryStub(core, typeof(BlogEntry));
-            query.AddCondition("post_status", (byte)PublishStatuses.Queued);
-            query.AddCondition("post_published_ut", ConditionEquality.LessThanEqual, UnixTime.UnixTimeStamp());
+            query.AddCondition("post_claim_id", claimId);
 
             DataTable blogPosts = core.Db.Query(query);
 
@@ -252,6 +268,14 @@ namespace BoxSocial.Applications.Blog
 
                 core.Search.Index(be);
                 core.CallingApplication.PublishToFeed(core, be.Author, be, be.Title);
+            }
+
+            // cleanup claims, once an hour to reduce table locking queries
+            if (DateTime.Now.Minute == 0)
+            {
+                DeleteQuery dQuery = new DeleteQuery(typeof(BlogQueueClaim));
+                dQuery.AddCondition(new QueryOperation("blog_claim_time", QueryOperations.Addition, new QueryField("blog_claim_ttl")), ConditionEquality.GreaterThan, time);
+                core.Db.Query(dQuery);
             }
 
             return true;

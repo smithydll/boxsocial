@@ -256,9 +256,9 @@ namespace BoxSocial.Applications.Blog
                 }
                 else
                 {
-                    VariableCollection emoticonVariableCollection = template.CreateChild("emoticon_hidden_list");
-                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
-                    emoticonVariableCollection.Parse("URI", emoticon.File);
+                    //VariableCollection emoticonVariableCollection = template.CreateChild("emoticon_hidden_list");
+                    //emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    //emoticonVariableCollection.Parse("URI", emoticon.File);
                 }
             }
 

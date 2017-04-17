@@ -299,9 +299,9 @@ namespace BoxSocial.Applications.Forum
                 }
                 else
                 {
-                    VariableCollection emoticonVariableCollection = e.Template.CreateChild("emoticon_hidden_list");
-                    emoticonVariableCollection.Parse("CODE", emoticon.Code);
-                    emoticonVariableCollection.Parse("URI", emoticon.File);
+                    //VariableCollection emoticonVariableCollection = e.Template.CreateChild("emoticon_hidden_list");
+                    //emoticonVariableCollection.Parse("CODE", emoticon.Code);
+                    //emoticonVariableCollection.Parse("URI", emoticon.File);
                 }
             }
 

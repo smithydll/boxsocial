@@ -80,6 +80,7 @@
     <Compile Include="AccountBlogManage.cs" />
     <Compile Include="AccountBlogPreferences.cs" />
     <Compile Include="AccountBlogQueue.cs" />
+    <Compile Include="BlogQueueClaim.cs" />
     <Compile Include="AccountBlogRoll.cs" />
     <Compile Include="AccountBlogTrackback.cs" />
     <Compile Include="AccountBlogWrite.cs" />
